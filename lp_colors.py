@@ -33,7 +33,7 @@ PURPLE_THIRD = 50
 curr_colors = [[BLACK for y in range(9)] for x in range(9)]
 effect_colors = [[BLACK for y in range(9)] for x in range(9)]
 
-import lp_events, keyboard
+import lp_events, scripts
 
 lp_object = None
 
@@ -55,50 +55,24 @@ def update():
     for x in range(9):
         for y in range(9):
             set_color = None
-            if (lp_events.pressed[x][y]) and (keyboard.script_threads[x][y] != None):
-                if keyboard.script_threads[x][y].is_alive():
-                    set_color = keyboard.COLOR_PRIMED
+            if (lp_events.pressed[x][y]) and (scripts.script_threads[x][y] != None):
+                if scripts.script_threads[x][y].is_alive():
+                    set_color = scripts.COLOR_PRIMED
                 else:
                     set_color = effect_colors[x][y]
-            elif keyboard.script_threads[x][y] != None:
-                if keyboard.script_threads[x][y].is_alive():
+            elif scripts.script_threads[x][y] != None:
+                if scripts.script_threads[x][y].is_alive():
                     set_color = effect_colors[x][y]
                 else:
-                    if (x, y) in [l[1:] for l in keyboard.scripts_to_run]:
-                        set_color = keyboard.COLOR_PRIMED
+                    if (x, y) in [l[1:] for l in scripts.scripts_to_run]:
+                        set_color = scripts.COLOR_PRIMED
                     else:
                         set_color = curr_colors[x][y]
-            elif (x, y) in [l[1:] for l in keyboard.scripts_to_run]:
-                set_color = keyboard.COLOR_PRIMED
+            elif (x, y) in [l[1:] for l in scripts.scripts_to_run]:
+                set_color = scripts.COLOR_PRIMED
             else:
                 set_color = curr_colors[x][y]
             lp_object.LedCtrlXYByCode(x, y, set_color)
 
 update_bindable = lambda x, y : update()
-
-# Just for fun, use lp_colors.rainbowreplace(lp_colors.LIGHTBLUE) in instrument mode ;)
-def rainbow_replace(replace_color):
-    for x in range(8):
-        for y in range(1, 9):
-            if curr_colors[x][y] == replace_color:
-                rainbow_color = None
-                if y == 1:
-                    rainbow_color = PINK_THIRD
-                elif y == 2:
-                    rainbow_color = RED_THIRD
-                elif y == 3:
-                    rainbow_color = AMBER_THIRD
-                elif y == 4:
-                    rainbow_color = YELLOW_THIRD
-                elif y == 5:
-                    rainbow_color = GREEN_THIRD
-                elif y == 6:
-                    rainbow_color = LIGHTBLUE_THIRD
-                elif y == 7:
-                    rainbow_color = BLUE_THIRD
-                else:
-                    rainbow_color = PURPLE_THIRD
-
-                curr_colors[x][y] = rainbow_color
-    update()
 
