@@ -33,7 +33,7 @@ PURPLE_THIRD = 50
 curr_colors = [[BLACK for y in range(9)] for x in range(9)]
 effect_colors = [[BLACK for y in range(9)] for x in range(9)]
 
-import lp_events
+import lp_events, keyboard
 
 lp_object = None
 
@@ -57,6 +57,11 @@ def update():
             set_color = None
             if lp_events.pressed[x][y]:
                 set_color = effect_colors[x][y]
+            elif keyboard.script_threads[x][y] != None:
+                if keyboard.script_threads[x][y].is_alive():
+                    set_color = effect_colors[x][y]
+                else:
+                    set_color = curr_colors[x][y]
             else:
                 set_color = curr_colors[x][y]
             lp_object.LedCtrlXYByCode(x, y, set_color)

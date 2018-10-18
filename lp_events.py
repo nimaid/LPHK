@@ -41,6 +41,7 @@ def start(lp_object):
     lp_colors.init(lp_object)
     init(lp_object)
     run(lp_object)
+    lp_colors.update()
 
 def bind_func_with_colors(x, y, func, off_color, on_color = lp_colors.GREEN, release_func = None):
     global press_funcs
@@ -50,6 +51,7 @@ def bind_func_with_colors(x, y, func, off_color, on_color = lp_colors.GREEN, rel
     release_funcs[x][y] = release_func
     lp_colors.setXY(x, y, off_color)
     lp_colors.effectXY(x, y, on_color)
+    lp_colors.update()
 
 def unbind_all(update_colors=True):
     global press_funcs
