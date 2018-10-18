@@ -2,31 +2,33 @@ import threading
 from functools import partial
 import lp_events, lp_colors, keyboard
 
-COLOR_ACTIVE = lp_colors.BLUE
+COLOR_ACTIVE = lp_colors.GREEN
 COLOR_PRIMED = lp_colors.PINK
+COLOR_DEFAULT = lp_colors.BLUE
 
-script_threads = [[None for y in range(9)] for x in range(9)]
-script_running = False
-scripts_to_run = []
+threads = [[None for y in range(9)] for x in range(9)]
+running = False
+to_run = []
+text = [["" for y in range(9)] for x in range(9)]
 
 def run_in_bg(func, x, y):
-    global script_threads
-    global scripts_to_run
-    if not script_running:
-        script_threads[x][y] = threading.Thread(None, func)
-        script_threads[x][y].start()
+    global threads
+    global to_run
+    if not running:
+        threads[x][y] = threading.Thread(None, func)
+        threads[x][y].start()
     else:
-        scripts_to_run.append((func, x, y))
+        sto_run.append((func, x, y))
 
 def run_funcs(funcs_in):
-    global script_running
-    global scripts_to_run
-    script_running = True
+    global running
+    global to_run
+    running = True
     for f in funcs_in:
         f()
-    script_running = False
-    if len(scripts_to_run) > 0:
-        tup = scripts_to_run.pop(0)
+    running = False
+    if len(to_run) > 0:
+        tup = to_run.pop(0)
         func = tup[0]
         x = tup[1]
         y = tup[2]
@@ -60,6 +62,12 @@ def run_script(script_str, x, y):
     script_func = partial(run_funcs, (funcs_to_run))
     run_in_bg(script_func, x, y)
 
-def bind_script_to_button(x, y, script_down, off_color):
+def bind(x, y, script_down, off_color=COLOR_DEFAULT):
     script_down_bindable = lambda a, b : run_script(script_down, x, y)
     lp_events.bind_func_with_colors(x, y, script_down_bindable, off_color, COLOR_ACTIVE)
+    text[x][y] = script_down
+
+def unbind(x, y):
+    lp_events.unbind(x, y)
+    threads[x][y] = None
+    text[x][y] = ""

@@ -55,20 +55,20 @@ def update():
     for x in range(9):
         for y in range(9):
             set_color = None
-            if (lp_events.pressed[x][y]) and (scripts.script_threads[x][y] != None):
-                if scripts.script_threads[x][y].is_alive():
+            if (lp_events.pressed[x][y]) and (scripts.threads[x][y] != None):
+                if scripts.threads[x][y].is_alive():
                     set_color = scripts.COLOR_PRIMED
                 else:
                     set_color = effect_colors[x][y]
-            elif scripts.script_threads[x][y] != None:
-                if scripts.script_threads[x][y].is_alive():
+            elif scripts.threads[x][y] != None:
+                if scripts.threads[x][y].is_alive():
                     set_color = effect_colors[x][y]
                 else:
-                    if (x, y) in [l[1:] for l in scripts.scripts_to_run]:
+                    if (x, y) in [l[1:] for l in scripts.to_run]:
                         set_color = scripts.COLOR_PRIMED
                     else:
                         set_color = curr_colors[x][y]
-            elif (x, y) in [l[1:] for l in scripts.scripts_to_run]:
+            elif (x, y) in [l[1:] for l in scripts.to_run]:
                 set_color = scripts.COLOR_PRIMED
             else:
                 set_color = curr_colors[x][y]

@@ -13,7 +13,7 @@ except ImportError:
     except ImportError:
         sys.exit("[launchpad_py] Error loading launchpad.py")
 
-import lp_events, lp_colors, scripts
+import lp_events, lp_colors, scripts, keyboard
 
 lp = launchpad.LaunchpadMk2();
 
@@ -30,10 +30,10 @@ def main():
 
     init()
 
-    scripts.bind_script_to_button(0, 1, SCRIPT_YT, lp_colors.RED)
-    scripts.bind_script_to_button(1, 1, SCRIPT_QBF, lp_colors.AMBER)
-    scripts.bind_script_to_button(2, 1, SCRIPT_HW, lp_colors.YELLOW)
-    scripts.bind_script_to_button(3, 1, SCRIPT_TNC, lp_colors.LIGHTBLUE)
+    scripts.bind(0, 1, SCRIPT_YT, lp_colors.RED)
+    scripts.bind(1, 1, SCRIPT_QBF, lp_colors.AMBER)
+    scripts.bind(2, 1, SCRIPT_HW, lp_colors.YELLOW)
+    scripts.bind(3, 1, SCRIPT_TNC, lp_colors.LIGHTBLUE)
 
 main()
 
