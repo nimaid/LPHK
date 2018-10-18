@@ -1,9 +1,13 @@
 import sys
 
-SCRIPT_QBF = "STRING The Quick Brown Fox Jumps Over The Lazy Dog\nSP_TAP enter"
-SCRIPT_HW = "STRING Hello, world!\nSP_TAP enter"
-SCRIPT_YT = "STRING youtube.com\nSP_TAP enter"
-SCRIPT_TNC = "STRING tv.nimaid.com\nSP_TAP enter"
+SCRIPT_QBF = "STRING The Quick Brown Fox\nSP_TAP enter"
+SCRIPT_HW = "STRING echo \"Hello, world!\"\nSP_TAP enter"
+SCRIPT_YT = "WEB youtube.com"
+SCRIPT_IDC = "WEB_NEW tv.nimaid.com\nDELAY 2\nSP_TAP f11"
+SCRIPT_TERM = "SP_PRESS ctrl\nSP_PRESS alt\nTAP t 0.1\nSP_RELEASE alt\nSP_RELEASE ctrl"
+SCRIPT_SPACE = "SP_TAP space"
+SCRIPT_F11 = "SP_TAP f11"
+SCRIPT_DEV = "SP_PRESS ctrl\nSP_PRESS shift\nTAP j\nSP_RELEASE shift\nSP_RELEASE ctrl"
 
 try:
     import launchpad_py as launchpad
@@ -30,10 +34,16 @@ def main():
 
     init()
 
-    scripts.bind(0, 1, SCRIPT_YT, lp_colors.RED)
-    scripts.bind(1, 1, SCRIPT_QBF, lp_colors.AMBER)
-    scripts.bind(2, 1, SCRIPT_HW, lp_colors.YELLOW)
-    scripts.bind(3, 1, SCRIPT_TNC, lp_colors.LIGHTBLUE)
+    scripts.bind(0, 1, SCRIPT_YT, lp_colors.RED_THIRD)
+    scripts.bind(0, 2, SCRIPT_QBF, lp_colors.AMBER_THIRD)
+
+    scripts.bind(1, 1, SCRIPT_IDC, lp_colors.WHITE_THIRD)
+    scripts.bind(1, 2, SCRIPT_SPACE, lp_colors.RED_THIRD)
+    scripts.bind(1, 3, SCRIPT_F11, lp_colors.YELLOW_THIRD)
+    scripts.bind(1, 4, SCRIPT_DEV, lp_colors.MINT_THIRD)
+
+    scripts.bind(2, 1, SCRIPT_TERM, lp_colors.PURPLE_THIRD)
+    scripts.bind(2, 2, SCRIPT_HW, lp_colors.PINK_THIRD)
 
 main()
 

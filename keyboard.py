@@ -11,6 +11,7 @@ def sp(name):
 
 def tap(key, wait=0):
     controller.press(key)
-    sleep(wait)
+    sleep(wait/2)
     controller.release(key)
+    sleep(wait/2)
 
