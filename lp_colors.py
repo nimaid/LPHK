@@ -55,13 +55,21 @@ def update():
     for x in range(9):
         for y in range(9):
             set_color = None
-            if lp_events.pressed[x][y]:
-                set_color = effect_colors[x][y]
+            if (lp_events.pressed[x][y]) and (keyboard.script_threads[x][y] != None):
+                if keyboard.script_threads[x][y].is_alive():
+                    set_color = keyboard.COLOR_PRIMED
+                else:
+                    set_color = effect_colors[x][y]
             elif keyboard.script_threads[x][y] != None:
                 if keyboard.script_threads[x][y].is_alive():
                     set_color = effect_colors[x][y]
                 else:
-                    set_color = curr_colors[x][y]
+                    if (x, y) in [l[1:] for l in keyboard.scripts_to_run]:
+                        set_color = keyboard.COLOR_PRIMED
+                    else:
+                        set_color = curr_colors[x][y]
+            elif (x, y) in [l[1:] for l in keyboard.scripts_to_run]:
+                set_color = keyboard.COLOR_PRIMED
             else:
                 set_color = curr_colors[x][y]
             lp_object.LedCtrlXYByCode(x, y, set_color)
