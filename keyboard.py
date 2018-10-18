@@ -56,7 +56,7 @@ def run_script(script_str, x, y):
     for line in script_lines:
         split_line = line.split(' ')
         if split_line[0] == "STRING":
-            funcs_to_run.append(partial(controller.type, (split_line[1])))
+            funcs_to_run.append(partial(controller.type, (" ".join(split_line[1:]))))
         elif split_line[0] == "DELAY":
             funcs_to_run.append(partial(sleep, (float(split_line[1]))))
         elif split_line[0] == "TAP":

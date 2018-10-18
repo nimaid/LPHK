@@ -1,5 +1,7 @@
 import sys
 
+SCRIPT_QBF = "STRING The Quick Brown Fox Jumps Over The Lazy Dog\nSP_TAP enter"
+
 try:
     import launchpad_py as launchpad
 except ImportError:
@@ -25,6 +27,7 @@ def main():
 
     init()
 
+    keyboard.bind_script_to_button(0, 1, SCRIPT_QBF, lp_colors.AMBER)
 
 main()
 
