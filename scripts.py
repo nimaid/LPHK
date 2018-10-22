@@ -92,7 +92,9 @@ def unbind(x, y):
 def unbind_all():
     global threads
     global text
+    global to_run
     lp_events.unbind_all()
     threads = [[None for y in range(9)] for x in range(9)]
     text = [["" for y in range(9)] for x in range(9)]
+    to_run = []
 

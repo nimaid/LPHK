@@ -29,10 +29,13 @@ def load_layout(name):
         l = f.readlines()
 
         for x in range(9):
-            line = l[x].split("||")
+            line = l[x][:-1].split("||")
             for y in range(9):
                 info = line[y].split("~~")
                 color = int(info[0])
                 script_text = info[1].replace("\\n", "\n")
 
-                scripts.bind(x, y, script_text, color)
+                if script_text != "":
+                    scripts.bind(x, y, script_text, color)
+                else:
+                    lp_colors.setXY(x, y, color)
