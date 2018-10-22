@@ -22,5 +22,5 @@ Open a web browser and click on the web bar. Press a button and text will be ene
 * ~~LPScript base iteration~~
 * ~~Keyboard lib base~~
 * ~~Proof of concept demo~~
-* Saving/Loading
+* ~~Saving/Loading~~
 * Basic GUI
