@@ -1,0 +1,9 @@
+0~~||7~~WEB youtube.com||11~~STRING The Quick Brown Fox\nSP_TAP enter||0~~||0~~||0~~||0~~||0~~||0~~
+0~~||1~~WEB_NEW tv.nimaid.com\nDELAY 2\nSP_TAP f11||7~~SP_TAP space||15~~SP_TAP f11||31~~SP_PRESS ctrl\nSP_PRESS shift\nTAP j\nSP_RELEASE shift\nSP_RELEASE ctrl||0~~||0~~||0~~||0~~
+0~~||50~~SP_PRESS ctrl\nSP_PRESS alt\nTAP t 0.1\nSP_RELEASE alt\nSP_RELEASE ctrl||55~~STRING echo "Hello, world!"\nSP_TAP enter||0~~||0~~||0~~||0~~||0~~||0~~
+0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~
+0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~
+0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~
+0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~
+0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~
+0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~

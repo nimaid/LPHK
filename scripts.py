@@ -5,7 +5,7 @@ import lp_events, lp_colors, keyboard
 
 COLOR_ACTIVE = lp_colors.GREEN
 COLOR_PRIMED = lp_colors.RED
-COLOR_DEFAULT = lp_colors.BLUE
+COLOR_DEFAULT = lp_colors.BLUE_THIRD
 
 threads = [[None for y in range(9)] for x in range(9)]
 running = False
@@ -88,3 +88,11 @@ def unbind(x, y):
     lp_events.unbind(x, y)
     threads[x][y] = None
     text[x][y] = ""
+
+def unbind_all():
+    global threads
+    global text
+    lp_events.unbind_all()
+    threads = [[None for y in range(9)] for x in range(9)]
+    text = [["" for y in range(9)] for x in range(9)]
+

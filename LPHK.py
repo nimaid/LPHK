@@ -17,12 +17,13 @@ except ImportError:
     except ImportError:
         sys.exit("[launchpad_py] Error loading launchpad.py")
 
-import lp_events, lp_colors, scripts, keyboard
+import lp_events, lp_colors, scripts, keyboard, files
 
 lp = launchpad.LaunchpadMk2();
 
 def init():
     lp.ButtonFlush()
+    files.init(sys.path[0])
     lp_events.start(lp)
 
 def main():
