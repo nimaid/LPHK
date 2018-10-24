@@ -29,7 +29,7 @@ def save_layout(name):
 
 def load_layout(name):
     scripts.unbind_all()
-    with open(PATH + LAYOUT_PATH + name + EXT, "r") as f:
+    with open(PATH + LAYOUT_PATH + name + LAYOUT_EXT, "r") as f:
         l = f.readlines()
 
         for x in range(9):
