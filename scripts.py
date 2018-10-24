@@ -39,44 +39,67 @@ def run_funcs(funcs_in):
 def run_script(script_str, x, y):
     script_lines = script_str.split('\n')
     funcs_to_run = []
+    print("[scripts] NOW PARSING SCRIPT...")
     for line in script_lines:
         split_line = line.split(' ')
         if split_line[0] == "STRING":
             funcs_to_run.append(partial(keyboard.controller.type, " ".join(split_line[1:])))
+            print("[scripts] TYPE STRING " + split_line[1])
         elif split_line[0] == "DELAY":
             funcs_to_run.append(partial(sleep, float(split_line[1])))
+            print("[scripts] DELAY " + split_line[1] + " SECONDS")
         elif split_line[0] == "TAP":
             if len(split_line) < 3:
                 funcs_to_run.append(partial(keyboard.tap, split_line[1]))
+                print("[scripts] TAP " + split_line[1])
             else:
                 funcs_to_run.append(partial(keyboard.tap, split_line[1], float(split_line[2])))
+                print("[scripts] TAP " + split_line[1] + " FOR " + str(split_line[2]) + " SECONDS")
         elif split_line[0] == "PRESS":
             funcs_to_run.append(partial(keyboard.controller.press, split_line[1]))
+            print("[scripts] PRESS " + split_line[1])
         elif split_line[0] == "RELEASE":
             funcs_to_run.append(partial(keyboard.controller.release, split_line[1]))
+            print("[scripts] RELEASE " + split_line[1])
         elif split_line[0] == "SP_TAP":
             if keyboard.sp(split_line[1]) != None:
-                funcs_to_run.append(partial(keyboard.tap, keyboard.sp(split_line[1])))
+                if len(split_line) < 3:
+                    funcs_to_run.append(partial(keyboard.tap, keyboard.sp(split_line[1])))
+                    print("[scripts] SPECIAL TAP " + split_line[1])
+                else:
+                    funcs_to_run.append(partial(keyboard.tap, keyboard.sp(split_line[1]), split_line[2]))
+                    print("[scripts] SPECIAL TAP " + split_line[1] + " FOR " + str(split_line[2]) + " SECONDS")
+            else:
+                print("[scripts] TAP INVALID SPECIAL CHARACTER: " + split_line[1] + ", SKIPPING...")
         elif split_line[0] == "SP_PRESS":
             if keyboard.sp(split_line[1]) != None:
                 funcs_to_run.append(partial(keyboard.controller.press, keyboard.sp(split_line[1])))
+                print("[scripts] SPECIAL PRESS " + split_line[1])
+            else:
+                print("[scripts] PRESS INVALID SPECIAL CHARACTER: " + split_line[1])
+                print("[scripts] SKIPPING...")
         elif split_line[0] == "SP_RELEASE":
             if keyboard.sp(split_line[1]) != None:
                 funcs_to_run.append(partial(keyboard.controller.release, keyboard.sp(split_line[1])))
+                print("[scripts] SPECIAL RELEASE " + split_line[1])
+            else:
+                print("[scripts] RELEASE INVALID SPECIAL CHARACTER: " + split_line[1] + ", SKIPPING...")
         elif split_line[0] == "WEB":
             link = split_line[1]
             if "http" not in link:
                 link = "http://" + link
             funcs_to_run.append(partial(webbrowser.open, link))
+            print("[scripts] OPEN WEBSITE " + link)
         elif split_line[0] == "WEB_NEW":
             link = split_line[1]
             if "http" not in link:
                 link = "http://" + link
             funcs_to_run.append(partial(webbrowser.open_new, link))
+            print("[scripts] OPEN WEBSITE (TRY NEW WINDOW) " + link)
         else:
-            print("INVALID COMMAND: " + split_line[0])
-            print("SKIPPING...")
+            print("[scripts] INVALID COMMAND: " + split_line[0] + ", SKIPPING...")
     script_func = partial(run_funcs, funcs_to_run)
+    print("[scripts] SCRIPT PARSED. RUNNING IN BACKGROUND...")
     run_in_bg(script_func, x, y)
 
 def bind(x, y, script_down, off_color=COLOR_DEFAULT):

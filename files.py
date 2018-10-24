@@ -1,14 +1,18 @@
 import lp_colors, scripts
 
 PATH = None
-EXT = ".LPHK"
+LAYOUT_EXT = ".LPHKlayout"
+LAYOUT_PATH = "/user_layouts/"
+SCRIPT_EXT = ".LPHKscript"
+SCRIPT_PATH = "/user_scripts/"
+
 
 def init(path_in):
     global PATH
-    PATH = path_in + "/user_layouts/"
+    PATH = path_in
 
 def save_layout(name):
-    with open(PATH + name + EXT, "w+") as f:
+    with open(PATH + LAYOUT_PATH + name + LAYOUT_EXT, "w+") as f:
         for x in range(9):
             for y in range(9):
                 color = str(lp_colors.curr_colors[x][y])
@@ -25,7 +29,7 @@ def save_layout(name):
 
 def load_layout(name):
     scripts.unbind_all()
-    with open(PATH + name + EXT, "r") as f:
+    with open(PATH + LAYOUT_PATH + name + EXT, "r") as f:
         l = f.readlines()
 
         for x in range(9):
@@ -39,3 +43,19 @@ def load_layout(name):
                     scripts.bind(x, y, script_text, color)
                 else:
                     lp_colors.setXY(x, y, color)
+
+def load_script(name, x=-1, y=-1, color=scripts.COLOR_DEFAULT):
+    script_string = ""
+    with open(PATH + SCRIPT_PATH + name + SCRIPT_EXT, "r") as f:
+        l = f.readlines()
+
+        for line in l:
+            script_string += line
+
+    script_string = script_string.rstrip()
+    if (x >= 0) and (y >= 0):
+        scripts.bind(x, y, script_string, color)
+    elif (x >= 0) or (y >= 0):
+        raise Exception("You must either set both x and y as positive numbers, or set neither")
+    else:
+        return script_string
