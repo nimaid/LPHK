@@ -23,4 +23,6 @@ Open a web browser and click on the web bar. Press a button and text will be ene
 * ~~Keyboard lib base~~
 * ~~Proof of concept demo~~
 * ~~Saving/Loading~~
+* Looping/Control Flow
+* ~~Variables/Expressions~~
 * Basic GUI

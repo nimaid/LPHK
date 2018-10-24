@@ -1,7 +1,7 @@
 import threading, webbrowser
 from time import sleep
 from functools import partial
-import lp_events, lp_colors, keyboard
+import lp_events, lp_colors, keyboard, parse
 
 COLOR_ACTIVE = lp_colors.GREEN
 COLOR_PRIMED = lp_colors.RED
@@ -36,15 +36,18 @@ def run_funcs(funcs_in):
         run_in_bg(func, x, y)
     threading.Timer(0.01, lp_colors.update, ()).start()
 
-def run_script(script_str, x, y):
+def run_script(script_str, x=-1, y=-1):
     script_lines = script_str.split('\n')
     funcs_to_run = []
     print("[scripts] NOW PARSING SCRIPT...")
     for line in script_lines:
         split_line = line.split(' ')
         if split_line[0] == "STRING":
-            funcs_to_run.append(partial(keyboard.controller.type, " ".join(split_line[1:])))
-            print("[scripts] TYPE STRING " + split_line[1])
+            type_string = " ".join(split_line[1:])
+            funcs_to_run.append(partial(keyboard.controller.type, type_string))
+
+            print_string = type_string
+            print("[scripts] TYPE STRING " + print_string)
         elif split_line[0] == "DELAY":
             funcs_to_run.append(partial(sleep, float(split_line[1])))
             print("[scripts] DELAY " + split_line[1] + " SECONDS")
@@ -96,11 +99,21 @@ def run_script(script_str, x, y):
                 link = "http://" + link
             funcs_to_run.append(partial(webbrowser.open_new, link))
             print("[scripts] OPEN WEBSITE (TRY NEW WINDOW) " + link)
+        elif split_line[0] == "VAR_SET":
+            parse.set_var(split_line[1], split_line[2])
+            print("[scripts] SET VARIABLE " + split_line[1] + " TO " + split_line[2])
+        elif split_line[0] == "VAR_SET_EQ":
+            parse.set_var_eval_string(split_line[1], split_line[2])
+            print("[scripts] SET VARIABLE " + split_line[1] + " TO EQUATION " + split_line[2] + " EQUAL TO " + str(parse.variables[split_line[1]]))
         else:
             print("[scripts] INVALID COMMAND: " + split_line[0] + ", SKIPPING...")
     script_func = partial(run_funcs, funcs_to_run)
-    print("[scripts] SCRIPT PARSED. RUNNING IN BACKGROUND...")
-    run_in_bg(script_func, x, y)
+    if (x >= 0) and (y >= 0):
+        print("[scripts] SCRIPT PARSED. RUNNING IN BACKGROUND...")
+        run_in_bg(script_func, x, y)
+    else:
+        print("[scripts] SCRIPT PARSED. RUNNING...")
+        script_func()
 
 def bind(x, y, script_down, off_color=COLOR_DEFAULT):
     script_down_bindable = lambda a, b : run_script(script_down, x, y)
