@@ -17,6 +17,12 @@ def init():
     files.init(sys.path[0])
     lp_events.start(lp)
 
+def shutdown():
+    scripts.unbind_all()
+    lp_events.timer.cancel()
+    lp.Close()
+    sys.exit("[LPHK] Shutting down...")
+
 def main():
     if lp.Open(0, "mk2"):
         print("[LPHK] Connected to Launchpad Mk2!")
