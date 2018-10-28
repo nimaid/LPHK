@@ -16,7 +16,7 @@ Plug your Launchpad MkII (for now, Pro and others are coming) in, then run LPHK.
 Open a web browser and click on the web bar. Press a button and text will be eneterd. See scripts.py and LPHK.py for details on using LPScript and binding to a button. Still in development, so no real docs yet.
 
 ## What is LPHKscript?
-LPHKscript is a simple hotkey scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript. Commands follow the format: `COMMAND args'. Scripts are just a text file with newlines seperating commands.
+LPHKscript is a simple hotkey scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript. Commands follow the format: `COMMAND arg1 arg2 ...'. Scripts are just a text file with newlines seperating commands.
 The current command list is as follows:
 * `STRING` - types (argument 1)
 * `DELAY` - delays the script for (argument 1) seconds
