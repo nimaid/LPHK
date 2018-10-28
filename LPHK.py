@@ -35,8 +35,7 @@ def main():
         return
 
     init()
-    files.load_layout("default")
-    #window.make()
+    window.make()
 
 main()
 

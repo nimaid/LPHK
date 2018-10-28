@@ -6,13 +6,19 @@ LAYOUT_PATH = "/user_layouts/"
 SCRIPT_EXT = ".LPHKscript"
 SCRIPT_PATH = "/user_scripts/"
 
+curr_layout = None
 
 def init(path_in):
     global PATH
     PATH = path_in
 
-def save_layout(name):
-    with open(PATH + LAYOUT_PATH + name + LAYOUT_EXT, "w+") as f:
+def save_layout(name, add_path=True):
+    final_path = None
+    if add_path:
+        final_path = PATH + LAYOUT_PATH + name + LAYOUT_EXT
+    else:
+        final_path = name
+    with open(final_path, "w+") as f:
         for x in range(9):
             for y in range(9):
                 color = str(lp_colors.curr_colors[x][y])
@@ -27,9 +33,15 @@ def save_layout(name):
                     f.write("||")
             f.write("\n")
 
-def load_layout(name):
+def load_layout(name, add_path=True):
+    global curr_layout
     scripts.unbind_all()
-    with open(PATH + LAYOUT_PATH + name + LAYOUT_EXT, "r") as f:
+    final_path = None
+    if add_path:
+        final_path = PATH + LAYOUT_PATH + name + LAYOUT_EXT
+    else:
+        final_path = name
+    with open(final_path, "r") as f:
         l = f.readlines()
 
         for x in range(9):
@@ -43,6 +55,7 @@ def load_layout(name):
                     scripts.bind(x, y, script_text, color)
                 else:
                     lp_colors.setXY(x, y, color)
+    curr_layout = final_path
 
 def load_script(name, x=-1, y=-1, color=scripts.COLOR_DEFAULT):
     script_string = ""
