@@ -1,7 +1,7 @@
 import threading, webbrowser
 from time import sleep
 from functools import partial
-import lp_events, lp_colors, keyboard, parse
+import lp_events, lp_colors, keyboard, parse, sound
 
 COLOR_ACTIVE = lp_colors.GREEN
 COLOR_PRIMED = lp_colors.RED
@@ -105,6 +105,9 @@ def run_script(script_str, x=-1, y=-1):
         elif split_line[0] == "VAR_SET_EQ":
             parse.set_var_eval_string(split_line[1], split_line[2])
             print("[scripts] SET VARIABLE " + split_line[1] + " TO EQUATION " + split_line[2] + " EQUAL TO " + str(parse.variables[split_line[1]]))
+        elif split_line[0] == "SOUND":
+            sound.play(split_line[1])
+            print("[scripts] PLAY SOUND " + split_line[1])
         else:
             print("[scripts] INVALID COMMAND: " + split_line[0] + ", SKIPPING...")
     script_func = partial(run_funcs, funcs_to_run)
