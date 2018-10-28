@@ -1,5 +1,5 @@
 # LPHK
-A Novation Launchpad macro scripting language
+A Novation Launchpad macro scripting system.
 
 ## What does it do?
 The goal of this project is to implement a macro scripting system for the Novation Launchpad, in order to use the launchpad as a scriptable, general purpose macro keyboard.
@@ -7,7 +7,28 @@ The goal of this project is to implement a macro scripting system for the Novati
 It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript), and will have a GUI to enter scripts, set colors, and to save/load your setup.
 
 ## Why would you do that?
-Because it could be very useful for editing, gaming, programming, and even program launchers.
+Because it could be immensely useful for a wide variaty of tasks, such as:
+* Gaming, to bind:
+  * Items
+  * Volume
+  * Attacks
+  * Typed commands
+  * Reference Website launcher
+  * Window switcher
+* Editing, to bind:
+  * Cuts/insertions
+  * Modes
+  * Effects
+  * Render
+  * Preview
+  * Scrubbing.
+* Programming, to bind:
+  * Commenting code
+  * Autotyping function/loop templates
+  * Compiling/excuting
+  * Breakpoints
+  * Debugger
+* ... and many more!
 
 ## Does it work yet?
 Sort of! You can bind scripts to buttons, save/load layout files, and bind single script text files.
@@ -42,7 +63,7 @@ The current command list is as follows:
 ## What still needs to be written?
 ### Global
 * ~~MkII spacific interface~~
-* Support all launchpads
+* Support for all launchpads
 * ~~Events system~~
 * ~~Colors system~~
 * ~~LPScript base iteration~~
