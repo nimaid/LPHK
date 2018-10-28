@@ -3,7 +3,7 @@ A hotkey mapper for the Novation Launchpad
 
 ## What does it do?
 The goal of this project is to implement a keyboard and mouse macro binding system for the Novation Launchpad.
-It uses "LPScript", a very simple scripting language similar to DuckyScript, and will have a GUI to enter scripts, set colors, and to save/load your setup.
+It uses "LPHKscript", a very simple scripting language similar to DuckyScript, and will have a GUI to enter scripts, set colors, and to save/load your setup.
 
 ## Why would you do that?
 Because it could be very useful for editing, gaming, programming, and even program launchers.
