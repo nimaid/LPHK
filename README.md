@@ -58,7 +58,7 @@ The current command list is as follows:
 * `WEB_NEW` - open website (argument 1) in default browser, try new window
 * `VAR_SET` - sets a global variable shared between all scripts
 * `VAR_SET_EQ` - sets a global variable (argument 1) to the output of the expression string (argument 2), allowed to use previously defined global variables
-* `SOUND` - play a sound named (argument 1)
+* `SOUND` - play a sound named (argument 1) inside the user_sounds/ folder, .wav and .ogg only
 
 ## What still needs to be written?
 ### Global
