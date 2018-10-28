@@ -7,7 +7,7 @@ The goal of this project is to implement a macro scripting system for the Novati
 It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript), and will have a GUI to enter scripts, set colors, and to save/load your setup.
 
 ## Why would you do that?
-Because it could be immensely useful for a wide variaty of tasks, such as:
+Because it could be immensely useful for a wide variety of tasks, such as:
 * Gaming, to bind:
   * Items
   * Volume
