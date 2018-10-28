@@ -9,11 +9,11 @@ It uses "LPHKscript", a very simple scripting language similar to DuckyScript, a
 Because it could be very useful for editing, gaming, programming, and even program launchers.
 
 ## Does it work yet?
-Sort of! You can bind simple script strings to buttons, with colors, and the scheduling/events system is all done. Now the GUI and extention on the scripting language are the primary concerns. See below for a todo list. I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help!
+Sort of! You can bind scripts to buttons, save/load layout files, and bind single script text files. Now the GUI and extention on the scripting language are the primary concerns. See below for a todo list. I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help!
 
 ## How do I use it?
 Plug your Launchpad MkII (for now, Pro and others are coming) in, then run LPHK.py with Python 3, either through IDLE or "python3 LPHK.py".
-Open a web browser and click on the web bar. Press a button and text will be eneterd. See scripts.py and LPHK.py for details on using LPScript and binding to a button. Still in development, so no real docs yet.
+The default layout is a demo. You technically can do all the binding/saving/loading with the `python3` -i option, via the `scripts`, `files`, and `lp_colors` libraries. A GUI is coming, as I am learning Tkinter. Most main functionality is already bound to functions, so I only really need to make buttons and things to run those functions. :) Stay tuned.
 
 ## What is LPHKscript?
 LPHKscript is a simple hotkey scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript. Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines seperating commands.
