@@ -23,7 +23,7 @@ The current command list is as follows:
 * `TAP` - taps the normal character (argument 1), if (argument 2) supplied, delay (argument 1) seconds before releasing
 * `PRESS` - presses normal character (argument 1)
 * `RELEASE` - releases the normal character (argument 1)
-* `SP_TAP` - taps the special character (argument 1)
+* `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, delay (argument 1) seconds before releasing
 * `SP_PRESS` - presses the special character (argument 1)
 * `SP_RELEASE` - releases the spacial character (argument 1)
 * `WEB` - open website (argument 1) in default browser
