@@ -21,7 +21,7 @@ Because it could be immensely useful for a wide variety of tasks, such as:
   * Effects
   * Render
   * Preview
-  * Scrubbing.
+  * Scrubbing
 * Programming, to bind:
   * Commenting code
   * Autotyping function/loop templates
