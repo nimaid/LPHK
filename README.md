@@ -15,6 +15,23 @@ Sort of! You can bind simple script strings to buttons, with colors, and the sch
 Plug your Launchpad MkII (for now, Pro and others are coming) in, then run LPHK.py with Python 3, either through IDLE or "python3 LPHK.py".
 Open a web browser and click on the web bar. Press a button and text will be eneterd. See scripts.py and LPHK.py for details on using LPScript and binding to a button. Still in development, so no real docs yet.
 
+## What is LPHKscript?
+LPHKscript is a simple hotkey scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript. Commands follow the format: `COMMAND args'. Scripts are just a text file with newlines seperating commands.
+The current command list is as follows:
+* `STRING` - types (argument 1)
+* `DELAY` - delays the script for (argument 1) seconds
+* `TAP` - taps the normal character (argument 1), if (argument 2) supplied, delay (argument 1) seconds before releasing
+* `PRESS` - presses normal character (argument 1)
+* `RELEASE` - releases the normal character (argument 1)
+* `SP_TAP` - taps the special character (argument 1)
+* `SP_PRESS` - presses the special character (argument 1)
+* `SP_RELEASE` - releases the spacial character (argument 1)
+* `WEB` - open website (argument 1) in default browser
+* `WEB_NEW` - open website (argument 1) in default browser, try new window
+* `VAR_SET` - sets a global variable shared between all scripts
+* `VAR_SET_EQ` - sets a global variable (argument 1) to the output of the expression string (argument 2), allowed to use previously defined global variables
+* `SOUND` - play a sound named (argument 1)
+
 ## What still needs to be written?
 ### Global
 * ~~MkII spacific interface~~
