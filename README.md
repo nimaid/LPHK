@@ -17,6 +17,8 @@ Open a web browser and click on the web bar. Press a button and text will be ene
 
 ## What still needs to be written?
 ### Global
+* ~~MkII spacific interface~~
+* Support all launchpads
 * ~~Events system~~
 * ~~Colors system~~
 * ~~LPScript base iteration~~
