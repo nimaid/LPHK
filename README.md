@@ -1,5 +1,5 @@
 # LPHK
-A hotkey mapper for the Novation Launchpad
+A Novation Launchpad keyboard macro scripting language
 
 ## What does it do?
 The goal of this project is to implement a keyboard and mouse macro binding system for the Novation Launchpad.
