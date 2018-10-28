@@ -1,6 +1,8 @@
 # LPHK
 A Novation Launchpad macro scripting system.
 
+Pronouced: LaunchPad HotKey
+
 ## What does it do?
 The goal of this project is to implement a macro scripting system for the Novation Launchpad, in order to use the launchpad as a scriptable, general purpose macro keyboard.
 
