@@ -2,8 +2,8 @@
 A Novation Launchpad keyboard macro scripting language
 
 ## What does it do?
-The goal of this project is to implement a keyboard and mouse macro binding system for the Novation Launchpad.
-It uses "LPHKscript", a very simple scripting language similar to DuckyScript, and will have a GUI to enter scripts, set colors, and to save/load your setup.
+The goal of this project is to implement a keyboard macro scripting system for the Novation Launchpad.
+It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript), and will have a GUI to enter scripts, set colors, and to save/load your setup.
 
 ## Why would you do that?
 Because it could be very useful for editing, gaming, programming, and even program launchers.
