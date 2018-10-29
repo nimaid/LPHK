@@ -32,6 +32,7 @@ def save_layout(name, add_path=True):
                 if y < 8:
                     f.write("||")
             f.write("\n")
+    print("[files] Saved layout as " + final_path)
 
 def load_layout(name, add_path=True):
     global curr_layout
@@ -56,6 +57,7 @@ def load_layout(name, add_path=True):
                 else:
                     lp_colors.setXY(x, y, color)
     curr_layout = final_path
+    print("[files] Loaded layout " + final_path)
 
 def load_script(name, x=-1, y=-1, color=scripts.COLOR_DEFAULT):
     script_string = ""

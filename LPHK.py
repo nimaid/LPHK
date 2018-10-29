@@ -1,6 +1,6 @@
 import sys
 
-EXIT_ON_WINDOW_CLOSE = False #set to False for interactive console debugging
+EXIT_ON_WINDOW_CLOSE = True
 
 try:
     import launchpad_py as launchpad
@@ -17,6 +17,16 @@ PATH = sys.path[0]
 lp = launchpad.LaunchpadMk2();
 
 def init():
+    global EXIT_ON_WINDOW_CLOSE
+    if len(sys.argv) > 1:
+        if (sys.argv[1] == "--debug") or (sys.argv[1] == "-d"):
+            EXIT_ON_WINDOW_CLOSE = False
+            print("[LPHK] Debugging mode active! Will not shut down on window close.")
+            print("[LPHK] Run shutdown() to manually close the program correctly.")
+
+        else:
+            print("[LPHK] Invalid argument: " + sys.argv[1] + ". Ignoring...")
+
     lp.ButtonFlush()
     files.init(PATH)
     sound.init(PATH)
