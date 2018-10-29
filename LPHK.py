@@ -1,5 +1,7 @@
 import sys
 
+EXIT_ON_WINDOW_CLOSE = False #set to False for interactive console debugging
+
 try:
     import launchpad_py as launchpad
 except ImportError:
@@ -24,7 +26,6 @@ def shutdown():
     scripts.unbind_all()
     lp_events.timer.cancel()
     lp.Close()
-    window.close()
     sys.exit("[LPHK] Sutting down...")
 
 def main():
@@ -36,6 +37,7 @@ def main():
 
     init()
     window.make()
+    if EXIT_ON_WINDOW_CLOSE:
+        shutdown()
 
 main()
-
