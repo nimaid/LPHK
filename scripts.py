@@ -99,12 +99,6 @@ def run_script(script_str, x=-1, y=-1):
                 link = "http://" + link
             funcs_to_run.append(partial(webbrowser.open_new, link))
             print("[scripts] OPEN WEBSITE (TRY NEW WINDOW) " + link)
-        elif split_line[0] == "VAR_SET":
-            parse.set_var(split_line[1], split_line[2])
-            print("[scripts] SET VARIABLE " + split_line[1] + " TO " + split_line[2])
-        elif split_line[0] == "VAR_SET_EQ":
-            parse.set_var_eval_string(split_line[1], split_line[2])
-            print("[scripts] SET VARIABLE " + split_line[1] + " TO EQUATION " + split_line[2] + " EQUAL TO " + str(parse.variables[split_line[1]]))
         elif split_line[0] == "SOUND":
             sound.play(split_line[1])
             print("[scripts] PLAY SOUND " + split_line[1])
