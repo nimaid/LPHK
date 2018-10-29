@@ -7,6 +7,7 @@ import os
 import scripts, files, lp_colors
 
 BUTTON_SIZE = 40
+BUTTON_GAP = 10
 
 root = None
 app = None
@@ -34,12 +35,13 @@ class Main_Window(tk.Frame):
         m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
         m.add_cascade(label="Layout", menu=m_Layout)
 
+        c = tk.Canvas(self, width=600, height=400)
+        c.bind("<Button-1>", self.click)
+        c.grid(row=0, column=0)
+
         for x in range(8):
             for y in range(8):
-                tk.Grid.columnconfigure(self, x, minsize=BUTTON_SIZE)
-                tk.Grid.rowconfigure(self, y, minsize=BUTTON_SIZE)
-                curr_button = tk.Button(self, bg="#ffffff", command=self.unbind_lp)
-                curr_button.grid(row=y, column=x, sticky="news")
+                self.draw_button(c, x, y)
 
     def unbind_lp(self):
         scripts.unbind_all()
@@ -68,13 +70,32 @@ class Main_Window(tk.Frame):
         else:
             files.save_layout(files.curr_layout, False)
 
+    def click(self, event):
+        column = int((event.x + (BUTTON_GAP / 2)) // (BUTTON_SIZE + BUTTON_GAP))
+        row = int((event.y + (BUTTON_GAP / 2)) // (BUTTON_SIZE + BUTTON_GAP))
+
+        print("[window] Clicked at (" + str(column) + ", " + str(row) + ")")
+
+    def draw_button(self, canvas, column, row, color="#000000", shape="square"):
+        x_start = (BUTTON_SIZE * column) + (BUTTON_GAP * column)
+        y_start = (BUTTON_SIZE * row) + (BUTTON_GAP * row)
+
+        if shape == "square":
+            x0 = x_start
+            y0 = y_start
+            x1 = x_start + BUTTON_SIZE
+            y1 = y_start + BUTTON_SIZE
+
+            canvas.create_rectangle(x0, y0, x1, y1, fill=color)
+
+
 def make():
     global root
     global app
     global root_destroyed
     root = tk.Tk()
     root_destroyed = False
-    root.geometry("600x400")
+    #root.geometry("600x400")
     root.protocol("WM_DELETE_WINDOW", close)
     app = Main_Window(root)
     app.mainloop()

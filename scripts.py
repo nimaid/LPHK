@@ -1,7 +1,7 @@
 import threading, webbrowser
 from time import sleep
 from functools import partial
-import lp_events, lp_colors, keyboard, parse, sound
+import lp_events, lp_colors, keyboard, sound
 
 COLOR_ACTIVE = lp_colors.GREEN
 COLOR_PRIMED = lp_colors.RED
