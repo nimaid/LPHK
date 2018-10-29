@@ -4,15 +4,15 @@ import tkinter as tk
 from tkinter import filedialog
 import os
 
+import scripts, files, lp_colors
+
 BUTTON_SIZE = 40
 
 root = None
 app = None
 root_destroyed = None
 
-layout_filetypes = [('LPHK layout files', '.LPHKlayout')]
-
-import scripts, files, lp_colors
+layout_filetypes = [('LPHK layout files', files.LAYOUT_EXT)]
 
 class Main_Window(tk.Frame):
     def __init__(self, master=None):
