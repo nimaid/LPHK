@@ -7,7 +7,7 @@ import os
 import scripts, files, lp_colors
 
 BUTTON_SIZE = 40
-BUTTON_GAP = 10
+BUTTON_GAP = BUTTON_SIZE // 4
 
 root = None
 app = None
@@ -35,13 +35,12 @@ class Main_Window(tk.Frame):
         m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
         m.add_cascade(label="Layout", menu=m_Layout)
 
-        c = tk.Canvas(self, width=600, height=400)
+        c_size = (BUTTON_SIZE * 9) + (BUTTON_GAP * 8)
+        c = tk.Canvas(self, width=c_size, height=c_size)
         c.bind("<Button-1>", self.click)
-        c.grid(row=0, column=0)
+        c.grid(row=0, column=0, padx=BUTTON_GAP, pady=BUTTON_GAP)
 
-        for x in range(8):
-            for y in range(8):
-                self.draw_button(c, x, y)
+        self.draw_canvas(c)
 
     def unbind_lp(self):
         scripts.unbind_all()
@@ -79,14 +78,26 @@ class Main_Window(tk.Frame):
     def draw_button(self, canvas, column, row, color="#000000", shape="square"):
         x_start = (BUTTON_SIZE * column) + (BUTTON_GAP * column)
         y_start = (BUTTON_SIZE * row) + (BUTTON_GAP * row)
+        x_end = x_start + BUTTON_SIZE
+        y_end = y_start + BUTTON_SIZE
 
         if shape == "square":
-            x0 = x_start
-            y0 = y_start
-            x1 = x_start + BUTTON_SIZE
-            y1 = y_start + BUTTON_SIZE
+            canvas.create_rectangle(x_start, y_start, x_end, y_end, fill=color)
+        elif shape == "circle":
+            shrink = BUTTON_SIZE / 10
+            canvas.create_oval(x_start + shrink, y_start + shrink, x_end - shrink, y_end - shrink, fill=color, outline="")
 
-            canvas.create_rectangle(x0, y0, x1, y1, fill=color)
+    def draw_canvas(self, canvas):
+        canvas.delete("all")
+        for x in range(8):
+            self.draw_button(canvas, x, 0, shape="circle")
+
+        for y in range(1, 9):
+            self.draw_button(canvas, 8, y, shape="circle")
+
+        for x in range(8):
+            for y in range(1, 9):
+                self.draw_button(canvas, x, y)
 
 
 def make():
