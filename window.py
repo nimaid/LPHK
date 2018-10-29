@@ -7,7 +7,6 @@ import os
 import scripts, files, lp_colors
 
 BUTTON_SIZE = 40
-BUTTON_GAP = BUTTON_SIZE // 4
 
 root = None
 app = None
@@ -35,16 +34,19 @@ class Main_Window(tk.Frame):
         m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
         m.add_cascade(label="Layout", menu=m_Layout)
 
-        c_size = (BUTTON_SIZE * 9) + (BUTTON_GAP * 8)
-        c = tk.Canvas(self, width=c_size, height=c_size)
-        c.bind("<Button-1>", self.click)
-        c.grid(row=0, column=0, padx=BUTTON_GAP, pady=BUTTON_GAP)
+        c_gap = int(BUTTON_SIZE // 4)
 
-        self.draw_canvas(c)
+        c_size = (BUTTON_SIZE * 9) + (c_gap * 8)
+        self.c = tk.Canvas(self, width=c_size, height=c_size)
+        self.c.bind("<Button-1>", self.click)
+        self.c.grid(row=0, column=0, padx=c_gap, pady=c_gap)
+
+        self.draw_canvas()
 
     def unbind_lp(self):
         scripts.unbind_all()
         files.curr_layout = None
+        self.draw_canvas()
 
     def load_layout(self):
         name = filedialog.askopenfilename(parent=app,
@@ -53,6 +55,7 @@ class Main_Window(tk.Frame):
                                           filetypes=layout_filetypes)
         if name:
             files.load_layout(name, False)
+            self.draw_canvas()
 
     def save_layout_as(self):
         name = filedialog.asksaveasfilename(parent=app,
@@ -70,35 +73,40 @@ class Main_Window(tk.Frame):
             files.save_layout(files.curr_layout, False)
 
     def click(self, event):
-        column = int((event.x + (BUTTON_GAP / 2)) // (BUTTON_SIZE + BUTTON_GAP))
-        row = int((event.y + (BUTTON_GAP / 2)) // (BUTTON_SIZE + BUTTON_GAP))
+        gap = int(BUTTON_SIZE // 4)
+
+        column = int((event.x + (gap / 2)) // (BUTTON_SIZE + gap))
+        row = int((event.y + (gap / 2)) // (BUTTON_SIZE + gap))
 
         print("[window] Clicked at (" + str(column) + ", " + str(row) + ")")
 
-    def draw_button(self, canvas, column, row, color="#000000", shape="square"):
-        x_start = (BUTTON_SIZE * column) + (BUTTON_GAP * column)
-        y_start = (BUTTON_SIZE * row) + (BUTTON_GAP * row)
+    def draw_button(self, column, row, color="#000000", shape="square"):
+        gap = int(BUTTON_SIZE // 4)
+
+        x_start = (BUTTON_SIZE * column) + (gap * column)
+        y_start = (BUTTON_SIZE * row) + (gap * row)
         x_end = x_start + BUTTON_SIZE
         y_end = y_start + BUTTON_SIZE
 
         if shape == "square":
-            canvas.create_rectangle(x_start, y_start, x_end, y_end, fill=color)
+            self.c.create_rectangle(x_start, y_start, x_end, y_end, fill=color, outline="")
         elif shape == "circle":
             shrink = BUTTON_SIZE / 10
-            canvas.create_oval(x_start + shrink, y_start + shrink, x_end - shrink, y_end - shrink, fill=color, outline="")
+            self.c.create_oval(x_start + shrink, y_start + shrink, x_end - shrink, y_end - shrink, fill=color, outline="")
 
-    def draw_canvas(self, canvas):
-        canvas.delete("all")
+    def draw_canvas(self):
+        self.c.delete("all")
         for x in range(8):
-            self.draw_button(canvas, x, 0, shape="circle")
+            y = 0
+            self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y), shape="circle")
 
         for y in range(1, 9):
-            self.draw_button(canvas, 8, y, shape="circle")
+            x = 8
+            self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y), shape="circle")
 
         for x in range(8):
             for y in range(1, 9):
-                self.draw_button(canvas, x, y)
-
+                self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y))
 
 def make():
     global root

@@ -30,7 +30,38 @@ PURPLE = 48
 PURPLE_HALF = 49
 PURPLE_THIRD = 50
 
-RGB_CODES = {0: "#000000"}
+RGB = {BLACK: "#000",
+       WHITE_THIRD: "#555",
+       WHITE_HALF: "#aaa",
+       WHITE: "#fff",
+       RED: "#f00",
+       RED_HALF: "#a00",
+       RED_THIRD: "#500",
+       AMBER: "#f90",
+       AMBER_HALF: "#a60",
+       AMBER_THIRD: "#530",
+       GREEN: "#0f0",
+       GREEN_HALF: "#0a0",
+       GREEN_THIRD: "#050",
+       YELLOW: "#ff0",
+       YELLOW_HALF: "#aa0",
+       YELLOW_THIRD: "#550",
+       MINT: "#0ff",
+       MINT_HALF: "#0aa",
+       MINT_THIRD: "#055",
+       LIGHTBLUE: "#0bf",
+       LIGHTBLUE_HALF: "#08a",
+       LIGHTBLUE_THIRD: "#045",
+       BLUE: "#00f",
+       BLUE_HALF: "#00a",
+       BLUE_THIRD: "#005",
+       PINK: "#f99",
+       PINK_HALF: "#a66",
+       PINK_THIRD: "#533",
+       PURPLE: "#90f",
+       PURPLE_HALF: "#60a",
+       PURPLE_THIRD: "#305"}
+
 
 curr_colors = [[BLACK for y in range(9)] for x in range(9)]
 effect_colors = [[BLACK for y in range(9)] for x in range(9)]
@@ -52,6 +83,9 @@ def effectXY(x, y, color):
 
 def getXY(x, y):
     return curr_colors[x][y]
+
+def getXY_RGB(x, y):
+    return RGB[getXY(x, y)]
 
 def update():
     for x in range(9):
