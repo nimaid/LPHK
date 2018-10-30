@@ -1,7 +1,7 @@
 47~~SP_TAP vol_up||50~~WEB https://github.com/nimaid/LPHK||55~~WEB https://github.com/nimaid/LPMM||0~~||0~~||0~~||0~~||0~~||0~~
 47~~SP_TAP vol_down||7~~WEB youtube.com||23~~SP_TAP space||15~~TAP f||11~~TAP c||0~~||0~~||0~~||0~~
 47~~SP_TAP prev_track||1~~WEB_NEW tv.nimaid.com\nDELAY 2\nSP_TAP f11||23~~SP_TAP space||15~~SP_TAP f11||31~~SP_PRESS ctrl\nSP_PRESS shift\nTAP j\nSP_RELEASE shift\nSP_RELEASE ctrl||0~~||0~~||0~~||0~~
-47~~SP_TAP next_track||39~~SOUND 440_1s.wav||0~~||0~~||0~~||0~~||0~~||0~~||0~~
+47~~SP_TAP next_track||39~~SOUND 440_1s.wav||39~~STRING Hello, world!||0~~||0~~||0~~||0~~||0~~||0~~
 0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~
 0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~
 0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~||0~~

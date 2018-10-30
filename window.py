@@ -151,6 +151,7 @@ class Main_Window(tk.Frame):
 
         w.wait_visibility()
         w.grab_set()
+        t.focus_set()
 
     def unbind_destroy(self, x, y, window):
         scripts.unbind(x, y)
