@@ -1,4 +1,4 @@
-import pygame
+import pygame, os
 from time import sleep
 
 PATH = None
@@ -15,4 +15,8 @@ def init(path_in):
     m.init()
 
 def play(filename):
-    m.Sound(PATH + SOUND_PATH + filename).play()
+    try:
+        m.Sound(PATH + SOUND_PATH + filename).play()
+        return True
+    except:
+        return False

@@ -62,6 +62,41 @@ RGB = {BLACK: "#000",
        PURPLE_HALF: "#60a",
        PURPLE_THIRD: "#305"}
 
+VALID_COLORS = ["White", "Red", "Orange", "Yellow", "Green", "Mint", "Light Blue", "Blue", "Purple", "Pink"]
+VALID_BRIGHTS = ["Full", "Half", "Third"]
+
+COLOR_BRIGHTS = {WHITE: ("White", "Full"),
+                 RED: ("Red", "Full"),
+                 AMBER: ("Orange", "Full"),
+                 YELLOW: ("Yellow", "Full"),
+                 GREEN: ("Green", "Full"),
+                 MINT: ("Mint", "Full"),
+                 LIGHTBLUE: ("Light Blue", "Full"),
+                 BLUE: ("Blue", "Full"),
+                 PURPLE: ("Purple", "Full"),
+                 PINK: ("Pink", "Full"),
+
+                 WHITE_HALF: ("White", "Half"),
+                 RED_HALF: ("Red", "Half"),
+                 AMBER_HALF: ("Orange", "Half"),
+                 YELLOW_HALF: ("Yellow", "Half"),
+                 GREEN_HALF: ("Green", "Half"),
+                 MINT_HALF: ("Mint", "Half"),
+                 LIGHTBLUE_HALF: ("Light Blue", "Half"),
+                 BLUE_HALF: ("Blue", "Half"),
+                 PURPLE_HALF: ("Purple", "Half"),
+                 PINK_HALF: ("Pink", "Half"),
+
+                 WHITE_THIRD: ("White", "Third"),
+                 RED_THIRD: ("Red", "Third"),
+                 AMBER_THIRD: ("Orange", "Third"),
+                 YELLOW_THIRD: ("Yellow", "Third"),
+                 GREEN_THIRD: ("Green", "Third"),
+                 MINT_THIRD: ("Mint", "Third"),
+                 LIGHTBLUE_THIRD: ("Light Blue", "Third"),
+                 BLUE_THIRD: ("Blue", "Third"),
+                 PURPLE_THIRD: ("Purple", "Third"),
+                 PINK_THIRD: ("Pink", "Third")}
 
 curr_colors = [[BLACK for y in range(9)] for x in range(9)]
 effect_colors = [[BLACK for y in range(9)] for x in range(9)]
@@ -112,3 +147,68 @@ def update():
 
 update_bindable = lambda x, y : update()
 
+def code_by_color_brightness(color, brightness):
+    if brightness == "Full":
+        if color == "White":
+            return WHITE
+        elif color == "Red":
+            return RED
+        elif color == "Orange":
+            return AMBER
+        elif color == "Yellow":
+            return YELLOW
+        elif color == "Green":
+            return GREEN
+        elif color == "Mint":
+            return MINT
+        elif color == "Light Blue":
+            return LIGHTBLUE
+        elif color == "Blue":
+            return BLUE
+        elif color == "Purple":
+            return PURPLE
+        elif color == "Pink":
+            return PINK
+    elif brightness == "Half":
+        if color == "White":
+            return WHITE_HALF
+        elif color == "Red":
+            return RED_HALF
+        elif color == "Orange":
+            return AMBER_HALF
+        elif color == "Yellow":
+            return YELLOW_HALF
+        elif color == "Green":
+            return GREEN_HALF
+        elif color == "Mint":
+            return MINT_HALF
+        elif color == "Light Blue":
+            return LIGHTBLUE_HALF
+        elif color == "Blue":
+            return BLUE_HALF
+        elif color == "Purple":
+            return PURPLE_HALF
+        elif color == "Pink":
+            return PINK_HALF
+    elif brightness == "Third":
+        if color == "White":
+            return WHITE_THIRD
+        elif color == "Red":
+            return RED_THIRD
+        elif color == "Orange":
+            return AMBER_THIRD
+        elif color == "Yellow":
+            return YELLOW_THIRD
+        elif color == "Green":
+            return GREEN_THIRD
+        elif color == "Mint":
+            return MINT_THIRD
+        elif color == "Light Blue":
+            return LIGHTBLUE_THIRD
+        elif color == "Blue":
+            return BLUE_THIRD
+        elif color == "Purple":
+            return PURPLE_THIRD
+        elif color == "Pink":
+            return PINK_THIRD
+    return(-1)

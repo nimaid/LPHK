@@ -1,7 +1,5 @@
-#TODO: make buttons a canvas so I can change colors
-
 import tkinter as tk
-from tkinter import filedialog
+import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox
 import os
 
 import scripts, files, lp_colors
@@ -19,6 +17,8 @@ class Main_Window(tk.Frame):
         tk.Frame.__init__(self, master)
         self.master = master
         self.init_window()
+        self.info_image = tk.PhotoImage(file="resources/info.png")
+        self.warning_image = tk.PhotoImage(file="resources/warning.png")
 
     def init_window(self):
         self.master.title("LPHK - Novation Launchpad Macro Scripting System")
@@ -49,7 +49,7 @@ class Main_Window(tk.Frame):
         self.draw_canvas()
 
     def load_layout(self):
-        name = filedialog.askopenfilename(parent=app,
+        name = tk.filedialog.askopenfilename(parent=app,
                                           initialdir=os.getcwd() + "/user_layouts/",
                                           title="Load layout...:",
                                           filetypes=layout_filetypes)
@@ -58,7 +58,7 @@ class Main_Window(tk.Frame):
             self.draw_canvas()
 
     def save_layout_as(self):
-        name = filedialog.asksaveasfilename(parent=app,
+        name = tk.filedialog.asksaveasfilename(parent=app,
                                             initialdir=os.getcwd() + "/user_layouts/",
                                             title="Save layout as...:",
                                             filetypes=layout_filetypes)
@@ -79,8 +79,6 @@ class Main_Window(tk.Frame):
         row = int((event.y + (gap / 2)) // (BUTTON_SIZE + gap))
 
         self.script_entry_window(column, row)
-
-        print("[window] Clicked at (" + str(column) + ", " + str(row) + ")")
 
     def draw_button(self, column, row, color="#000000", shape="square"):
         gap = int(BUTTON_SIZE // 4)
@@ -112,9 +110,74 @@ class Main_Window(tk.Frame):
 
     def script_entry_window(self, x, y):
         w = tk.Toplevel(self)
-        w.winfo_toplevel().title("Editing script for button (" + str(x) + ", " + str(y) + ")")
-        b = tk.Label(w, text="You pressed (" + str(x) + ", " + str(y) + ")")
-        b.grid(column=0, row=0, padx=150, pady=20)
+        w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
+        w.protocol("WM_DELETE_WINDOW", lambda: self.release_destroy(w))
+        w.resizable(False, False)
+
+        t = tk.scrolledtext.ScrolledText(w)
+        t.grid(column=0, row=0, columnspan=5, padx=10, pady=10)
+
+        t.insert(tk.INSERT, scripts.text[x][y])
+
+        curr_color = lp_colors.getXY(x, y)
+        curr_color_bright = None
+        if curr_color != 0:
+            curr_color_bright = lp_colors.COLOR_BRIGHTS[curr_color]
+        else:
+            curr_color_bright = ("Blue", "Third")
+
+        c_label = tk.Label(w, text="Color:")
+        c_label.grid(column=0, row=1, sticky=tk.E)
+
+        color = tk.StringVar(w)
+        color.set(curr_color_bright[0])
+        color_select = tk.OptionMenu(w, color, *lp_colors.VALID_COLORS)
+        color_select.grid(column=1, row=1, sticky=tk.W)
+
+        b_label = tk.Label(w, text="Brightness:")
+        b_label.grid(column=2, row=1, sticky=tk.E)
+
+        bright = tk.StringVar(w)
+        bright.set(curr_color_bright[1])
+        bright_select = tk.OptionMenu(w, bright, *lp_colors.VALID_BRIGHTS)
+        bright_select.grid(column=3, row=1, sticky=tk.W)
+
+        save_func = lambda: self.save_script(w, x, y, lp_colors.code_by_color_brightness(color.get(), bright.get()), t.get(1.0, tk.END))
+        b = tk.Button(w, text="Save Script", command=save_func)
+        b.grid(column=4, row=1)
+        w.grab_set()
+
+    def release_destroy(self, window):
+        window.grab_release()
+        window.destroy()
+
+    def save_script(self, window, x, y, color, script_text):
+        script_text = script_text.strip()
+
+        script_validate = scripts.validate_script(script_text)
+        if script_validate == True:
+            if script_text != "":
+                scripts.bind(x, y, script_text, color)
+                self.draw_canvas()
+                window.destroy()
+            else:
+                #tk.messagebox.showwarning("Warning", "No script supplied.")
+                popup = tk.Toplevel(window)
+                popup.wm_title("No Script Entered")
+                popup.tkraise(window)
+                info_label = tk.Label(popup, image=self.info_image)
+                info_label.photo = self.info_image
+                info_label.grid(column=0, row=0, padx=10, pady=10)
+                tk.Label(popup, text="Please enter a script before saving.").grid(column=1, row=0, padx=10, pady=10)
+        else:
+            #tk.messagebox.showerror("Syntax Error", "Invalid command: " + script_validate)
+            popup = tk.Toplevel(window)
+            popup.wm_title("Syntax Error")
+            popup.tkraise(window)
+            warning_label = tk.Label(popup, image=self.warning_image)
+            warning_label.photo = self.warning_image
+            warning_label.grid(column=0, row=0, padx=10, pady=10)
+            tk.Label(popup, text="Invalid command: " + script_validate).grid(column=1, row=0, padx=10, pady=10)
 
 def make():
     global root

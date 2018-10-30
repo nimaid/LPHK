@@ -31,14 +31,16 @@ Because it could be immensely useful for a wide variety of tasks, such as:
 * ... and many more!
 
 ## Does it work yet?
-Sort of! You can bind scripts to buttons, save/load layout files, and bind single script text files.
+Yes! It does not have all the features I want just yet, and still has bugs, but it works! You can use the GUI to load/save layouts and edit button scripts/colors. It's still buggy, and not nearly as polished as I want yet, but it is functional!
 
-Now the GUI and extention on the scripting language are the primary concerns. See below for a todo list. I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help!
+This is still WIP and still a beta version. See below for a todo list. I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help!
 
 ## How do I use it?
 Plug your Launchpad MkII (for now, Pro and others are coming) in, then run LPHK.py with Python 3, either through IDLE or "python3 LPHK.py".
 
-The default layout is a demo. You technically can do all the binding/saving/loading with the `python3` -i option, via the `scripts`, `files`, and `lp_colors` libraries. A GUI is coming, as I am learning Tkinter. Most main functionality is already bound to functions, so I only really need to make buttons and things to run those functions. :) Stay tuned.
+Go to "Layout > Load layout..." to load an existing layout. See the user_layouts/examples/ folder for more info.
+
+For now, there is no error checking, so invalid lines of LPHKscript are just skipped. The whole GUI is still rough around the edges, so don't be too supprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :)
 
 ## What is LPHKscript?
 LPHKscript is a simple hotkey scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript.
@@ -69,4 +71,6 @@ The current command list is as follows:
 * ~~Proof of concept demo~~
 * ~~Saving/Loading~~
 * ~~Sound functionality~~
-* Basic GUI
+* ~~Basic GUI~~
+* Save/load single scripts in GUI
+*

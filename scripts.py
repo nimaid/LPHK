@@ -7,6 +7,8 @@ COLOR_ACTIVE = lp_colors.GREEN
 COLOR_PRIMED = lp_colors.RED
 COLOR_DEFAULT = lp_colors.BLUE_THIRD
 
+VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND"]
+
 threads = [[None for y in range(9)] for x in range(9)]
 running = False
 to_run = []
@@ -99,8 +101,10 @@ def run_script(script_str, x=-1, y=-1):
             funcs_to_run.append(partial(webbrowser.open_new, link))
             print("[scripts]    Open website " + link + " in default browser, try to make a new window")
         elif split_line[0] == "SOUND":
-            sound.play(split_line[1])
-            print("[scripts]    Play sound file " + split_line[1])
+            if(sound.play(split_line[1])):
+                print("[scripts]    Play sound file " + split_line[1])
+            else:
+                print("[scripts]    Can't play sound " + split_line[1] + ", skipping...")
         else:
             print("[scripts]    Invalid command: " + split_line[0] + ", skipping...")
     script_func = partial(run_funcs, funcs_to_run)
@@ -130,3 +134,13 @@ def unbind_all():
     text = [["" for y in range(9)] for x in range(9)]
     to_run = []
 
+def validate_script(script_str):
+    if script_str == "":
+        return True
+    script_lines = script_str.split('\n')
+    for line in script_lines:
+        split_line = line.split(' ')
+        if split_line[0] not in VALID_COMMANDS:
+            return line
+
+    return True
