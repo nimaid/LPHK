@@ -78,6 +78,8 @@ class Main_Window(tk.Frame):
         column = int((event.x + (gap / 2)) // (BUTTON_SIZE + gap))
         row = int((event.y + (gap / 2)) // (BUTTON_SIZE + gap))
 
+        self.script_entry_window(column, row)
+
         print("[window] Clicked at (" + str(column) + ", " + str(row) + ")")
 
     def draw_button(self, column, row, color="#000000", shape="square"):
@@ -108,14 +110,20 @@ class Main_Window(tk.Frame):
             for y in range(1, 9):
                 self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y))
 
+    def script_entry_window(self, x, y):
+        w = tk.Toplevel(self)
+        w.winfo_toplevel().title("Editing script for button (" + str(x) + ", " + str(y) + ")")
+        b = tk.Label(w, text="You pressed (" + str(x) + ", " + str(y) + ")")
+        b.grid(column=0, row=0, padx=150, pady=20)
+
 def make():
     global root
     global app
     global root_destroyed
     root = tk.Tk()
     root_destroyed = False
-    #root.geometry("600x400")
     root.protocol("WM_DELETE_WINDOW", close)
+    root.resizable(False, False)
     app = Main_Window(root)
     app.mainloop()
 

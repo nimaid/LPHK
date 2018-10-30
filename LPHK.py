@@ -19,7 +19,7 @@ lp = launchpad.LaunchpadMk2();
 def init():
     global EXIT_ON_WINDOW_CLOSE
     if len(sys.argv) > 1:
-        if (sys.argv[1] == "--debug") or (sys.argv[1] == "-d"):
+        if ("--debug" in sys.argv) or ("-d" in sys.argv):
             EXIT_ON_WINDOW_CLOSE = False
             print("[LPHK] Debugging mode active! Will not shut down on window close.")
             print("[LPHK] Run shutdown() to manually close the program correctly.")
