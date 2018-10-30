@@ -55,12 +55,12 @@ RGB = {BLACK: "#000",
        BLUE: "#00f",
        BLUE_HALF: "#00a",
        BLUE_THIRD: "#005",
-       PINK: "#f99",
-       PINK_HALF: "#a66",
-       PINK_THIRD: "#533",
-       PURPLE: "#90f",
-       PURPLE_HALF: "#60a",
-       PURPLE_THIRD: "#305"}
+       PINK: "#f0f",
+       PINK_HALF: "#a0a",
+       PINK_THIRD: "#505",
+       PURPLE: "#96f",
+       PURPLE_HALF: "#64a",
+       PURPLE_THIRD: "#325"}
 
 VALID_COLORS = ["White", "Red", "Orange", "Yellow", "Green", "Mint", "Light Blue", "Blue", "Purple", "Pink"]
 VALID_BRIGHTS = ["Full", "Half", "Third"]
