@@ -38,17 +38,19 @@ class Main_Window(tk.Frame):
         self.m = tk.Menu(self.master)
         self.master.config(menu=self.m)
 
-        m_Launchpad = tk.Menu(self.m, tearoff=False)
-        m_Launchpad.add_command(label="Connect to Launchpad MkII...", command=self.connect_MkII)
-        m_Launchpad.add_command(label="Disonnect Launchpad...", command=self.disconnect_lp)
-        self.m.add_cascade(label="Launchpad", menu=m_Launchpad)
+        self.m_Launchpad = tk.Menu(self.m, tearoff=False)
+        self.m_Launchpad.add_command(label="Connect to Launchpad MkII...", command=self.connect_MkII)
+        self.m_Launchpad.add_command(label="Disonnect from Launchpad...", command=self.disconnect_lp)
+        self.m.add_cascade(label="Launchpad", menu=self.m_Launchpad)
 
-        m_Layout = tk.Menu(self.m, tearoff=False)
-        m_Layout.add_command(label="New layout...", command=self.unbind_lp)
-        m_Layout.add_command(label="Load layout...", command=self.load_layout)
-        m_Layout.add_command(label="Save layout...", command=self.save_layout)
-        m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
-        self.m.add_cascade(label="Layout", menu=m_Layout)
+        self.disable_lp_disconnect()
+
+        self.m_Layout = tk.Menu(self.m, tearoff=False)
+        self.m_Layout.add_command(label="New layout...", command=self.unbind_lp)
+        self.m_Layout.add_command(label="Load layout...", command=self.load_layout)
+        self.m_Layout.add_command(label="Save layout...", command=self.save_layout)
+        self.m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
+        self.m.add_cascade(label="Layout", menu=self.m_Layout)
 
         self.disable_menu("Layout")
 
@@ -65,6 +67,12 @@ class Main_Window(tk.Frame):
     def disable_menu(self, name):
         self.m.entryconfig(name, state="disabled")
 
+    def enable_lp_disconnect(self):
+        self.m_Launchpad.entryconfig("Disonnect from Launchpad...", state="normal")
+
+    def disable_lp_disconnect(self):
+        self.m_Launchpad.entryconfig("Disonnect from Launchpad...", state="disabled")
+
     def connect_MkII(self):
         global lp_connected
         if lp_object.Open(0, "mk2"):
@@ -73,9 +81,9 @@ class Main_Window(tk.Frame):
             lp_connected = True
             self.draw_canvas()
             self.enable_menu("Layout")
+            self.enable_lp_disconnect()
 
             self.popup(self, "Connect to Launchpad MkII...", self.info_image, "Connected to Launchpad MkII!", "OK")
-
         else:
             self.popup(self, "Connect to Launchpad MkII...", self.warning_image, "Could not connect to Launchpad MkII!", "OK")
 
@@ -89,8 +97,9 @@ class Main_Window(tk.Frame):
         self.clear_canvas()
 
         self.disable_menu("Layout")
+        self.disable_lp_disconnect()
 
-        self.popup(self, "Disconnect Launchpad...", self.info_image, "Disconnected to Launchpad!", "OK")
+        self.popup(self, "Disconnect from Launchpad...", self.info_image, "Disconnected from Launchpad!", "OK")
 
     def unbind_lp(self):
         scripts.unbind_all()
