@@ -114,9 +114,9 @@ For the `SP_` functions, the following values are allowed:
 * ~~Basic GUI~~
 * Save/load single scripts in GUI
 * ~~Script entry error checking~~
-* Add launchpad connection menu
-* Add launchpad connection status indicator
+* ~~Add launchpad connection menu~~
+* Add launchpad connection status indicator/remove popups
 * Add script status icons (playing, queued)
 * Make queued/playing buttons blink instead of be solid
-* MIDI output? (Low priority)
-* Load layout? (That could get messy, maybe not a script func, but a seperate GUI option to bind loading a specific layout)
+* MIDI output command? (Low priority)
+* Load layout command? (That could get messy, maybe not a script func, but a seperate GUI option to bind loading a specific layout)

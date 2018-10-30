@@ -2,15 +2,24 @@ import tkinter as tk
 import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox
 import os
 
-import scripts, files, lp_colors
+import scripts, files, lp_colors, lp_events
 
 BUTTON_SIZE = 40
 
 root = None
 app = None
 root_destroyed = None
+lp_object = None
 
 layout_filetypes = [('LPHK layout files', files.LAYOUT_EXT)]
+
+lp_connected = False
+
+def init(lp_object_in):
+    global lp_object
+    lp_object = lp_object_in
+
+    make()
 
 class Main_Window(tk.Frame):
     def __init__(self, master=None):
@@ -19,20 +28,29 @@ class Main_Window(tk.Frame):
         self.init_window()
         self.info_image = tk.PhotoImage(file="resources/info.png").subsample(2, 2)
         self.warning_image = tk.PhotoImage(file="resources/warning.png").subsample(2, 2)
+        self.grid_drawn = False
+        self.grid_rects = [[None for y in range(9)] for x in range(9)]
 
     def init_window(self):
         self.master.title("LPHK - Novation Launchpad Macro Scripting System")
         self.pack(fill="both", expand=1)
 
-        m = tk.Menu(self.master)
-        self.master.config(menu=m)
+        self.m = tk.Menu(self.master)
+        self.master.config(menu=self.m)
 
-        m_Layout = tk.Menu(m, tearoff=False)
+        m_Launchpad = tk.Menu(self.m, tearoff=False)
+        m_Launchpad.add_command(label="Connect to Launchpad MkII...", command=self.connect_MkII)
+        m_Launchpad.add_command(label="Disonnect Launchpad...", command=self.disconnect_lp)
+        self.m.add_cascade(label="Launchpad", menu=m_Launchpad)
+
+        m_Layout = tk.Menu(self.m, tearoff=False)
         m_Layout.add_command(label="New layout...", command=self.unbind_lp)
         m_Layout.add_command(label="Load layout...", command=self.load_layout)
         m_Layout.add_command(label="Save layout...", command=self.save_layout)
         m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
-        m.add_cascade(label="Layout", menu=m_Layout)
+        self.m.add_cascade(label="Layout", menu=m_Layout)
+
+        self.disable_menu("Layout")
 
         c_gap = int(BUTTON_SIZE // 4)
 
@@ -41,7 +59,38 @@ class Main_Window(tk.Frame):
         self.c.bind("<Button-1>", self.click)
         self.c.grid(row=0, column=0, padx=c_gap, pady=c_gap)
 
-        self.draw_canvas()
+    def enable_menu(self, name):
+        self.m.entryconfig(name, state="normal")
+
+    def disable_menu(self, name):
+        self.m.entryconfig(name, state="disabled")
+
+    def connect_MkII(self):
+        global lp_connected
+        if lp_object.Open(0, "mk2"):
+            lp_object.ButtonFlush()
+            lp_events.start(lp_object)
+            lp_connected = True
+            self.draw_canvas()
+            self.enable_menu("Layout")
+
+            self.popup(self, "Connect to Launchpad MkII...", self.info_image, "Connected to Launchpad MkII!", "OK")
+
+        else:
+            self.popup(self, "Connect to Launchpad MkII...", self.warning_image, "Could not connect to Launchpad MkII!", "OK")
+
+    def disconnect_lp(self):
+        global lp_connected
+        scripts.unbind_all()
+        lp_events.timer.cancel()
+        lp_object.Close()
+        lp_connected = False
+
+        self.clear_canvas()
+
+        self.disable_menu("Layout")
+
+        self.popup(self, "Disconnect Launchpad...", self.info_image, "Disconnected to Launchpad!", "OK")
 
     def unbind_lp(self):
         scripts.unbind_all()
@@ -78,7 +127,8 @@ class Main_Window(tk.Frame):
         column = int((event.x + (gap / 2)) // (BUTTON_SIZE + gap))
         row = int((event.y + (gap / 2)) // (BUTTON_SIZE + gap))
 
-        self.script_entry_window(column, row)
+        if self.grid_drawn:
+            self.script_entry_window(column, row)
 
     def draw_button(self, column, row, color="#000000", shape="square"):
         gap = int(BUTTON_SIZE // 4)
@@ -89,24 +139,42 @@ class Main_Window(tk.Frame):
         y_end = y_start + BUTTON_SIZE
 
         if shape == "square":
-            self.c.create_rectangle(x_start, y_start, x_end, y_end, fill=color, outline="")
+            return self.c.create_rectangle(x_start, y_start, x_end, y_end, fill=color, outline="")
         elif shape == "circle":
             shrink = BUTTON_SIZE / 10
-            self.c.create_oval(x_start + shrink, y_start + shrink, x_end - shrink, y_end - shrink, fill=color, outline="")
+            return self.c.create_oval(x_start + shrink, y_start + shrink, x_end - shrink, y_end - shrink, fill=color, outline="")
 
     def draw_canvas(self):
-        self.c.delete("all")
-        for x in range(8):
-            y = 0
-            self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y), shape="circle")
+        if self.grid_drawn:
+            for x in range(8):
+                y = 0
+                self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
 
-        for y in range(1, 9):
-            x = 8
-            self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y), shape="circle")
-
-        for x in range(8):
             for y in range(1, 9):
-                self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y))
+                x = 8
+                self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
+
+            for x in range(8):
+                for y in range(1, 9):
+                    self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
+        else:
+            for x in range(8):
+                y = 0
+                self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y), shape="circle")
+
+            for y in range(1, 9):
+                x = 8
+                self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y), shape="circle")
+
+            for x in range(8):
+                for y in range(1, 9):
+                    self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y))
+            self.grid_drawn = True
+
+    def clear_canvas(self):
+        self.c.delete("all")
+        self.grid_rects = [[None for y in range(9)] for x in range(9)]
+        self.grid_drawn = False
 
     def script_entry_window(self, x, y):
         w = tk.Toplevel(self)

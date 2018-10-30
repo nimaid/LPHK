@@ -12,7 +12,7 @@ except ImportError:
     except ImportError:
         sys.exit("[launchpad_py] Error loading launchpad.py")
 
-import lp_events, lp_colors, scripts, keyboard, files, sound, window
+import lp_events, scripts, keyboard, files, sound, window
 
 PATH = sys.path[0]
 
@@ -29,26 +29,21 @@ def init():
         else:
             print("[LPHK] Invalid argument: " + sys.argv[1] + ". Ignoring...")
 
-    lp.ButtonFlush()
     files.init(PATH)
     sound.init(PATH)
-    lp_events.start(lp)
 
 def shutdown():
-    scripts.unbind_all()
-    lp_events.timer.cancel()
-    lp.Close()
+    if lp_events.timer != None:
+        lp_events.timer.cancel()
+    if window.lp_connected:
+        scripts.unbind_all()
+        lp_events.timer.cancel()
+        lp.Close()
     sys.exit("[LPHK] Sutting down...")
 
 def main():
-    if lp.Open(0, "mk2"):
-        print("[LPHK] Connected to Launchpad Mk2!")
-    else:
-        print("[LPHK] Could not connect to Launchpad Mk2, exiting...")
-        return
-
     init()
-    window.make()
+    window.init(lp)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
 
