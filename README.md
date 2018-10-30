@@ -38,9 +38,18 @@ This is still WIP and still a beta version. See below for a todo list. I have a 
 ## How do I use it?
 Plug your Launchpad MkII (for now, Pro and others are coming) in, then run LPHK.py with Python 3, either through IDLE or "python3 LPHK.py".
 
-Go to "Layout > Load layout..." to load an existing layout. See the user_layouts/examples/ folder for more info.
 
-The whole GUI is still rough around the edges, so don't be too supprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :)
+Click `Launchpad > Connect to Launchpad MkII...`. If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
+
+
+Click on a button to open the Script Edit window for that button. All scripts are saved in the `.LPHKlayout` files, but the editor also has the ability to import/export single `.LPHKscript` files. For examples, you can click `Import Script` and look through the `user_scripts/examples/` folder. Select the button color and brightness, then click `Bind Button (x, y)`. If there are syntax errors, this is when they will be caught, and you will be informed without the editor closing.
+
+Go to `Layout > Save layout as...` to save your current layout for future use, colors and all.
+
+
+Go to `Layout > Load layout...` to load an existing layout. Examples are in `user_layouts/examples/`.
+
+The whole GUI is still rough around the edges, so don't be too supprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :) And don't feel shy making feature requests, either!
 
 ## What is LPHKscript?
 LPHKscript is a simple hotkey scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript.
