@@ -74,3 +74,5 @@ The current command list is as follows:
 * ~~Basic GUI~~
 * Save/load single scripts in GUI
 * ~~Script entry error checking~~
+* Add launchpad connection menu
+* Add launchpad connection status indicator
