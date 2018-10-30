@@ -60,8 +60,48 @@ The current command list is as follows:
 * `WEB_NEW` - open website (argument 1) in default browser, try new window
 * `SOUND` - play a sound named (argument 1) inside the `user_sounds/` folder, `.wav` and `.ogg` only
 
+For the `SP_` functions, the following values are allowed:
+* `alt`
+* `alt_gr`
+* `alt_r`
+* `backspace`
+* `bright_down`
+* `bright_up`
+* `caps_lock`
+* `cmd`
+* `cmd_r`
+* `crtl`
+* `ctrl_r`
+* `delete`
+* `down`
+* `end`
+* `enter`
+* `esc`
+* `f1` - `f20`
+* `home`
+* `insert`
+* `left`
+* `menu`
+* `mute`
+* `next_track`
+* `num_lock`
+* `page_down`
+* `page_up`
+* `pause`
+* `play_pause`
+* `prev_track`
+* `print_screen`
+* `right`
+* `scroll_lock`
+* `shift`
+* `shift_r`
+* `space`
+* `tab`
+* `up`
+* `vol_down`
+* `vol_up`
+
 ## What still needs to be written?
-### Global
 * ~~MkII spacific interface~~
 * Support for all launchpads
 * ~~Events system~~
