@@ -12,6 +12,7 @@ def init(path_in):
     global PATH
     PATH = path_in
 
+    m.pre_init(44100, -16, 2, 2048)
     m.init()
 
 def play(filename):
