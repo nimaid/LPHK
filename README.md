@@ -76,3 +76,4 @@ The current command list is as follows:
 * ~~Script entry error checking~~
 * Add launchpad connection menu
 * Add launchpad connection status indicator
+* Add script status icons (playing, queued_

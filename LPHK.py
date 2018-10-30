@@ -1,3 +1,5 @@
+#! /usr/bin/python3
+
 import sys
 
 EXIT_ON_WINDOW_CLOSE = True
