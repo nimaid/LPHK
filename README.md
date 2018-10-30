@@ -120,7 +120,7 @@ For the `SP_` functions, the following values are allowed:
 * ~~Script entry error checking~~
 * ~~Add launchpad connection menu~~
 * Add a REPEAT command to do last command n number of times
-* Add launchpad connection status indicator/remove popups
+* ~~Add launchpad connection status indicator/remove popups~~
 * Add script status icons (playing, queued)
 * Make queued/playing buttons blink instead of be solid
 * MIDI output command? (Low priority)

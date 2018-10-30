@@ -5,6 +5,9 @@ import os
 import scripts, files, lp_colors, lp_events
 
 BUTTON_SIZE = 40
+STAT_ACTIVE_COLOR = "#060"
+STAT_INACTIVE_COLOR = "#444"
+
 
 root = None
 app = None
@@ -62,6 +65,9 @@ class Main_Window(tk.Frame):
         self.c.bind("<Button-1>", self.click)
         self.c.grid(row=0, column=0, padx=c_gap, pady=c_gap)
 
+        self.stat = tk.Label(self, text="No Launchpad Connected", bg=STAT_INACTIVE_COLOR, fg="#fff")
+        self.stat.grid(row=1, column=0, sticky=tk.EW)
+
     def enable_menu(self, name):
         self.m.entryconfig(name, state="normal")
 
@@ -84,7 +90,9 @@ class Main_Window(tk.Frame):
             self.enable_menu("Layout")
             self.enable_lp_disconnect()
 
-            self.popup(self, "Connect to Launchpad MkII...", self.info_image, "Connected to Launchpad MkII!", "OK")
+            #self.popup(self, "Connect to Launchpad MkII...", self.info_image, "Connected to Launchpad MkII!", "OK")
+            self.stat["text"] = "Connected to Launchpad MkII!"
+            self.stat["bg"] = STAT_ACTIVE_COLOR
         else:
             self.popup(self, "Connect to Launchpad MkII...", self.warning_image, "Could not connect to Launchpad MkII!", "OK")
 
@@ -100,7 +108,9 @@ class Main_Window(tk.Frame):
         self.disable_menu("Layout")
         self.disable_lp_disconnect()
 
-        self.popup(self, "Disconnect from Launchpad...", self.info_image, "Disconnected from Launchpad!", "OK")
+        #self.popup(self, "Disconnect from Launchpad...", self.info_image, "Disconnected from Launchpad!", "OK")
+        self.stat["text"] = "No Launchpad Connected"
+        self.stat["bg"] = STAT_INACTIVE_COLOR
 
     def unbind_lp(self):
         scripts.unbind_all()
@@ -192,7 +202,7 @@ class Main_Window(tk.Frame):
         w.resizable(False, False)
 
         t = tk.scrolledtext.ScrolledText(w)
-        t.grid(column=0, row=0, columnspan=8, padx=10, pady=10)
+        t.grid(column=0, row=0, columnspan=4, padx=10, pady=10)
 
         t.insert(tk.INSERT, scripts.text[x][y])
 
@@ -212,28 +222,28 @@ class Main_Window(tk.Frame):
         color_select.grid(column=1, row=1, sticky=tk.W)
 
         b_label = tk.Label(w, text="Brightness:")
-        b_label.grid(column=2, row=1, sticky=tk.E)
+        b_label.grid(column=0, row=2, sticky=tk.E)
 
         bright = tk.StringVar(w)
         bright.set(curr_color_bright[1])
         bright_select = tk.OptionMenu(w, bright, *lp_colors.VALID_BRIGHTS)
-        bright_select.grid(column=3, row=1, sticky=tk.W)
+        bright_select.grid(column=1, row=2, sticky=tk.W)
 
         import_script_func = lambda: self.import_script(t, w)
         import_script_button = tk.Button(w, text="Import Script", command=import_script_func)
-        import_script_button.grid(column=4, row=1)
+        import_script_button.grid(column=2, row=1)
 
         export_script_func = lambda: self.export_script(t, w)
         export_script_button = tk.Button(w, text="Export Script", command=export_script_func)
-        export_script_button.grid(column=5, row=1)
+        export_script_button.grid(column=2, row=2)
 
         unbind_func = lambda: self.unbind_destroy(x, y, w)
         unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
-        unbind_button.grid(column=6, row=1)
+        unbind_button.grid(column=3, row=1)
 
         save_func = lambda: self.save_script(w, x, y, lp_colors.code_by_color_brightness(color.get(), bright.get()), t.get(1.0, tk.END))
-        save_button = tk.Button(w, text="Save Script", command=save_func)
-        save_button.grid(column=7, row=1)
+        save_button = tk.Button(w, text="Bind Button (" + str(x) + ", " + str(y) + ")", command=save_func)
+        save_button.grid(column=3, row=2)
 
         w.wait_visibility()
         w.grab_set()
@@ -254,7 +264,7 @@ class Main_Window(tk.Frame):
                 self.draw_canvas()
                 window.destroy()
             else:
-                self.popup(window, "No Script Entered", self.info_image, "Please enter a script before saving.", "OK")
+                self.popup(window, "No Script Entered", self.info_image, "Please enter a script to bind.", "OK")
         else:
             self.popup(window, "Syntax Error", self.warning_image, "Error in line: " + script_validate[1] + "\n" + script_validate[0], "OK")
 
