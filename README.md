@@ -40,7 +40,7 @@ Plug your Launchpad MkII (for now, Pro and others are coming) in, then run LPHK.
 
 Go to "Layout > Load layout..." to load an existing layout. See the user_layouts/examples/ folder for more info.
 
-For now, there is no error checking, so invalid lines of LPHKscript are just skipped. The whole GUI is still rough around the edges, so don't be too supprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :)
+The whole GUI is still rough around the edges, so don't be too supprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :)
 
 ## What is LPHKscript?
 LPHKscript is a simple hotkey scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript.
@@ -73,4 +73,4 @@ The current command list is as follows:
 * ~~Sound functionality~~
 * ~~Basic GUI~~
 * Save/load single scripts in GUI
-*
+* ~~Script entry error checking~~

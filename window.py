@@ -115,7 +115,7 @@ class Main_Window(tk.Frame):
         w.resizable(False, False)
 
         t = tk.scrolledtext.ScrolledText(w)
-        t.grid(column=0, row=0, columnspan=5, padx=10, pady=10)
+        t.grid(column=0, row=0, columnspan=6, padx=10, pady=10)
 
         t.insert(tk.INSERT, scripts.text[x][y])
 
@@ -142,13 +142,24 @@ class Main_Window(tk.Frame):
         bright_select = tk.OptionMenu(w, bright, *lp_colors.VALID_BRIGHTS)
         bright_select.grid(column=3, row=1, sticky=tk.W)
 
+        unbind_func = lambda: self.unbind_destroy(x, y, w)
+        unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
+        unbind_button.grid(column=4, row=1)
+
         save_func = lambda: self.save_script(w, x, y, lp_colors.code_by_color_brightness(color.get(), bright.get()), t.get(1.0, tk.END))
-        b = tk.Button(w, text="Save Script", command=save_func)
-        b.grid(column=4, row=1)
+        save_button = tk.Button(w, text="Save Script", command=save_func)
+        save_button.grid(column=5, row=1)
+
+        w.wait_visibility()
         w.grab_set()
 
     def release_destroy(self, window):
         window.grab_release()
+        window.destroy()
+
+    def unbind_destroy(self, x, y, window):
+        scripts.unbind(x, y)
+        self.draw_canvas()
         window.destroy()
 
     def save_script(self, window, x, y, color, script_text):
@@ -161,7 +172,6 @@ class Main_Window(tk.Frame):
                 self.draw_canvas()
                 window.destroy()
             else:
-                #tk.messagebox.showwarning("Warning", "No script supplied.")
                 popup = tk.Toplevel(window)
                 popup.wm_title("No Script Entered")
                 popup.tkraise(window)
@@ -170,7 +180,6 @@ class Main_Window(tk.Frame):
                 info_label.grid(column=0, row=0, padx=10, pady=10)
                 tk.Label(popup, text="Please enter a script before saving.").grid(column=1, row=0, padx=10, pady=10)
         else:
-            #tk.messagebox.showerror("Syntax Error", "Invalid command: " + script_validate)
             popup = tk.Toplevel(window)
             popup.wm_title("Syntax Error")
             popup.tkraise(window)
