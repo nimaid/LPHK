@@ -90,8 +90,7 @@ class Main_Window(tk.Frame):
             self.enable_menu("Layout")
             self.enable_lp_disconnect()
 
-            #self.popup(self, "Connect to Launchpad MkII...", self.info_image, "Connected to Launchpad MkII!", "OK")
-            self.stat["text"] = "Connected to Launchpad MkII!"
+            self.stat["text"] = "Connected to Launchpad MkII"
             self.stat["bg"] = STAT_ACTIVE_COLOR
         else:
             self.popup(self, "Connect to Launchpad MkII...", self.warning_image, "Could not connect to Launchpad MkII!", "OK")
@@ -108,7 +107,6 @@ class Main_Window(tk.Frame):
         self.disable_menu("Layout")
         self.disable_lp_disconnect()
 
-        #self.popup(self, "Disconnect from Launchpad...", self.info_image, "Disconnected from Launchpad!", "OK")
         self.stat["text"] = "No Launchpad Connected"
         self.stat["bg"] = STAT_INACTIVE_COLOR
 
@@ -132,6 +130,8 @@ class Main_Window(tk.Frame):
                                             title="Save layout as...:",
                                             filetypes=layout_filetypes)
         if name:
+            if files.LAYOUT_EXT not in name:
+                name += files.LAYOUT_EXT
             files.save_layout(name, False)
             files.load_layout(name, False)
 
@@ -284,6 +284,8 @@ class Main_Window(tk.Frame):
                                                title="Export script...:",
                                                filetypes=script_filetypes)
         if name:
+            if files.SCRIPT_EXT not in name:
+                name += files.SCRIPT_EXT
             text = textbox.get("1.0", tk.END)
             files.export_script(name, text, False)
 

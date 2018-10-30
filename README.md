@@ -63,6 +63,7 @@ The current command list is as follows:
 For all commands, the arguments cannot contain the following strings:
 * `:LPHK_BUTTON_SEP:`
 * `:LPHK_ENTRY_SEP:`
+* `:LPHK_NEWLINE_REP:`
 
 For the `SP_` functions, the following values are allowed:
 * `alt`
