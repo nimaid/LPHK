@@ -60,6 +60,10 @@ The current command list is as follows:
 * `WEB_NEW` - open website (argument 1) in default browser, try new window
 * `SOUND` - play a sound named (argument 1) inside the `user_sounds/` folder, `.wav` and `.ogg` only
 
+For all commands, the arguments cannot contain the following strings:
+* `:LPHK_BUTTON_SEP:`
+* `:LPHK_ENTRY_SEP:`
+
 For the `SP_` functions, the following values are allowed:
 * `alt`
 * `alt_gr`
