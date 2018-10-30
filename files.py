@@ -63,19 +63,3 @@ def load_layout(name, add_path=True):
                     lp_colors.setXY(x, y, color)
     curr_layout = final_path
     print("[files] Loaded layout " + final_path)
-
-def load_script(name, x=-1, y=-1, color=scripts.COLOR_DEFAULT):
-    script_string = ""
-    with open(PATH + SCRIPT_PATH + name + SCRIPT_EXT, "r") as f:
-        l = f.readlines()
-
-        for line in l:
-            script_string += line
-
-    script_string = script_string.rstrip()
-    if (x >= 0) and (y >= 0):
-        scripts.bind(x, y, script_string, color)
-    elif (x >= 0) or (y >= 0):
-        raise Exception("You must either set both x and y as positive numbers, or set neither")
-    else:
-        return script_string
