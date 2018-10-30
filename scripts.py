@@ -142,5 +142,11 @@ def validate_script(script_str):
         split_line = line.split(' ')
         if split_line[0] not in VALID_COMMANDS:
             return line
+        if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
+            if keyboard.sp(split_line[1]) == None:
+                return line
+        if split_line[0] in ["TAP", "PRESS", "RELEASE"]:
+            if len(split_line[1]) > 1:
+                return line
 
     return True
