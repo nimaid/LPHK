@@ -42,6 +42,7 @@ def save_layout(name, add_path=True):
 def load_layout(name, add_path=True):
     global curr_layout
     scripts.unbind_all()
+
     final_path = None
     if add_path:
         final_path = PATH + LAYOUT_PATH + name + LAYOUT_EXT
@@ -63,3 +64,24 @@ def load_layout(name, add_path=True):
                     lp_colors.setXY(x, y, color)
     curr_layout = final_path
     print("[files] Loaded layout " + final_path)
+
+def import_script(name, add_path=True):
+    final_path = None
+    if add_path:
+        final_path = PATH + LAYOUT_PATH + name + LAYOUT_EXT
+    else:
+        final_path = name
+    with open(final_path, "r") as f:
+        text = f.read()
+        print("[files] Imported script as " + final_path)
+        return text
+
+def export_script(name, script, add_path=True):
+    final_path = None
+    if add_path:
+        final_path = PATH + LAYOUT_PATH + name + LAYOUT_EXT
+    else:
+        final_path = name
+    with open(final_path, "w+") as f:
+        f.write(script)
+        print("[files] Exported script as " + final_path)

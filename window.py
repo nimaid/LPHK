@@ -12,6 +12,7 @@ root_destroyed = None
 lp_object = None
 
 layout_filetypes = [('LPHK layout files', files.LAYOUT_EXT)]
+script_filetypes = [('LPHK script files', files.SCRIPT_EXT)]
 
 lp_connected = False
 
@@ -108,7 +109,7 @@ class Main_Window(tk.Frame):
 
     def load_layout(self):
         name = tk.filedialog.askopenfilename(parent=app,
-                                          initialdir=os.getcwd() + "/user_layouts/",
+                                          initialdir=os.getcwd() + files.LAYOUT_PATH,
                                           title="Load layout...:",
                                           filetypes=layout_filetypes)
         if name:
@@ -117,7 +118,7 @@ class Main_Window(tk.Frame):
 
     def save_layout_as(self):
         name = tk.filedialog.asksaveasfilename(parent=app,
-                                            initialdir=os.getcwd() + "/user_layouts/",
+                                            initialdir=os.getcwd() + files.LAYOUT_PATH,
                                             title="Save layout as...:",
                                             filetypes=layout_filetypes)
         if name:
@@ -191,7 +192,7 @@ class Main_Window(tk.Frame):
         w.resizable(False, False)
 
         t = tk.scrolledtext.ScrolledText(w)
-        t.grid(column=0, row=0, columnspan=6, padx=10, pady=10)
+        t.grid(column=0, row=0, columnspan=8, padx=10, pady=10)
 
         t.insert(tk.INSERT, scripts.text[x][y])
 
@@ -218,13 +219,21 @@ class Main_Window(tk.Frame):
         bright_select = tk.OptionMenu(w, bright, *lp_colors.VALID_BRIGHTS)
         bright_select.grid(column=3, row=1, sticky=tk.W)
 
+        import_script_func = lambda: self.import_script(t, w)
+        import_script_button = tk.Button(w, text="Import Script", command=import_script_func)
+        import_script_button.grid(column=4, row=1)
+
+        export_script_func = lambda: self.export_script(t, w)
+        export_script_button = tk.Button(w, text="Export Script", command=export_script_func)
+        export_script_button.grid(column=5, row=1)
+
         unbind_func = lambda: self.unbind_destroy(x, y, w)
         unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
-        unbind_button.grid(column=4, row=1)
+        unbind_button.grid(column=6, row=1)
 
         save_func = lambda: self.save_script(w, x, y, lp_colors.code_by_color_brightness(color.get(), bright.get()), t.get(1.0, tk.END))
         save_button = tk.Button(w, text="Save Script", command=save_func)
-        save_button.grid(column=5, row=1)
+        save_button.grid(column=7, row=1)
 
         w.wait_visibility()
         w.grab_set()
@@ -248,6 +257,25 @@ class Main_Window(tk.Frame):
                 self.popup(window, "No Script Entered", self.info_image, "Please enter a script before saving.", "OK")
         else:
             self.popup(window, "Syntax Error", self.warning_image, "Error in line: " + script_validate[1] + "\n" + script_validate[0], "OK")
+
+    def import_script(self, textbox, window):
+        name = tk.filedialog.askopenfilename(parent=window,
+                                             initialdir=os.getcwd() + files.SCRIPT_PATH,
+                                             title="Import script...:",
+                                             filetypes=script_filetypes)
+        if name:
+            text = files.import_script(name, False)
+            textbox.delete("1.0", tk.END)
+            textbox.insert(tk.INSERT, text)
+
+    def export_script(self, textbox, window):
+        name = tk.filedialog.asksaveasfilename(parent=window,
+                                               initialdir=os.getcwd() + files.SCRIPT_PATH,
+                                               title="Export script...:",
+                                               filetypes=script_filetypes)
+        if name:
+            text = textbox.get("1.0", tk.END)
+            files.export_script(name, text, False)
 
     def popup(self, window, title, image, text, button_text):
         popup = tk.Toplevel(window)

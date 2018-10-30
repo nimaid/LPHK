@@ -116,9 +116,10 @@ For the `SP_` functions, the following values are allowed:
 * ~~Saving/Loading~~
 * ~~Sound functionality~~
 * ~~Basic GUI~~
-* Save/load single scripts in GUI
+* ~~Save/load single scripts in GUI~~
 * ~~Script entry error checking~~
 * ~~Add launchpad connection menu~~
+* Add a REPEAT command to do last command n number of times
 * Add launchpad connection status indicator/remove popups
 * Add script status icons (playing, queued)
 * Make queued/playing buttons blink instead of be solid
