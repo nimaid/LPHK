@@ -17,8 +17,8 @@ class Main_Window(tk.Frame):
         tk.Frame.__init__(self, master)
         self.master = master
         self.init_window()
-        self.info_image = tk.PhotoImage(file="resources/info.png")
-        self.warning_image = tk.PhotoImage(file="resources/warning.png")
+        self.info_image = tk.PhotoImage(file="resources/info.png").subsample(2, 2)
+        self.warning_image = tk.PhotoImage(file="resources/warning.png").subsample(2, 2)
 
     def init_window(self):
         self.master.title("LPHK - Novation Launchpad Macro Scripting System")
@@ -111,7 +111,6 @@ class Main_Window(tk.Frame):
     def script_entry_window(self, x, y):
         w = tk.Toplevel(self)
         w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
-        w.protocol("WM_DELETE_WINDOW", lambda: self.release_destroy(w))
         w.resizable(False, False)
 
         t = tk.scrolledtext.ScrolledText(w)
@@ -153,10 +152,6 @@ class Main_Window(tk.Frame):
         w.wait_visibility()
         w.grab_set()
 
-    def release_destroy(self, window):
-        window.grab_release()
-        window.destroy()
-
     def unbind_destroy(self, x, y, window):
         scripts.unbind(x, y)
         self.draw_canvas()
@@ -172,23 +167,22 @@ class Main_Window(tk.Frame):
                 self.draw_canvas()
                 window.destroy()
             else:
-                popup = tk.Toplevel(window)
-                popup.wm_title("No Script Entered")
-                popup.tkraise(window)
-                info_label = tk.Label(popup, image=self.info_image)
-                info_label.photo = self.info_image
-                info_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
-                tk.Label(popup, text="Please enter a script before saving.").grid(column=1, row=0, padx=10, pady=10)
-                tk.Button(popup, text="OK", command=popup.destroy).grid(column=1, row=1, padx=10, pady=10)
+                self.popup(window, "No Script Entered", self.info_image, "Please enter a script before saving.", "OK")
         else:
-            popup = tk.Toplevel(window)
-            popup.wm_title("Syntax Error")
-            popup.tkraise(window)
-            warning_label = tk.Label(popup, image=self.warning_image)
-            warning_label.photo = self.warning_image
-            warning_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
-            tk.Label(popup, text="Invalid command: " + script_validate).grid(column=1, row=0, padx=10, pady=10)
-            tk.Button(popup, text="OK", command=popup.destroy).grid(column=1, row=1, padx=10, pady=10)
+            self.popup(window, "Syntax Error", self.warning_image, "Invalid command: " + script_validate, "OK")
+
+    def popup(self, window, title, image, text, button_text):
+        popup = tk.Toplevel(window)
+        popup.resizable(False, False)
+        popup.wm_title(title)
+        popup.tkraise(window)
+        picture_label = tk.Label(popup, image=image)
+        picture_label.photo = image
+        picture_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
+        tk.Label(popup, text=text).grid(column=1, row=0, padx=10, pady=10)
+        tk.Button(popup, text=button_text, command=popup.destroy).grid(column=1, row=1, padx=10, pady=10)
+        popup.wait_visibility()
+        popup.grab_set()
 
 def make():
     global root
