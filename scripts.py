@@ -143,20 +143,20 @@ def validate_script(script_str):
     for line in script_lines:
         split_line = line.split(' ')
         if split_line[0] not in VALID_COMMANDS:
-            return line
+            return ("Command '" + split_line[0] + "' not valid.", line)
         if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND"]:
             if len(split_line) < 2:
-                return line
+                return ("Command '" + split_line[0] + "' requires at least 1 argument.", line)
             else:
                 for token in split_line[1:]:
-                    for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR):
+                    for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR, files.NEWLINE_REPLACE):
                         if sep in token:
-                            return line
+                            return ("You cannot use the string '" + sep + "' in any command.", line)
         if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
             if keyboard.sp(split_line[1]) == None:
-                return line
+                return ("No special character named '" + split_line[1] + "'.", line)
         if split_line[0] in ["TAP", "PRESS", "RELEASE"]:
             if len(split_line[1]) > 1:
-                return line
+                return ("More than 1 character supplied.", line)
 
     return True

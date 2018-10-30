@@ -247,7 +247,7 @@ class Main_Window(tk.Frame):
             else:
                 self.popup(window, "No Script Entered", self.info_image, "Please enter a script before saving.", "OK")
         else:
-            self.popup(window, "Syntax Error", self.warning_image, "Invalid command: " + script_validate, "OK")
+            self.popup(window, "Syntax Error", self.warning_image, "Error in line: " + script_validate[1] + "\n" + script_validate[0], "OK")
 
     def popup(self, window, title, image, text, button_text):
         popup = tk.Toplevel(window)
@@ -257,7 +257,7 @@ class Main_Window(tk.Frame):
         picture_label = tk.Label(popup, image=image)
         picture_label.photo = image
         picture_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
-        tk.Label(popup, text=text).grid(column=1, row=0, padx=10, pady=10)
+        tk.Label(popup, text=text, justify=tk.LEFT).grid(column=1, row=0, padx=10, pady=10)
         tk.Button(popup, text=button_text, command=popup.destroy).grid(column=1, row=1, padx=10, pady=10)
         popup.wait_visibility()
         popup.grab_set()
