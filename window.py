@@ -177,16 +177,18 @@ class Main_Window(tk.Frame):
                 popup.tkraise(window)
                 info_label = tk.Label(popup, image=self.info_image)
                 info_label.photo = self.info_image
-                info_label.grid(column=0, row=0, padx=10, pady=10)
+                info_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
                 tk.Label(popup, text="Please enter a script before saving.").grid(column=1, row=0, padx=10, pady=10)
+                tk.Button(popup, text="OK", command=popup.destroy).grid(column=1, row=1, padx=10, pady=10)
         else:
             popup = tk.Toplevel(window)
             popup.wm_title("Syntax Error")
             popup.tkraise(window)
             warning_label = tk.Label(popup, image=self.warning_image)
             warning_label.photo = self.warning_image
-            warning_label.grid(column=0, row=0, padx=10, pady=10)
+            warning_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
             tk.Label(popup, text="Invalid command: " + script_validate).grid(column=1, row=0, padx=10, pady=10)
+            tk.Button(popup, text="OK", command=popup.destroy).grid(column=1, row=1, padx=10, pady=10)
 
 def make():
     global root
