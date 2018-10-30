@@ -7,6 +7,8 @@ COLOR_ACTIVE = lp_colors.GREEN
 COLOR_PRIMED = lp_colors.RED
 COLOR_DEFAULT = lp_colors.BLUE_THIRD
 
+import files
+
 VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND"]
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -145,6 +147,11 @@ def validate_script(script_str):
         if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND"]:
             if len(split_line) < 2:
                 return line
+            else:
+                for token in split_line[1:]:
+                    for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR):
+                        if sep in token:
+                            return line
         if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
             if keyboard.sp(split_line[1]) == None:
                 return line

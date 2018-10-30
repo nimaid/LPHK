@@ -5,6 +5,9 @@ LAYOUT_EXT = ".LPHKlayout"
 LAYOUT_PATH = "/user_layouts/"
 SCRIPT_EXT = ".LPHKscript"
 SCRIPT_PATH = "/user_scripts/"
+BUTTON_SEPERATOR = ":LPHK_BUTTON_SEP:"
+ENTRY_SEPERATOR = ":LPHK_ENTRY_SEP:"
+
 
 curr_layout = None
 
@@ -24,13 +27,13 @@ def save_layout(name, add_path=True):
                 color = str(lp_colors.curr_colors[x][y])
                 f.write(color)
 
-                f.write("~~")
+                f.write(ENTRY_SEPERATOR)
 
                 script_text = scripts.text[x][y].replace("\n", "\\n")
                 f.write(script_text)
 
                 if y < 8:
-                    f.write("||")
+                    f.write(BUTTON_SEPERATOR)
             f.write("\n")
     print("[files] Saved layout as " + final_path)
 
@@ -46,9 +49,9 @@ def load_layout(name, add_path=True):
         l = f.readlines()
 
         for x in range(9):
-            line = l[x][:-1].split("||")
+            line = l[x][:-1].split(BUTTON_SEPERATOR)
             for y in range(9):
-                info = line[y].split("~~")
+                info = line[y].split(ENTRY_SEPERATOR)
                 color = int(info[0])
                 script_text = info[1].replace("\\n", "\n")
 
