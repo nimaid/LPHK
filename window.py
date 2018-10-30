@@ -136,7 +136,7 @@ class Main_Window(tk.Frame):
         column = int((event.x + (gap / 2)) // (BUTTON_SIZE + gap))
         row = int((event.y + (gap / 2)) // (BUTTON_SIZE + gap))
 
-        if self.grid_drawn:
+        if self.grid_drawn and ((column, row) != (8, 0)):
             self.script_entry_window(column, row)
 
     def draw_button(self, column, row, color="#000000", shape="square"):
