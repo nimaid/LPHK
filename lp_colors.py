@@ -105,8 +105,6 @@ color_modes = [["solid" for y in range(9)] for x in range(9)]
 
 import lp_events, scripts
 
-from time import sleep
-
 lp_object = None
 
 def init(lp_object_in):
