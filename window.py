@@ -212,7 +212,7 @@ class Main_Window(tk.Frame):
         if curr_color != 0:
             curr_color_bright = lp_colors.COLOR_BRIGHTS[curr_color]
         else:
-            curr_color_bright = ("Blue", "Third")
+            curr_color_bright = ("Blue", "Full")
 
         c_label = tk.Label(w, text="Color:")
         c_label.grid(column=0, row=1, sticky=tk.E)
@@ -264,7 +264,7 @@ class Main_Window(tk.Frame):
                 script_text = files.strip_lines(script_text)
                 scripts.bind(x, y, script_text, color)
                 self.draw_canvas()
-                lp_colors.update()
+                lp_colors.updateXY(x, y)
                 window.destroy()
             else:
                 self.popup(window, "No Script Entered", self.info_image, "Please enter a script to bind.", "OK")

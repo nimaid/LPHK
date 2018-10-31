@@ -22,6 +22,7 @@ def run_in_bg(func, x, y):
     if not running:
         threads[x][y] = threading.Thread(None, func)
         threads[x][y].start()
+        lp_colors.updateXY(x, y)
     else:
         to_run.append((func, x, y))
 
@@ -38,9 +39,8 @@ def run_funcs(funcs_in):
         x = tup[1]
         y = tup[2]
         run_in_bg(func, x, y)
-    threading.Timer(0.001, lp_colors.update, ()).start()
 
-def run_script(script_str, x=-1, y=-1):
+def run_script(script_str, x=None, y=None):
     script_lines = script_str.split('\n')
     funcs_to_run = []
     print("[scripts] Now parsing script...")
@@ -112,12 +112,15 @@ def run_script(script_str, x=-1, y=-1):
                     print("[scripts]    Can't play sound " + split_line[1] + ", skipping...")
             else:
                 print("[scripts]    Invalid command: " + split_line[0] + ", skipping...")
-    script_func = partial(run_funcs, funcs_to_run)
-    if (x >= 0) and (y >= 0):
+    if (x != None) and (y != None):
         print("[scripts] Script parsed. Running in background on button (" + str(x) + ", " + str(y) + ")...")
+        funcs_to_run.append(partial(lp_colors.set_force_off, x, y, True))
+        funcs_to_run.append(partial(lp_colors.updateXY, x, y))
+        script_func = partial(run_funcs, funcs_to_run)
         run_in_bg(script_func, x, y)
     else:
         print("[scripts] Script parsed. Running in foreground...")
+        script_func = partial(run_funcs, funcs_to_run)
         script_func()
 
 def bind(x, y, script_down, off_color=COLOR_DEFAULT):

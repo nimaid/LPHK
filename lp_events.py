@@ -26,7 +26,8 @@ def run(lp_object):
             else:
                 pressed[event[0]][event[1]] = True
                 press_funcs[event[0]][event[1]](event[0], event[1])
-            lp_colors.update()
+            lp_colors.set_force_off(event[0], event[1], False)
+            lp_colors.updateXY(event[0], event[1])
         else:
             break
     init(lp_object)
@@ -36,7 +37,7 @@ def start(lp_object):
     lp_colors.init(lp_object)
     init(lp_object)
     run(lp_object)
-    lp_colors.update()
+    lp_colors.update_all()
 
 def bind_func_with_colors(x, y, func, off_color):
     global press_funcs
@@ -47,7 +48,7 @@ def unbind(x, y):
     global press_funcs
     press_funcs[x][y] = unbound_press
     lp_colors.setXY(x, y, lp_colors.BLACK)
-    lp_colors.update()
+    lp_colors.updateXY(x, y)
 
 def unbind_all():
     global press_funcs
@@ -55,4 +56,5 @@ def unbind_all():
     for x in range(9):
         for y in range(9):
             lp_colors.setXY(x, y, lp_colors.BLACK)
-    lp_colors.update()
+    lp_colors.raw_clear()
+
