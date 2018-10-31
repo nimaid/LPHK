@@ -86,3 +86,6 @@ def export_script(name, script, add_path=True):
     with open(final_path, "w+") as f:
         f.write(script)
         print("[files] Exported script as " + final_path)
+
+def strip_lines(text):
+    return "\n".join([line.strip() for line in text.split("\n")])

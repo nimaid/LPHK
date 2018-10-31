@@ -261,6 +261,7 @@ class Main_Window(tk.Frame):
         script_validate = scripts.validate_script(script_text)
         if script_validate == True:
             if script_text != "":
+                script_text = files.strip_lines(script_text)
                 scripts.bind(x, y, script_text, color)
                 self.draw_canvas()
                 lp_colors.update()
@@ -277,6 +278,7 @@ class Main_Window(tk.Frame):
                                              filetypes=script_filetypes)
         if name:
             text = files.import_script(name, False)
+            text = files.strip_lines(text)
             textbox.delete("1.0", tk.END)
             textbox.insert(tk.INSERT, text)
 
@@ -289,6 +291,7 @@ class Main_Window(tk.Frame):
             if files.SCRIPT_EXT not in name:
                 name += files.SCRIPT_EXT
             text = textbox.get("1.0", tk.END)
+            text = files.strip_lines(text)
             files.export_script(name, text, False)
 
     def popup(self, window, title, image, text, button_text):
