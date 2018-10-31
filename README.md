@@ -35,7 +35,7 @@ Because it could be immensely useful for a wide variety of tasks, such as:
 * ... and many more!
 
 ## Does it work yet?
-Yes! It does not have all the features I want just yet, and still has bugs, but it works! You can use the GUI to load/save layouts and edit button scripts/colors. It's still buggy, and not nearly as polished as I want yet, but it is functional!
+Yes! It does not have all the features I want just yet, and still has bugs, but it works! You can use the GUI to load/save layouts and edit button scripts/colors. It's not nearly as polished as I want yet, but it is functional!
 
 This is still WIP and still a beta version. See below for a todo list. I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help!
 
