@@ -120,7 +120,7 @@ For the `SP_` functions, the following values are allowed:
 * `vol_up`
 
 ## What still needs to be written?
-* ~~MkII spacific interface~~
+* ~~MkII specific interface~~
 * Support for all launchpads
 * ~~Events system~~
 * ~~Colors system~~
