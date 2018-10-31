@@ -62,6 +62,7 @@ def load_layout(name, add_path=True):
                     scripts.bind(x, y, script_text, color)
                 else:
                     lp_colors.setXY(x, y, color)
+    lp_colors.update()
     curr_layout = final_path
     print("[files] Loaded layout " + final_path)
 

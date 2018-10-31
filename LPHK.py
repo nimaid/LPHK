@@ -16,7 +16,7 @@ import lp_events, scripts, keyboard, files, sound, window
 
 PATH = sys.path[0]
 
-lp = launchpad.LaunchpadMk2();
+lp = launchpad.LaunchpadMk2()
 
 def init():
     global EXIT_ON_WINDOW_CLOSE

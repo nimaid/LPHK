@@ -7,7 +7,7 @@ import scripts, files, lp_colors, lp_events
 BUTTON_SIZE = 40
 STAT_ACTIVE_COLOR = "#060"
 STAT_INACTIVE_COLOR = "#444"
-
+INDICATOR_BPM = 500
 
 root = None
 app = None
@@ -84,6 +84,7 @@ class Main_Window(tk.Frame):
         global lp_connected
         if lp_object.Open(0, "mk2"):
             lp_object.ButtonFlush()
+            lp_object.LedCtrlBpm(INDICATOR_BPM)
             lp_events.start(lp_object)
             lp_connected = True
             self.draw_canvas()
@@ -237,13 +238,13 @@ class Main_Window(tk.Frame):
         export_script_button = tk.Button(w, text="Export Script", command=export_script_func)
         export_script_button.grid(column=2, row=2)
 
-        unbind_func = lambda: self.unbind_destroy(x, y, w)
-        unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
-        unbind_button.grid(column=3, row=1)
-
         save_func = lambda: self.save_script(w, x, y, lp_colors.code_by_color_brightness(color.get(), bright.get()), t.get(1.0, tk.END))
         save_button = tk.Button(w, text="Bind Button (" + str(x) + ", " + str(y) + ")", command=save_func)
-        save_button.grid(column=3, row=2)
+        save_button.grid(column=3, row=1)
+
+        unbind_func = lambda: self.unbind_destroy(x, y, w)
+        unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
+        unbind_button.grid(column=3, row=2)
 
         w.wait_visibility()
         w.grab_set()
@@ -262,6 +263,7 @@ class Main_Window(tk.Frame):
             if script_text != "":
                 scripts.bind(x, y, script_text, color)
                 self.draw_canvas()
+                lp_colors.update()
                 window.destroy()
             else:
                 self.popup(window, "No Script Entered", self.info_image, "Please enter a script to bind.", "OK")
