@@ -105,6 +105,8 @@ color_modes = [["solid" for y in range(9)] for x in range(9)]
 
 import lp_events, scripts
 
+from time import sleep
+
 lp_object = None
 
 def init(lp_object_in):
@@ -125,45 +127,48 @@ def getXY_RGB(x, y):
     return RGB[getXY(x, y)]
 
 def update():
-    for x in range(9):
-        for y in range(9):
-            set_color = None
-            if (lp_events.pressed[x][y]) and (scripts.threads[x][y] != None):
-                if scripts.threads[x][y].is_alive():
-                    set_color = scripts.COLOR_PRIMED
-                    color_modes[x][y] = "pulse"
-                else:
-                    set_color = effect_colors[x][y]
-                    color_modes[x][y] = "flash"
-            elif scripts.threads[x][y] != None:
-                if scripts.threads[x][y].is_alive():
-                    set_color = effect_colors[x][y]
-                    color_modes[x][y] = "flash"
-                else:
-                    if (x, y) in [l[1:] for l in scripts.to_run]:
+    try:
+        for x in range(9):
+            for y in range(9):
+                set_color = None
+                if (lp_events.pressed[x][y]) and (scripts.threads[x][y] != None):
+                    if scripts.threads[x][y].is_alive():
                         set_color = scripts.COLOR_PRIMED
                         color_modes[x][y] = "pulse"
                     else:
-                        set_color = curr_colors[x][y]
-                        color_modes[x][y] = "solid"
-            elif (x, y) in [l[1:] for l in scripts.to_run]:
-                set_color = scripts.COLOR_PRIMED
-                color_modes[x][y] = "pulse"
-            else:
-                set_color = curr_colors[x][y]
-                color_modes[x][y] = "solid"
+                        set_color = effect_colors[x][y]
+                        color_modes[x][y] = "flash"
+                elif scripts.threads[x][y] != None:
+                    if scripts.threads[x][y].is_alive():
+                        set_color = effect_colors[x][y]
+                        color_modes[x][y] = "flash"
+                    else:
+                        if (x, y) in [l[1:] for l in scripts.to_run]:
+                            set_color = scripts.COLOR_PRIMED
+                            color_modes[x][y] = "pulse"
+                        else:
+                            set_color = curr_colors[x][y]
+                            color_modes[x][y] = "solid"
+                elif (x, y) in [l[1:] for l in scripts.to_run]:
+                    set_color = scripts.COLOR_PRIMED
+                    color_modes[x][y] = "pulse"
+                else:
+                    set_color = curr_colors[x][y]
+                    color_modes[x][y] = "solid"
 
-            if (color_modes[x][y] == "solid") or ((y == 0) or (x == 8)):
-            #pulse and flash only work on main grid
-                lp_object.LedCtrlXYByCode(x, y, set_color)
-            elif color_modes[x][y] == "pulse":
-                lp_object.LedCtrlXYByCode(x, y, curr_colors[x][y])
-                lp_object.LedCtrlPulseXYByCode(x, y, set_color)
-            elif color_modes[x][y] == "flash":
-                lp_object.LedCtrlXYByCode(x, y, curr_colors[x][y])
-                lp_object.LedCtrlFlashXYByCode(x, y, set_color)
-            else:
-                lp_object.LedCtrlXYByCode(x, y, set_color)
+                if (color_modes[x][y] == "solid") or ((y == 0) or (x == 8)):
+                #pulse and flash only work on main grid
+                    lp_object.LedCtrlXYByCode(x, y, set_color)
+                elif color_modes[x][y] == "pulse":
+                    lp_object.LedCtrlXYByCode(x, y, curr_colors[x][y])
+                    lp_object.LedCtrlPulseXYByCode(x, y, set_color)
+                elif color_modes[x][y] == "flash":
+                    lp_object.LedCtrlXYByCode(x, y, curr_colors[x][y])
+                    lp_object.LedCtrlFlashXYByCode(x, y, set_color)
+                else:
+                    lp_object.LedCtrlXYByCode(x, y, set_color)
+    except:
+        print("[lp_colors] Cannot update colors, maybe launchpad is disconnected?")
 
 
 update_bindable = lambda x, y : update()

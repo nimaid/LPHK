@@ -38,7 +38,7 @@ def run_funcs(funcs_in):
         x = tup[1]
         y = tup[2]
         run_in_bg(func, x, y)
-    threading.Timer(0.01, lp_colors.update, ()).start()
+    threading.Timer(0.001, lp_colors.update, ()).start()
 
 def run_script(script_str, x=-1, y=-1):
     script_lines = script_str.split('\n')
