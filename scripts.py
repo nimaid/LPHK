@@ -13,16 +13,19 @@ VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PR
 
 threads = [[None for y in range(9)] for x in range(9)]
 running = False
+last_run = None
 to_run = []
 text = [["" for y in range(9)] for x in range(9)]
 
 def run_in_bg(func, x, y):
     global threads
     global to_run
+    global last_run
     if not running:
         threads[x][y] = threading.Thread(None, func)
         threads[x][y].start()
         lp_colors.updateXY(x, y)
+        last_run = (x, y)
     else:
         to_run.append((func, x, y))
 
@@ -44,6 +47,9 @@ def run_script(script_str, x=None, y=None):
     if (x != None) and (x != None):
         if (x, y) in [l[1:] for l in to_run]:
             print("[scripts] Script already scheduled...")
+            return
+        if ((x, y) == last_run) and (running):
+            print("[scripts] Script already running...")
             return
 
     script_lines = script_str.split('\n')
