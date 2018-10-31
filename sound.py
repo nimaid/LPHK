@@ -16,8 +16,8 @@ def init(path_in):
     m.init()
 
 def play(filename):
+    final_name = PATH + SOUND_PATH + filename
     try:
-        m.Sound(PATH + SOUND_PATH + filename).play()
-        return True
+        m.Sound(final_name).play()
     except:
-        return False
+        print("[sound] Could not play sound " + final_name)

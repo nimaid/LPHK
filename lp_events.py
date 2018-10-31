@@ -4,7 +4,7 @@ import lp_colors
 RUN_DELAY = 0.005 #0.005 == 200 FPS
 
 def unbound_press(x, y):
-    print("[lp_events] NOTHING BOUND TO BUTTON ("+str(x)+", "+str(y)+")")
+    print("[lp_events] Unbound button ("+str(x)+", "+str(y)+")")
 
 
 press_funcs = [[unbound_press for y in range(9)] for x in range(9)]

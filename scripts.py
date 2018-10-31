@@ -117,10 +117,8 @@ def run_script(script_str, x=None, y=None):
                 funcs_to_run.append(partial(webbrowser.open_new, link))
                 print("[scripts]    Open website " + link + " in default browser, try to make a new window")
             elif split_line[0] == "SOUND":
-                if(sound.play(split_line[1])):
-                    print("[scripts]    Play sound file " + split_line[1])
-                else:
-                    print("[scripts]    Can't play sound " + split_line[1] + ", skipping...")
+                funcs_to_run.append(partial(sound.play, split_line[1]))
+                print("[scripts]    Play sound file " + split_line[1])
             else:
                 print("[scripts]    Invalid command: " + split_line[0] + ", skipping...")
     if (x != None) and (y != None):
