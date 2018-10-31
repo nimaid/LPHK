@@ -122,7 +122,7 @@ def run_script(script_str, x=-1, y=-1):
 
 def bind(x, y, script_down, off_color=COLOR_DEFAULT):
     script_down_bindable = lambda a, b : run_script(script_down, x, y)
-    lp_events.bind_func_with_colors(x, y, script_down_bindable, off_color, COLOR_ACTIVE)
+    lp_events.bind_func_with_colors(x, y, script_down_bindable, off_color)
     text[x][y] = script_down
 
 def unbind(x, y):

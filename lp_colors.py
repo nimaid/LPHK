@@ -99,8 +99,6 @@ COLOR_BRIGHTS = {WHITE: ("White", "Full"),
                  PINK_THIRD: ("Pink", "Third")}
 
 curr_colors = [[BLACK for y in range(9)] for x in range(9)]
-effect_colors = [[BLACK for y in range(9)] for x in range(9)]
-
 color_modes = [["solid" for y in range(9)] for x in range(9)]
 
 import lp_events, scripts
@@ -111,13 +109,8 @@ def init(lp_object_in):
     global lp_object
     lp_object = lp_object_in
 
-
-
 def setXY(x, y, color):
     curr_colors[x][y] = color
-
-def effectXY(x, y, color):
-    effect_colors[x][y] = color
 
 def getXY(x, y):
     return curr_colors[x][y]
@@ -129,25 +122,14 @@ def update():
     try:
         for x in range(9):
             for y in range(9):
-                set_color = None
-                if (lp_events.pressed[x][y]) and (scripts.threads[x][y] != None):
-                    if scripts.threads[x][y].is_alive():
-                        set_color = scripts.COLOR_PRIMED
-                        color_modes[x][y] = "pulse"
-                    else:
-                        set_color = effect_colors[x][y]
-                        color_modes[x][y] = "flash"
-                elif scripts.threads[x][y] != None:
-                    if scripts.threads[x][y].is_alive():
-                        set_color = effect_colors[x][y]
-                        color_modes[x][y] = "flash"
-                    else:
-                        if (x, y) in [l[1:] for l in scripts.to_run]:
-                            set_color = scripts.COLOR_PRIMED
-                            color_modes[x][y] = "pulse"
-                        else:
-                            set_color = curr_colors[x][y]
-                            color_modes[x][y] = "solid"
+                is_running = False
+                if scripts.threads[x][y] != None:
+                    if scripts.threads[x][y].isAlive():
+                        is_running = True
+
+                if is_running:
+                    set_color = scripts.COLOR_ACTIVE
+                    color_modes[x][y] = "flash"
                 elif (x, y) in [l[1:] for l in scripts.to_run]:
                     set_color = scripts.COLOR_PRIMED
                     color_modes[x][y] = "pulse"

@@ -7,7 +7,7 @@ import scripts, files, lp_colors, lp_events
 BUTTON_SIZE = 40
 STAT_ACTIVE_COLOR = "#060"
 STAT_INACTIVE_COLOR = "#444"
-INDICATOR_BPM = 500
+INDICATOR_BPM = 480
 
 root = None
 app = None
@@ -119,7 +119,7 @@ class Main_Window(tk.Frame):
     def load_layout(self):
         name = tk.filedialog.askopenfilename(parent=app,
                                           initialdir=os.getcwd() + files.LAYOUT_PATH,
-                                          title="Load layout...:",
+                                          title="Load layout...",
                                           filetypes=layout_filetypes)
         if name:
             files.load_layout(name, False)
@@ -128,7 +128,7 @@ class Main_Window(tk.Frame):
     def save_layout_as(self):
         name = tk.filedialog.asksaveasfilename(parent=app,
                                             initialdir=os.getcwd() + files.LAYOUT_PATH,
-                                            title="Save layout as...:",
+                                            title="Save layout as...",
                                             filetypes=layout_filetypes)
         if name:
             if files.LAYOUT_EXT not in name:
