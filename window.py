@@ -5,7 +5,7 @@ import os
 import scripts, files, lp_colors, lp_events
 
 BUTTON_SIZE = 40
-STAT_ACTIVE_COLOR = "#060"
+STAT_ACTIVE_COLOR = "#080"
 STAT_INACTIVE_COLOR = "#444"
 INDICATOR_BPM = 480
 
@@ -67,6 +67,7 @@ class Main_Window(tk.Frame):
 
         self.stat = tk.Label(self, text="No Launchpad Connected", bg=STAT_INACTIVE_COLOR, fg="#fff")
         self.stat.grid(row=1, column=0, sticky=tk.EW)
+        self.stat.config(font=("Courier", BUTTON_SIZE // 3, "bold"))
 
     def enable_menu(self, name):
         self.m.entryconfig(name, state="normal")
