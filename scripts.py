@@ -41,6 +41,11 @@ def run_funcs(funcs_in):
         run_in_bg(func, x, y)
 
 def run_script(script_str, x=None, y=None):
+    if (x != None) and (x != None):
+        if (x, y) in [l[1:] for l in to_run]:
+            print("[scripts] Script already scheduled...")
+            return
+
     script_lines = script_str.split('\n')
     funcs_to_run = []
     print("[scripts] Now parsing script...")
