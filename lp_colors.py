@@ -135,7 +135,7 @@ def updateXY(x, y):
                 set_color = curr_colors[x][y]
                 color_modes[x][y] = "solid"
             elif is_running:
-                set_color = scripts.COLOR_ACTIVE
+                set_color = scripts.COLOR_PRIMED
                 color_modes[x][y] = "flash"
             elif (x, y) in [l[1:] for l in scripts.to_run]:
                 set_color = scripts.COLOR_PRIMED
@@ -148,10 +148,9 @@ def updateXY(x, y):
                 #pulse and flash only work on main grid
                 lp_object.LedCtrlXYByCode(x, y, set_color)
             elif color_modes[x][y] == "pulse":
-                lp_object.LedCtrlXYByCode(x, y, curr_colors[x][y])
                 lp_object.LedCtrlPulseXYByCode(x, y, set_color)
             elif color_modes[x][y] == "flash":
-                lp_object.LedCtrlXYByCode(x, y, curr_colors[x][y])
+                lp_object.LedCtrlXYByCode(x, y, BLACK)
                 lp_object.LedCtrlFlashXYByCode(x, y, set_color)
             else:
                 lp_object.LedCtrlXYByCode(x, y, set_color)

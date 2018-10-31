@@ -3,9 +3,7 @@ from time import sleep
 from functools import partial
 import lp_events, lp_colors, keyboard, sound
 
-COLOR_ACTIVE = lp_colors.GREEN
 COLOR_PRIMED = lp_colors.RED
-COLOR_DEFAULT = lp_colors.BLUE_THIRD
 
 import files
 
@@ -132,9 +130,9 @@ def run_script(script_str, x=None, y=None):
         script_func = partial(run_funcs, funcs_to_run)
         script_func()
 
-def bind(x, y, script_down, off_color=COLOR_DEFAULT):
+def bind(x, y, script_down, color):
     script_down_bindable = lambda a, b : run_script(script_down, x, y)
-    lp_events.bind_func_with_colors(x, y, script_down_bindable, off_color)
+    lp_events.bind_func_with_colors(x, y, script_down_bindable, color)
     text[x][y] = script_down
 
 def unbind(x, y):
