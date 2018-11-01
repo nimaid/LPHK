@@ -127,11 +127,9 @@ def updateXY(x, y):
     try:
         if (x, y) != (8, 0):
             is_running = False
-            if scripts.procs[x][y] != None:
-                if scripts.procs[x][y].is_alive():
+            if scripts.threads[x][y] != None:
+                if scripts.threads[x][y].isAlive():
                     is_running = True
-
-            print("Update colors (" + str(x) + ", " + str(y) + "), is_running = " + str(is_running) + ", force_off = " + str(force_off[x][y]))
 
             if force_off[x][y]:
                 set_color = curr_colors[x][y]

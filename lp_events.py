@@ -1,4 +1,4 @@
-import threading
+import copy, threading, time
 import lp_colors
 
 RUN_DELAY = 0.005 #0.005 == 200 FPS
@@ -26,8 +26,8 @@ def run(lp_object):
             else:
                 pressed[event[0]][event[1]] = True
                 press_funcs[event[0]][event[1]](event[0], event[1])
-                lp_colors.set_force_off(event[0], event[1], False)
-                lp_colors.updateXY(event[0], event[1])
+            lp_colors.set_force_off(event[0], event[1], False)
+            lp_colors.updateXY(event[0], event[1])
         else:
             break
     init(lp_object)
@@ -43,7 +43,6 @@ def bind_func_with_colors(x, y, func, off_color):
     global press_funcs
     press_funcs[x][y] = func
     lp_colors.setXY(x, y, off_color)
-    lp_colors.updateXY(x, y)
 
 def unbind(x, y):
     global press_funcs
