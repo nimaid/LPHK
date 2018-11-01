@@ -265,7 +265,6 @@ class Main_Window(tk.Frame):
                 script_text = files.strip_lines(script_text)
                 scripts.bind(x, y, script_text, color)
                 self.draw_canvas()
-                lp_colors.updateXY(x, y)
                 window.destroy()
             else:
                 self.popup(window, "No Script Entered", self.info_image, "Please enter a script to bind.", "OK")

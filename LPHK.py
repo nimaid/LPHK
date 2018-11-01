@@ -35,7 +35,6 @@ def init():
 def shutdown():
     if lp_events.timer != None:
         lp_events.timer.cancel()
-    scripts.to_run = []
     if window.lp_connected:
         scripts.unbind_all()
         lp_events.timer.cancel()
