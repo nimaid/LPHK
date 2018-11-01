@@ -71,6 +71,7 @@ def run_script_and_run_next(script, x, y):
         schedule_script(new_script, x, y)
 
 def run_script(script_str, x, y):
+    lp_colors.updateXY(x, y)
     coords = "(" + str(x) + ", " + str(y) + ")"
 
     script_lines = script_str.split('\n')
