@@ -8,7 +8,7 @@ A Novation Launchpad macro scripting system.
 ## What does it do?
 The goal of this project is to implement a macro scripting system for the Novation Launchpad, in order to use the launchpad as a scriptable, general purpose macro keyboard.
 
-It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript), and will have a GUI to enter scripts, set colors, and to save/load your setup.
+It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript), and has a GUI to enter scripts, set colors, and to save/load your setup.
 
 ## Why would you do that?
 Because it could be immensely useful for a wide variety of tasks, such as:
@@ -120,7 +120,7 @@ For the `SP_` functions, the following values are allowed:
 * `vol_up`
 
 ## What still needs to be written?
-* ~~MkII spacific interface~~
+* ~~MkII specific interface~~
 * Support for all launchpads
 * ~~Events system~~
 * ~~Colors system~~
@@ -136,6 +136,7 @@ For the `SP_` functions, the following values are allowed:
 * Add a REPEAT command to do last command n number of times
 * ~~Add launchpad connection status indicator/remove popups~~
 * Add script status icons (playing, queued)
+* Make pressing a running/queued button cancel/terminate execution
 * ~~Make queued/playing buttons blink instead of be solid~~ (Big shout out to FMMT666 for [adding the features I needed to launchpad.py](https://github.com/FMMT666/launchpad.py/issues/31)!)
 * A "run the script on button X Y" command... runs risk of infinite loops.
 * MIDI output command? (Low priority)
