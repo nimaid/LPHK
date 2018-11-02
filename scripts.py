@@ -90,40 +90,54 @@ def run_script(script_str, x, y):
                 print("[scripts] " + coords + "    Type out string " + type_string)
                 keyboard.controller.type(type_string)
             elif split_line[0] == "DELAY":
-                print("[scripts] " + coords + "    Delay for " + split_line[1] + " seconds")
-                delay =float(split_line[1])
-                while delay > DELAY_EXIT_CHECK:
-                    sleep(DELAY_EXIT_CHECK)
-                    delay -= DELAY_EXIT_CHECK
-                    if kill[x][y]:
-                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                        kill[x][y] = False
-                        running = False
-                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return
-                if delay > 0:
-                    sleep(delay)
-            elif split_line[0] == "TAP":
-                if len(split_line) < 3:
-                    print("[scripts] " + coords + "    Tap key " + split_line[1])
-                    keyboard.tap(split_line[1])
-                else:
-                    print("[scripts] " + coords + "    Tap key " + split_line[1] + " for " + str(split_line[2]) + " seconds")
-                    keyboard.controller.press(split_line[1])
-                    delay = float(split_line[2])
+                delay = None
+                try:
+                    delay =float(split_line[1])
+                except:
+                    print("[scripts] " + coords + "     Invalid time to delay, skipping...")
+
+                if delay != None:
+                    print("[scripts] " + coords + "    Delay for " + split_line[1] + " seconds")
                     while delay > DELAY_EXIT_CHECK:
                         sleep(DELAY_EXIT_CHECK)
                         delay -= DELAY_EXIT_CHECK
                         if kill[x][y]:
                             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                            keyboard.controller.release(split_line[1])
                             kill[x][y] = False
                             running = False
                             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                             return
                     if delay > 0:
                         sleep(delay)
-                    keyboard.controller.release(split_line[1])
+            elif split_line[0] == "TAP":
+                if len(split_line) < 3:
+                    print("[scripts] " + coords + "    Tap key " + split_line[1])
+                    keyboard.tap(split_line[1])
+                else:
+                    delay = None
+                    try:
+                        delay =float(split_line[2])
+                    except:
+                        print("[scripts] " + coords + "     Invalid time to tap, skipping...")
+
+                    if delay != None:
+                        print("[scripts] " + coords + "    Tap key " + split_line[1] + " for " + str(split_line[2]) + " seconds")
+                        keyboard.controller.press(split_line[1])
+
+                        while delay > DELAY_EXIT_CHECK:
+                            sleep(DELAY_EXIT_CHECK)
+                            delay -= DELAY_EXIT_CHECK
+                            if kill[x][y]:
+                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                                kill[x][y] = False
+                                running = False
+                                keyboard.controller.release(split_line[1])
+                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                                return
+                        if delay > 0:
+                            sleep(delay)
+
+                        keyboard.controller.release(split_line[1])
 
             elif split_line[0] == "PRESS":
                 print("[scripts] " + coords + "    Press key " + split_line[1])
@@ -137,23 +151,32 @@ def run_script(script_str, x, y):
                         print("[scripts] " + coords + "    Tap special key " + split_line[1])
                         keyboard.tap(keyboard.sp(split_line[1]))
                     else:
+                        delay = None
+                    try:
+                        delay =float(split_line[2])
+                    except:
+                        print("[scripts] " + coords + "     Invalid time to special tap, skipping...")
+
+                    if delay != None:
                         print("[scripts] " + coords + "    Tap special key " + split_line[1] + " for " + str(split_line[2]) + " seconds")
+
                         key = keyboard.sp(split_line[1])
 
                         keyboard.controller.press(key)
-                        delay = float(split_line[2])
+
                         while delay > DELAY_EXIT_CHECK:
                             sleep(DELAY_EXIT_CHECK)
                             delay -= DELAY_EXIT_CHECK
                             if kill[x][y]:
                                 print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                keyboard.controller.release(key)
                                 kill[x][y] = False
                                 running = False
+                                keyboard.controller.release(key)
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                 return
                         if delay > 0:
                             sleep(delay)
+
                         keyboard.controller.release(key)
                 else:
                     print("[scripts] " + coords + "    Invalid special character to tap: " + split_line[1] + ", skipping...")
@@ -255,5 +278,24 @@ def validate_script(script_str):
             if split_line[0] in ["TAP", "PRESS", "RELEASE"]:
                 if len(split_line[1]) > 1:
                     return ("More than 1 character supplied.", line)
+            if split_line[0] == "DELAY":
+                if len(split_line) > 2:
+                    return ("Too many arguments supplied.", line)
+                try:
+                    temp = float(split_line[1])
+                except:
+                    return ("Delay time '" + split_line[1] + "' not valid.", line)
+            if split_line[0] in ["TAP", "SP_TAP"]:
+                if len(split_line) > 3:
+                    return ("Too many arguments supplied.", line)
+                if len(split_line) > 2:
+                    try:
+                        temp = float(split_line[2])
+                    except:
+                        func_name = "Tap"
+                        if split_line[0] == "SP_TAP":
+                            func_name = "Special tap"
+
+                        return (func_name + " time '" + split_line[2] + "' not valid.", line)
 
     return True
