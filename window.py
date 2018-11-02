@@ -208,6 +208,7 @@ class Main_Window(tk.Frame):
 
         t.insert(tk.INSERT, scripts.text[x][y])
         t.bind("<<Paste>>", self.custom_paste)
+        t.bind("<Control-Key-a>", self.select_all)
 
         curr_color = lp_colors.getXY(x, y)
         curr_color_bright = None
@@ -258,6 +259,12 @@ class Main_Window(tk.Frame):
         except:
             pass
         event.widget.insert("insert", event.widget.clipboard_get())
+        return "break"
+
+    def select_all(self, event):
+        event.widget.tag_add(tk.SEL, "1.0", tk.END)
+        event.widget.mark_set(tk.INSERT, "1.0")
+        event.widget.see(tk.INSERT)
         return "break"
 
     def unbind_destroy(self, x, y, window):
