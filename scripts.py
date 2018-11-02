@@ -37,7 +37,11 @@ def schedule_script(script_in, x, y):
             temp = to_run.pop(index)
         return
 
-    if not running:
+    if script_in.split("\n")[0].split(" ")[0] == "@ASYNC":
+        print("[scripts] " + coords + " Starting asynchronous script in background...")
+        threads[x][y] = threading.Thread(target=run_script, args=(script_in,x,y))
+        threads[x][y].start()
+    elif not running:
         print("[scripts] " + coords + " No script running, starting script in background...")
         threads[x][y] = threading.Thread(target=run_script_and_run_next, args=(script_in,x,y))
         threads[x][y].start()
@@ -72,20 +76,28 @@ def run_script(script_str, x, y):
     lp_colors.updateXY(x, y)
     coords = "(" + str(x) + ", " + str(y) + ")"
 
-    running = True
-    script_lines = script_str.split('\n')
+    script_lines = script_str.split("\n")
+
+    async = False
+    if script_lines[0].split(" ")[0] == "@ASYNC":
+        async = True
+        temp = script_lines.pop(0)
+    else:
+        running = True
+
     print("[scripts] " + coords + " Now running script...")
     for line in script_lines:
         if kill[x][y]:
             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
             kill[x][y] = False
-            running = False
+            if not async:
+                running = False
             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
             return
         if line.strip() == "":
             print("[scripts] " + coords + "    Empty line")
         else:
-            split_line = line.split(' ')
+            split_line = line.split(" ")
             if split_line[0] == "STRING":
                 type_string = " ".join(split_line[1:])
                 print("[scripts] " + coords + "    Type out string " + type_string)
@@ -105,7 +117,8 @@ def run_script(script_str, x, y):
                         if kill[x][y]:
                             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                             kill[x][y] = False
-                            running = False
+                            if not async:
+                                running = False
                             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                             return
                     if delay > 0:
@@ -131,7 +144,8 @@ def run_script(script_str, x, y):
                             if kill[x][y]:
                                 print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                 kill[x][y] = False
-                                running = False
+                                if not async:
+                                    running = False
                                 keyboard.controller.release(split_line[1])
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                 return
@@ -172,7 +186,8 @@ def run_script(script_str, x, y):
                                 if kill[x][y]:
                                     print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                     kill[x][y] = False
-                                    running = False
+                                    if not async:
+                                        running = False
                                     keyboard.controller.release(key)
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                     return
@@ -216,14 +231,16 @@ def run_script(script_str, x, y):
                     if kill[x][y]:
                         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                         kill[x][y] = False
-                        running = False
+                        if not async:
+                            running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                         return
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
     print("[scripts] (" + str(x) + ", " + str(y) + ") Script done running.")
 
-    running = False
+    if not async:
+        running = False
     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
 
 def bind(x, y, script_down, color):
@@ -269,11 +286,22 @@ def validate_script(script_str):
     if script_str == "":
         return True
     script_lines = script_str.split('\n')
+
+    first_line_split = script_lines[0].split(" ")
+
+    if first_line_split[0] == "@ASYNC":
+        if len(first_line_split) > 1:
+            return ("@ASYNC takes no arguments.", script_lines[0])
+        temp = script_lines.pop(0)
+
     for line in script_lines:
         if line.strip() != "":
             split_line = line.split(' ')
             if split_line[0] not in VALID_COMMANDS:
-                return ("Command '" + split_line[0] + "' not valid.", line)
+                if split_line[0] == "@ASYNC":
+                    return ("@ASYNC is a header and can only be used on the first line.", line)
+                else:
+                    return ("Command '" + split_line[0] + "' not valid.", line)
             if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND"]:
                 if len(split_line) < 2:
                     return ("Command '" + split_line[0] + "' requires at least 1 argument.", line)
