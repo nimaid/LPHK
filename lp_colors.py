@@ -134,7 +134,7 @@ def updateXY(x, y):
             color_modes[x][y] = "flash"
         elif (x, y) in [l[1:] for l in scripts.to_run]:
             if is_func_key:
-                set_color = scripts.COLOR_FUNC_KEYS_ACTIVE
+                set_color = scripts.COLOR_FUNC_KEYS_PRIMED
             else:
                 set_color = scripts.COLOR_PRIMED
                 color_modes[x][y] = "pulse"
