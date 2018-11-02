@@ -192,6 +192,13 @@ def run_script(script_str, x, y):
         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
 
 def bind(x, y, script_down, color):
+    global to_run
+    if (x, y) in [l[1:] for l in to_run]:
+        indexes = [i for i, v in enumerate(to_run) if ((v[1] == x) and (v[2] == y))]
+        for index in indexes[::-1]:
+            temp = to_run.pop(index)
+        return
+
     schedule_script_bindable = lambda a, b: schedule_script(script_down, x, y)
 
     lp_events.bind_func_with_colors(x, y, schedule_script_bindable, color)
