@@ -257,7 +257,8 @@ class Main_Window(tk.Frame):
             event.widget.delete("sel.first", "sel.last")
         except:
             pass
-        #event.widget.insert("insert", event.widget.clipboard_get())
+        event.widget.insert("insert", event.widget.clipboard_get())
+        return "break"
 
     def unbind_destroy(self, x, y, window):
         scripts.unbind(x, y)
