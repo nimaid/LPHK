@@ -84,10 +84,10 @@ class Main_Window(tk.Frame):
     def connect_MkII(self):
         global lp_connected
         if lp_object.Open(0, "mk2"):
+            lp_connected = True
             lp_object.ButtonFlush()
             lp_object.LedCtrlBpm(INDICATOR_BPM)
             lp_events.start(lp_object)
-            lp_connected = True
             self.draw_canvas()
             self.enable_menu("Layout")
             self.enable_lp_disconnect()

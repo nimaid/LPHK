@@ -138,6 +138,7 @@ For the `SP_` functions, the following values are allowed:
 * ~~Script entry error checking~~
 * ~~Add launchpad connection menu~~
 * Add a REPEAT command to do last command n number of times
+* Add a WAIT_UNPRESSED command that delays while the button the script is bound to is pressed
 * ~~Add launchpad connection status indicator/remove popups~~
 * Add script status icons (playing, queued)
 * ~~Make pressing a running/queued button cancel/terminate execution~~
