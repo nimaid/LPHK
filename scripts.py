@@ -5,6 +5,7 @@ import lp_events, lp_colors, keyboard, sound
 
 COLOR_PRIMED = lp_colors.RED
 COLOR_FUNC_KEYS_PRIMED = lp_colors.AMBER
+EXIT_UPDATE_DELAY = 0.1
 
 import files
 
@@ -20,7 +21,6 @@ kill = [[False for y in range(9)] for x in range(9)]
 def schedule_script(script_in, x, y):
     global threads
     global to_run
-
     coords = "(" + str(x) + ", " + str(y) + ")"
 
     if threads[x][y] != None:
@@ -79,7 +79,7 @@ def run_script(script_str, x, y):
             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
             kill[x][y] = False
             running = False
-            threading.Timer(lp_events.RUN_DELAY, lp_colors.updateXY, (x, y)).start()
+            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
             return
         if line.strip() == "":
             print("[scripts] " + coords + "    Empty line")
@@ -99,7 +99,7 @@ def run_script(script_str, x, y):
                         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                         kill[x][y] = False
                         running = False
-                        threading.Timer(lp_events.RUN_DELAY, lp_colors.updateXY, (x, y)).start()
+                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                         return
                 if delay > 0:
                     sleep(delay)
@@ -119,7 +119,7 @@ def run_script(script_str, x, y):
                             keyboard.controller.release(split_line[1])
                             kill[x][y] = False
                             running = False
-                            threading.Timer(lp_events.RUN_DELAY, lp_colors.updateXY, (x, y)).start()
+                            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                             return
                     if delay > 0:
                         sleep(delay)
@@ -150,7 +150,7 @@ def run_script(script_str, x, y):
                                 keyboard.controller.release(key)
                                 kill[x][y] = False
                                 running = False
-                                threading.Timer(lp_events.RUN_DELAY, lp_colors.updateXY, (x, y)).start()
+                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                 return
                         if delay > 0:
                             sleep(delay)
@@ -189,7 +189,7 @@ def run_script(script_str, x, y):
         print("[scripts] (" + str(x) + ", " + str(y) + ") Script done running.")
 
         running = False
-        threading.Timer(lp_events.RUN_DELAY, lp_colors.updateXY, (x, y)).start()
+        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
 
 def bind(x, y, script_down, color):
     schedule_script_bindable = lambda a, b: schedule_script(script_down, x, y)
@@ -198,9 +198,17 @@ def bind(x, y, script_down, color):
     text[x][y] = script_down
 
 def unbind(x, y):
+    global kill
+    global to_run
     lp_events.unbind(x, y)
     threads[x][y] = None
     text[x][y] = ""
+    if (x, y) in [l[1:] for l in to_run]:
+        indexes = [i for i, v in enumerate(to_run) if ((v[1] == x) and (v[2] == y))]
+        for index in indexes[::-1]:
+            temp = to_run.pop(index)
+        return
+    kill[x][y] = True
 
 def unbind_all():
     global threads
