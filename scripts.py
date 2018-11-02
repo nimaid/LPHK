@@ -10,7 +10,7 @@ EXIT_UPDATE_DELAY = 0.1
 import files
 
 VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED"]
-DELAY_EXIT_CHECK = 0.25
+DELAY_EXIT_CHECK = 0.025
 
 threads = [[None for y in range(9)] for x in range(9)]
 running = False
