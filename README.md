@@ -12,6 +12,8 @@ The goal of this project is to implement a macro scripting system for the Novati
 
 It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript), and has a GUI to enter scripts, set colors, and to save/load your setup.
 
+I have specifically chosen to do my best to develop this using as many cross platform libraries as possible, with a hard requirement that Linux and Windows be supported, and a strong preference for Mac as well. The GUI is driven by TK, which works on all of the above plus Unix. The interface with the launchpad and several script functions are built on pygame, which is compatable with basically everything ever. Pretty much everything else is standard Python 3.
+
 ## Why would you do that?
 Because it could be immensely useful for a wide variety of tasks, such as:
 * Gaming, to bind:
