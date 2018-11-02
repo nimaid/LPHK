@@ -16,7 +16,6 @@ threads = [[None for y in range(9)] for x in range(9)]
 running = False
 to_run = []
 text = [["" for y in range(9)] for x in range(9)]
-kill = [[False for y in range(9)] for x in range(9)]
 
 def schedule_script(script_in, x, y):
     global threads
@@ -27,7 +26,7 @@ def schedule_script(script_in, x, y):
     if threads[x][y] != None:
         if threads[x][y].is_alive():
             print("[scripts] " + coords + " Script already running, killing script....")
-            kill[x][y] = True
+            threads[x][y].kill.set()
             return
 
     if (x, y) in [l[1:] for l in to_run]:
@@ -40,10 +39,12 @@ def schedule_script(script_in, x, y):
     if script_in.split("\n")[0].split(" ")[0] == "@ASYNC":
         print("[scripts] " + coords + " Starting asynchronous script in background...")
         threads[x][y] = threading.Thread(target=run_script, args=(script_in,x,y))
+        threads[x][y].kill = threading.Event()
         threads[x][y].start()
     elif not running:
         print("[scripts] " + coords + " No script running, starting script in background...")
         threads[x][y] = threading.Thread(target=run_script_and_run_next, args=(script_in,x,y))
+        threads[x][y].kill = threading.Event()
         threads[x][y].start()
     else:
         print("[scripts] " + coords + " A script is already running, scheduling...")
@@ -69,7 +70,6 @@ def run_script_and_run_next(script_in, x_in, y_in):
     run_next()
 
 def run_script(script_str, x, y):
-    global kill
     global running
     global exit
 
@@ -87,9 +87,9 @@ def run_script(script_str, x, y):
 
     print("[scripts] " + coords + " Now running script...")
     for line in script_lines:
-        if kill[x][y]:
+        if threads[x][y].kill.is_set():
             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-            kill[x][y] = False
+            threads[x][y].kill.clear()
             if not async:
                 running = False
             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -114,9 +114,9 @@ def run_script(script_str, x, y):
                     while delay > DELAY_EXIT_CHECK:
                         sleep(DELAY_EXIT_CHECK)
                         delay -= DELAY_EXIT_CHECK
-                        if kill[x][y]:
+                        if threads[x][y].kill.is_set():
                             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                            kill[x][y] = False
+                            threads[x][y].kill.clear()
                             if not async:
                                 running = False
                             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -141,9 +141,9 @@ def run_script(script_str, x, y):
                         while delay > DELAY_EXIT_CHECK:
                             sleep(DELAY_EXIT_CHECK)
                             delay -= DELAY_EXIT_CHECK
-                            if kill[x][y]:
+                            if threads[x][y].kill.is_set():
                                 print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                kill[x][y] = False
+                                threads[x][y].kill.clear()
                                 if not async:
                                     running = False
                                 keyboard.controller.release(split_line[1])
@@ -183,9 +183,9 @@ def run_script(script_str, x, y):
                             while delay > DELAY_EXIT_CHECK:
                                 sleep(DELAY_EXIT_CHECK)
                                 delay -= DELAY_EXIT_CHECK
-                                if kill[x][y]:
+                                if threads[x][y].kill.is_set():
                                     print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                    kill[x][y] = False
+                                    threads[x][y].kill.clear()
                                     if not async:
                                         running = False
                                     keyboard.controller.release(key)
@@ -228,9 +228,9 @@ def run_script(script_str, x, y):
                 print("[scripts] " + coords + "    Wait for script key to be unpressed")
                 while lp_events.pressed[x][y]:
                     sleep(DELAY_EXIT_CHECK)
-                    if kill[x][y]:
+                    if threads[x][y].kill.is_set():
                         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                        kill[x][y] = False
+                        threads[x][y].kill.clear()
                         if not async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -257,7 +257,6 @@ def bind(x, y, script_down, color):
     text[x][y] = script_down
 
 def unbind(x, y):
-    global kill
     global to_run
     lp_events.unbind(x, y)
     text[x][y] = ""
@@ -266,13 +265,12 @@ def unbind(x, y):
         for index in indexes[::-1]:
             temp = to_run.pop(index)
         return
-    kill[x][y] = True
+    threads[x][y].kill.set()
 
 def unbind_all():
     global threads
     global text
     global to_run
-    global kill
     lp_events.unbind_all()
     text = [["" for y in range(9)] for x in range(9)]
     to_run = []
@@ -280,7 +278,7 @@ def unbind_all():
         for y in range(9):
             if threads[x][y] != None:
                 if threads[x][y].isAlive():
-                    kill[x][y] = True
+                    threads[x][y].kill.set()
 
 def validate_script(script_str):
     if script_str == "":
