@@ -119,44 +119,34 @@ def getXY_RGB(x, y):
     return RGB[getXY(x, y)]
 
 def updateXY(x, y):
-    try:
-        if (x, y) != (8, 0):
-            is_running = False
-            if scripts.threads[x][y] != None:
-                if scripts.threads[x][y].isAlive():
-                    is_running = True
+    if (x, y) != (8, 0):
+        is_running = False
+        if scripts.threads[x][y] != None:
+            if scripts.threads[x][y].isAlive():
+                is_running = True
 
-            #print("Update colors for (" + str(x) + ", " + str(y) + "), is_running = " + str(is_running))
+        #print("Update colors for (" + str(x) + ", " + str(y) + "), is_running = " + str(is_running))
 
-            #if force_off[x][y]:
-            if False:
-                set_color = curr_colors[x][y]
-                color_modes[x][y] = "solid"
-            elif is_running:
-                set_color = scripts.COLOR_PRIMED
-                color_modes[x][y] = "flash"
-            elif (x, y) in [l[1:] for l in scripts.to_run]:
-                set_color = scripts.COLOR_PRIMED
-                color_modes[x][y] = "pulse"
-            elif lp_events.pressed[x][y]:
-                set_color = scripts.COLOR_PRIMED
-                color_modes[x][y] = "solid"
-            else:
-                set_color = curr_colors[x][y]
-                color_modes[x][y] = "solid"
+        if is_running:
+            set_color = scripts.COLOR_PRIMED
+            color_modes[x][y] = "flash"
+        elif (x, y) in [l[1:] for l in scripts.to_run]:
+            set_color = scripts.COLOR_PRIMED
+            color_modes[x][y] = "pulse"
+        else:
+            set_color = curr_colors[x][y]
+            color_modes[x][y] = "solid"
 
-            if (color_modes[x][y] == "solid") or ((y == 0) or (x == 8)):
-                #pulse and flash only work on main grid
-                lp_object.LedCtrlXYByCode(x, y, set_color)
-            elif color_modes[x][y] == "pulse":
-                lp_object.LedCtrlPulseXYByCode(x, y, set_color)
-            elif color_modes[x][y] == "flash":
-                lp_object.LedCtrlXYByCode(x, y, BLACK)
-                lp_object.LedCtrlFlashXYByCode(x, y, set_color)
-            else:
-                lp_object.LedCtrlXYByCode(x, y, set_color)
-    except:
-        print("[lp_colors] Cannot update colors, maybe launchpad is disconnected?")
+        if (color_modes[x][y] == "solid") or ((y == 0) or (x == 8)):
+            #pulse and flash only work on main grid
+            lp_object.LedCtrlXYByCode(x, y, set_color)
+        elif color_modes[x][y] == "pulse":
+            lp_object.LedCtrlPulseXYByCode(x, y, set_color)
+        elif color_modes[x][y] == "flash":
+            lp_object.LedCtrlXYByCode(x, y, BLACK)
+            lp_object.LedCtrlFlashXYByCode(x, y, set_color)
+        else:
+            lp_object.LedCtrlXYByCode(x, y, set_color)
 
 def update_all():
     for x in range(9):
