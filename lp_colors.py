@@ -131,7 +131,10 @@ def updateXY(x, y):
                 if scripts.threads[x][y].isAlive():
                     is_running = True
 
-            if force_off[x][y]:
+            #print("Update colors for (" + str(x) + ", " + str(y) + "), is_running = " + str(is_running))
+
+            #if force_off[x][y]:
+            if False:
                 set_color = curr_colors[x][y]
                 color_modes[x][y] = "solid"
             elif is_running:
@@ -140,6 +143,9 @@ def updateXY(x, y):
             elif (x, y) in [l[1:] for l in scripts.to_run]:
                 set_color = scripts.COLOR_PRIMED
                 color_modes[x][y] = "pulse"
+            elif lp_events.pressed[x][y]:
+                set_color = scripts.COLOR_PRIMED
+                color_modes[x][y] = "solid"
             else:
                 set_color = curr_colors[x][y]
                 color_modes[x][y] = "solid"

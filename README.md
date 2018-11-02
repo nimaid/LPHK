@@ -136,7 +136,7 @@ For the `SP_` functions, the following values are allowed:
 * Add a REPEAT command to do last command n number of times
 * ~~Add launchpad connection status indicator/remove popups~~
 * Add script status icons (playing, queued)
-* Make pressing a running/queued button cancel/terminate execution
+* ~~Make pressing a running/queued button cancel/terminate execution~~
 * ~~Make queued/playing buttons blink instead of be solid~~ (Big shout out to FMMT666 for [adding the features I needed to launchpad.py](https://github.com/FMMT666/launchpad.py/issues/31)!)
 * A "run the script on button X Y" command... runs risk of infinite loops.
 * MIDI output command? (Low priority)

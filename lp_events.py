@@ -14,20 +14,22 @@ timer = None
 
 def init(lp_object):
     global timer
-    timer = threading.Timer(RUN_DELAY, run, [lp_object])
+    global press_funcs
+    timer = threading.Timer(RUN_DELAY, run, (lp_object,))
 
 def run(lp_object):
     global timer
     while True:
         event = lp_object.ButtonStateXY()
         if event != []:
+            x = event[0]
+            y = event[1]
             if event[2] == 0:
-                pressed[event[0]][event[1]] = False
+                pressed[x][y] = False
             else:
-                pressed[event[0]][event[1]] = True
-                press_funcs[event[0]][event[1]](event[0], event[1])
-            lp_colors.set_force_off(event[0], event[1], False)
-            lp_colors.updateXY(event[0], event[1])
+                pressed[x][y] = True
+                press_funcs[x][y](x, y)
+            lp_colors.updateXY(x, y)
         else:
             break
     init(lp_object)
