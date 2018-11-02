@@ -207,6 +207,7 @@ class Main_Window(tk.Frame):
         t.grid(column=0, row=0, columnspan=4, padx=10, pady=10)
 
         t.insert(tk.INSERT, scripts.text[x][y])
+        t.bind("<<Paste>>", self.custom_paste)
 
         curr_color = lp_colors.getXY(x, y)
         curr_color_bright = None
@@ -250,6 +251,13 @@ class Main_Window(tk.Frame):
         w.wait_visibility()
         w.grab_set()
         t.focus_set()
+
+    def custom_paste(self, event):
+        try:
+            event.widget.delete("sel.first", "sel.last")
+        except:
+            pass
+        #event.widget.insert("insert", event.widget.clipboard_get())
 
     def unbind_destroy(self, x, y, window):
         scripts.unbind(x, y)
