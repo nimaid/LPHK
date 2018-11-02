@@ -70,12 +70,14 @@ The current command list is as follows:
 * `TAP` - taps the normal character (argument 1), if (argument 2) supplied, delay (argument 1) seconds before releasing
 * `PRESS` - presses normal character (argument 1)
 * `RELEASE` - releases the normal character (argument 1)
+* `SOUND` - play a sound named (argument 1) inside the `user_sounds/` folder, `.wav` and `.ogg` only
 * `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, delay (argument 1) seconds before releasing
 * `SP_PRESS` - presses the special character (argument 1)
 * `SP_RELEASE` - releases the spacial character (argument 1)
+* `WAIT_UNPRESSED` - waits until the button it's bound too is unpressed (no arguments)
 * `WEB` - open website (argument 1) in default browser
 * `WEB_NEW` - open website (argument 1) in default browser, try new window
-* `SOUND` - play a sound named (argument 1) inside the `user_sounds/` folder, `.wav` and `.ogg` only
+
 
 For all commands, the arguments cannot contain the following strings, as they are reserved for the LPHKlayout file format:
 * `:LPHK_BUTTON_SEP:`
@@ -138,7 +140,7 @@ For the `SP_` functions, the following values are allowed:
 * ~~Script entry error checking~~
 * ~~Add launchpad connection menu~~
 * Add a REPEAT command to do last command n number of times
-* Add a WAIT_UNPRESSED command that delays while the button the script is bound to is pressed
+* ~~Add a WAIT_UNPRESSED command that delays while the button the script is bound to is pressed~~
 * ~~Add launchpad connection status indicator/remove popups~~
 * Add script status icons (playing, queued)
 * ~~Make pressing a running/queued button cancel/terminate execution~~

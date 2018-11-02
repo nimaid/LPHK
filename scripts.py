@@ -9,7 +9,7 @@ EXIT_UPDATE_DELAY = 0.1
 
 import files
 
-VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND"]
+VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED"]
 DELAY_EXIT_CHECK = 0.25
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -21,6 +21,7 @@ kill = [[False for y in range(9)] for x in range(9)]
 def schedule_script(script_in, x, y):
     global threads
     global to_run
+    global running
     coords = "(" + str(x) + ", " + str(y) + ")"
 
     if threads[x][y] != None:
@@ -208,12 +209,22 @@ def run_script(script_str, x, y):
             elif split_line[0] == "SOUND":
                 print("[scripts] " + coords + "    Play sound file " + split_line[1])
                 sound.play(split_line[1])
+            elif split_line[0] == "WAIT_UNPRESSED":
+                print("[scripts] " + coords + "    Wait for script key to be unpressed")
+                while lp_events.pressed[x][y]:
+                    sleep(DELAY_EXIT_CHECK)
+                    if kill[x][y]:
+                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                        kill[x][y] = False
+                        running = False
+                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                        return
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
-        print("[scripts] (" + str(x) + ", " + str(y) + ") Script done running.")
+    print("[scripts] (" + str(x) + ", " + str(y) + ") Script done running.")
 
-        running = False
-        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+    running = False
+    threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
 
 def bind(x, y, script_down, color):
     global to_run
@@ -294,7 +305,8 @@ def validate_script(script_str):
                         func_name = "Tap"
                         if split_line[0] == "SP_TAP":
                             func_name = "Special tap"
-
                         return (func_name + " time '" + split_line[2] + "' not valid.", line)
-
+            if split_line[0] == "WAIT_UNPRESSED":
+                if len(split_line) > 1:
+                    return ("WAIT_UNPRESSED takes no arguments.", line)
     return True
