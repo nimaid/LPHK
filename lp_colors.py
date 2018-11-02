@@ -125,19 +125,24 @@ def updateXY(x, y):
             if scripts.threads[x][y].isAlive():
                 is_running = True
 
+        is_func_key = ((y == 0) or (x == 8))
+
         #print("Update colors for (" + str(x) + ", " + str(y) + "), is_running = " + str(is_running))
 
         if is_running:
             set_color = scripts.COLOR_PRIMED
             color_modes[x][y] = "flash"
         elif (x, y) in [l[1:] for l in scripts.to_run]:
-            set_color = scripts.COLOR_PRIMED
-            color_modes[x][y] = "pulse"
+            if is_func_key:
+                set_color = scripts.COLOR_FUNC_KEYS_ACTIVE
+            else:
+                set_color = scripts.COLOR_PRIMED
+                color_modes[x][y] = "pulse"
         else:
             set_color = curr_colors[x][y]
             color_modes[x][y] = "solid"
 
-        if (color_modes[x][y] == "solid") or ((y == 0) or (x == 8)):
+        if (color_modes[x][y] == "solid") or is_func_key:
             #pulse and flash only work on main grid
             lp_object.LedCtrlXYByCode(x, y, set_color)
         elif color_modes[x][y] == "pulse":

@@ -4,6 +4,7 @@ from functools import partial
 import lp_events, lp_colors, keyboard, sound
 
 COLOR_PRIMED = lp_colors.RED
+COLOR_FUNC_KEYS_ACTIVE = lp_colors.AMBER
 
 import files
 
