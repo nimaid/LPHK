@@ -100,7 +100,6 @@ COLOR_BRIGHTS = {WHITE: ("White", "Full"),
 
 curr_colors = [[BLACK for y in range(9)] for x in range(9)]
 color_modes = [["solid" for y in range(9)] for x in range(9)]
-force_off = [[False for y in range(9)] for x in range(9)]
 
 import lp_events, scripts
 
@@ -118,10 +117,6 @@ def getXY(x, y):
 
 def getXY_RGB(x, y):
     return RGB[getXY(x, y)]
-
-def set_force_off(x, y, setting):
-    global force_off
-    force_off[x][y] = setting
 
 def updateXY(x, y):
     try:

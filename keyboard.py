@@ -14,8 +14,7 @@ def sp(name):
         except:
             return None
 
-def tap(key, wait=0):
+def tap(key):
     controller.press(key)
-    sleep(wait)
     controller.release(key)
 
