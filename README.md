@@ -2,6 +2,7 @@
 A Novation Launchpad macro scripting system.
 
 [First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
+[Scheduling System](https://www.youtube.com/watch?v=rv2YmPQvMr0&t=164s)
 
 ![First Look GUI](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LHPK_first_look.png)
 
