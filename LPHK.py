@@ -36,10 +36,12 @@ def shutdown():
     if lp_events.timer != None:
         lp_events.timer.cancel()
     scripts.to_run = []
+    scripts.kill = [[True for y in range(9)] for x in range(9)]
     if window.lp_connected:
         scripts.unbind_all()
         lp_events.timer.cancel()
         lp.Close()
+        window.lp_connected = False
     sys.exit("[LPHK] Sutting down...")
 
 def main():

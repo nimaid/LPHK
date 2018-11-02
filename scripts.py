@@ -231,7 +231,6 @@ def unbind(x, y):
     global kill
     global to_run
     lp_events.unbind(x, y)
-    threads[x][y] = None
     text[x][y] = ""
     if (x, y) in [l[1:] for l in to_run]:
         indexes = [i for i, v in enumerate(to_run) if ((v[1] == x) and (v[2] == y))]
@@ -246,7 +245,6 @@ def unbind_all():
     global to_run
     global kill
     lp_events.unbind_all()
-    threads = [[None for y in range(9)] for x in range(9)]
     text = [["" for y in range(9)] for x in range(9)]
     to_run = []
     for x in range(9):
