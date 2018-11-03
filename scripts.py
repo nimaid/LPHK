@@ -94,8 +94,11 @@ def run_script(script_str, x, y):
                 running = False
             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
             return
-        if line.strip() == "":
+        line = line.strip()
+        if line == "":
             print("[scripts] " + coords + "    Empty line")
+        elif line[0] == "-":
+            print("[scripts] " + coords + "    Comment " + line[1:])
         else:
             split_line = line.split(" ")
             if split_line[0] == "STRING":
@@ -293,46 +296,48 @@ def validate_script(script_str):
         temp = script_lines.pop(0)
 
     for line in script_lines:
-        if line.strip() != "":
-            split_line = line.split(' ')
-            if split_line[0] not in VALID_COMMANDS:
-                if split_line[0] == "@ASYNC":
-                    return ("@ASYNC is a header and can only be used on the first line.", line)
-                else:
-                    return ("Command '" + split_line[0] + "' not valid.", line)
-            if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND"]:
-                if len(split_line) < 2:
-                    return ("Command '" + split_line[0] + "' requires at least 1 argument.", line)
-                else:
-                    for token in split_line[1:]:
-                        for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR, files.NEWLINE_REPLACE):
-                            if sep in token:
-                                return ("You cannot use the string '" + sep + "' in any command.", line)
-            if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
-                if keyboard.sp(split_line[1]) == None:
-                    return ("No special character named '" + split_line[1] + "'.", line)
-            if split_line[0] in ["TAP", "PRESS", "RELEASE"]:
-                if len(split_line[1]) > 1:
-                    return ("More than 1 character supplied.", line)
-            if split_line[0] == "DELAY":
-                if len(split_line) > 2:
-                    return ("Too many arguments supplied.", line)
-                try:
-                    temp = float(split_line[1])
-                except:
-                    return ("Delay time '" + split_line[1] + "' not valid.", line)
-            if split_line[0] in ["TAP", "SP_TAP"]:
-                if len(split_line) > 3:
-                    return ("Too many arguments supplied.", line)
-                if len(split_line) > 2:
+        line = line.strip()
+        if line != "":
+            if line[0] != "-":
+                split_line = line.split(' ')
+                if split_line[0] not in VALID_COMMANDS:
+                    if split_line[0] == "@ASYNC":
+                        return ("@ASYNC is a header and can only be used on the first line.", line)
+                    else:
+                        return ("Command '" + split_line[0] + "' not valid.", line)
+                if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND"]:
+                    if len(split_line) < 2:
+                        return ("Command '" + split_line[0] + "' requires at least 1 argument.", line)
+                    else:
+                        for token in split_line[1:]:
+                            for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR, files.NEWLINE_REPLACE):
+                                if sep in token:
+                                    return ("You cannot use the string '" + sep + "' in any command.", line)
+                if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
+                    if keyboard.sp(split_line[1]) == None:
+                        return ("No special character named '" + split_line[1] + "'.", line)
+                if split_line[0] in ["TAP", "PRESS", "RELEASE"]:
+                    if len(split_line[1]) > 1:
+                        return ("More than 1 character supplied.", line)
+                if split_line[0] == "DELAY":
+                    if len(split_line) > 2:
+                        return ("Too many arguments supplied.", line)
                     try:
-                        temp = float(split_line[2])
+                        temp = float(split_line[1])
                     except:
-                        func_name = "Tap"
-                        if split_line[0] == "SP_TAP":
-                            func_name = "Special tap"
-                        return (func_name + " time '" + split_line[2] + "' not valid.", line)
-            if split_line[0] == "WAIT_UNPRESSED":
-                if len(split_line) > 1:
-                    return ("WAIT_UNPRESSED takes no arguments.", line)
+                        return ("Delay time '" + split_line[1] + "' not valid.", line)
+                if split_line[0] in ["TAP", "SP_TAP"]:
+                    if len(split_line) > 3:
+                        return ("Too many arguments supplied.", line)
+                    if len(split_line) > 2:
+                        try:
+                            temp = float(split_line[2])
+                        except:
+                            func_name = "Tap"
+                            if split_line[0] == "SP_TAP":
+                                func_name = "Special tap"
+                            return (func_name + " time '" + split_line[2] + "' not valid.", line)
+                if split_line[0] == "WAIT_UNPRESSED":
+                    if len(split_line) > 1:
+                        return ("WAIT_UNPRESSED takes no arguments.", line)
     return True

@@ -64,7 +64,9 @@ LPHKscript is a simple macro scripting language tailor made for LPHK. Syntax is 
 
 Only one script runs at a time, and there is a sceduling system for them. If a script is scheduled, it's button will pulse red. If the script is running, the button will flash red quickly. When you press a script button, if there is a script running, it adds the script to the queue. If no scripts are running, the script is added to the queue and the queue execution is started. Tapping a scheduled script's button will unschedule it, and tapping a running scripts button will kill it. If that sounds confusing, load up `user_layouts/examples/all_delays_all_day.LPHKlayout` and press a bunch of buttons.
 
-There is one exception to the scheculing system. If the first line of a script is `@ASYNC`, the script will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. This must go on the very first line.
+There is one exception to the scheculing system. If the first line of a script is `@ASYNC`, the script will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. If this is used, it must be on the very first line.
+
+Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. If `@ASYNC` is used, a comment cannot come before the `@ASYNC` command, as that must be on the first line, always.
 
 Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines seperating commands.
 
@@ -146,6 +148,7 @@ For the `SP_` functions, the following values are allowed:
 * ~~Add a WAIT_UNPRESSED command that delays while the button the script is bound to is pressed~~
 * ~~Add @ASYNC header command to run script independent of other scripts~~
 * ~~Add launchpad connection status indicator/remove popups~~
+* ~~Add commenting script lines~~
 * Add script status icons (playing, queued)
 * ~~Make pressing a running/queued button cancel/terminate execution~~
 * ~~Make queued/playing buttons blink instead of be solid~~ (Big shout out to FMMT666 for [adding the features I needed to launchpad.py](https://github.com/FMMT666/launchpad.py/issues/31)!)
