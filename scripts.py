@@ -296,6 +296,9 @@ def validate_script(script_str):
         temp = script_lines.pop(0)
 
     for line in script_lines:
+        for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR, files.NEWLINE_REPLACE):
+            if sep in line:
+                return ("You cannot use the string '" + sep + "' in any script.", line)
         line = line.strip()
         if line != "":
             if line[0] != "-":
@@ -308,11 +311,6 @@ def validate_script(script_str):
                 if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND"]:
                     if len(split_line) < 2:
                         return ("Command '" + split_line[0] + "' requires at least 1 argument.", line)
-                    else:
-                        for token in split_line[1:]:
-                            for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR, files.NEWLINE_REPLACE):
-                                if sep in token:
-                                    return ("You cannot use the string '" + sep + "' in any command.", line)
                 if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
                     if keyboard.sp(split_line[1]) == None:
                         return ("No special character named '" + split_line[1] + "'.", line)
