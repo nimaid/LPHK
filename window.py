@@ -223,31 +223,31 @@ class Main_Window(tk.Frame):
         color = tk.StringVar(w)
         color.set(curr_color_bright[0])
         color_select = tk.OptionMenu(w, color, *lp_colors.VALID_COLORS)
-        color_select.grid(column=1, row=1, sticky=tk.W)
+        color_select.grid(column=1, row=1, sticky=tk.EW, padx=10)
 
         b_label = tk.Label(w, text="Brightness:")
-        b_label.grid(column=0, row=2, sticky=tk.E)
+        b_label.grid(column=0, row=2, sticky=tk.E,)
 
         bright = tk.StringVar(w)
         bright.set(curr_color_bright[1])
         bright_select = tk.OptionMenu(w, bright, *lp_colors.VALID_BRIGHTS)
-        bright_select.grid(column=1, row=2, sticky=tk.W)
+        bright_select.grid(column=1, row=2, sticky=tk.EW, padx=10, pady=5)
 
         import_script_func = lambda: self.import_script(t, w)
         import_script_button = tk.Button(w, text="Import Script", command=import_script_func)
-        import_script_button.grid(column=2, row=1)
+        import_script_button.grid(column=2, row=1, sticky=tk.EW)
 
         export_script_func = lambda: self.export_script(t, w)
         export_script_button = tk.Button(w, text="Export Script", command=export_script_func)
-        export_script_button.grid(column=2, row=2)
+        export_script_button.grid(column=2, row=2, sticky=tk.EW, pady=5)
 
         save_func = lambda: self.save_script(w, x, y, lp_colors.code_by_color_brightness(color.get(), bright.get()), t.get(1.0, tk.END))
         save_button = tk.Button(w, text="Bind Button (" + str(x) + ", " + str(y) + ")", command=save_func)
-        save_button.grid(column=3, row=1)
+        save_button.grid(column=3, row=1, sticky=tk.EW, padx=10)
 
         unbind_func = lambda: self.unbind_destroy(x, y, w)
         unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
-        unbind_button.grid(column=3, row=2)
+        unbind_button.grid(column=3, row=2, sticky=tk.EW, padx=10, pady=5)
 
         w.wait_visibility()
         w.grab_set()
