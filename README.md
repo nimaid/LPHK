@@ -146,6 +146,7 @@ For the `SP_` functions, the following values are allowed:
 * ~~Save/load single scripts in GUI~~
 * ~~Script entry error checking~~
 * ~~Add launchpad connection menu~~
+* Mouse move/click/scroll/position/line
 * Add a REPEAT command to do last command n number of times
 * ~~Add a WAIT_UNPRESSED command that delays while the button the script is bound to is pressed~~
 * ~~Add @ASYNC header command to run script independent of other scripts~~
