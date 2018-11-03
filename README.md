@@ -5,6 +5,8 @@ A Novation Launchpad macro scripting system.
 
 [Scheduling System](https://www.youtube.com/watch?v=rv2YmPQvMr0&t=164s)
 
+[DOOM on a Launchpad](https://www.youtube.com/watch?v=4o_fh3n8FME)
+
 ![First Look GUI](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LHPK_first_look.png)
 
 ## What does it do?
