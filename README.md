@@ -146,10 +146,7 @@ For the `SP_` functions, the following values are allowed:
 * ~~Save/load single scripts in GUI~~
 * ~~Script entry error checking~~
 * ~~Add launchpad connection menu~~
-* Add `M_MOVE` command to move (x, y) relative to the current position
-* Add `M_TAP` command to tap (click) named button
-* Add `M_SCROLL` command to scroll either (0, y) or (x, y)
-* Add `M_SET` command to set cursor to (x, y)
+* Add `M_MOVE`, `M_TAP`, `M_SCROLL`, and `M_SET` commands
 * Put save/load script into menu
 * Make `Add Command...` menu that acts as a guided helper for making commands
 * Add mouse event capture prompts to `Add Command...` menu boxes
