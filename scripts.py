@@ -1,7 +1,7 @@
 import threading, webbrowser
 from time import sleep
 from functools import partial
-import lp_events, lp_colors, keyboard, sound
+import lp_events, lp_colors, keyboard, sound, mouse
 
 COLOR_PRIMED = lp_colors.RED
 COLOR_FUNC_KEYS_PRIMED = lp_colors.AMBER
@@ -139,7 +139,7 @@ def run_script(script_str, x, y):
 
                     if delay != None:
                         print("[scripts] " + coords + "    Tap key " + split_line[1] + " for " + str(split_line[2]) + " seconds")
-                        keyboard.controller.press(split_line[1])
+                        keyboard.press(split_line[1])
 
                         while delay > DELAY_EXIT_CHECK:
                             sleep(DELAY_EXIT_CHECK)
@@ -149,20 +149,20 @@ def run_script(script_str, x, y):
                                 threads[x][y].kill.clear()
                                 if not async:
                                     running = False
-                                keyboard.controller.release(split_line[1])
+                                keyboard.release(split_line[1])
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                 return
                         if delay > 0:
                             sleep(delay)
 
-                        keyboard.controller.release(split_line[1])
+                        keyboard.release(split_line[1])
 
             elif split_line[0] == "PRESS":
                 print("[scripts] " + coords + "    Press key " + split_line[1])
-                keyboard.controller.press(split_line[1])
+                keyboard.press(split_line[1])
             elif split_line[0] == "RELEASE":
                 print("[scripts] " + coords + " (" + str(x) + ", " + str(y) + ")    Release key " + split_line[1])
-                keyboard.controller.release(split_line[1])
+                keyboard.release(split_line[1])
             elif split_line[0] == "SP_TAP":
                 if keyboard.sp(split_line[1]) != None:
                     delay = None
@@ -181,7 +181,7 @@ def run_script(script_str, x, y):
 
                             key = keyboard.sp(split_line[1])
 
-                            keyboard.controller.press(key)
+                            keyboard.press(key)
 
                             while delay > DELAY_EXIT_CHECK:
                                 sleep(DELAY_EXIT_CHECK)
@@ -191,25 +191,25 @@ def run_script(script_str, x, y):
                                     threads[x][y].kill.clear()
                                     if not async:
                                         running = False
-                                    keyboard.controller.release(key)
+                                    keyboard.release(key)
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                     return
                             if delay > 0:
                                 sleep(delay)
 
-                            keyboard.controller.release(key)
+                            keyboard.release(key)
                 else:
                     print("[scripts] " + coords + "    Invalid special character to tap: " + split_line[1] + ", skipping...")
             elif split_line[0] == "SP_PRESS":
                 if keyboard.sp(split_line[1]) != None:
                     print("[scripts] " + coords + "    Press special key " + split_line[1])
-                    keyboard.controller.press(keyboard.sp(split_line[1]))
+                    keyboard.press(keyboard.sp(split_line[1]))
                 else:
                     print("[scripts] " + coords + "    Invalid special character to press: " + split_line[1] + ", skipping...")
             elif split_line[0] == "SP_RELEASE":
                 if keyboard.sp(split_line[1]) != None:
                     print("[scripts] " + coords + "    Release special key " + split_line[1])
-                    keyboard.controller.release(keyboard.sp(split_line[1]))
+                    keyboard.release(keyboard.sp(split_line[1]))
                 else:
                     print("[scripts] " + coords + "    Invalid special character to release: " + split_line[1] + ", skipping...")
             elif split_line[0] == "WEB":

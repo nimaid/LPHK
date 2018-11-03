@@ -1,4 +1,3 @@
-from time import sleep
 from pynput.keyboard import Key, Controller, KeyCode
 
 media_keys = {"vol_up" : 269025043, "vol_down" : 269025041, "mute" : 269025042, "play_pause" : 269025044, "prev_track" : 269025046, "next_track" : 269025047, "bright_down" : 269025027, "bright_up" : 269025026}
@@ -14,7 +13,13 @@ def sp(name):
         except:
             return None
 
-def tap(key):
+def press(key):
     controller.press(key)
-    controller.release(key)
+
+def release(key):
+    controller.press(key)
+
+def tap(key):
+    press(key)
+    release(key)
 
