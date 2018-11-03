@@ -225,8 +225,12 @@ def run_script(script_str, x, y):
                 print("[scripts] " + coords + "    Open website " + link + " in default browser, try to make a new window")
                 webbrowser.open_new(link)
             elif split_line[0] == "SOUND":
-                print("[scripts] " + coords + "    Play sound file " + split_line[1])
-                sound.play(split_line[1])
+                if len(split_line) > 2:
+                    print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]))
+                    sound.play(split_line[1], float(split_line[2]))
+                else:
+                    print("[scripts] " + coords + "    Play sound file " + split_line[1])
+                    sound.play(split_line[1])
             elif split_line[0] == "WAIT_UNPRESSED":
                 print("[scripts] " + coords + "    Wait for script key to be unpressed")
                 while lp_events.pressed[x][y]:
@@ -339,4 +343,12 @@ def validate_script(script_str):
                 if split_line[0] == "WAIT_UNPRESSED":
                     if len(split_line) > 1:
                         return ("WAIT_UNPRESSED takes no arguments.", line)
+                if split_line[0] == "SOUND":
+                    if len(split_line) > 2:
+                        try:
+                            vol = float(float(split_line[2]) / 100.0)
+                            if (vol < 0.0) or (vol > 1.0):
+                                return ("SOUND volume must be between 0 and 100.", line)
+                        except:
+                            return ("SOUND volume " + split_line[2] + " not valid.", line)
     return True

@@ -15,9 +15,12 @@ def init(path_in):
     m.pre_init(44100, -16, 2, 2048)
     m.init()
 
-def play(filename):
+def play(filename, volume=100.0):
     final_name = PATH + SOUND_PATH + filename
     try:
-        m.Sound(final_name).play()
+        sound = m.Sound(final_name)
+        vol = float(volume / 100.0)
+        sound.set_volume(vol)
+        sound.play()
     except:
         print("[sound] Could not play sound " + final_name)

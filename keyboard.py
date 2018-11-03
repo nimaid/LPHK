@@ -17,7 +17,7 @@ def press(key):
     controller.press(key)
 
 def release(key):
-    controller.press(key)
+    controller.release(key)
 
 def tap(key):
     press(key)
