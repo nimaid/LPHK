@@ -268,7 +268,8 @@ def unbind(x, y):
         for index in indexes[::-1]:
             temp = to_run.pop(index)
         return
-    threads[x][y].kill.set()
+    if threads[x][y] != None:
+        threads[x][y].kill.set()
 
 def unbind_all():
     global threads
