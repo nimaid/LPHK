@@ -146,7 +146,18 @@ For the `SP_` functions, the following values are allowed:
 * ~~Save/load single scripts in GUI~~
 * ~~Script entry error checking~~
 * ~~Add launchpad connection menu~~
-* Mouse move/click/scroll/position/line
+* Add `M_MOVE` command to move (x, y) relative to the current position
+* Add `M_TAP` command to tap (click) named button
+* Add `M_SCROLL` command to scroll either (0, y) or (x, y)
+* Add `M_SET` command to set cursor to (x, y)
+* Put save/load script into menu
+* Make `Add Command...` menu that acts as a guided helper for making commands
+* Add mouse event capture prompts to `Add Command...` menu boxes
+* Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
+* Add some sort of `move_on_line_over_time function` to the mouse library... or maybe just straight up in the script parser b/c of the `kill.set()` `Event()` handling...
+* Add `M_LINE` command to move (x, y) relative to current position over n seconds
+* Add `M_LINE_ABS` command to move from (x1, y1) to (x2, y2) over n seconds
+* Add generalized macro recorder
 * Add a REPEAT command to do last command n number of times
 * ~~Add a WAIT_UNPRESSED command that delays while the button the script is bound to is pressed~~
 * ~~Add @ASYNC header command to run script independent of other scripts~~
