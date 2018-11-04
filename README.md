@@ -75,11 +75,11 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 The current command list is as follows:
 * `STRING` - types (argument 1)
 * `DELAY` - delays the script for (argument 1) seconds
-* `TAP` - taps the normal character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (arguemnt 3) supplied,  delay (argument 2) seconds before releasing
+* `TAP` - taps the normal character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (argument 3) supplied,  delay (argument 2) seconds before releasing
 * `PRESS` - presses normal character (argument 1)
 * `RELEASE` - releases the normal character (argument 1)
 * `SOUND` - play a sound named (argument 1) inside the `user_sounds/` folder, `.wav` and `.ogg` only, if (argument 2) supplied, set volume to (argument 2), 0-100
-* `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (arguemnt 3) supplied,  delay (argument 2) seconds before releasing
+* `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (argument 3) supplied,  delay (argument 2) seconds before releasing
 * `SP_PRESS` - presses the special character (argument 1)
 * `SP_RELEASE` - releases the spacial character (argument 1)
 * `M_PRESS` - presses the mouse button (argument 1)
@@ -166,10 +166,10 @@ For the `SP_` commands, the following key names are allowed:
 * Add `M_LINE` and `M_LINE_ABS` commands
 * Add generalized macro recorder wizard (!!!)
 * Add a `REPEAT` command to do last command n number of times
-* ~~Add a WAIT_UNPRESSED command that delays while the button the script is bound to is pressed~~
+* ~~Add a `WAIT_UNPRESSED` command that delays while the button the script is bound to is pressed~~
 * Add `WAIT_UNPRESSED_REPEAT` command to repeat the last command until the button is released
 * Add `LABEL` and `GOTO` commands
-* ~~Add @ASYNC header command to run script independent of other scripts~~
+* ~~Add `@ASYNC` header command to run script independent of other scripts~~
 * ~~Add launchpad connection status indicator/remove popups~~
 * ~~Add commenting script lines~~
 * Add script status icons (playing, queued)
