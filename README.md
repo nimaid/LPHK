@@ -86,7 +86,7 @@ The current command list is as follows:
 * `M_RELEASE` - releases the mouse button (argument 1)
 * `M_MOVE` - moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position
 * `M_SET` - sets the absolute cursor posistion to (argument 1) horizontal and (argument 2) vertical
-* `M_SCROLL` - scrolls the mouse vertically by (argument 1), if (arguemnt 2) supplied, scroll (argument 2) horizontally
+* `M_SCROLL` - scrolls the mouse vertically by (argument 1), if (argument 2) supplied, scroll (argument 2) horizontally
 * `WAIT_UNPRESSED` - waits until the button it's bound too is unpressed (no arguments)
 * `WEB` - open website (argument 1) in default browser
 * `WEB_NEW` - open website (argument 1) in default browser, try new window
