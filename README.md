@@ -75,11 +75,11 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 The current command list is as follows:
 * `STRING` - types (argument 1)
 * `DELAY` - delays the script for (argument 1) seconds
-* `TAP` - taps the normal character (argument 1), if (argument 2) supplied, delay (argument 1) seconds before releasing
+* `TAP` - taps the normal character (argument 1), if (argument 2) supplied, delay (argument 2) seconds before releasing
 * `PRESS` - presses normal character (argument 1)
 * `RELEASE` - releases the normal character (argument 1)
-* `SOUND` - play a sound named (argument 1) inside the `user_sounds/` folder, `.wav` and `.ogg` only
-* `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, delay (argument 1) seconds before releasing
+* `SOUND` - play a sound named (argument 1) inside the `user_sounds/` folder, `.wav` and `.ogg` only, if (argument 2) supplied, set volume to (argument 2), 0-100
+* `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, delay (argument 2) seconds before releasing
 * `SP_PRESS` - presses the special character (argument 1)
 * `SP_RELEASE` - releases the spacial character (argument 1)
 * `WAIT_UNPRESSED` - waits until the button it's bound too is unpressed (no arguments)
