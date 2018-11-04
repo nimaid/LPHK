@@ -75,13 +75,18 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 The current command list is as follows:
 * `STRING` - types (argument 1)
 * `DELAY` - delays the script for (argument 1) seconds
-* `TAP` - taps the normal character (argument 1), if (argument 2) supplied, delay (argument 2) seconds before releasing
+* `TAP` - taps the normal character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (arguemnt 3) supplied,  delay (argument 2) seconds before releasing
 * `PRESS` - presses normal character (argument 1)
 * `RELEASE` - releases the normal character (argument 1)
 * `SOUND` - play a sound named (argument 1) inside the `user_sounds/` folder, `.wav` and `.ogg` only, if (argument 2) supplied, set volume to (argument 2), 0-100
-* `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, delay (argument 2) seconds before releasing
+* `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (arguemnt 3) supplied,  delay (argument 2) seconds before releasing
 * `SP_PRESS` - presses the special character (argument 1)
 * `SP_RELEASE` - releases the spacial character (argument 1)
+* `M_PRESS` - presses the mouse button (argument 1)
+* `M_RELEASE` - releases the mouse button (argument 1)
+* `M_MOVE` - moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position
+* `M_SET` - sets the absolute cursor posistion to (argument 1) horizontal and (argument 2) vertical
+* `M_SCROLL` - scrolls the mouse vertically by (argument 1), if (arguemnt 2) supplied, scroll (argument 2) horizontally
 * `WAIT_UNPRESSED` - waits until the button it's bound too is unpressed (no arguments)
 * `WEB` - open website (argument 1) in default browser
 * `WEB_NEW` - open website (argument 1) in default browser, try new window
@@ -91,7 +96,12 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * `:LPHK_ENTRY_SEP:`
 * `:LPHK_NEWLINE_REP:`
 
-For the `SP_` functions, the following values are allowed:
+For `M_PRESS`, `M_RELEASE`, and `M_TAP`, the folowing button names are allowed:
+* `left`
+* `middle`
+* `right`
+
+For the `SP_` commands, the following key names are allowed:
 * `alt`
 * `alt_gr`
 * `alt_r`
@@ -148,7 +158,8 @@ For the `SP_` functions, the following values are allowed:
 * ~~Add launchpad connection menu~~
 * Add `COMBO a b c...` command to `PRESS a` `PRESS b` `TAP c``RELEASE b` `RELEASE a`
 * Add `COMBO_TIME time a b c...` command to do a `COMBO` with `time` delays between key events
-* Add `M_MOVE`, `M_TAP`, `M_SCROLL`, and `M_SET` commands
+* ~~Add `M_MOVE`, `M_TAP`, `M_SCROLL`, and `M_SET` commands~~
+* Add `M_PRESS`, `M_RELEASE`, and `M_TAP` commands
 * Put save/load script into menu
 * Make `Add Command...` menu that acts as a guided helper for making commands
 * Add mouse event capture prompts to `Add Command...` menu boxes
