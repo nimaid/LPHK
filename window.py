@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox
+from PIL import ImageTk, Image
 import os
 
 import scripts, files, lp_colors, lp_events
@@ -30,8 +31,9 @@ class Main_Window(tk.Frame):
         tk.Frame.__init__(self, master)
         self.master = master
         self.init_window()
-        self.info_image = tk.PhotoImage(file="resources/info.png").subsample(2, 2)
-        self.warning_image = tk.PhotoImage(file="resources/warning.png").subsample(2, 2)
+
+        self.info_image = ImageTk.PhotoImage(Image.open("resources/info.png"))
+        self.warning_image = ImageTk.PhotoImage(Image.open("resources/warning.png"))
         self.grid_drawn = False
         self.grid_rects = [[None for y in range(9)] for x in range(9)]
 
