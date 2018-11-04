@@ -156,8 +156,10 @@ For the `SP_` functions, the following values are allowed:
 * Add some sort of `move_on_line_over_time function` to the mouse library... or maybe just straight up in the script parser b/c of the `kill.set()` `Event()` handling...
 * Add `M_LINE` and `M_LINE_ABS` commands
 * Add generalized macro recorder wizard (!!!)
-* Add a REPEAT command to do last command n number of times
+* Add a `REPEAT` command to do last command n number of times
 * ~~Add a WAIT_UNPRESSED command that delays while the button the script is bound to is pressed~~
+* Add `WAIT_UNPRESSED_REPEAT` command to repeat the last command until the button is released
+* Add `LABEL` and `GOTO` commands
 * ~~Add @ASYNC header command to run script independent of other scripts~~
 * ~~Add launchpad connection status indicator/remove popups~~
 * ~~Add commenting script lines~~
