@@ -146,6 +146,8 @@ For the `SP_` functions, the following values are allowed:
 * ~~Save/load single scripts in GUI~~
 * ~~Script entry error checking~~
 * ~~Add launchpad connection menu~~
+* Add `COMBO a b c...` command to `PRESS a` `PRESS b` `TAP c``RELEASE b` `RELEASE a`
+* Add `COMBO_TIME time a b c...` command to do a `COMBO` with `time` delays between key events
 * Add `M_MOVE`, `M_TAP`, `M_SCROLL`, and `M_SET` commands
 * Put save/load script into menu
 * Make `Add Command...` menu that acts as a guided helper for making commands
