@@ -401,7 +401,7 @@ def run_script(script_str, x, y):
                 if len(split_line) > 6:
                     skip = int(split_line[6])
 
-                if delay == None:
+                if (delay == None) or (delay <= 0):
                     print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ")")
                 else:
                     print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ") by " + str(skip) + " pixels per step and wait " + split_line[5] + " milliseconds between each step")
@@ -416,7 +416,7 @@ def run_script(script_str, x, y):
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                         return
                     mouse.setXY(x_M, y_M)
-                    if delay != None:
+                    if (delay != None) and (delay > 0):
                         temp_delay = delay
                         while temp_delay > DELAY_EXIT_CHECK:
                             sleep(DELAY_EXIT_CHECK)
@@ -614,14 +614,16 @@ def validate_script(script_str):
                         temp = int(split_line[4])
                     except:
                         return ("'M_LINE' Y2 value '" + split_line[4] + "' not valid.", line)
-                    if len(split_line) < 5:
+                    if len(split_line) >= 6:
                         try:
                             temp = float(split_line[5])
                         except:
                             return ("'M_LINE' wait value '" + split_line[5] + "' not valid.", line)
-                    if len(split_line) < 6:
+                    if len(split_line) >= 7:
                         try:
                             temp = int(split_line[6])
+                            if temp == 0:
+                                return ("'M_LINE' skip value cannot be zero.", line)
                         except:
                             return ("'M_LINE' skip value '" + split_line[6] + "' not valid.", line)
 
