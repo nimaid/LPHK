@@ -7,7 +7,7 @@ A Novation Launchpad macro scripting system.
 
 [DOOM on a Launchpad](https://www.youtube.com/watch?v=4o_fh3n8FME)
 
-![First Look GUI](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LHPK_first_look.png)
+![GUI Update 1](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LHPK_update_1.png)
 
 ## What does it do?
 The goal of this project is to implement a macro scripting system for the Novation Launchpad, in order to use the launchpad as a scriptable, general purpose macro keyboard.
