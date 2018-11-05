@@ -392,17 +392,22 @@ def run_script(script_str, x, y):
                 y1 = int(split_line[2])
                 x2 = int(split_line[3])
                 y2 = int(split_line[4])
+
                 delay = None
                 if len(split_line) > 5:
                     delay = float(split_line[5]) / 1000.0
 
+                skip = 1
+                if len(split_line) > 6:
+                    skip = int(split_line[6])
+
                 if delay == None:
                     print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ")")
                 else:
-                    print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ") and wait " + split_line[5] + " milliseconds between each")
+                    print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ") by " + str(skip) + " pixels per step and wait " + split_line[5] + " milliseconds between each step")
 
                 points = mouse.line_coords(x1, y1, x2, y2)
-                for x_M, y_M in points:
+                for x_M, y_M in points[::skip]:
                     if threads[x][y].kill.is_set():
                         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                         threads[x][y].kill.clear()
@@ -512,7 +517,7 @@ def validate_script(script_str):
                     if len(split_line) > 4:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["M_LINE"]:
-                    if len(split_line) > 6:
+                    if len(split_line) > 7:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
                     if keyboard.sp(split_line[1]) == None:
@@ -614,5 +619,10 @@ def validate_script(script_str):
                             temp = float(split_line[5])
                         except:
                             return ("'M_LINE' wait value '" + split_line[5] + "' not valid.", line)
+                    if len(split_line) < 6:
+                        try:
+                            temp = int(split_line[6])
+                        except:
+                            return ("'M_LINE' skip value '" + split_line[6] + "' not valid.", line)
 
     return True
