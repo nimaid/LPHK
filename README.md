@@ -64,32 +64,71 @@ The whole GUI is still rough around the edges, so don't be too supprised if some
 ## What is LPHKscript?
 LPHKscript is a simple macro scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript.
 
+### Scheduling
 Only one script runs at a time, and there is a sceduling system for them. If a script is scheduled, it's button will pulse red. If the script is running, the button will flash red quickly. When you press a script button, if there is a script running, it adds the script to the queue. If no scripts are running, the script is added to the queue and the queue execution is started. Tapping a scheduled script's button will unschedule it, and tapping a running scripts button will kill it. If that sounds confusing, load up `user_layouts/examples/all_delays_all_day.LPHKlayout` and press a bunch of buttons.
 
+### `@ASYNC`
 There is one exception to the scheculing system. If the first line of a script is `@ASYNC`, the script will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. If this is used, it must be on the very first line.
 
+### Comments
 Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. If `@ASYNC` is used, a comment cannot come before the `@ASYNC` command, as that must be on the first line, always.
 
+### Commands
 Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines seperating commands.
 
-The current command list is as follows:
-* `STRING` - types (argument 1)
-* `DELAY` - delays the script for (argument 1) seconds
-* `TAP` - taps the normal character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (argument 3) supplied,  delay (argument 3) seconds before releasing each time
-* `PRESS` - presses normal character (argument 1)
-* `RELEASE` - releases the normal character (argument 1)
-* `SOUND` - play a sound named (argument 1) inside the `user_sounds/` folder, `.wav` and `.ogg` only, if (argument 2) supplied, set volume to (argument 2), 0-100
-* `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (argument 3) supplied,  delay (argument 3) seconds before releasing each time
-* `SP_PRESS` - presses the special character (argument 1)
-* `SP_RELEASE` - releases the spacial character (argument 1)
-* `M_PRESS` - presses the mouse button (argument 1)
-* `M_RELEASE` - releases the mouse button (argument 1)
-* `M_MOVE` - moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position
-* `M_SET` - sets the absolute cursor posistion to (argument 1) horizontal and (argument 2) vertical
-* `M_SCROLL` - scrolls the mouse vertically by (argument 1), if (argument 2) supplied, scroll (argument 2) horizontally
-* `WAIT_UNPRESSED` - waits until the button it's bound to is unpressed (no arguments)
-* `WEB` - open website (argument 1) in default browser
-* `WEB_NEW` - open website (argument 1) in default browser, try new window
+* **Utility**
+  * `DELAY`
+    * Delays the script for (argument 1) seconds.
+  * `SOUND`
+    * Play a sound named (argument 1) inside the `user_sounds/` folder.
+      * Supports `.wav` and `.ogg` only.
+    * If (argument 2) supplied, set volume to (argument 2).
+      * Range is 0 to 100
+  * `WAIT_UNPRESSED`
+    * Waits until the button the script is bound to is unpressed. (no arguments)
+  * `WEB`
+    * Open website (argument 1) in default browser.
+  * `WEB_NEW`
+    * Open website (argument 1) in default browser, try new window.
+* **Keyboard**
+  * `PRESS`
+    * Presses normal character (argument 1).
+      * Accepts any non-whitespace single character
+  * `RELEASE`
+    * Releases the normal character (argument 1).
+      * Accepts any non-whitespace single character
+  * `STRING`
+    * Types whatever text comes after it.
+  * `TAP`
+    * Taps the normal character (argument 1).
+      * Accepts any non-whitespace single character
+    * If (argument 2) supplied, tap (argument 2) number of times.
+    * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
+  * `SP_PRESS`
+    * Presses the special character (argument 1).
+      * See below for a list of valid key names.
+  * `SP_RELEASE`
+    * Releases the special character (argument 1).
+      * See below for a list of valid key names.
+  * `SP_TAP`
+    * Taps the special character (argument 1).
+        * See below for a list of valid key names.
+    * If (argument 2) supplied, tap (argument 2) number of times.
+    * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
+* **Mouse**
+  * `M_MOVE`
+    * Moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position.
+    * `M_PRESS`
+      * Presses the mouse button (argument 1).
+        * See below for a list of valid button names.
+  * `M_RELEASE`
+    * Releases the mouse button (argument 1).
+      * See below for a list of valid button names.
+  * `M_SCROLL`
+    * Scrolls the mouse vertically by (argument 1).
+    * If (argument 2) supplied, scroll horizontally by (argument 2).
+  * `M_SET`
+    * Sets the absolute cursor posistion to (argument 1) horizontal and (argument 2) vertical.
 
 For all commands, the arguments cannot contain the following strings, as they are reserved for the LPHKlayout file format:
 * `:LPHK_BUTTON_SEP:`
