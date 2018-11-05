@@ -1,5 +1,5 @@
 from pynput.mouse import Controller, Button
-from bresenham.bresenham import bresenham
+from bresenham import bresenham
 
 controller = Controller()
 
