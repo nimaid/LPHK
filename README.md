@@ -205,10 +205,26 @@ For the `SP_` commands, the following key names are allowed:
 * `vol_up`
 
 ## What still needs to be written?
-* ~~Support for Launchpad MkII~~
+
 * Support for Launchpad Pro
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
+* Add generalized macro recorder wizard (!!!)
+* Add a `REPEAT` command to do last command n number of times
+* Add `WAIT_UNPRESSED_REPEAT` command to repeat the last command until the button is released
+* Add `LABEL`, `GOTO_LABEL`, and `REPEAT_LABEL` commands
+* Add `WAIT_UNPRESSED_REPEAT_LABEL` command
+* Make `Add Command...` menu that acts as a guided helper for making commands
+* Add mouse event capture prompts to `Add Command...` menu boxes
+* Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
+* Add script status icons (playing, queued)
+* A "run the script on button X Y" command... runs risk of infinite loops.
+* Add `CMD` advanced command (make scary warning dialog boxes)
+* MIDI output command? (Low priority)
+* Load layout command? (That could get messy, maybe not a script func, but a seperate GUI option to bind loading a specific layout)
+
+## What have you done so far?
+* ~~Support for Launchpad MkII~~
 * ~~Events system~~
 * ~~Colors system~~
 * ~~LPScript base iteration~~
@@ -223,23 +239,10 @@ For the `SP_` commands, the following key names are allowed:
 * ~~Add `M_MOVE`, `M_TAP`, `M_SCROLL`, and `M_SET` commands~~
 * ~~Add `M_PRESS`, `M_RELEASE`, and `M_TAP` commands~~
 * ~~Put save/load script into menu~~
-* Make `Add Command...` menu that acts as a guided helper for making commands
-* Add mouse event capture prompts to `Add Command...` menu boxes
-* Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
-* ~~Add `M_LINE` and `M_LINE_MOVE` commands~~
-* Add generalized macro recorder wizard (!!!)
-* Add a `REPEAT` command to do last command n number of times
+* ~~Add `M_LINE`, `M_LINE_SET`, and `M_LINE_MOVE` commands~~
 * ~~Add a `WAIT_UNPRESSED` command that delays while the button the script is bound to is pressed~~
-* Add `WAIT_UNPRESSED_REPEAT` command to repeat the last command until the button is released
-* Add `LABEL`, `GOTO_LABEL`, and `REPEAT_LABEL` commands
-* Add `WAIT_UNPRESSED_REPEAT_LABEL` command
 * ~~Add `@ASYNC` header command to run script independent of other scripts~~
 * ~~Add launchpad connection status indicator/remove popups~~
 * ~~Add commenting script lines~~
-* Add script status icons (playing, queued)
 * ~~Make pressing a running/queued button cancel/terminate execution~~
 * ~~Make queued/playing buttons blink instead of be solid~~ (Big shout out to FMMT666 for [adding the features I needed to launchpad.py](https://github.com/FMMT666/launchpad.py/issues/31)!)
-* A "run the script on button X Y" command... runs risk of infinite loops.
-* Add `CMD` advanced command (make scary warning dialog boxes)
-* MIDI output command? (Low priority)
-* Load layout command? (That could get messy, maybe not a script func, but a seperate GUI option to bind loading a specific layout)
