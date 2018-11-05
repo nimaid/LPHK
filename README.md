@@ -226,7 +226,7 @@ For the `SP_` commands, the following key names are allowed:
 * Add a `REPEAT` command to do last command n number of times
 * ~~Add a `WAIT_UNPRESSED` command that delays while the button the script is bound to is pressed~~
 * Add `WAIT_UNPRESSED_REPEAT` command to repeat the last command until the button is released
-* Add `LABEL` and `REPEAT_LABEL` commands
+* Add `LABEL`, `GOTO_LABEL`, and `REPEAT_LABEL` commands
 * Add `WAIT_UNPRESSED_REPEAT_LABEL` command
 * ~~Add `@ASYNC` header command to run script independent of other scripts~~
 * ~~Add launchpad connection status indicator/remove popups~~
