@@ -131,6 +131,12 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * If (argument 2) supplied, scroll horizontally by (argument 2).
   * `M_SET`
     * Sets the absolute cursor posistion to (argument 1) horizontal and (argument 2) vertical.
+  * `M_TAP`
+    * Taps the mouse button (argument 1).
+        * See below for a list of valid mouse button names.
+    * If (argument 2) supplied, tap (argument 2) number of times.
+    * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
+
 
 For all commands, the arguments cannot contain the following strings, as they are reserved for the LPHKlayout file format:
 * `:LPHK_BUTTON_SEP:`
@@ -200,7 +206,7 @@ For the `SP_` commands, the following key names are allowed:
 * ~~Script entry error checking~~
 * ~~Add launchpad connection menu~~
 * ~~Add `M_MOVE`, `M_TAP`, `M_SCROLL`, and `M_SET` commands~~
-* Add ~~`M_PRESS`~~, ~~`M_RELEASE`~~, and `M_TAP` commands
+* ~~Add `M_PRESS`, `M_RELEASE`, and `M_TAP` commands~~
 * Put save/load script into menu
 * Make `Add Command...` menu that acts as a guided helper for making commands
 * Add mouse event capture prompts to `Add Command...` menu boxes

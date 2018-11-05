@@ -11,7 +11,7 @@ EXIT_UPDATE_DELAY = 0.1
 
 import files
 
-VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL"]
+VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP"]
 DELAY_EXIT_CHECK = 0.025
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -333,6 +333,60 @@ def run_script(script_str, x, y):
                 else:
                     print("[scripts] " + coords + "    Scroll " + split_line[1])
                     mouse.scroll(0, float(split_line[1]))
+            elif split_line[0] == "M_TAP":
+                if len(split_line) <= 2:
+                    print("[scripts] " + coords + "    Tap mouse button " + split_line[1])
+                    mouse.click(split_line[1])
+                elif len(split_line) <= 3:
+                    taps = None
+                    try:
+                        taps = int(split_line[2])
+                    except:
+                        print("[scripts] " + coords + "     Invalid number of times to tap, skipping...")
+
+                    if (taps != None):
+                        print("[scripts] " + coords + "    Tap mouse button " + split_line[1] + " " + split_line[2] + " times")
+                        mouse.click(split_line[1], taps)
+                else:
+                    taps = None
+                    try:
+                        taps = int(split_line[2])
+                    except:
+                        print("[scripts] " + coords + "     Invalid number of times to tap, skipping...")
+                    delay = None
+                    try:
+                        delay =float(split_line[3])
+                    except:
+                        print("[scripts] " + coords + "     Invalid time to tap, skipping...")
+
+                    if (taps != None) and (delay != None):
+                        print("[scripts] " + coords + "    Tap mouse button " + split_line[1] + " " + split_line[2] + " times for " + str(split_line[3]) + " seconds each")
+                        for tap in range(taps):
+                            temp_delay = delay
+                            if threads[x][y].kill.is_set():
+                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                                threads[x][y].kill.clear()
+                                if not async:
+                                    running = False
+                                mouse.release(split_line[1])
+                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                                return
+
+                            mouse.press(split_line[1])
+                            while temp_delay > DELAY_EXIT_CHECK:
+                                sleep(DELAY_EXIT_CHECK)
+                                temp_delay -= DELAY_EXIT_CHECK
+                                if threads[x][y].kill.is_set():
+                                    print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                                    threads[x][y].kill.clear()
+                                    if not async:
+                                        running = False
+                                    mouse.release(split_line[1])
+                                    threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                                    return
+                            if temp_delay > 0:
+                                sleep(temp_delay)
+                            mouse.release(split_line[1])
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
     print("[scripts] (" + str(x) + ", " + str(y) + ") Script done running.")
@@ -404,9 +458,21 @@ def validate_script(script_str):
                         return ("@ASYNC is a header and can only be used on the first line.", line)
                     else:
                         return ("Command '" + split_line[0] + "' not valid.", line)
-                if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL"]:
+                if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP"]:
                     if len(split_line) < 2:
-                        return ("Command '" + split_line[0] + "' requires at least 1 argument.", line)
+                        return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                if split_line[0] in ["WAIT_UNPRESSED"]:
+                    if len(split_line) > 1:
+                        return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                if split_line[0] in ["DELAY", "WEB", "WEB_NEW", "PRESS", "RELEASE", "SP_PRESS", "SP_RELEASE", "M_PRESS", "M_RELEASE"]:
+                    if len(split_line) > 2:
+                        return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                if split_line[0] in ["SOUND", "M_MOVE", "M_SCROLL", "M_SET"]:
+                    if len(split_line) > 3:
+                        return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                if split_line[0] in ["TAP", "SP_TAP", "M_TAP"]:
+                    if len(split_line) > 4:
+                        return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
                     if keyboard.sp(split_line[1]) == None:
                         return ("No special character named '" + split_line[1] + "'.", line)
@@ -414,18 +480,16 @@ def validate_script(script_str):
                     if len(split_line[1]) > 1:
                         return ("More than 1 character supplied.", line)
                 if split_line[0] == "DELAY":
-                    if len(split_line) > 2:
-                        return ("Too many arguments supplied.", line)
                     try:
                         temp = float(split_line[1])
                     except:
                         return ("Delay time '" + split_line[1] + "' not valid.", line)
-                if split_line[0] in ["TAP", "SP_TAP"]:
+                if split_line[0] in ["TAP", "SP_TAP", "M_TAP"]:
                     func_name = "Tap"
                     if split_line[0] == "SP_TAP":
                         func_name = "Special tap"
-                    if len(split_line) > 4:
-                        return ("Too many arguments supplied.", line)
+                    if split_line[0] == "M_TAP":
+                        func_name = "Mouse tap"
                     if len(split_line) > 3:
                         try:
                             temp = float(split_line[3])
@@ -449,18 +513,29 @@ def validate_script(script_str):
                         except:
                             return ("'SOUND' volume " + split_line[2] + " not valid.", line)
                 if split_line[0] == "M_MOVE":
-                    if len(split_line) > 3:
-                        return ("Too many arguments supplied.", line)
                     if len(split_line) < 3:
                         return ("'M_MOVE' requires both an X and a Y movement value.", line)
+                    try:
+                        temp = float(split_line[1])
+                    except:
+                        return ("'M_MOVE' X value '" + split_line[1] + "' not valid.", line)
+                    try:
+                        temp = float(split_line[2])
+                    except:
+                        return ("'M_MOVE' Y value '" + split_line[2] + "' not valid.", line)
+
                 if split_line[0] == "M_SET":
-                    if len(split_line) > 3:
-                        return ("Too many arguments supplied.", line)
                     if len(split_line) < 3:
                         return ("'M_SET' requires both an X and a Y value.", line)
+                    try:
+                        temp = float(split_line[1])
+                    except:
+                        return ("'M_SET' X value '" + split_line[1] + "' not valid.", line)
+                    try:
+                        temp = float(split_line[2])
+                    except:
+                        return ("'M_SET' Y value '" + split_line[2] + "' not valid.", line)
                 if split_line[0] in ["M_PRESS", "M_RELEASE", "M_TAP"]:
-                    if len(split_line) > 2:
-                        return ("Too many arguments supplied.", line)
                     if split_line[1] not in ["left", "middle", "right"]:
                         return ("Invalid mouse button '" + split_line[1] + "'.", line)
                 if split_line[0] == "M_SCROLL":
