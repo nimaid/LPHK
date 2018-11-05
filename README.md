@@ -128,6 +128,11 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * If (argument 3) supplied, delay (argument 3) milliseconds between each step.
     * If (argument 4) supplied, move (argument 4) pixels per step.
       * If not supplied, assumed to be 1
+  * `M_LINE_SET`
+    * Move the mouse cursor in a line to absolute point (argument 1),(argument 2)
+    * If (argument 3) supplied, delay (argument 3) milliseconds between each step.
+    * If (argument 4) supplied, move (argument 4) pixels per step.
+      * If not supplied, assumed to be 1
   * `M_MOVE`
     * Moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position.
   * `M_PRESS`
