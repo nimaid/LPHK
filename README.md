@@ -184,8 +184,10 @@ For the `SP_` commands, the following key names are allowed:
 * `vol_up`
 
 ## What still needs to be written?
-* ~~MkII specific interface~~
-* Support for all launchpads
+* ~~Support for Launchpad MkII~~
+* Support for Launchpad Pro
+* Support for Launchpad Classic/S/Mini
+  * Includes Behringer CMD Touch TC64 in Novation compatability mode
 * ~~Events system~~
 * ~~Colors system~~
 * ~~LPScript base iteration~~
