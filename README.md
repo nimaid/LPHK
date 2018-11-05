@@ -222,7 +222,8 @@ For the `SP_` commands, the following key names are allowed:
 * Add a `REPEAT` command to do last command n number of times
 * ~~Add a `WAIT_UNPRESSED` command that delays while the button the script is bound to is pressed~~
 * Add `WAIT_UNPRESSED_REPEAT` command to repeat the last command until the button is released
-* Add `LABEL` and `GOTO` commands
+* Add `LABEL` and `REPEAT_LABEL` commands
+* Add `WAIT_UNPRESSED_REPEAT_LABEL` command
 * ~~Add `@ASYNC` header command to run script independent of other scripts~~
 * ~~Add launchpad connection status indicator/remove popups~~
 * ~~Add commenting script lines~~
@@ -230,5 +231,6 @@ For the `SP_` commands, the following key names are allowed:
 * ~~Make pressing a running/queued button cancel/terminate execution~~
 * ~~Make queued/playing buttons blink instead of be solid~~ (Big shout out to FMMT666 for [adding the features I needed to launchpad.py](https://github.com/FMMT666/launchpad.py/issues/31)!)
 * A "run the script on button X Y" command... runs risk of infinite loops.
+* Add `CMD` advanced command (make scary warning dialog boxes)
 * MIDI output command? (Low priority)
 * Load layout command? (That could get messy, maybe not a script func, but a seperate GUI option to bind loading a specific layout)
