@@ -1,4 +1,5 @@
 from pynput.mouse import Controller, Button
+from bresenham.bresenham import bresenham
 
 controller = Controller()
 
@@ -38,4 +39,7 @@ def release(button="left"):
 
 def scroll(x, y):
     controller.scroll(x, y)
+
+def line_coords(x1, y1, x2, y2):
+    return list(bresenham(x1, y1, x2, y2))
 
