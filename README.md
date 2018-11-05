@@ -221,7 +221,6 @@ For the `SP_` commands, the following key names are allowed:
 * Make `Add Command...` menu that acts as a guided helper for making commands
 * Add mouse event capture prompts to `Add Command...` menu boxes
 * Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
-* Add some sort of `move_on_line_over_time function` to the mouse library... or maybe just straight up in the script parser b/c of the `kill.set()` `Event()` handling...
 * ~~Add `M_LINE` and `M_LINE_MOVE` commands~~
 * Add generalized macro recorder wizard (!!!)
 * Add a `REPEAT` command to do last command n number of times
