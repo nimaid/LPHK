@@ -120,9 +120,9 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 * **Mouse**
   * `M_MOVE`
     * Moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position.
-    * `M_PRESS`
-      * Presses the mouse button (argument 1).
-        * See below for a list of valid button names.
+  * `M_PRESS`
+    * Presses the mouse button (argument 1).
+      * See below for a list of valid button names.
   * `M_RELEASE`
     * Releases the mouse button (argument 1).
       * See below for a list of valid button names.

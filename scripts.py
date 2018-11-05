@@ -1,3 +1,5 @@
+#TODO Refactor so each command is a seperate function in a list. That way, the script parser can just do commands["COMMAND"]((args,))
+
 import threading, webbrowser
 from time import sleep
 from functools import partial
