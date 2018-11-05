@@ -95,15 +95,15 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 * **Keyboard**
   * `PRESS`
     * Presses normal character (argument 1).
-      * Accepts any non-whitespace single character
+      * Accepts any non-whitespace single character.
   * `RELEASE`
     * Releases the normal character (argument 1).
-      * Accepts any non-whitespace single character
+      * Accepts any non-whitespace single character.
   * `STRING`
     * Types whatever text comes after it.
   * `TAP`
     * Taps the normal character (argument 1).
-      * Accepts any non-whitespace single character
+      * Accepts any non-whitespace single character.
     * If (argument 2) supplied, tap (argument 2) number of times.
     * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
   * `SP_PRESS`
