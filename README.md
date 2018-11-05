@@ -75,11 +75,11 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 The current command list is as follows:
 * `STRING` - types (argument 1)
 * `DELAY` - delays the script for (argument 1) seconds
-* `TAP` - taps the normal character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (argument 3) supplied,  delay (argument 2) seconds before releasing
+* `TAP` - taps the normal character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (argument 3) supplied,  delay (argument 3) seconds before releasing each time
 * `PRESS` - presses normal character (argument 1)
 * `RELEASE` - releases the normal character (argument 1)
 * `SOUND` - play a sound named (argument 1) inside the `user_sounds/` folder, `.wav` and `.ogg` only, if (argument 2) supplied, set volume to (argument 2), 0-100
-* `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (argument 3) supplied,  delay (argument 2) seconds before releasing
+* `SP_TAP` - taps the special character (argument 1), if (argument 2) supplied, tap (argument 2) number of times, if (argument 3) supplied,  delay (argument 3) seconds before releasing each time
 * `SP_PRESS` - presses the special character (argument 1)
 * `SP_RELEASE` - releases the spacial character (argument 1)
 * `M_PRESS` - presses the mouse button (argument 1)
@@ -87,7 +87,7 @@ The current command list is as follows:
 * `M_MOVE` - moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position
 * `M_SET` - sets the absolute cursor posistion to (argument 1) horizontal and (argument 2) vertical
 * `M_SCROLL` - scrolls the mouse vertically by (argument 1), if (argument 2) supplied, scroll (argument 2) horizontally
-* `WAIT_UNPRESSED` - waits until the button it's bound too is unpressed (no arguments)
+* `WAIT_UNPRESSED` - waits until the button it's bound to is unpressed (no arguments)
 * `WEB` - open website (argument 1) in default browser
 * `WEB_NEW` - open website (argument 1) in default browser, try new window
 
