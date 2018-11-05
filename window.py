@@ -205,12 +205,24 @@ class Main_Window(tk.Frame):
         w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
         w.resizable(False, False)
 
+        e_m = tk.Menu(w)
+        w.config(menu=e_m)
+
+        e_m_Script = tk.Menu(e_m, tearoff=False)
+
         t = tk.scrolledtext.ScrolledText(w)
-        t.grid(column=0, row=0, columnspan=4, padx=10, pady=10)
+        t.grid(column=0, row=0, rowspan=4, padx=10, pady=10)
 
         t.insert(tk.INSERT, scripts.text[x][y])
         t.bind("<<Paste>>", self.custom_paste)
         t.bind("<Control-Key-a>", self.select_all)
+
+        import_script_func = lambda: self.import_script(t, w)
+        e_m_Script.add_command(label="Import script...", command=import_script_func)
+
+        export_script_func = lambda: self.export_script(t, w)
+        e_m_Script.add_command(label="Export script...", command=export_script_func)
+        e_m.add_cascade(label="Script", menu=e_m_Script)
 
         curr_color = lp_colors.getXY(x, y)
         curr_color_bright = None
@@ -220,36 +232,30 @@ class Main_Window(tk.Frame):
             curr_color_bright = ("Blue", "Full")
 
         c_label = tk.Label(w, text="Color:")
-        c_label.grid(column=0, row=1, sticky=tk.E)
+        c_label.grid(column=1, row=0, sticky="se")
 
         color = tk.StringVar(w)
         color.set(curr_color_bright[0])
         color_select = tk.OptionMenu(w, color, *lp_colors.VALID_COLORS)
-        color_select.grid(column=1, row=1, sticky=tk.EW, padx=10)
+        color_select.config(width=12)
+        color_select.grid(column=2, row=0, padx=10, sticky="sew")
 
         b_label = tk.Label(w, text="Brightness:")
-        b_label.grid(column=0, row=2, sticky=tk.E,)
+        b_label.grid(column=1, row=1, sticky="ne")
 
         bright = tk.StringVar(w)
         bright.set(curr_color_bright[1])
         bright_select = tk.OptionMenu(w, bright, *lp_colors.VALID_BRIGHTS)
-        bright_select.grid(column=1, row=2, sticky=tk.EW, padx=10, pady=5)
-
-        import_script_func = lambda: self.import_script(t, w)
-        import_script_button = tk.Button(w, text="Import Script", command=import_script_func)
-        import_script_button.grid(column=2, row=1, sticky=tk.EW)
-
-        export_script_func = lambda: self.export_script(t, w)
-        export_script_button = tk.Button(w, text="Export Script", command=export_script_func)
-        export_script_button.grid(column=2, row=2, sticky=tk.EW, pady=5)
+        bright_select.config(width=12)
+        bright_select.grid(column=2, row=1,padx=10, sticky="new")
 
         save_func = lambda: self.save_script(w, x, y, lp_colors.code_by_color_brightness(color.get(), bright.get()), t.get(1.0, tk.END))
         save_button = tk.Button(w, text="Bind Button (" + str(x) + ", " + str(y) + ")", command=save_func)
-        save_button.grid(column=3, row=1, sticky=tk.EW, padx=10)
+        save_button.grid(column=1, row=2, columnspan=2, padx=(0,10), sticky="nesw")
 
         unbind_func = lambda: self.unbind_destroy(x, y, w)
         unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
-        unbind_button.grid(column=3, row=2, sticky=tk.EW, padx=10, pady=5)
+        unbind_button.grid(column=1, row=3, columnspan=2, padx=(0,10), pady=10, sticky="nesw")
 
         w.wait_visibility()
         w.grab_set()
@@ -293,7 +299,7 @@ class Main_Window(tk.Frame):
     def import_script(self, textbox, window):
         name = tk.filedialog.askopenfilename(parent=window,
                                              initialdir=os.getcwd() + files.SCRIPT_PATH,
-                                             title="Import script...:",
+                                             title="Import script...",
                                              filetypes=script_filetypes)
         if name:
             text = files.import_script(name, False)
@@ -304,7 +310,7 @@ class Main_Window(tk.Frame):
     def export_script(self, textbox, window):
         name = tk.filedialog.asksaveasfilename(parent=window,
                                                initialdir=os.getcwd() + files.SCRIPT_PATH,
-                                               title="Export script...:",
+                                               title="Export script...",
                                                filetypes=script_filetypes)
         if name:
             if files.SCRIPT_EXT not in name:
