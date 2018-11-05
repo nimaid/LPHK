@@ -11,7 +11,7 @@ EXIT_UPDATE_DELAY = 0.1
 
 import files
 
-VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE"]
+VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE"]
 DELAY_EXIT_CHECK = 0.025
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -402,11 +402,54 @@ def run_script(script_str, x, y):
                     skip = int(split_line[6])
 
                 if (delay == None) or (delay <= 0):
-                    print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ")")
+                    print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ") by " + str(skip) + " pixels per step")
                 else:
                     print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ") by " + str(skip) + " pixels per step and wait " + split_line[5] + " milliseconds between each step")
 
                 points = mouse.line_coords(x1, y1, x2, y2)
+                for x_M, y_M in points[::skip]:
+                    if threads[x][y].kill.is_set():
+                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                        threads[x][y].kill.clear()
+                        if not async:
+                            running = False
+                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                        return
+                    mouse.setXY(x_M, y_M)
+                    if (delay != None) and (delay > 0):
+                        temp_delay = delay
+                        while temp_delay > DELAY_EXIT_CHECK:
+                            sleep(DELAY_EXIT_CHECK)
+                            temp_delay -= DELAY_EXIT_CHECK
+                            if threads[x][y].kill.is_set():
+                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                                threads[x][y].kill.clear()
+                                if not async:
+                                    running = False
+                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                                return
+                        if temp_delay > 0:
+                            sleep(temp_delay)
+            elif split_line[0] == "M_LINE_MOVE":
+                x1 = int(split_line[1])
+                y1 = int(split_line[2])
+
+                delay = None
+                if len(split_line) > 3:
+                    delay = float(split_line[3]) / 1000.0
+
+                skip = 1
+                if len(split_line) > 4:
+                    skip = int(split_line[4])
+
+                if (delay == None) or (delay <= 0):
+                    print("[scripts] " + coords + "    Mouse line move relative (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step")
+                else:
+                    print("[scripts] " + coords + "    Mouse line move relative (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step and wait " + split_line[3] + " milliseconds between each step")
+
+                x_C, y_C = mouse.getXY()
+                x_N, y_N = x_C + x1, y_C + y1
+                points = mouse.line_coords(x_C, y_C, x_N, y_N)
                 for x_M, y_M in points[::skip]:
                     if threads[x][y].kill.is_set():
                         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
@@ -596,7 +639,7 @@ def validate_script(script_str):
                         except:
                             return ("Invalid scroll amount '" + split_line[2] + "'.", line)
                 if split_line[0] == "M_LINE":
-                    if len(split_line) < 4:
+                    if len(split_line) < 5:
                         return ("'M_LINE' requires at least X1, Y1, X2, and Y2 arguments.", line)
                     try:
                         temp = int(split_line[1])
@@ -626,5 +669,28 @@ def validate_script(script_str):
                                 return ("'M_LINE' skip value cannot be zero.", line)
                         except:
                             return ("'M_LINE' skip value '" + split_line[6] + "' not valid.", line)
+                if split_line[0] == "M_LINE_MOVE":
+                    if len(split_line) < 3:
+                        return ("'M_LINE_MOVE' requires at least X and Y arguments.", line)
+                    try:
+                        temp = int(split_line[1])
+                    except:
+                        return ("'M_LINE_MOVE' X value '" + split_line[1] + "' not valid.", line)
+                    try:
+                        temp = int(split_line[2])
+                    except:
+                        return ("'M_LINE_MOVE' Y value '" + split_line[2] + "' not valid.", line)
+                    if len(split_line) >= 4:
+                        try:
+                            temp = float(split_line[3])
+                        except:
+                            return ("'M_LINE_MOVE' wait value '" + split_line[3] + "' not valid.", line)
+                    if len(split_line) >= 5:
+                        try:
+                            temp = int(split_line[4])
+                            if temp == 0:
+                                return ("'M_LINE_MOVE' skip value cannot be zero.", line)
+                        except:
+                            return ("'M_LINE_MOVE' skip value '" + split_line[4] + "' not valid.", line)
 
     return True
