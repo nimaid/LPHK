@@ -118,6 +118,9 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * If (argument 2) supplied, tap (argument 2) number of times.
     * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
 * **Mouse**
+  * `M_LINE`
+    * Move the mouse in a line from absolute point (argument 1),(argument 2) to absolute point (argument 3),(argument 4).
+    * If (argument 5) supplied, delay (argument 5) milliseconds between each pixel.
   * `M_MOVE`
     * Moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position.
   * `M_PRESS`
@@ -212,7 +215,7 @@ For the `SP_` commands, the following key names are allowed:
 * Add mouse event capture prompts to `Add Command...` menu boxes
 * Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
 * Add some sort of `move_on_line_over_time function` to the mouse library... or maybe just straight up in the script parser b/c of the `kill.set()` `Event()` handling...
-* Add `M_LINE` and `M_LINE_ABS` commands
+* Add ~~`M_LINE`~~ and `M_LINE_MOVE` commands
 * Add generalized macro recorder wizard (!!!)
 * Add a `REPEAT` command to do last command n number of times
 * ~~Add a `WAIT_UNPRESSED` command that delays while the button the script is bound to is pressed~~

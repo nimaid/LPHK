@@ -11,7 +11,7 @@ EXIT_UPDATE_DELAY = 0.1
 
 import files
 
-VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP"]
+VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE"]
 DELAY_EXIT_CHECK = 0.025
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -387,6 +387,44 @@ def run_script(script_str, x, y):
                             if temp_delay > 0:
                                 sleep(temp_delay)
                             mouse.release(split_line[1])
+            elif split_line[0] == "M_LINE":
+                x1 = int(split_line[1])
+                y1 = int(split_line[2])
+                x2 = int(split_line[3])
+                y2 = int(split_line[4])
+                delay = None
+                if len(split_line) > 5:
+                    delay = float(split_line[5]) / 1000.0
+
+                if delay == None:
+                    print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ")")
+                else:
+                    print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ") and wait " + split_line[5] + " milliseconds between each")
+
+                points = mouse.line_coords(x1, y1, x2, y2)
+                for x_M, y_M in points:
+                    if threads[x][y].kill.is_set():
+                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                        threads[x][y].kill.clear()
+                        if not async:
+                            running = False
+                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                        return
+                    mouse.setXY(x_M, y_M)
+                    if delay != None:
+                        temp_delay = delay
+                        while temp_delay > DELAY_EXIT_CHECK:
+                            sleep(DELAY_EXIT_CHECK)
+                            temp_delay -= DELAY_EXIT_CHECK
+                            if threads[x][y].kill.is_set():
+                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                                threads[x][y].kill.clear()
+                                if not async:
+                                    running = False
+                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                                return
+                        if temp_delay > 0:
+                            sleep(temp_delay)
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
     print("[scripts] (" + str(x) + ", " + str(y) + ") Script done running.")
@@ -473,6 +511,9 @@ def validate_script(script_str):
                 if split_line[0] in ["TAP", "SP_TAP", "M_TAP"]:
                     if len(split_line) > 4:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                if split_line[0] in ["M_LINE"]:
+                    if len(split_line) > 6:
+                        return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
                     if keyboard.sp(split_line[1]) == None:
                         return ("No special character named '" + split_line[1] + "'.", line)
@@ -516,11 +557,11 @@ def validate_script(script_str):
                     if len(split_line) < 3:
                         return ("'M_MOVE' requires both an X and a Y movement value.", line)
                     try:
-                        temp = float(split_line[1])
+                        temp = int(split_line[1])
                     except:
                         return ("'M_MOVE' X value '" + split_line[1] + "' not valid.", line)
                     try:
-                        temp = float(split_line[2])
+                        temp = int(split_line[2])
                     except:
                         return ("'M_MOVE' Y value '" + split_line[2] + "' not valid.", line)
 
@@ -528,11 +569,11 @@ def validate_script(script_str):
                     if len(split_line) < 3:
                         return ("'M_SET' requires both an X and a Y value.", line)
                     try:
-                        temp = float(split_line[1])
+                        temp = int(split_line[1])
                     except:
                         return ("'M_SET' X value '" + split_line[1] + "' not valid.", line)
                     try:
-                        temp = float(split_line[2])
+                        temp = int(split_line[2])
                     except:
                         return ("'M_SET' Y value '" + split_line[2] + "' not valid.", line)
                 if split_line[0] in ["M_PRESS", "M_RELEASE", "M_TAP"]:
@@ -549,4 +590,29 @@ def validate_script(script_str):
                             temp = float(split_line[2])
                         except:
                             return ("Invalid scroll amount '" + split_line[2] + "'.", line)
+                if split_line[0] == "M_LINE":
+                    if len(split_line) < 4:
+                        return ("'M_LINE' requires at least X1, Y1, X2, and Y2 arguments.", line)
+                    try:
+                        temp = int(split_line[1])
+                    except:
+                        return ("'M_LINE' X1 value '" + split_line[1] + "' not valid.", line)
+                    try:
+                        temp = int(split_line[2])
+                    except:
+                        return ("'M_LINE' Y1 value '" + split_line[2] + "' not valid.", line)
+                    try:
+                        temp = int(split_line[3])
+                    except:
+                        return ("'M_LINE' X2 value '" + split_line[3] + "' not valid.", line)
+                    try:
+                        temp = int(split_line[4])
+                    except:
+                        return ("'M_LINE' Y2 value '" + split_line[4] + "' not valid.", line)
+                    if len(split_line) < 5:
+                        try:
+                            temp = float(split_line[5])
+                        except:
+                            return ("'M_LINE' wait value '" + split_line[5] + "' not valid.", line)
+
     return True
