@@ -198,7 +198,7 @@ For the `SP_` commands, the following key names are allowed:
 * ~~Script entry error checking~~
 * ~~Add launchpad connection menu~~
 * ~~Add `M_MOVE`, `M_TAP`, `M_SCROLL`, and `M_SET` commands~~
-* Add `M_PRESS`, `M_RELEASE`, and `M_TAP` commands
+* Add ~~`M_PRESS`~~, ~~`M_RELEASE`~~, and `M_TAP` commands
 * Put save/load script into menu
 * Make `Add Command...` menu that acts as a guided helper for making commands
 * Add mouse event capture prompts to `Add Command...` menu boxes
