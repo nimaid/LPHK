@@ -34,6 +34,8 @@ class Main_Window(tk.Frame):
 
         self.info_image = ImageTk.PhotoImage(Image.open("resources/info.png"))
         self.warning_image = ImageTk.PhotoImage(Image.open("resources/warning.png"))
+        self.error_image = ImageTk.PhotoImage(Image.open("resources/error.png"))
+        self.alert_image = ImageTk.PhotoImage(Image.open("resources/alert.png"))
         self.grid_drawn = False
         self.grid_rects = [[None for y in range(9)] for x in range(9)]
 
@@ -97,7 +99,7 @@ class Main_Window(tk.Frame):
             self.stat["text"] = "Connected to Launchpad MkII"
             self.stat["bg"] = STAT_ACTIVE_COLOR
         else:
-            self.popup(self, "Connect to Launchpad MkII...", self.warning_image, "Could not connect to Launchpad MkII!", "OK")
+            self.popup(self, "Connect to Launchpad MkII...", self.error_image, "Could not connect to Launchpad MkII!", "OK")
 
     def disconnect_lp(self):
         global lp_connected
@@ -294,7 +296,7 @@ class Main_Window(tk.Frame):
             else:
                 self.popup(window, "No Script Entered", self.info_image, "Please enter a script to bind.", "OK")
         else:
-            self.popup(window, "Syntax Error", self.warning_image, "Error in line: " + script_validate[1] + "\n" + script_validate[0], "OK")
+            self.popup(window, "Syntax Error", self.error_image, "Error in line: " + script_validate[1] + "\n" + script_validate[0], "OK")
 
     def import_script(self, textbox, window):
         name = tk.filedialog.askopenfilename(parent=window,

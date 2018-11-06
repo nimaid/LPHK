@@ -8,11 +8,12 @@ import lp_events, lp_colors, keyboard, sound, mouse
 COLOR_PRIMED = lp_colors.RED
 COLOR_FUNC_KEYS_PRIMED = lp_colors.AMBER
 EXIT_UPDATE_DELAY = 0.1
+DELAY_EXIT_CHECK = 0.025
 
 import files
 
 VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET"]
-DELAY_EXIT_CHECK = 0.025
+
 
 threads = [[None for y in range(9)] for x in range(9)]
 running = False

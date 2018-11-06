@@ -214,16 +214,21 @@ For the `SP_` commands, the following key names are allowed:
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
 * Add generalized macro recorder wizard (!!!)
-* Add a `REPEAT` command to do last command n number of times
-* Add `WAIT_UNPRESSED_REPEAT` command to repeat the last command until the button is released
-* Add `LABEL`, `GOTO_LABEL`, and `REPEAT_LABEL` commands
-* Add `WAIT_UNPRESSED_REPEAT_LABEL` command
+* Add `LABEL` and `GOTO_LABEL` commands
+* Add `REPEAT_LABEL` command to jump from this line to a `LABEL` n number of times max
+  * Defaults to 1
+* Add `IF_PRESSED_GOTO_LABEL` command to jump from this line to a `LABEL` if the key is still pressed
+* Add `IF_UNPRESSED_GOTO_LABEL` command to jump from this line to a `LABEL` if the key is unpressed
+* Add `IF_PRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is still pressed n number of times max
+  * Defaults to 1
+* Add `IF_UNPRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is unpressed n number of times max
+  * Defaults to 1
 * Make `Add Command...` menu that acts as a guided helper for making commands
 * Add mouse event capture prompts to `Add Command...` menu boxes
 * Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
 * Add script status icons (playing, queued)
 * A "run the script on button X Y" command... runs risk of infinite loops.
-* Add `CMD` advanced command (make scary warning dialog boxes)
+* Add `CMD` command to run OS commands (make multi-level scary warning dialog boxes when binding scripts/loading layouts)
 * MIDI output command? (Low priority)
 * Load layout command? (That could get messy, maybe not a script func, but a seperate GUI option to bind loading a specific layout)
 
