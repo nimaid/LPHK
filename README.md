@@ -7,6 +7,8 @@ A Novation Launchpad macro scripting system.
 
 [DOOM on a Launchpad](https://www.youtube.com/watch?v=4o_fh3n8FME)
 
+[Mouse Commands Demo - Maze](https://www.youtube.com/watch?v=w1YGSpT6aI8)
+
 ![GUI Update 1](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LHPK_update_1.png)
 
 ## What does it do?
