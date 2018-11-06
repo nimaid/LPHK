@@ -5,6 +5,8 @@ A Novation Launchpad macro scripting system.
 
 [Scheduling System](https://www.youtube.com/watch?v=rv2YmPQvMr0&t=164s)
 
+[Hackaday Early Writeup](https://hackaday.com/2018/11/04/launchpad-midi-controller-put-to-work-with-python/)
+
 [DOOM on a Launchpad](https://www.youtube.com/watch?v=4o_fh3n8FME)
 
 [Mouse Commands Demo - Maze](https://www.youtube.com/watch?v=w1YGSpT6aI8)
