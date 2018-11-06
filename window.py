@@ -36,6 +36,7 @@ class Main_Window(tk.Frame):
         self.warning_image = ImageTk.PhotoImage(Image.open("resources/warning.png"))
         self.error_image = ImageTk.PhotoImage(Image.open("resources/error.png"))
         self.alert_image = ImageTk.PhotoImage(Image.open("resources/alert.png"))
+        self.scare_image = ImageTk.PhotoImage(Image.open("resources/scare.png"))
         self.grid_drawn = False
         self.grid_rects = [[None for y in range(9)] for x in range(9)]
 
