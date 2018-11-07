@@ -233,6 +233,7 @@ For the `SP_` commands, the following key names are allowed:
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
 * Add generalized macro recorder wizard (!!!)
+* Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution
 * Add `LABEL` and `GOTO_LABEL` commands
 * Add `REPEAT_LABEL` command to jump from this line to a `LABEL` n number of times max
   * Defaults to 1
@@ -246,7 +247,6 @@ For the `SP_` commands, the following key names are allowed:
 * Add mouse event capture prompts to `Add Command...` menu boxes
 * Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
 * Add script status icons (playing, queued)
-* A "run the script on button X Y" command... runs risk of infinite loops.
 * Add `CMD` command to run OS commands (make multi-level scary warning dialog boxes when binding scripts/loading layouts)
 * MIDI output command? (Low priority)
 * Load layout command? (That could get messy, maybe not a script func, but a seperate GUI option to bind loading a specific layout)
