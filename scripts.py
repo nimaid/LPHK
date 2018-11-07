@@ -81,9 +81,9 @@ def run_script(script_str, x, y):
 
     script_lines = script_str.split("\n")
 
-    async = False
+    is_async = False
     if script_lines[0].split(" ")[0] == "@ASYNC":
-        async = True
+        is_async = True
         temp = script_lines.pop(0)
     else:
         running = True
@@ -93,7 +93,7 @@ def run_script(script_str, x, y):
         if threads[x][y].kill.is_set():
             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
             threads[x][y].kill.clear()
-            if not async:
+            if not is_async:
                 running = False
             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
             return
@@ -123,7 +123,7 @@ def run_script(script_str, x, y):
                         if threads[x][y].kill.is_set():
                             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                             threads[x][y].kill.clear()
-                            if not async:
+                            if not is_async:
                                 running = False
                             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                             return
@@ -147,7 +147,7 @@ def run_script(script_str, x, y):
                             if threads[x][y].kill.is_set():
                                 print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                 threads[x][y].kill.clear()
-                                if not async:
+                                if not is_async:
                                     running = False
                                 keyboard.release(split_line[1])
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -172,7 +172,7 @@ def run_script(script_str, x, y):
                             if threads[x][y].kill.is_set():
                                 print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                 threads[x][y].kill.clear()
-                                if not async:
+                                if not is_async:
                                     running = False
                                 keyboard.release(split_line[1])
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -185,7 +185,7 @@ def run_script(script_str, x, y):
                                 if threads[x][y].kill.is_set():
                                     print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                     threads[x][y].kill.clear()
-                                    if not async:
+                                    if not is_async:
                                         running = False
                                     keyboard.release(split_line[1])
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -219,7 +219,7 @@ def run_script(script_str, x, y):
                                 if threads[x][y].kill.is_set():
                                     print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                     threads[x][y].kill.clear()
-                                    if not async:
+                                    if not is_async:
                                         running = False
                                     keyboard.release(key)
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -244,7 +244,7 @@ def run_script(script_str, x, y):
                                 if threads[x][y].kill.is_set():
                                     print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                     threads[x][y].kill.clear()
-                                    if not async:
+                                    if not is_async:
                                         running = False
                                     keyboard.release(key)
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -257,7 +257,7 @@ def run_script(script_str, x, y):
                                     if threads[x][y].kill.is_set():
                                         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                         threads[x][y].kill.clear()
-                                        if not async:
+                                        if not is_async:
                                             running = False
                                         keyboard.release(key)
                                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -305,7 +305,7 @@ def run_script(script_str, x, y):
                     if threads[x][y].kill.is_set():
                         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                         threads[x][y].kill.clear()
-                        if not async:
+                        if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                         return
@@ -367,7 +367,7 @@ def run_script(script_str, x, y):
                             if threads[x][y].kill.is_set():
                                 print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                 threads[x][y].kill.clear()
-                                if not async:
+                                if not is_async:
                                     running = False
                                 mouse.release(split_line[1])
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -380,7 +380,7 @@ def run_script(script_str, x, y):
                                 if threads[x][y].kill.is_set():
                                     print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                     threads[x][y].kill.clear()
-                                    if not async:
+                                    if not is_async:
                                         running = False
                                     mouse.release(split_line[1])
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
@@ -412,7 +412,7 @@ def run_script(script_str, x, y):
                     if threads[x][y].kill.is_set():
                         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                         threads[x][y].kill.clear()
-                        if not async:
+                        if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                         return
@@ -425,7 +425,7 @@ def run_script(script_str, x, y):
                             if threads[x][y].kill.is_set():
                                 print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                 threads[x][y].kill.clear()
-                                if not async:
+                                if not is_async:
                                     running = False
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                 return
@@ -455,7 +455,7 @@ def run_script(script_str, x, y):
                     if threads[x][y].kill.is_set():
                         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                         threads[x][y].kill.clear()
-                        if not async:
+                        if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                         return
@@ -468,7 +468,7 @@ def run_script(script_str, x, y):
                             if threads[x][y].kill.is_set():
                                 print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                 threads[x][y].kill.clear()
-                                if not async:
+                                if not is_async:
                                     running = False
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                 return
@@ -497,7 +497,7 @@ def run_script(script_str, x, y):
                     if threads[x][y].kill.is_set():
                         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                         threads[x][y].kill.clear()
-                        if not async:
+                        if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                         return
@@ -510,7 +510,7 @@ def run_script(script_str, x, y):
                             if threads[x][y].kill.is_set():
                                 print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                 threads[x][y].kill.clear()
-                                if not async:
+                                if not is_async:
                                     running = False
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                 return
@@ -520,7 +520,7 @@ def run_script(script_str, x, y):
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
     print("[scripts] (" + str(x) + ", " + str(y) + ") Script done running.")
 
-    if not async:
+    if not is_async:
         running = False
     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
 
