@@ -72,7 +72,8 @@ Before using the program, there are some dependencies/libraries that you will ne
 
 ### Post-Install Instructions
 * Before starting the program, make sure your Launchpad MkII (for now, Pro and others are coming) is connected to the computer.
-* Click `Launchpad > Connect to Launchpad MkII...`. If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
+* Click `Launchpad > Connect to Launchpad MkII...`.
+  * If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
 * Click on a button to open the Script Edit window for that button.
   * All scripts are saved in the `.LPHKlayout` files, but the editor also has the ability to import/export single `.LPHKscript` files.
     * For examples, you can click `Import Script` and look through the `user_scripts/examples/` folder.
@@ -81,7 +82,7 @@ Before using the program, there are some dependencies/libraries that you will ne
 * Go to `Layout > Save layout as...` to save your current layout for future use, colors and all.
 * Go to `Layout > Load layout...` to load an existing layout. Examples are in `user_layouts/examples/`.
 
-####The whole GUI is still rough around the edges, so don't be too supprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :) And don't feel shy making feature requests, either!
+#### The whole GUI is still rough around the edges, so don't be too supprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :) And don't feel shy making feature requests, either!
 
 ## What is LPHKscript?
 LPHKscript is a simple macro scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript.
