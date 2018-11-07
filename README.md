@@ -54,7 +54,7 @@ Before using the program, there are some dependencies/libraries that you will ne
 
 ### Linux Install/Run Instructions
 * Simply clone the project and run `install_dependencies.sh`. If it fails, run with `sudo`.
-* Many distros will let you double click on `LPHK.py` to run it. If yours doesn't look up how to associate `.py` files with the `python3` binary on your distro.
+* Many distros will let you double click on `LPHK.py` to run it. If yours doesn't, look up how to associate `.py` files with the `python3` binary on your distro.
   * At this point, you should be able to use whatever functionality the program currently has.
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
 
