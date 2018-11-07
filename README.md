@@ -50,16 +50,38 @@ Yes! It does not have all the features I want just yet, and still has bugs, but 
 This is still WIP and still a beta version. See below for a todo list. I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help!
 
 ## How do I use it?
-Plug your Launchpad MkII (for now, Pro and others are coming) in, then run LPHK.py with Python 3, either through IDLE or "python3 LPHK.py".
+Before using the program, there are some dependencies/libraries that you will need to install:
 
+### Linux Install/Run Instructions
+Simply clone the project and run `install_dependencies.sh`. If it fails, run with `sudo`.
+
+Many distros will let you double click on `LPHK.py` to run it. If yours doesn't look up how to associate `.py` files with the `python3` binary on your distro.
+
+If you have errors, run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
+
+### Windows Install/Run Instructions
+First, download the lastest release of Python 3.x from https://www.python.org/. Run it, make a note of the default install location.
+
+I suggest checking the option "Add Python 3.x to PATH", as it lets you easily use Python from the command line.
+
+If performing a "Custom Installation" of Python 3, ensure "pip" and "tcl/tk and IDLE" are selected for install, at minimum.
+
+Clone LPHK into a folder of your choice. You can move the folder later, even to a USB drive.
+
+Run "install_dependencies.bat" to install required libraries via pip, which you just installed with Python 3.
+
+After installing all dependencies, right click on LPHK.py and select "Open with", then "Look for another app on this PC". Browse to that install location you noted earlier and select "python.exe". At this point, you should be able to use whatever functionality the program currently has.
+
+If you have errors, run the script in the command line by running "python3 LPHK.py" in the LPHK directory. (If this fails, use "python LPHK.py".) Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
+
+### Post-Install Instructions
+Before starting the program, make sure your Launchpad MkII (for now, Pro and others are coming) is connected to the computer.
 
 Click `Launchpad > Connect to Launchpad MkII...`. If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
-
 
 Click on a button to open the Script Edit window for that button. All scripts are saved in the `.LPHKlayout` files, but the editor also has the ability to import/export single `.LPHKscript` files. For examples, you can click `Import Script` and look through the `user_scripts/examples/` folder. Select the button color and brightness, then click `Bind Button (x, y)`. If there are syntax errors, this is when they will be caught, and you will be informed without the editor closing.
 
 Go to `Layout > Save layout as...` to save your current layout for future use, colors and all.
-
 
 Go to `Layout > Load layout...` to load an existing layout. Examples are in `user_layouts/examples/`.
 
