@@ -248,7 +248,14 @@ For the `SP_` commands, the following key names are allowed:
 * Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
 * Add GUI scaling
 * Add script status icons (playing, queued)
-* Add `CMD` command to run OS commands (make multi-level scary warning dialog boxes when binding scripts/loading layouts)
+* Add `CMD` command to run OS commands
+  * Make multi-level scary warning dialog boxes when binding to a button (incl during load layout)
+  * Give option (and strongly reccomend its use) for users to run command once and verify it does what they want before binding to button (incl during load layout)
+* Add `@LOAD_LAYOUT` header command to load a specified layout
+  * Check if layout currently exists when binding to a button (incl during load layout)
+    * If not, prompt user if they want to continue anyway
+* Add feature to SOUND to check if file currently exists when binding to a button (incl during load layout)
+  * If not, prompt user if they want to continue anyway
 * MIDI output command? (Low priority)
 * Load layout command? (That could get messy, maybe not a script func, but a seperate GUI option to bind loading a specific layout)
 
