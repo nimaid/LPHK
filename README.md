@@ -246,6 +246,7 @@ For the `SP_` commands, the following key names are allowed:
 * Make `Add Command...` menu that acts as a guided helper for making commands
 * Add mouse event capture prompts to `Add Command...` menu boxes
 * Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
+* Add GUI scaling
 * Add script status icons (playing, queued)
 * Add `CMD` command to run OS commands (make multi-level scary warning dialog boxes when binding scripts/loading layouts)
 * MIDI output command? (Low priority)
