@@ -228,8 +228,6 @@ For the `SP_` commands, the following key names are allowed:
 * `vol_up`
 
 ## What still needs to be written?
-
-* All 128 colors (off + 128)
 * Support for Launchpad Pro
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
@@ -283,3 +281,5 @@ For the `SP_` commands, the following key names are allowed:
 * ~~Add commenting script lines~~
 * ~~Make pressing a running/queued button cancel/terminate execution~~
 * ~~Make queued/playing buttons blink instead of be solid~~ (Big shout out to FMMT666 for [adding the features I needed to launchpad.py](https://github.com/FMMT666/launchpad.py/issues/31)!)
+* ~~Make user defined colors RGB~~
+* ~~Add RGB color selector~~

@@ -1,7 +1,8 @@
 import tkinter as tk
-import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox
+import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox, tkinter.colorchooser
 from PIL import ImageTk, Image
 import os
+from functools import partial
 
 import scripts, files, lp_colors, lp_events
 
@@ -19,6 +20,7 @@ layout_filetypes = [('LPHK layout files', files.LAYOUT_EXT)]
 script_filetypes = [('LPHK script files', files.SCRIPT_EXT)]
 
 lp_connected = False
+colors_to_set = [[[0, 0, 255] for y in range(9)] for x in range(9)]
 
 def init(lp_object_in):
     global lp_object
@@ -204,6 +206,7 @@ class Main_Window(tk.Frame):
         self.grid_drawn = False
 
     def script_entry_window(self, x, y):
+        global color_to_set
         w = tk.Toplevel(self)
         w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
         w.resizable(False, False)
@@ -214,7 +217,7 @@ class Main_Window(tk.Frame):
         e_m_Script = tk.Menu(e_m, tearoff=False)
 
         t = tk.scrolledtext.ScrolledText(w)
-        t.grid(column=0, row=0, rowspan=4, padx=10, pady=10)
+        t.grid(column=0, row=0, rowspan=3, padx=10, pady=10)
 
         t.insert(tk.INSERT, scripts.text[x][y])
         t.bind("<<Paste>>", self.custom_paste)
@@ -227,42 +230,51 @@ class Main_Window(tk.Frame):
         e_m_Script.add_command(label="Export script...", command=export_script_func)
         e_m.add_cascade(label="Script", menu=e_m_Script)
 
-        curr_color = lp_colors.getXY(x, y)
-        curr_color_bright = None
-        if curr_color != 0:
-            curr_color_bright = lp_colors.COLOR_BRIGHTS[curr_color]
-        else:
-            curr_color_bright = ("Blue", "Full")
+        colors_to_set[x][y] =  lp_colors.getXY(x, y)
+        if type(colors_to_set[x][y]) == int:
+            rgb = lp_colors.RGB[colors_to_set[x][y]]
+            colors_to_set[x][y] = []
+            for c in range(3):
+                val = rgb[c + 1]
+                colors_to_set[x][y].append(int(val + val, 16))
+        ask_color_func = lambda: self.ask_color(w, color_button, x, y, colors_to_set[x][y])
+        color_button = tk.Button(w, text="Select Color", command=ask_color_func)
+        color_button.grid(column=1, row=0, padx=(0, 10), pady=(10, 50), sticky="nesw")
+        start_color_str = lp_colors.list_RGB_to_string(colors_to_set[x][y])
+        self.button_color_with_text_update(color_button, start_color_str)
 
-        c_label = tk.Label(w, text="Color:")
-        c_label.grid(column=1, row=0, sticky="se")
-
-        color = tk.StringVar(w)
-        color.set(curr_color_bright[0])
-        color_select = tk.OptionMenu(w, color, *lp_colors.VALID_COLORS)
-        color_select.config(width=12)
-        color_select.grid(column=2, row=0, padx=10, sticky="sew")
-
-        b_label = tk.Label(w, text="Brightness:")
-        b_label.grid(column=1, row=1, sticky="ne")
-
-        bright = tk.StringVar(w)
-        bright.set(curr_color_bright[1])
-        bright_select = tk.OptionMenu(w, bright, *lp_colors.VALID_BRIGHTS)
-        bright_select.config(width=12)
-        bright_select.grid(column=2, row=1,padx=10, sticky="new")
-
-        save_func = lambda: self.save_script(w, x, y, lp_colors.code_by_color_brightness(color.get(), bright.get()), t.get(1.0, tk.END))
-        save_button = tk.Button(w, text="Bind Button (" + str(x) + ", " + str(y) + ")", command=save_func)
-        save_button.grid(column=1, row=2, columnspan=2, padx=(0,10), sticky="nesw")
+        save_script_func = lambda: self.save_script(w, x, y, t.get(1.0, tk.END))
+        save_button = tk.Button(w, text="Bind Button (" + str(x) + ", " + str(y) + ")", command=save_script_func)
+        save_button.grid(column=1, row=1, padx=(0,10), sticky="nesw")
 
         unbind_func = lambda: self.unbind_destroy(x, y, w)
         unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
-        unbind_button.grid(column=1, row=3, columnspan=2, padx=(0,10), pady=10, sticky="nesw")
+        unbind_button.grid(column=1, row=2, padx=(0,10), pady=10, sticky="nesw")
 
         w.wait_visibility()
         w.grab_set()
         t.focus_set()
+
+    def ask_color(self, window, button, x, y, default_color):
+        global colors_to_set
+        color = tk.colorchooser.askcolor(initialcolor=tuple(default_color), parent=window)
+        if color[0] != None:
+            color_to_set = [int(min(255, max(0, c))) for c in color[0]]
+            colors_to_set[x][y] = color_to_set
+            self.button_color_with_text_update(button, color[1])
+
+    def button_color_with_text_update(self, button, color):
+        button.configure(bg=color, activebackground=color)
+        color_rgb = []
+        for c in range(3):
+            start_index = c * 2
+            val = color[start_index + 1:start_index + 3]
+            color_rgb.append(int(val, 16))
+        luminance = ((0.299 * color_rgb[0]) + (0.587 * color_rgb[1]) + (0.114 * color_rgb[2])) / 255.0
+        if luminance > 0.5:
+            button.configure(fg="black", activeforeground="black")
+        else:
+            button.configure(fg="white", activeforeground="white")
 
     def custom_paste(self, event):
         try:
@@ -283,14 +295,15 @@ class Main_Window(tk.Frame):
         self.draw_canvas()
         window.destroy()
 
-    def save_script(self, window, x, y, color, script_text):
+    def save_script(self, window, x, y, script_text):
+        global colors_to_set
         script_text = script_text.strip()
 
         script_validate = scripts.validate_script(script_text)
         if script_validate == True:
             if script_text != "":
                 script_text = files.strip_lines(script_text)
-                scripts.bind(x, y, script_text, color)
+                scripts.bind(x, y, script_text, colors_to_set[x][y])
                 self.draw_canvas()
                 lp_colors.updateXY(x, y)
                 window.destroy()

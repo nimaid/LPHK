@@ -26,8 +26,15 @@ def save_layout(name, add_path=True):
     with open(final_path, "w+") as f:
         for x in range(9):
             for y in range(9):
-                color = str(lp_colors.curr_colors[x][y])
-                f.write(color)
+                color = lp_colors.curr_colors[x][y]
+                if type(color) == list:
+                    f.write(str(color[0]))
+                    f.write(",")
+                    f.write(str(color[1]))
+                    f.write(",")
+                    f.write(str(color[2]))
+                else:
+                    f.write(str(color))
 
                 f.write(ENTRY_SEPERATOR)
 
@@ -55,7 +62,15 @@ def load_layout(name, add_path=True):
             line = l[x][:-1].split(BUTTON_SEPERATOR)
             for y in range(9):
                 info = line[y].split(ENTRY_SEPERATOR)
-                color = int(info[0])
+                color = info[0]
+                if not color.isdigit():
+                    split = color.split(",")
+                    color = []
+                    color.append(int(split[0]))
+                    color.append(int(split[1]))
+                    color.append(int(split[2]))
+                else:
+                    color = int(info[0])
                 script_text = info[1].replace(NEWLINE_REPLACE, "\n")
 
                 if script_text != "":
