@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox, tkinter.colorchooser
 from PIL import ImageTk, Image
-import os, threading
+import os
 from functools import partial
 
 import scripts, files, lp_colors, lp_events
@@ -350,12 +350,12 @@ class Main_Window(tk.Frame):
         popup.resizable(False, False)
         popup.wm_title(title)
         popup.tkraise(window)
-        
+
         def run_end():
-            if end_command != None:
-                threading.Thread(target=end_command).start()
             popup.destroy()
-        
+            if end_command != None:
+                end_command()
+
         picture_label = tk.Label(popup, image=image)
         picture_label.photo = image
         picture_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
