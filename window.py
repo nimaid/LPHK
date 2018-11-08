@@ -13,6 +13,7 @@ STAT_ACTIVE_COLOR = "#080"
 STAT_INACTIVE_COLOR = "#444"
 DEFAULT_COLOR = [0, 0, 255]
 INDICATOR_BPM = 480
+BUTTON_FONT = ("helvetica", 11, "bold")
 
 root = None
 app = None
@@ -245,16 +246,21 @@ class Main_Window(tk.Frame):
         ask_color_func = lambda: self.ask_color(w, color_button, x, y, colors_to_set[x][y])
         color_button = tk.Button(w, text="Select Color", command=ask_color_func)
         color_button.grid(column=1, row=0, padx=(0, 10), pady=(10, 50), sticky="nesw")
+        color_button.config(font=BUTTON_FONT)
         start_color_str = lp_colors.list_RGB_to_string(colors_to_set[x][y])
         self.button_color_with_text_update(color_button, start_color_str)
 
         save_script_func = lambda: self.save_script(w, x, y, t.get(1.0, tk.END))
         save_button = tk.Button(w, text="Bind Button (" + str(x) + ", " + str(y) + ")", command=save_script_func)
         save_button.grid(column=1, row=1, padx=(0,10), sticky="nesw")
+        save_button.config(font=BUTTON_FONT)
+        save_button.config(bg="#c3d9C3")
 
         unbind_func = lambda: self.unbind_destroy(x, y, w)
         unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
         unbind_button.grid(column=1, row=2, padx=(0,10), pady=10, sticky="nesw")
+        unbind_button.config(font=BUTTON_FONT)
+        unbind_button.config(bg="#d9c3c3")
 
         w.wait_visibility()
         w.grab_set()
