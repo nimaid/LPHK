@@ -156,11 +156,3 @@ def raw_clear():
     for x in range(9):
         for y in range(9):
             lp_object.LedCtrlXYByCode(x, y, BLACK)
-
-def HSV_to_RGB(h, s, v):
-    RGB = colorsys.hsv_to_rgb(h, s, v)
-    return [round(c) for c in RGB]
-
-def RGB_to_HSV(r, g, b):
-    HSV = colorsys.rgb_to_hsv(r, g, b)
-    return [round(c) for c in HSV]
