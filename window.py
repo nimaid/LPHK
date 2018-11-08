@@ -7,6 +7,8 @@ from functools import partial
 import scripts, files, lp_colors, lp_events
 
 BUTTON_SIZE = 40
+HS_SIZE = 200
+V_WIDTH = 50
 STAT_ACTIVE_COLOR = "#080"
 STAT_INACTIVE_COLOR = "#444"
 DEFAULT_COLOR = [0, 0, 255]
@@ -254,9 +256,45 @@ class Main_Window(tk.Frame):
         unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
         unbind_button.grid(column=1, row=2, padx=(0,10), pady=10, sticky="nesw")
 
+        '''
+        color_canvas = tk.Canvas(w, width=HS_SIZE + V_WIDTH, height=HS_SIZE)
+        HS_image = tk.PhotoImage(width=HS_SIZE, height=HS_SIZE)
+        HS_center = round(HS_SIZE/2)
+        color_canvas.create_image((HS_center, HS_center), image=HS_image, state="normal")
+        color_canvas.HS_image = HS_image
+        V_image = tk.PhotoImage(width=V_WIDTH, height=HS_SIZE)
+        V_center = round(V_WIDTH/2) + HS_SIZE
+        color_canvas.create_image((V_center, HS_center), image=V_image, state="normal")
+        color_canvas.V_image = V_image
+        color_canvas.grid(column=1, row=3)
+
+        self.draw_color_selector(color_canvas, 0, 1, 255)
+        '''
+
         w.wait_visibility()
         w.grab_set()
         t.focus_set()
+
+    def draw_color_selector(self, canvas, h=None, s=None, v=None):
+        if h != None:
+            canvas.hue = h
+        if s != None:
+            canvas.saturation = s
+        if v != None:
+            canvas.value = v
+        for x in range(HS_SIZE):
+            for y in range(HS_SIZE):
+                hue_set = (x / HS_SIZE)
+                saturation_set = (1 - (y / HS_SIZE))
+                rgb = lp_colors.HSV_to_RGB(hue_set, saturation_set, canvas.value)
+                color = lp_colors.list_RGB_to_string(rgb)
+                canvas.HS_image.put(color, (x, y))
+        for x in range(V_WIDTH):
+            for y in range(HS_SIZE):
+                value_set = (1 - (y / HS_SIZE)) * 255
+                rgb = lp_colors.HSV_to_RGB(canvas.hue, canvas.saturation, value_set)
+                color = lp_colors.list_RGB_to_string(rgb)
+                canvas.V_image.put(color, (x, y))
 
     def ask_color(self, window, button, x, y, default_color):
         global colors_to_set

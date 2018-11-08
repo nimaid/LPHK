@@ -66,6 +66,7 @@ curr_colors = [[BLACK for y in range(9)] for x in range(9)]
 color_modes = [["solid" for y in range(9)] for x in range(9)]
 
 import lp_events, scripts, window
+import colorsys
 
 lp_object = None
 
@@ -156,68 +157,10 @@ def raw_clear():
         for y in range(9):
             lp_object.LedCtrlXYByCode(x, y, BLACK)
 
-def code_by_color_brightness(color, brightness):
-    if brightness == "Full":
-        if color == "White":
-            return WHITE
-        elif color == "Red":
-            return RED
-        elif color == "Orange":
-            return AMBER
-        elif color == "Yellow":
-            return YELLOW
-        elif color == "Green":
-            return GREEN
-        elif color == "Mint":
-            return MINT
-        elif color == "Light Blue":
-            return LIGHTBLUE
-        elif color == "Blue":
-            return BLUE
-        elif color == "Purple":
-            return PURPLE
-        elif color == "Pink":
-            return PINK
-    elif brightness == "Half":
-        if color == "White":
-            return WHITE_HALF
-        elif color == "Red":
-            return RED_HALF
-        elif color == "Orange":
-            return AMBER_HALF
-        elif color == "Yellow":
-            return YELLOW_HALF
-        elif color == "Green":
-            return GREEN_HALF
-        elif color == "Mint":
-            return MINT_HALF
-        elif color == "Light Blue":
-            return LIGHTBLUE_HALF
-        elif color == "Blue":
-            return BLUE_HALF
-        elif color == "Purple":
-            return PURPLE_HALF
-        elif color == "Pink":
-            return PINK_HALF
-    elif brightness == "Third":
-        if color == "White":
-            return WHITE_THIRD
-        elif color == "Red":
-            return RED_THIRD
-        elif color == "Orange":
-            return AMBER_THIRD
-        elif color == "Yellow":
-            return YELLOW_THIRD
-        elif color == "Green":
-            return GREEN_THIRD
-        elif color == "Mint":
-            return MINT_THIRD
-        elif color == "Light Blue":
-            return LIGHTBLUE_THIRD
-        elif color == "Blue":
-            return BLUE_THIRD
-        elif color == "Purple":
-            return PURPLE_THIRD
-        elif color == "Pink":
-            return PINK_THIRD
-    return(-1)
+def HSV_to_RGB(h, s, v):
+    RGB = colorsys.hsv_to_rgb(h, s, v)
+    return [round(c) for c in RGB]
+
+def RGB_to_HSV(r, g, b):
+    HSV = colorsys.rgb_to_hsv(r, g, b)
+    return [round(c) for c in HSV]
