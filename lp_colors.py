@@ -62,7 +62,7 @@ RGB = {BLACK: "#000",
        PURPLE_HALF: "#64a",
        PURPLE_THIRD: "#325"}
 
-curr_colors = [[[0,0,0] for y in range(9)] for x in range(9)]
+curr_colors = [[BLACK for y in range(9)] for x in range(9)]
 color_modes = [["solid" for y in range(9)] for x in range(9)]
 
 import lp_events, scripts, window
@@ -97,6 +97,9 @@ def getXY_RGB(x, y):
         return color_string
     else:
         return RGB[color]
+
+def luminance(r, g, b):
+	return ((0.299 * r) + (0.587 * g) + (0.114 * b)) / 255.0
 
 def updateXY(x, y):
     if window.lp_connected:

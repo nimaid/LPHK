@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox, tkinter.colorchooser
 from PIL import ImageTk, Image
-import os
+import os, threading
 from functools import partial
 
 import scripts, files, lp_colors, lp_events
@@ -9,6 +9,8 @@ import scripts, files, lp_colors, lp_events
 BUTTON_SIZE = 40
 STAT_ACTIVE_COLOR = "#080"
 STAT_INACTIVE_COLOR = "#444"
+DEFAULT_COLOR = [0, 0, 255]
+LUMINANCE_CUT = 0.01
 INDICATOR_BPM = 480
 
 root = None
@@ -237,6 +239,9 @@ class Main_Window(tk.Frame):
             for c in range(3):
                 val = rgb[c + 1]
                 colors_to_set[x][y].append(int(val + val, 16))
+        luminance = lp_colors.luminance(colors_to_set[x][y][0], colors_to_set[x][y][1], colors_to_set[x][y][2])
+        if luminance < LUMINANCE_CUT:
+            colors_to_set[x][y] = DEFAULT_COLOR
         ask_color_func = lambda: self.ask_color(w, color_button, x, y, colors_to_set[x][y])
         color_button = tk.Button(w, text="Select Color", command=ask_color_func)
         color_button.grid(column=1, row=0, padx=(0, 10), pady=(10, 50), sticky="nesw")
@@ -260,8 +265,13 @@ class Main_Window(tk.Frame):
         color = tk.colorchooser.askcolor(initialcolor=tuple(default_color), parent=window)
         if color[0] != None:
             color_to_set = [int(min(255, max(0, c))) for c in color[0]]
-            colors_to_set[x][y] = color_to_set
-            self.button_color_with_text_update(button, color[1])
+            luminance = lp_colors.luminance(color_to_set[0], color_to_set[1], color_to_set[2])
+            if luminance < LUMINANCE_CUT:
+                rerun = lambda: self.ask_color(window, button, x, y, default_color)
+                self.popup(window, "Invalid Color", self.warning_image, "That color is too dark to see.", "OK", rerun)
+            else:
+                colors_to_set[x][y] = color_to_set
+                self.button_color_with_text_update(button, color[1])
 
     def button_color_with_text_update(self, button, color):
         button.configure(bg=color, activebackground=color)
@@ -270,7 +280,7 @@ class Main_Window(tk.Frame):
             start_index = c * 2
             val = color[start_index + 1:start_index + 3]
             color_rgb.append(int(val, 16))
-        luminance = ((0.299 * color_rgb[0]) + (0.587 * color_rgb[1]) + (0.114 * color_rgb[2])) / 255.0
+        luminance = lp_colors.luminance(color_rgb[0], color_rgb[1], color_rgb[2])
         if luminance > 0.5:
             button.configure(fg="black", activeforeground="black")
         else:
@@ -335,16 +345,22 @@ class Main_Window(tk.Frame):
             text = files.strip_lines(text)
             files.export_script(name, text, False)
 
-    def popup(self, window, title, image, text, button_text):
+    def popup(self, window, title, image, text, button_text, end_command=None):
         popup = tk.Toplevel(window)
         popup.resizable(False, False)
         popup.wm_title(title)
         popup.tkraise(window)
+        
+        def run_end():
+            if end_command != None:
+                threading.Thread(target=end_command).start()
+            popup.destroy()
+        
         picture_label = tk.Label(popup, image=image)
         picture_label.photo = image
         picture_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
         tk.Label(popup, text=text, justify=tk.LEFT).grid(column=1, row=0, padx=10, pady=10)
-        tk.Button(popup, text=button_text, command=popup.destroy).grid(column=1, row=1, padx=10, pady=10)
+        tk.Button(popup, text=button_text, command=run_end).grid(column=1, row=1, padx=10, pady=10)
         popup.wait_visibility()
         popup.grab_set()
 

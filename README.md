@@ -246,7 +246,7 @@ For the `SP_` commands, the following key names are allowed:
 * Add mouse event capture prompts to `Add Command...` menu boxes
 * Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
 * Add GUI scaling
-* Add script status icons (playing, queued)
+* Add script status icons (bound, playing, queued)
 * Add `CMD` command to run OS commands
   * Make multi-level scary warning dialog boxes when binding to a button (incl during load layout)
   * Give option (and strongly reccomend its use) for users to run command once and verify it does what they want before binding to button (incl during load layout)
