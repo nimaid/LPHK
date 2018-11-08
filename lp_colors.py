@@ -74,8 +74,6 @@ def init(lp_object_in):
     lp_object = lp_object_in
 
 def setXY(x, y, color):
-    if type(color) in (list, tuple):
-        color = [int(min(255, max(0, c))) for c in color]
     curr_colors[x][y] = color
 
 def getXY(x, y):

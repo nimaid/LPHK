@@ -10,7 +10,6 @@ BUTTON_SIZE = 40
 STAT_ACTIVE_COLOR = "#080"
 STAT_INACTIVE_COLOR = "#444"
 DEFAULT_COLOR = [0, 0, 255]
-LUMINANCE_CUT = 0.01
 INDICATOR_BPM = 480
 
 root = None
@@ -239,8 +238,7 @@ class Main_Window(tk.Frame):
             for c in range(3):
                 val = rgb[c + 1]
                 colors_to_set[x][y].append(int(val + val, 16))
-        luminance = lp_colors.luminance(colors_to_set[x][y][0], colors_to_set[x][y][1], colors_to_set[x][y][2])
-        if luminance < LUMINANCE_CUT:
+        if all(c < 4 for c in colors_to_set[x][y]):
             colors_to_set[x][y] = DEFAULT_COLOR
         ask_color_func = lambda: self.ask_color(w, color_button, x, y, colors_to_set[x][y])
         color_button = tk.Button(w, text="Select Color", command=ask_color_func)
@@ -265,8 +263,7 @@ class Main_Window(tk.Frame):
         color = tk.colorchooser.askcolor(initialcolor=tuple(default_color), parent=window)
         if color[0] != None:
             color_to_set = [int(min(255, max(0, c))) for c in color[0]]
-            luminance = lp_colors.luminance(color_to_set[0], color_to_set[1], color_to_set[2])
-            if luminance < LUMINANCE_CUT:
+            if all(c < 4 for c in color_to_set):
                 rerun = lambda: self.ask_color(window, button, x, y, default_color)
                 self.popup(window, "Invalid Color", self.warning_image, "That color is too dark to see.", "OK", rerun)
             else:
