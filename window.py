@@ -225,7 +225,7 @@ class Main_Window(tk.Frame):
     def script_entry_window(self, x, y):
         global color_to_set
         w = tk.Toplevel(self)
-        w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
+        w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")...")
         w.resizable(False, False)
 
         e_m = tk.Menu(w)
@@ -281,7 +281,7 @@ class Main_Window(tk.Frame):
 
     def ask_color(self, window, button, x, y, default_color):
         global colors_to_set
-        color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window)
+        color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
         if color[0] != None:
             color_to_set = [int(min(255, max(0, c))) for c in color[0]]
             if all(c < 4 for c in color_to_set):
