@@ -18,6 +18,7 @@ BUTTON_FONT = ("helvetica", 11, "bold")
 root = None
 app = None
 root_destroyed = None
+restart = False
 lp_object = None
 
 layout_filetypes = [('LPHK layout files', files.LAYOUT_EXT)]
@@ -56,6 +57,7 @@ class Main_Window(tk.Frame):
         self.m_Launchpad = tk.Menu(self.m, tearoff=False)
         self.m_Launchpad.add_command(label="Connect to Launchpad MkII...", command=self.connect_MkII)
         self.m_Launchpad.add_command(label="Disonnect from Launchpad...", command=self.disconnect_lp)
+        self.m_Launchpad.add_command(label="Redetect...", command=self.redetect_lp)
         self.m.add_cascade(label="Launchpad", menu=self.m_Launchpad)
 
         self.disable_lp_disconnect()
@@ -94,25 +96,31 @@ class Main_Window(tk.Frame):
 
     def connect_MkII(self):
         global lp_connected
-        if lp_object.Open(0, "mk2"):
-            lp_connected = True
-            lp_object.ButtonFlush()
-            lp_object.LedCtrlBpm(INDICATOR_BPM)
-            lp_events.start(lp_object)
-            self.draw_canvas()
-            self.enable_menu("Layout")
-            self.enable_lp_disconnect()
+        try:
+            if lp_object.Open(0, "mk2"):
+                lp_connected = True
+                lp_object.ButtonFlush()
+                lp_object.LedCtrlBpm(INDICATOR_BPM)
+                lp_events.start(lp_object)
+                self.draw_canvas()
+                self.enable_menu("Layout")
+                self.enable_lp_disconnect()
 
-            self.stat["text"] = "Connected to Launchpad MkII"
-            self.stat["bg"] = STAT_ACTIVE_COLOR
-        else:
-            self.popup(self, "Connect to Launchpad MkII...", self.error_image, "Could not connect to Launchpad MkII!", "OK")
+                self.stat["text"] = "Connected to Launchpad MkII"
+                self.stat["bg"] = STAT_ACTIVE_COLOR
+            else:
+                self.popup(self, "Connect to Launchpad MkII...", self.error_image, "Could not connect to Launchpad MkII!\nPlug in your USB cable and try the 'Redetect...' option from the 'Launchpad' menu.", "OK")
+        except:
+            self.popup(self, "Connect to Launchpad MkII...", self.error_image, "Fatal error while connecting to Launchpad MkII!\nDisconnect and reconnect your USB cable, then use the 'Redetect...' option from the 'Launchpad' menu.", "OK")
 
     def disconnect_lp(self):
         global lp_connected
-        scripts.unbind_all()
-        lp_events.timer.cancel()
-        lp_object.Close()
+        try:
+            scripts.unbind_all()
+            lp_events.timer.cancel()
+            lp_object.Close()
+        except:
+            self.redetect_lp()
         lp_connected = False
 
         self.clear_canvas()
@@ -122,6 +130,11 @@ class Main_Window(tk.Frame):
 
         self.stat["text"] = "No Launchpad Connected"
         self.stat["bg"] = STAT_INACTIVE_COLOR
+
+    def redetect_lp(self):
+        global restart
+        restart = True
+        close()
 
     def unbind_lp(self):
         scripts.unbind_all()

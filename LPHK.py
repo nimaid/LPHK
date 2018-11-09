@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 
-import sys
+import sys, os
 
 EXIT_ON_WINDOW_CLOSE = True
 
@@ -45,6 +45,8 @@ def shutdown():
         lp_events.timer.cancel()
         lp.Close()
         window.lp_connected = False
+    if window.restart:
+        os.execv(sys.executable, [sys.executable] + sys.argv)
     sys.exit("[LPHK] Sutting down...")
 
 def main():
