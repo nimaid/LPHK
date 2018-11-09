@@ -11,7 +11,7 @@ A Novation Launchpad macro scripting system.
 
 [Mouse Commands Demo - Maze](https://www.youtube.com/watch?v=w1YGSpT6aI8)
 
-![Update 2](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LHPK_update_2.png)
+![Update 2](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_2.png)
 
 ## What does it do?
 The goal of this project is to implement a macro scripting system for the Novation Launchpad, in order to use the launchpad as a scriptable, general purpose macro keyboard.
