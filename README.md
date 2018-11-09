@@ -1,6 +1,8 @@
 # LPHK (LaunchPad HotKey)
 A Novation Launchpad macro scripting system.
 
+![Update 2](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_2.png)
+
 [First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
 
 [Scheduling System](https://www.youtube.com/watch?v=rv2YmPQvMr0&t=164s)
@@ -10,8 +12,6 @@ A Novation Launchpad macro scripting system.
 [DOOM on a Launchpad](https://www.youtube.com/watch?v=4o_fh3n8FME)
 
 [Mouse Commands Demo - Maze](https://www.youtube.com/watch?v=w1YGSpT6aI8)
-
-![Update 2](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_2.png)
 
 ## What does it do?
 The goal of this project is to implement a macro scripting system for the Novation Launchpad, in order to use the launchpad as a scriptable, general purpose macro keyboard.
