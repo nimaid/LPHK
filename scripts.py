@@ -1,5 +1,3 @@
-#TODO Refactor so each command is a seperate function in a list. That way, the script parser can just do commands["COMMAND"]((args,))
-
 import threading, webbrowser
 from time import sleep
 from functools import partial
@@ -89,15 +87,15 @@ def run_script(script_str, x, y):
         running = True
 
     print("[scripts] " + coords + " Now running script...")
-    for line in script_lines:
+    def main_logic(idx):
         if threads[x][y].kill.is_set():
             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
             threads[x][y].kill.clear()
             if not is_async:
                 running = False
             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-            return
-        line = line.strip()
+            return idx + 1
+        line = script_lines[idx].strip()
         if line == "":
             print("[scripts] " + coords + "    Empty line")
         elif line[0] == "-":
@@ -126,7 +124,7 @@ def run_script(script_str, x, y):
                             if not is_async:
                                 running = False
                             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                            return
+                            return idx + 1
                     if delay > 0:
                         sleep(delay)
             elif split_line[0] == "TAP":
@@ -151,7 +149,7 @@ def run_script(script_str, x, y):
                                     running = False
                                 keyboard.release(split_line[1])
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return
+                                return idx + 1
                             keyboard.tap(split_line[1])
                 else:
                     taps = None
@@ -176,7 +174,7 @@ def run_script(script_str, x, y):
                                     running = False
                                 keyboard.release(split_line[1])
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return
+                                return idx + 1
 
                             keyboard.press(split_line[1])
                             while temp_delay > DELAY_EXIT_CHECK:
@@ -189,7 +187,7 @@ def run_script(script_str, x, y):
                                         running = False
                                     keyboard.release(split_line[1])
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                    return
+                                    return idx + 1
                             if temp_delay > 0:
                                 sleep(temp_delay)
                             keyboard.release(split_line[1])
@@ -223,7 +221,7 @@ def run_script(script_str, x, y):
                                         running = False
                                     keyboard.release(key)
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                    return
+                                    return idx + 1
                                 keyboard.tap(key)
                     else:
                         taps = None
@@ -248,7 +246,7 @@ def run_script(script_str, x, y):
                                         running = False
                                     keyboard.release(key)
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                    return
+                                    return idx + 1
 
                                 keyboard.press(key)
                                 while temp_delay > DELAY_EXIT_CHECK:
@@ -261,7 +259,7 @@ def run_script(script_str, x, y):
                                             running = False
                                         keyboard.release(key)
                                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                        return
+                                        return idx + 1
                                 if temp_delay > 0:
                                     sleep(temp_delay)
                                 keyboard.release(key)
@@ -308,7 +306,7 @@ def run_script(script_str, x, y):
                         if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return
+                        return idx + 1
             elif split_line[0] == "M_MOVE":
                 if len(split_line) >= 3:
                     print("[scripts] " + coords + "    Relative mouse movement (" + split_line[1] + ", " + str(split_line[2]) + ")")
@@ -371,7 +369,7 @@ def run_script(script_str, x, y):
                                     running = False
                                 mouse.release(split_line[1])
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return
+                                return idx + 1
 
                             mouse.press(split_line[1])
                             while temp_delay > DELAY_EXIT_CHECK:
@@ -384,7 +382,7 @@ def run_script(script_str, x, y):
                                         running = False
                                     mouse.release(split_line[1])
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                    return
+                                    return idx + 1
                             if temp_delay > 0:
                                 sleep(temp_delay)
                             mouse.release(split_line[1])
@@ -415,7 +413,7 @@ def run_script(script_str, x, y):
                         if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return
+                        return idx + 1
                     mouse.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
                         temp_delay = delay
@@ -428,7 +426,7 @@ def run_script(script_str, x, y):
                                 if not is_async:
                                     running = False
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return
+                                return idx + 1
                         if temp_delay > 0:
                             sleep(temp_delay)
             elif split_line[0] == "M_LINE_MOVE":
@@ -458,7 +456,7 @@ def run_script(script_str, x, y):
                         if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return
+                        return idx + 1
                     mouse.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
                         temp_delay = delay
@@ -471,7 +469,7 @@ def run_script(script_str, x, y):
                                 if not is_async:
                                     running = False
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return
+                                return idx + 1
                         if temp_delay > 0:
                             sleep(temp_delay)
             elif split_line[0] == "M_LINE_SET":
@@ -500,7 +498,7 @@ def run_script(script_str, x, y):
                         if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return
+                        return idx + 1
                     mouse.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
                         temp_delay = delay
@@ -513,11 +511,19 @@ def run_script(script_str, x, y):
                                 if not is_async:
                                     running = False
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return
+                                return idx + 1
                         if temp_delay > 0:
                             sleep(temp_delay)
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
+        return idx + 1
+    run = True
+    idx = 0
+    while run:
+        idx = main_logic(idx)
+        if (idx < 0) or (idx >= len(script_lines)):
+            run = False
+    
     print("[scripts] (" + str(x) + ", " + str(y) + ") Script done running.")
 
     if not is_async:
