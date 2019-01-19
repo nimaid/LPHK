@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET"]
+VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL"]
 
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -87,6 +87,15 @@ def run_script(script_str, x, y):
         running = True
 
     print("[scripts] " + coords + " Now running script...")
+    
+    #parse labels
+    labels = dict()
+    for idx,line in enumerate(script_lines):
+        line = line.strip()
+        split_line = line.split(" ")
+        if split_line[0] == "LABEL":
+            labels[split_line[1]] = idx + 1
+    
     def main_logic(idx):
         if threads[x][y].kill.is_set():
             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
@@ -99,7 +108,7 @@ def run_script(script_str, x, y):
         if line == "":
             print("[scripts] " + coords + "    Empty line")
         elif line[0] == "-":
-            print("[scripts] " + coords + "    Comment " + line[1:])
+            print("[scripts] " + coords + "    Comment: " + line[1:])
         else:
             split_line = line.split(" ")
             if split_line[0] == "STRING":
@@ -514,6 +523,13 @@ def run_script(script_str, x, y):
                                 return idx + 1
                         if temp_delay > 0:
                             sleep(temp_delay)
+            elif split_line[0] == "LABEL":
+               print("[scripts] " + coords + "    Label: " + split_line[1])
+               return idx + 1
+            elif split_line[0] == "IF_PRESSED_GOTO_LABEL":
+                print("[scripts] " + coords + "    If key is pressed goto LABEL " + split_line[1])
+                if lp_events.pressed[x][y]:
+                    return labels[split_line[1]]
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
         return idx + 1
