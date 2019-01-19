@@ -1,7 +1,7 @@
 import threading, webbrowser
 from time import sleep
 from functools import partial
-import lp_events, lp_colors, keyboard, sound, mouse
+import lp_events, lp_colors, kb, sound, mouse
 
 COLOR_PRIMED = lp_colors.RED
 COLOR_FUNC_KEYS_PRIMED = lp_colors.AMBER
@@ -114,7 +114,7 @@ def run_script(script_str, x, y):
             if split_line[0] == "STRING":
                 type_string = " ".join(split_line[1:])
                 print("[scripts] " + coords + "    Type out string " + type_string)
-                keyboard.controller.type(type_string)
+                kb.controller.type(type_string)
             elif split_line[0] == "DELAY":
                 delay = None
                 try:
@@ -139,7 +139,7 @@ def run_script(script_str, x, y):
             elif split_line[0] == "TAP":
                 if len(split_line) <= 2:
                     print("[scripts] " + coords + "    Tap key " + split_line[1])
-                    keyboard.tap(split_line[1])
+                    kb.tap(split_line[1])
                 elif len(split_line) <= 3:
                     taps = None
                     try:
@@ -156,10 +156,10 @@ def run_script(script_str, x, y):
                                 threads[x][y].kill.clear()
                                 if not is_async:
                                     running = False
-                                keyboard.release(split_line[1])
+                                kb.release(split_line[1])
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                 return idx + 1
-                            keyboard.tap(split_line[1])
+                            kb.tap(split_line[1])
                 else:
                     taps = None
                     try:
@@ -181,11 +181,11 @@ def run_script(script_str, x, y):
                                 threads[x][y].kill.clear()
                                 if not is_async:
                                     running = False
-                                keyboard.release(split_line[1])
+                                kb.release(split_line[1])
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                 return idx + 1
 
-                            keyboard.press(split_line[1])
+                            kb.press(split_line[1])
                             while temp_delay > DELAY_EXIT_CHECK:
                                 sleep(DELAY_EXIT_CHECK)
                                 temp_delay -= DELAY_EXIT_CHECK
@@ -194,24 +194,24 @@ def run_script(script_str, x, y):
                                     threads[x][y].kill.clear()
                                     if not is_async:
                                         running = False
-                                    keyboard.release(split_line[1])
+                                    kb.release(split_line[1])
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                     return idx + 1
                             if temp_delay > 0:
                                 sleep(temp_delay)
-                            keyboard.release(split_line[1])
+                            kb.release(split_line[1])
             elif split_line[0] == "PRESS":
                 print("[scripts] " + coords + "    Press key " + split_line[1])
-                keyboard.press(split_line[1])
+                kb.press(split_line[1])
             elif split_line[0] == "RELEASE":
                 print("[scripts] " + coords + "    Release key " + split_line[1])
-                keyboard.release(split_line[1])
+                kb.release(split_line[1])
             elif split_line[0] == "SP_TAP":
-                if keyboard.sp(split_line[1]) != None:
-                    key = keyboard.sp(split_line[1])
+                if kb.sp(split_line[1]) != None:
+                    key = kb.sp(split_line[1])
                     if len(split_line) <= 2:
                         print("[scripts] " + coords + "    Tap special key " + split_line[1])
-                        keyboard.tap(key)
+                        kb.tap(key)
                     elif len(split_line) <= 3:
                         taps = None
                         try:
@@ -228,10 +228,10 @@ def run_script(script_str, x, y):
                                     threads[x][y].kill.clear()
                                     if not is_async:
                                         running = False
-                                    keyboard.release(key)
+                                    kb.release(key)
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                     return idx + 1
-                                keyboard.tap(key)
+                                kb.tap(key)
                     else:
                         taps = None
                         try:
@@ -253,11 +253,11 @@ def run_script(script_str, x, y):
                                     threads[x][y].kill.clear()
                                     if not is_async:
                                         running = False
-                                    keyboard.release(key)
+                                    kb.release(key)
                                     threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                     return idx + 1
 
-                                keyboard.press(key)
+                                kb.press(key)
                                 while temp_delay > DELAY_EXIT_CHECK:
                                     sleep(DELAY_EXIT_CHECK)
                                     temp_delay -= DELAY_EXIT_CHECK
@@ -266,24 +266,24 @@ def run_script(script_str, x, y):
                                         threads[x][y].kill.clear()
                                         if not is_async:
                                             running = False
-                                        keyboard.release(key)
+                                        kb.release(key)
                                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                         return idx + 1
                                 if temp_delay > 0:
                                     sleep(temp_delay)
-                                keyboard.release(key)
+                                kb.release(key)
                 else:
                     print("[scripts] " + coords + "    Invalid special character to tap: " + split_line[1] + ", skipping...")
             elif split_line[0] == "SP_PRESS":
-                if keyboard.sp(split_line[1]) != None:
+                if kb.sp(split_line[1]) != None:
                     print("[scripts] " + coords + "    Press special key " + split_line[1])
-                    keyboard.press(keyboard.sp(split_line[1]))
+                    kb.press(kb.sp(split_line[1]))
                 else:
                     print("[scripts] " + coords + "    Invalid special character to press: " + split_line[1] + ", skipping...")
             elif split_line[0] == "SP_RELEASE":
-                if keyboard.sp(split_line[1]) != None:
+                if kb.sp(split_line[1]) != None:
                     print("[scripts] " + coords + "    Release special key " + split_line[1])
-                    keyboard.release(keyboard.sp(split_line[1]))
+                    kb.release(kb.sp(split_line[1]))
                 else:
                     print("[scripts] " + coords + "    Invalid special character to release: " + split_line[1] + ", skipping...")
             elif split_line[0] == "WEB":
@@ -628,7 +628,7 @@ def validate_script(script_str):
                     if len(split_line) > 7:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
-                    if keyboard.sp(split_line[1]) == None:
+                    if kb.sp(split_line[1]) == None:
                         return ("No special character named '" + split_line[1] + "'.", line)
                 if split_line[0] in ["TAP", "PRESS", "RELEASE"]:
                     if len(split_line[1]) > 1:

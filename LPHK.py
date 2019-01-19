@@ -12,7 +12,7 @@ except ImportError:
     except ImportError:
         sys.exit("[LPHK] Error loading launchpad.py")
 
-import lp_events, scripts, keyboard, files, sound, window
+import lp_events, scripts, kb, files, sound, window
 
 PATH = sys.path[0]
 
