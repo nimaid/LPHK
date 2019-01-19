@@ -189,21 +189,16 @@ For `M_PRESS`, `M_RELEASE`, and `M_TAP`, the folowing button names are allowed:
 For the `SP_` commands, the following key names are allowed:
 * `alt`
 * `alt_gr`
-* `alt_r`
 * `backspace`
-* `bright_down`
-* `bright_up`
 * `caps_lock`
 * `cmd`
-* `cmd_r`
 * `crtl`
-* `ctrl_r`
 * `delete`
 * `down`
 * `end`
 * `enter`
 * `esc`
-* `f1` - `f20`
+* `f1` - `f24`
 * `home`
 * `insert`
 * `left`

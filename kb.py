@@ -1,6 +1,6 @@
 import keyboard
 
-media_keys = {"vol_up" : 269025043, "vol_down" : 269025041, "mute" : 269025042, "play_pause" : 269025044, "prev_track" : 269025046, "next_track" : 269025047, "bright_down" : 269025027, "bright_up" : 269025026}
+media_keys = {"vol_up" : 57392, "vol_down" : 57390, "mute" : 57376, "play_pause" : 57378, "prev_track" : 57360, "next_track" : 57369}
 
 
 def sp(name):
