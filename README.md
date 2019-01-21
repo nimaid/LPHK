@@ -104,15 +104,15 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 * **Utility**
   * `DELAY`
     * Delays the script for (argument 1) seconds.
+  * `IF_PRESSED_GOTO_LABEL`
+    * If the button the script is bound to is pressed, goto label (argument 1).
+  * `LABEL`
+    * Sets a label named (argument 1) for use with the `*GOTO_LABEL` commands.
   * `SOUND`
     * Play a sound named (argument 1) inside the `user_sounds/` folder.
       * Supports `.wav` and `.ogg` only.
     * If (argument 2) supplied, set volume to (argument 2).
       * Range is 0 to 100
-  * `IF_PRESSED_GOTO_LABEL`
-    * If the button the script is bound to is pressed, goto label (argument 1).
-  * `LABEL`
-    * Sets a label named (argument 1) for use with the `*GOTO_LABEL` commands.
   * `WAIT_UNPRESSED`
     * Waits until the button the script is bound to is unpressed. (no arguments)
   * `WEB`
