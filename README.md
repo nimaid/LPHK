@@ -104,8 +104,12 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 * **Utility**
   * `DELAY`
     * Delays the script for (argument 1) seconds.
+  * `GOTO_LABEL`
+    * Goto label (argument 1).
   * `IF_PRESSED_GOTO_LABEL`
     * If the button the script is bound to is pressed, goto label (argument 1).
+  * `IF_UNPRESSED_GOTO_LABEL`
+    * If the button the script is bound to is not pressed, goto label (argument 1).
   * `LABEL`
     * Sets a label named (argument 1) for use with the `*GOTO_LABEL` commands.
   * `SOUND`
@@ -190,7 +194,7 @@ For `M_PRESS`, `M_RELEASE`, and `M_TAP`, the folowing button names are allowed:
 * `middle`
 * `right`
 
-For the `SP_` commands, the following key names are allowed:
+For the `SP_*` commands, the following key names are allowed:
 * `alt`
 * `alt_gr`
 * `backspace`
@@ -233,10 +237,8 @@ For the `SP_` commands, the following key names are allowed:
 * Add button move/swap feature
 * Add generalized macro recorder wizard (!!!)
 * Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution
-* Add `GOTO_LABEL` command
 * Add `REPEAT_LABEL` command to jump from this line to a `LABEL` n number of times max
   * Defaults to 1
-* Add `IF_UNPRESSED_GOTO_LABEL` command to jump from this line to a `LABEL` if the key is unpressed
 * Add `IF_PRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is still pressed n number of times max
   * Defaults to 1
 * Add `IF_UNPRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is unpressed n number of times max
@@ -284,3 +286,5 @@ For the `SP_` commands, the following key names are allowed:
 * ~~Add RGB color selector~~
 * ~~Add `LABEL` command~~
 * ~~Add `IF_PRESSED_GOTO_LABEL` command to jump from this line to a `LABEL` if the key is still pressed~~
+* ~~Add `GOTO_LABEL` command~~
+* ~~Add `IF_UNPRESSED_GOTO_LABEL` command to jump from this line to a `LABEL` if the key is unpressed~~
