@@ -88,12 +88,12 @@ Before using the program, there are some dependencies/libraries that you will ne
 LPHKscript is a simple macro scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript.
 
 ### Scheduling
-Only one script runs at a time, and there is a sceduling system for them. If a script is scheduled, it's button will pulse red. If the script is running, the button will flash red quickly. This is true for the 8x8 grid, however, the function keys cannot flash or pulse, as a hardware limitation. These keys will be bright orange for scheduled and bright red for running.
+Only one script runs at a time, and there is a scheduling system for them. If a script is scheduled, it's button will pulse red. If the script is running, the button will flash red quickly. This is true for the 8x8 grid, however, the function keys cannot flash or pulse, as a hardware limitation. These keys will be bright orange for scheduled and bright red for running.
 
 When you press a script button, if there is a script running, it adds the script to the queue. If no scripts are running, the script is added to the queue and the queue execution is started. Tapping a scheduled script's button will unschedule it, and tapping a running scripts button will kill it. If that sounds confusing, load up `user_layouts/examples/all_delays_all_day.LPHKlayout` and press a bunch of buttons.
 
 ### The `@ASYNC` Header
-There is one exception to the scheculing system. If the first line of a script is `@ASYNC`, the script will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. If this is used, it must be on the very first line.
+There is one exception to the scheduling system. If the first line of a script is `@ASYNC`, the script will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. If this is used, it must be on the very first line.
 
 ### Comments
 Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. If `@ASYNC` is used, a comment cannot come before the `@ASYNC` command, as that must be on the first line, always.
@@ -234,20 +234,20 @@ For the `SP_*` commands, the following key names are allowed:
 * Support for Launchpad Pro
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add button move/swap feature
-* Add generalized macro recorder wizard (!!!)
-* Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution
 * Add `REPEAT_LABEL` command to jump from this line to a `LABEL` n number of times max
   * Defaults to 1
 * Add `IF_PRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is still pressed n number of times max
   * Defaults to 1
 * Add `IF_UNPRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is unpressed n number of times max
   * Defaults to 1
+* Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution
+* Add button move/swap feature
+* Add script status icons (bound, playing, queued)
+* Add GUI scaling
+* Add generalized macro recorder wizard
 * Make `Add Command...` menu that acts as a guided helper for making commands
 * Add mouse event capture prompts to `Add Command...` menu boxes
 * Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
-* Add GUI scaling
-* Add script status icons (bound, playing, queued)
 * Add `CMD` command to run OS commands
   * Make multi-level scary warning dialog boxes when binding to a button (incl during load layout)
   * Give option (and strongly reccomend its use) for users to run command once and verify it does what they want before binding to button (incl during load layout)

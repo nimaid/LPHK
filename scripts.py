@@ -94,7 +94,7 @@ def run_script(script_str, x, y):
         line = line.strip()
         split_line = line.split(" ")
         if split_line[0] == "LABEL":
-            labels[split_line[1]] = idx + 1
+            labels[split_line[1]] = idx
     
     def main_logic(idx):
         if threads[x][y].kill.is_set():
