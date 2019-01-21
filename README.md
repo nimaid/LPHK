@@ -109,6 +109,10 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
       * Supports `.wav` and `.ogg` only.
     * If (argument 2) supplied, set volume to (argument 2).
       * Range is 0 to 100
+  * `IF_PRESSED_GOTO_LABEL`
+    * If the button the script is bound to is pressed, goto label (argument 1).
+  * `LABEL`
+    * Sets a label named (argument 1) for use with the `*GOTO_LABEL` commands.
   * `WAIT_UNPRESSED`
     * Waits until the button the script is bound to is unpressed. (no arguments)
   * `WEB`
@@ -226,12 +230,12 @@ For the `SP_` commands, the following key names are allowed:
 * Support for Launchpad Pro
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
+* Add button move/swap feature
 * Add generalized macro recorder wizard (!!!)
 * Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution
-* Add `LABEL` and `GOTO_LABEL` commands
+* Add `GOTO_LABEL` command
 * Add `REPEAT_LABEL` command to jump from this line to a `LABEL` n number of times max
   * Defaults to 1
-* Add `IF_PRESSED_GOTO_LABEL` command to jump from this line to a `LABEL` if the key is still pressed
 * Add `IF_UNPRESSED_GOTO_LABEL` command to jump from this line to a `LABEL` if the key is unpressed
 * Add `IF_PRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is still pressed n number of times max
   * Defaults to 1
@@ -278,3 +282,5 @@ For the `SP_` commands, the following key names are allowed:
 * ~~Make queued/playing buttons blink instead of be solid~~ (Big shout out to FMMT666 for [adding the features I needed to launchpad.py](https://github.com/FMMT666/launchpad.py/issues/31)!)
 * ~~Make user defined colors RGB~~
 * ~~Add RGB color selector~~
+* ~~Add `LABEL` command~~
+* ~~Add `IF_PRESSED_GOTO_LABEL` command to jump from this line to a `LABEL` if the key is still pressed~~

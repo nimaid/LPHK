@@ -595,7 +595,20 @@ def validate_script(script_str):
         if len(first_line_split) > 1:
             return ("@ASYNC takes no arguments.", script_lines[0])
         temp = script_lines.pop(0)
-
+    
+    #parse labels
+    labels = []
+    for line in script_lines:
+        line = line.strip()
+        split_line = line.split(" ")
+        if split_line[0] == "LABEL":
+            if len(split_line) != 2:
+                return ("'" + split_line[0] + "' takes exactly 1 argument.", line)
+            if split_line[1] in labels:
+                return ("Label '" + split_line[1] + "' defined multiple times.", line)
+            else:
+                labels.append(split_line[1])
+    
     for line in script_lines:
         for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR, files.NEWLINE_REPLACE):
             if sep in line:
@@ -654,7 +667,6 @@ def validate_script(script_str):
                             temp = int(split_line[2])
                         except:
                             return (func_name + " repetitions '" + split_line[2] + "' not valid.", line)
-
                 if split_line[0] == "WAIT_UNPRESSED":
                     if len(split_line) > 1:
                         return ("'WAIT_UNPRESSED' takes no arguments.", line)
@@ -677,7 +689,6 @@ def validate_script(script_str):
                         temp = int(split_line[2])
                     except:
                         return ("'M_MOVE' Y value '" + split_line[2] + "' not valid.", line)
-
                 if split_line[0] == "M_SET":
                     if len(split_line) < 3:
                         return ("'M_SET' requires both an X and a Y value.", line)
@@ -757,5 +768,9 @@ def validate_script(script_str):
                                 return ("'" + split_line[0] + "' skip value cannot be zero.", line)
                         except:
                             return ("'" + split_line[0] + "' skip value '" + split_line[4] + "' not valid.", line)
-
+                if split_line[0] in ["GOTO_LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL"]:
+                    if len(split_line) != 2:
+                        return ("'" + split_line[0] + "' takes exactly 1 argument.", line)
+                    if split_line[1] not in labels:
+                        return ("Label '" + split_line[1] + "' not defined in this script.", line)
     return True
