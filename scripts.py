@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL"]
+VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL"]
 
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -554,6 +554,36 @@ def run_script(script_str, x, y):
                     print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
                     repeats[idx] -= 1
                     return labels[split_line[1]]
+            elif split_line[0] == "IF_PRESSED_REPEAT_LABEL":
+                print("[scripts] " + coords + "    If key is pressed repeat LABEL " + split_line[1] + " " + split_line[2] + " times max.")
+                if lp_events.pressed[x][y]:
+                    if idx in repeats:
+                        if repeats[idx] > 0:
+                            print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
+                            repeats[idx] -= 1
+                            return labels[split_line[1]]
+                        else:
+                            print("[scripts] " + coords + "        No repeats left, not repeating.")
+                    else:
+                        repeats[idx] = int(split_line[2])
+                        print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
+                        repeats[idx] -= 1
+                        return labels[split_line[1]]
+            elif split_line[0] == "IF_UNPRESSED_REPEAT_LABEL":
+                print("[scripts] " + coords + "    If key is not pressed repeat LABEL " + split_line[1] + " " + split_line[2] + " times max.")
+                if not lp_events.pressed[x][y]:
+                    if idx in repeats:
+                        if repeats[idx] > 0:
+                            print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
+                            repeats[idx] -= 1
+                            return labels[split_line[1]]
+                        else:
+                            print("[scripts] " + coords + "        No repeats left, not repeating.")
+                    else:
+                        repeats[idx] = int(split_line[2])
+                        print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
+                        repeats[idx] -= 1
+                        return labels[split_line[1]]
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
         return idx + 1
@@ -797,7 +827,7 @@ def validate_script(script_str):
                         return ("'" + split_line[0] + "' takes exactly 1 argument.", line)
                     if split_line[1] not in labels:
                         return ("Label '" + split_line[1] + "' not defined in this script.", line)
-                if split_line[0] in ["REPEAT_LABEL"]:
+                if split_line[0] in ["REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL"]:
                     if len(split_line) != 3:
                         return ("'" + split_line[0] + "' needs both a label name and how many times to repeat.", line)
                     if split_line[1] not in labels:

@@ -110,12 +110,16 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * Goto label (argument 1).
   * `IF_PRESSED_GOTO_LABEL`
     * If the button the script is bound to is pressed, goto label (argument 1).
+  * `IF_PRESSED_REPEAT_LABEL`
+    * If the button the script is bound to is pressed, goto label (argument 1) a maximum of (argument 2) times.
   * `IF_UNPRESSED_GOTO_LABEL`
     * If the button the script is bound to is not pressed, goto label (argument 1).
+  * `IF_UNPRESSED_REPEAT_LABEL`
+    * If the button the script is bound to is not pressed, goto label (argument 1) a maximum of (argument 2) times.
   * `LABEL`
     * Sets a label named (argument 1) for use with the `*GOTO_LABEL` commands.
   * `REPEAT_LABEL`
-    * Jumps to label (argument 1) a maximum of (argument 2) times.
+    * Goto label (argument 1) a maximum of (argument 2) times.
   * `SOUND`
     * Play a sound named (argument 1) inside the `user_sounds/` folder.
       * Supports `.wav` and `.ogg` only.
@@ -238,8 +242,6 @@ For the `SP_*` commands, the following key names are allowed:
 * Support for Launchpad Pro
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add `IF_PRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is still pressed n number of times max
-* Add `IF_UNPRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is unpressed n number of times max
 * Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution
 * Add button move/swap/copy feature
 * Add script status icons (bound, playing, queued)
@@ -289,3 +291,5 @@ For the `SP_*` commands, the following key names are allowed:
 * ~~Add `GOTO_LABEL` command~~
 * ~~Add `IF_UNPRESSED_GOTO_LABEL` command to jump from this line to a `LABEL` if the key is unpressed~~
 * ~~Add `REPEAT_LABEL` command to jump from this line to a `LABEL` n number of times max~~
+* ~~Add `IF_PRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is still pressed n number of times max~~
+* ~~Add `IF_UNPRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is unpressed n number of times max~~
