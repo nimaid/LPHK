@@ -27,6 +27,8 @@ Because it could be immensely useful for a wide variety of tasks, such as:
   * Volume
   * Attacks
   * Typed commands
+  * Automatic Glitch/Trick Execution (think ABH or propsurfing in Source)
+  * Repetitive tasks (grinding)
   * Reference Website launcher
   * Window switcher
 * Editing, to bind:
@@ -239,7 +241,7 @@ For the `SP_*` commands, the following key names are allowed:
 * Add `IF_PRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is still pressed n number of times max
 * Add `IF_UNPRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is unpressed n number of times max
 * Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution
-* Add button move/swap feature
+* Add button move/swap/copy feature
 * Add script status icons (bound, playing, queued)
 * Add GUI scaling
 * Add generalized macro recorder wizard
