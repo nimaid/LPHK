@@ -117,7 +117,7 @@ def run_script(script_str, x, y):
             if split_line[0] == "STRING":
                 type_string = " ".join(split_line[1:])
                 print("[scripts] " + coords + "    Type out string " + type_string)
-                kb.controller.type(type_string)
+                kb.keyboard.write(type_string)
             elif split_line[0] == "DELAY":
                 delay = None
                 try:

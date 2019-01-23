@@ -238,14 +238,15 @@ For the `SP_*` commands, the following key names are allowed:
 * `vol_down`
 * `vol_up`
 
-## What still needs to be written?
-* Support for Launchpad Pro
+## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
 * Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution
 * Add button move/swap/copy feature
 * Add script status icons (bound, playing, queued)
 * Add GUI scaling
+* Support for Launchpad Pro
+  * The lack of tactile feedback, ability to utilize the pressure sensitive inputs, and inconvenient function keys where the hand rests makes support for the LP Pro a lower priority.
 * Add generalized macro recorder wizard
 * Make `Add Command...` menu that acts as a guided helper for making commands
 * Add mouse event capture prompts to `Add Command...` menu boxes
