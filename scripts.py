@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL"]
+VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE"]
 
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -99,7 +99,10 @@ def run_script(script_str, x, y):
     #prepare repeat counter {idx:repeats_left}
     repeats = dict()
     
+    m_pos = ()
+    
     def main_logic(idx):
+        nonlocal m_pos
         if threads[x][y].kill.is_set():
             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
             threads[x][y].kill.clear()
@@ -319,6 +322,56 @@ def run_script(script_str, x, y):
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                         return idx + 1
+            elif split_line[0] == "M_STORE":
+                print("[scripts] " + coords + "    Store mouse position")
+                m_pos = mouse.getXY()
+            elif split_line[0] == "M_RECALL":
+                if m_pos == tuple():
+                    print("[scripts] " + coords + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
+                else:
+                    print("[scripts] " + coords + "    Recall mouse position " + str(m_pos))
+                    mouse.setXY(m_pos[0], m_pos[1])
+            elif split_line[0] == "M_RECALL_LINE":
+                x1, y1 = m_pos
+
+                delay = None
+                if len(split_line) > 1:
+                    delay = float(split_line[1]) / 1000.0
+
+                skip = 1
+                if len(split_line) > 2:
+                    skip = int(split_line[2])
+
+                if (delay == None) or (delay <= 0):
+                    print("[scripts] " + coords + "    Recall mouse position " + str(m_pos) + " in a line by " + str(skip) + " pixels per step")
+                else:
+                    print("[scripts] " + coords + "    Recall mouse position " + str(m_pos) + " in a line by " + str(skip) + " pixels per step and wait " + split_line[1] + " milliseconds between each step")
+
+                x_C, y_C = mouse.getXY()
+                points = mouse.line_coords(x_C, y_C, x1, y1)
+                for x_M, y_M in points[::skip]:
+                    if threads[x][y].kill.is_set():
+                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                        threads[x][y].kill.clear()
+                        if not is_async:
+                            running = False
+                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                        return idx + 1
+                    mouse.setXY(x_M, y_M)
+                    if (delay != None) and (delay > 0):
+                        temp_delay = delay
+                        while temp_delay > DELAY_EXIT_CHECK:
+                            sleep(DELAY_EXIT_CHECK)
+                            temp_delay -= DELAY_EXIT_CHECK
+                            if threads[x][y].kill.is_set():
+                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                                threads[x][y].kill.clear()
+                                if not is_async:
+                                    running = False
+                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                                return idx + 1
+                        if temp_delay > 0:
+                            sleep(temp_delay)
             elif split_line[0] == "M_MOVE":
                 if len(split_line) >= 3:
                     print("[scripts] " + coords + "    Relative mouse movement (" + split_line[1] + ", " + str(split_line[2]) + ")")
@@ -732,6 +785,22 @@ def validate_script(script_str):
                                 return ("'SOUND' volume must be between 0 and 100.", line)
                         except:
                             return ("'SOUND' volume " + split_line[2] + " not valid.", line)
+                if split_line[0] in ["M_STORE", "M_RECALL"]:
+                    if len(split_line) > 1:
+                        return ("'" + split_line[0] + "' takes no arguments.", line)
+                if split_line[0] == "M_RECALL_LINE":
+                    if len(split_line) > 1:
+                        try:
+                            temp = float(split_line[1])
+                        except:
+                            return ("'" + split_line[0] + "' wait value '" + split_line[1] + "' not valid.", line)
+                    if len(split_line) > 2:
+                        try:
+                            temp = int(split_line[2])
+                            if temp == 0:
+                                return ("'" + split_line[0] + "' skip value cannot be zero.", line)
+                        except:
+                            return ("'" + split_line[0] + "' skip value '" + split_line[2] + "' not valid.", line)
                 if split_line[0] == "M_MOVE":
                     if len(split_line) < 3:
                         return ("'M_MOVE' requires both an X and a Y movement value.", line)

@@ -177,6 +177,15 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * `M_PRESS`
     * Presses the mouse button (argument 1).
       * See below for a list of valid button names.
+  * `M_RECALL`
+    * Sets the mouse position to the last location stored with `M_STORE`.
+      * Will not do anything if `M_STORE` has not been called in that script.
+  * `M_RECALL_LINE`
+    * Move the mouse cursor in a line to the last location stored with `M_STORE`.
+      * Will not do anything if `M_STORE` has not been called in that script.
+    * If (argument 1) supplied, delay (argument 1) milliseconds between each step.
+    * If (argument 2) supplied, move (argument 2) pixels per step.
+      * If not supplied, assumed to be 1
   * `M_RELEASE`
     * Releases the mouse button (argument 1).
       * See below for a list of valid button names.
@@ -185,6 +194,8 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * If (argument 2) supplied, scroll horizontally by (argument 2).
   * `M_SET`
     * Sets the absolute cursor posistion to (argument 1) horizontal and (argument 2) vertical.
+  * `M_STORE`
+    * Stores the current mouse position for use with the `M_RECALL*` commands.
   * `M_TAP`
     * Taps the mouse button (argument 1).
         * See below for a list of valid mouse button names.
@@ -241,7 +252,6 @@ For the `SP_*` commands, the following key names are allowed:
 ## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution
 * Add button move/swap/copy feature
 * Add script status icons (bound, playing, queued)
 * Add GUI scaling
@@ -294,3 +304,4 @@ For the `SP_*` commands, the following key names are allowed:
 * ~~Add `REPEAT_LABEL` command to jump from this line to a `LABEL` n number of times max~~
 * ~~Add `IF_PRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is still pressed n number of times max~~
 * ~~Add `IF_UNPRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is unpressed n number of times max~~
+* ~~Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution~~
