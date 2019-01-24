@@ -1,4 +1,5 @@
 import lp_colors, scripts
+from time import sleep
 
 PATH = None
 LAYOUT_EXT = ".LPHKlayout"
@@ -10,6 +11,7 @@ BUTTON_SEPERATOR = ":LPHK_BUTTON_SEP:"
 ENTRY_SEPERATOR = ":LPHK_ENTRY_SEP:"
 NEWLINE_REPLACE = ":LPHK_NEWLINE_REP:"
 
+import window
 
 curr_layout = None
 
@@ -49,7 +51,8 @@ def save_layout(name, add_path=True):
 def load_layout(name, add_path=True):
     global curr_layout
     scripts.unbind_all()
-
+    window.app.draw_canvas()
+    
     final_path = None
     if add_path:
         final_path = PATH + LAYOUT_PATH + name + LAYOUT_EXT
@@ -75,6 +78,9 @@ def load_layout(name, add_path=True):
 
                 if script_text != "":
                     scripts.bind(x, y, script_text, color)
+                    script_validation = scripts.validate_script(script_text)
+                    if script_validation != True:
+                        window.app.save_script(window.app, x, y, script_text, open_editor = True)
                 else:
                     lp_colors.setXY(x, y, color)
         lp_colors.update_all()

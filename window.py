@@ -224,9 +224,19 @@ class Main_Window(tk.Frame):
 
     def script_entry_window(self, x, y):
         global color_to_set
+        
         w = tk.Toplevel(self)
         w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")...")
         w.resizable(False, False)
+        
+        def validate_func():
+            nonlocal x, y
+            script_validate = scripts.validate_script(scripts.text[x][y])
+            if script_validate != True:
+                self.save_script(w, x, y, scripts.text[x][y])
+            else:
+                w.destroy()
+        w.protocol("WM_DELETE_WINDOW", validate_func)
 
         e_m = tk.Menu(w)
         w.config(menu=e_m)
@@ -278,6 +288,8 @@ class Main_Window(tk.Frame):
         w.wait_visibility()
         w.grab_set()
         t.focus_set()
+        w.wait_window()
+        
 
     def ask_color(self, window, button, x, y, default_color):
         global colors_to_set
@@ -323,9 +335,15 @@ class Main_Window(tk.Frame):
         self.draw_canvas()
         window.destroy()
 
-    def save_script(self, window, x, y, script_text):
+    def save_script(self, window, x, y, script_text, open_editor = False):
         global colors_to_set
+        
         script_text = script_text.strip()
+        
+        def open_editor_func():
+            nonlocal x, y
+            if open_editor:
+                    self.script_entry_window(x, y)
 
         script_validate = scripts.validate_script(script_text)
         if script_validate == True:
@@ -336,9 +354,9 @@ class Main_Window(tk.Frame):
                 lp_colors.updateXY(x, y)
                 window.destroy()
             else:
-                self.popup(window, "No Script Entered", self.info_image, "Please enter a script to bind.", "OK")
+                self.popup(window, "No Script Entered", self.info_image, "Please enter a script to bind.", "OK", end_command = open_editor_func)
         else:
-            self.popup(window, "Syntax Error", self.error_image, "Error in line: " + script_validate[1] + "\n" + script_validate[0], "OK")
+            self.popup(window, "(" + str(x) + ", " + str(y) + ") Syntax Error", self.error_image, "Error in line: " + script_validate[1] + "\n" + script_validate[0], "OK", end_command = open_editor_func)
 
     def import_script(self, textbox, window):
         name = tk.filedialog.askopenfilename(parent=window,
@@ -381,6 +399,7 @@ class Main_Window(tk.Frame):
         tk.Button(popup, text=button_text, command=run_end).grid(column=1, row=1, padx=10, pady=10)
         popup.wait_visibility()
         popup.grab_set()
+        popup.wait_window()
 
 def make():
     global root

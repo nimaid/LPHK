@@ -241,7 +241,6 @@ For the keyboard commands, all single character keys and the following key names
 ## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Do syntax checks on loading a layout
 * Add `@SIMPLE` header for simple keybinding of single keyboard keys
   * Rest of file must only have comments
   * Template:
@@ -303,3 +302,4 @@ For the keyboard commands, all single character keys and the following key names
 * ~~Fix syntax checking being done in `main_logic()` instead of the, you know, syntax checker?~~
 * ~~Merge `SP_` functions into smart versions of their single-character counterparts~~
 * ~~Add feature to syntax checking for SOUND to check if file exists/is usable~~
+* ~~Do syntax checks on loading a layout~~
