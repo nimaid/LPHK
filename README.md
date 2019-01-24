@@ -252,6 +252,14 @@ For the `SP_*` commands, the following key names are allowed:
 ## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
+* Fix syntax checking being done in `main_logic()` instead of the, you know, syntax checker?
+  * I'm looking at you, `TAP`!
+* Merge `SP_` functions into smart versions of their single-character counterparts
+* Add `@SIMPLE` header for simple keybinding of single keyboard keys
+  * @ASYNC
+  * PRESS (argument 1)
+  * WAIT_UNPRESSED
+  * RELEASE (argument 1)
 * Add button move/swap/copy feature
 * Add script status icons (bound, playing, queued)
 * Add GUI scaling
