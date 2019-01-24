@@ -122,7 +122,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * Goto label (argument 1) a maximum of (argument 2) times.
   * `SOUND`
     * Play a sound named (argument 1) inside the `user_sounds/` folder.
-      * Supports `.wav` and `.ogg` only.
+      * Supports `.wav`, `.flac', and `.ogg` only.
     * If (argument 2) supplied, set volume to (argument 2).
       * Range is 0 to 100
   * `WAIT_UNPRESSED`
@@ -264,8 +264,6 @@ For the keyboard commands, all single character keys and the following key names
 * Add `@LOAD_LAYOUT` header command to load a specified layout
   * Check if layout currently exists when binding to a button (incl during load layout)
     * If not, prompt user if they want to continue anyway
-* Add feature to SOUND to check if file currently exists when binding to a button (incl during load layout)
-  * If not, prompt user if they want to continue anyway
 * MIDI output command? (Low priority)
 * Load layout command? (That could get messy, maybe not a script func, but a seperate GUI option to bind loading a specific layout)
 
@@ -304,3 +302,4 @@ For the keyboard commands, all single character keys and the following key names
 * ~~Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution~~
 * ~~Fix syntax checking being done in `main_logic()` instead of the, you know, syntax checker?~~
 * ~~Merge `SP_` functions into smart versions of their single-character counterparts~~
+* ~~Add feature to syntax checking for SOUND to check if file exists/is usable~~

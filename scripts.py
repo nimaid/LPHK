@@ -1,4 +1,4 @@
-import threading, webbrowser
+import threading, webbrowser, os
 from time import sleep
 from functools import partial
 import lp_events, lp_colors, kb, sound, mouse
@@ -678,6 +678,11 @@ def validate_script(script_str):
                     if len(split_line) > 1:
                         return ("'WAIT_UNPRESSED' takes no arguments.", line)
                 if split_line[0] == "SOUND":
+                    final_name = sound.full_name(split_line[1])
+                    if not os.path.isfile(final_name):
+                        return ("Sound file '" + final_name + "' not found.", line)
+                    if not sound.is_valid(split_line[1]):
+                        return ("Sound file '" + final_name + "' not valid.", line)
                     if len(split_line) > 2:
                         try:
                             vol = float(float(split_line[2]) / 100.0)
