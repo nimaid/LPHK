@@ -1,6 +1,6 @@
 # LPHK (LaunchPad HotKey)
 A Novation Launchpad macro scripting system.
-
+![logo] (https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK.png)
 ![Update 2](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_2.png)
 
 [First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
@@ -239,8 +239,10 @@ For all commands, the arguments cannot contain the following strings, as they ar
 
 ## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
+  * I can't implement this until I have one of the above to test the code with. Message me if you'd like to lend/give/sell me one to speed up the process. :) 
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
 * Add button move/swap/copy feature
+  * If moving/copying to already bound button, prompt to swap/overwrite/cancel/
 * Add script status icons (bound, playing, queued)
 * Add GUI scaling
 * Support for Launchpad Pro
