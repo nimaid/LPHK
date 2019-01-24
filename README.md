@@ -135,7 +135,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * Goto label (argument 1) a maximum of (argument 2) times.
   * `SOUND`
     * Play a sound named (argument 1) inside the `user_sounds/` folder.
-      * Supports `.wav`, `.flac', and `.ogg` only.
+      * Supports `.wav`, `.flac`, and `.ogg` only.
     * If (argument 2) supplied, set volume to (argument 2).
       * Range is 0 to 100
   * `WAIT_UNPRESSED`
