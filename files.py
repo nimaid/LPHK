@@ -77,10 +77,11 @@ def load_layout(name, add_path=True):
                 script_text = info[1].replace(NEWLINE_REPLACE, "\n")
 
                 if script_text != "":
-                    scripts.bind(x, y, script_text, color)
                     script_validation = scripts.validate_script(script_text)
                     if script_validation != True:
                         window.app.save_script(window.app, x, y, script_text, open_editor = True)
+                    else:
+                        scripts.bind(x, y, script_text, color)
                 else:
                     lp_colors.setXY(x, y, color)
         lp_colors.update_all()

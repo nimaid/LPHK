@@ -230,10 +230,12 @@ class Main_Window(tk.Frame):
         w.resizable(False, False)
         
         def validate_func():
-            nonlocal x, y
-            script_validate = scripts.validate_script(scripts.text[x][y])
+            nonlocal x, y, t
+            
+            text_string = t.get(1.0, tk.END)
+            script_validate = scripts.validate_script(text_string)
             if script_validate != True:
-                self.save_script(w, x, y, scripts.text[x][y])
+                self.save_script(w, x, y, text_string)
             else:
                 w.destroy()
         w.protocol("WM_DELETE_WINDOW", validate_func)
