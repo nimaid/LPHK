@@ -598,13 +598,25 @@ def validate_script(script_str):
     if script_str == "":
         return True
     script_lines = script_str.split('\n')
-
-    first_line_split = script_lines[0].split(" ")
+    
+    first_line = script_lines[0].strip()
+    first_line_split = first_line.split(" ")
 
     if first_line_split[0] == "@ASYNC":
         if len(first_line_split) > 1:
             return ("@ASYNC takes no arguments.", script_lines[0])
         temp = script_lines.pop(0)
+    if first_line_split[0] == "@SIMPLE":
+        if len(first_line_split) < 2:
+            return ("@SIMPLE requires a character to bind.", first_line)
+        if len(first_line_split) > 2:
+            return ("@SIMPLE only take one argument", first_line)
+        if kb.sp(first_line_split[1]) == None:
+            return ("No character named '" + first_line_split[1] + "'.", first_line)
+        for line in script_lines[1:]:
+            line = line.strip()
+            if line != "" and line[0] != "-":
+                return ("When @SIMPLE is used, scripts can only comtain comments.", line)
     
     #parse labels
     labels = []
@@ -619,7 +631,7 @@ def validate_script(script_str):
             else:
                 labels.append(split_line[1])
     
-    for line in script_lines:
+    for idx, line in enumerate(script_lines):
         for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR, files.NEWLINE_REPLACE):
             if sep in line:
                 return ("You cannot use the string '" + sep + "' in any script.", line)
@@ -627,6 +639,9 @@ def validate_script(script_str):
         if line != "":
             if line[0] != "-":
                 split_line = line.split(' ')
+                if split_line[0][0] == "@":
+                    if idx != 0:
+                        return ("Headers must only be used on the first line of a script.", line)
                 if split_line[0] not in VALID_COMMANDS:
                     if split_line[0] == "@ASYNC":
                         return ("@ASYNC is a header and can only be used on the first line.", line)

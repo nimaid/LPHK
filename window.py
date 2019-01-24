@@ -222,7 +222,7 @@ class Main_Window(tk.Frame):
         self.grid_rects = [[None for y in range(9)] for x in range(9)]
         self.grid_drawn = False
 
-    def script_entry_window(self, x, y):
+    def script_entry_window(self, x, y, text_override=None, color_override=None):
         global color_to_set
         
         w = tk.Toplevel(self)
@@ -234,7 +234,7 @@ class Main_Window(tk.Frame):
             
             text_string = t.get(1.0, tk.END)
             script_validate = scripts.validate_script(text_string)
-            if script_validate != True:
+            if script_validate != True and files.in_error:
                 self.save_script(w, x, y, text_string)
             else:
                 w.destroy()
@@ -247,8 +247,11 @@ class Main_Window(tk.Frame):
 
         t = tk.scrolledtext.ScrolledText(w)
         t.grid(column=0, row=0, rowspan=3, padx=10, pady=10)
-
-        t.insert(tk.INSERT, scripts.text[x][y])
+        
+        if text_override == None:
+            t.insert(tk.INSERT, scripts.text[x][y])
+        else:
+            t.insert(tk.INSERT, text_override)
         t.bind("<<Paste>>", self.custom_paste)
         t.bind("<Control-Key-a>", self.select_all)
 
@@ -258,16 +261,22 @@ class Main_Window(tk.Frame):
         export_script_func = lambda: self.export_script(t, w)
         e_m_Script.add_command(label="Export script...", command=export_script_func)
         e_m.add_cascade(label="Script", menu=e_m_Script)
-
-        colors_to_set[x][y] =  lp_colors.getXY(x, y)
+        
+        if color_override == None:
+            colors_to_set[x][y] =  lp_colors.getXY(x, y)
+        else:
+            colors_to_set[x][y] = color_override
+        
         if type(colors_to_set[x][y]) == int:
             rgb = lp_colors.RGB[colors_to_set[x][y]]
             colors_to_set[x][y] = []
             for c in range(3):
                 val = rgb[c + 1]
                 colors_to_set[x][y].append(int(val + val, 16))
+        
         if all(c < 4 for c in colors_to_set[x][y]):
             colors_to_set[x][y] = DEFAULT_COLOR
+        
         ask_color_func = lambda: self.ask_color(w, color_button, x, y, colors_to_set[x][y])
         color_button = tk.Button(w, text="Select Color", command=ask_color_func)
         color_button.grid(column=1, row=0, padx=(0, 10), pady=(10, 50), sticky="nesw")
@@ -337,7 +346,7 @@ class Main_Window(tk.Frame):
         self.draw_canvas()
         window.destroy()
 
-    def save_script(self, window, x, y, script_text, open_editor = False):
+    def save_script(self, window, x, y, script_text, open_editor = False, color=None):
         global colors_to_set
         
         script_text = script_text.strip()
@@ -345,7 +354,7 @@ class Main_Window(tk.Frame):
         def open_editor_func():
             nonlocal x, y
             if open_editor:
-                    self.script_entry_window(x, y)
+                    self.script_entry_window(x, y, script_text, color)
 
         script_validate = scripts.validate_script(script_text)
         if script_validate == True:

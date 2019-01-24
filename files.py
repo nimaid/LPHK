@@ -14,6 +14,7 @@ NEWLINE_REPLACE = ":LPHK_NEWLINE_REP:"
 import window
 
 curr_layout = None
+in_error = False
 
 def init(path_in):
     global PATH
@@ -50,6 +51,7 @@ def save_layout(name, add_path=True):
 
 def load_layout(name, add_path=True):
     global curr_layout
+    global in_error
     scripts.unbind_all()
     window.app.draw_canvas()
     
@@ -79,7 +81,10 @@ def load_layout(name, add_path=True):
                 if script_text != "":
                     script_validation = scripts.validate_script(script_text)
                     if script_validation != True:
-                        window.app.save_script(window.app, x, y, script_text, open_editor = True)
+                        lp_colors.update_all()
+                        in_error = True
+                        window.app.save_script(window.app, x, y, script_text, open_editor = True, color = color)
+                        in_error = False
                     else:
                         scripts.bind(x, y, script_text, color)
                 else:
