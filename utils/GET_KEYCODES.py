@@ -1,9 +1,7 @@
-from pynput.keyboard import Controller, Listener
+import keyboard
 
-keyboard = Controller()
+def press_callback(event):
+    print("Name: '" + event.name + "', Scan Code: '" + str(keyboard.key_to_scan_codes(event.name)[0]) + "'")
 
-def on_press(key):
-    print(key)
-
-Listener(on_press=on_press).start()
+keyboard.on_press(press_callback)
 
