@@ -144,21 +144,21 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * Open website (argument 1) in default browser.
   * `WEB_NEW`
     * Open website (argument 1) in default browser, try new window.
-* **Keyboard**
+* **Keypresses**
   * `PRESS`
-    * Presses normal character (argument 1).
-      * Accepts any non-whitespace single character.
+    * Presses the key (argument 1).
+      * See valid key names below.
   * `RELEASE`
-    * Releases the normal character (argument 1).
-      * Accepts any non-whitespace single character.
+    * Releases the key (argument 1).
+      * See valid key names below.
   * `STRING`
     * Types whatever text comes after it.
   * `TAP`
-    * Taps the normal character (argument 1).
-      * Accepts any non-whitespace single character.
+    * Taps the key (argument 1).
+      * See valid key names below.
     * If (argument 2) supplied, tap (argument 2) number of times.
     * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
-* **Mouse**
+* **Mouse Movement**
   * `M_LINE`
     * Move the mouse in a line from absolute point (argument 1),(argument 2) to absolute point (argument 3),(argument 4).
     * If (argument 5) supplied, delay (argument 5) milliseconds between each step.
@@ -176,9 +176,6 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
       * If not supplied, assumed to be 1
   * `M_MOVE`
     * Moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position.
-  * `M_PRESS`
-    * Presses the mouse button (argument 1).
-      * See below for a list of valid button names.
   * `M_RECALL`
     * Sets the mouse position to the last location stored with `M_STORE`.
       * Will not do anything if `M_STORE` has not been called in that script.
@@ -188,9 +185,6 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * If (argument 1) supplied, delay (argument 1) milliseconds between each step.
     * If (argument 2) supplied, move (argument 2) pixels per step.
       * If not supplied, assumed to be 1
-  * `M_RELEASE`
-    * Releases the mouse button (argument 1).
-      * See below for a list of valid button names.
   * `M_SCROLL`
     * Scrolls the mouse vertically by (argument 1).
     * If (argument 2) supplied, scroll horizontally by (argument 2).
@@ -198,24 +192,8 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * Sets the absolute cursor posistion to (argument 1) horizontal and (argument 2) vertical.
   * `M_STORE`
     * Stores the current mouse position for use with the `M_RECALL*` commands.
-  * `M_TAP`
-    * Taps the mouse button (argument 1).
-        * See below for a list of valid mouse button names.
-    * If (argument 2) supplied, tap (argument 2) number of times.
-    * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
 
-
-For all commands, the arguments cannot contain the following strings, as they are reserved for the LPHKlayout file format:
-* `:LPHK_BUTTON_SEP:`
-* `:LPHK_ENTRY_SEP:`
-* `:LPHK_NEWLINE_REP:`
-
-For `M_PRESS`, `M_RELEASE`, and `M_TAP`, the folowing button names are allowed:
-* `left`
-* `middle`
-* `right`
-
-For the keyboard commands, all single character keys and the following key names are allowed:
+For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitespace keys and the following key names are allowed:
 * `alt`
 * `alt_gr`
 * `backspace`
@@ -232,6 +210,9 @@ For the keyboard commands, all single character keys and the following key names
 * `insert`
 * `left`
 * `menu`
+* `mouse_left`
+* `mouse_midle`
+* `mouse_right`
 * `mute`
 * `next_track`
 * `num_lock`
@@ -251,10 +232,14 @@ For the keyboard commands, all single character keys and the following key names
 * `vol_down`
 * `vol_up`
 
+For all commands, the arguments cannot contain the following strings, as they are reserved for the LPHKlayout file format:
+* `:LPHK_BUTTON_SEP:`
+* `:LPHK_ENTRY_SEP:`
+* `:LPHK_NEWLINE_REP:`
+
 ## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Merge `M_TAP`, `M_PRESS`, and `M_RELEASE` commands into their keyboard counterparts
 * Add button move/swap/copy feature
 * Add script status icons (bound, playing, queued)
 * Add GUI scaling
@@ -311,3 +296,4 @@ For the keyboard commands, all single character keys and the following key names
 * ~~Add feature to syntax checking for SOUND to check if file exists/is usable~~
 * ~~Do syntax checks on loading a layout~~
 * ~~Add `@SIMPLE` header for simple keybinding of single keyboard keys~~
+* ~~Merge `M_TAP`, `M_PRESS`, and `M_RELEASE` commands into their keyboard counterparts~~
