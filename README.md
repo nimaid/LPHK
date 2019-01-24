@@ -94,11 +94,24 @@ Only one script runs at a time, and there is a scheduling system for them. If a 
 
 When you press a script button, if there is a script running, it adds the script to the queue. If no scripts are running, the script is added to the queue and the queue execution is started. Tapping a scheduled script's button will unschedule it, and tapping a running scripts button will kill it. If that sounds confusing, load up `user_layouts/examples/all_delays_all_day.LPHKlayout` and press a bunch of buttons.
 
-### The `@ASYNC` Header
-There is one exception to the scheduling system. If the first line of a script is `@ASYNC`, the script will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. If this is used, it must be on the very first line.
+### Headers
+Headers are commands that start with `@` and go on the first line of a script. They are used to put the scripting engine into different "modes", allowing you to do some interesting things.
+
+#### The `@ASYNC` Header
+There is one exception to the scheduling system. If the script has the `@ASYNC` header, it will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. If this is used, it must be on the very first line.
+
+#### The `@SIMPLE` Header
+This is a quick way to bind a controller button to a simple keypress of (argument 1). This has the equivilant code to:
+```
+@ASYNC
+PRESS (argument 1)
+WAIT_UNPRESSED
+RELEASE (argument 1)
+```
+If this is used, all other lines in the file must either be whitespace or comments. In addition, it must be on the very first line.
 
 ### Comments
-Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. If `@ASYNC` is used, a comment cannot come before the `@ASYNC` command, as that must be on the first line, always.
+Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. If a header is used, a comment cannot come before the header, as those must be on the first line, always.
 
 ### Commands List
 Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines seperating commands.
@@ -241,13 +254,6 @@ For the keyboard commands, all single character keys and the following key names
 ## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add `@SIMPLE` header for simple keybinding of single keyboard keys
-  * Rest of file must only have comments
-  * Template:
-    * @ASYNC
-    * PRESS (argument 1)
-    * WAIT_UNPRESSED
-    * RELEASE (argument 1)
 * Add button move/swap/copy feature
 * Add script status icons (bound, playing, queued)
 * Add GUI scaling
@@ -303,3 +309,4 @@ For the keyboard commands, all single character keys and the following key names
 * ~~Merge `SP_` functions into smart versions of their single-character counterparts~~
 * ~~Add feature to syntax checking for SOUND to check if file exists/is usable~~
 * ~~Do syntax checks on loading a layout~~
+* ~~Add `@SIMPLE` header for simple keybinding of single keyboard keys~~

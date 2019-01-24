@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE"]
+VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE"]
 
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -80,12 +80,14 @@ def run_script(script_str, x, y):
     script_lines = script_str.split("\n")
 
     is_async = False
-    if script_lines[0].split(" ")[0] == "@ASYNC":
+    if script_lines[0].split(" ")[0] in ["@ASYNC", "@SIMPLE"]:
         is_async = True
-        temp = script_lines.pop(0)
     else:
         running = True
-
+    
+    if script_lines[0].split(" ")[0] == "@ASYNC":
+        temp = script_lines.pop(0)
+    
     print("[scripts] " + coords + " Now running script...")
     
     #parse labels
@@ -540,6 +542,26 @@ def run_script(script_str, x, y):
                         print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
                         repeats[idx] -= 1
                         return labels[split_line[1]]
+            elif split_line[0] == "@SIMPLE":
+                print("[scripts] " + coords + "    Simple keybind: " + split_line[1])
+                
+                #PRESS
+                key = kb.sp(split_line[1])
+                kb.press(key)
+                
+                #WAIT_UNPRESSED
+                while lp_events.pressed[x][y]:
+                    sleep(DELAY_EXIT_CHECK)
+                    if threads[x][y].kill.is_set():
+                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                        threads[x][y].kill.clear()
+                        if not is_async:
+                            running = False
+                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                        return idx + 1
+                #RELEASE
+                kb.release(key)
+                
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
         return idx + 1
@@ -616,7 +638,7 @@ def validate_script(script_str):
         for line in script_lines[1:]:
             line = line.strip()
             if line != "" and line[0] != "-":
-                return ("When @SIMPLE is used, scripts can only comtain comments.", line)
+                return ("When @SIMPLE is used, scripts can only contain comments.", line)
     
     #parse labels
     labels = []
@@ -643,10 +665,7 @@ def validate_script(script_str):
                     if idx != 0:
                         return ("Headers must only be used on the first line of a script.", line)
                 if split_line[0] not in VALID_COMMANDS:
-                    if split_line[0] == "@ASYNC":
-                        return ("@ASYNC is a header and can only be used on the first line.", line)
-                    else:
-                        return ("Command '" + split_line[0] + "' not valid.", line)
+                    return ("Command '" + split_line[0] + "' not valid.", line)
                 if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP"]:
                     if len(split_line) < 2:
                         return ("Too few arguments for command '" + split_line[0] + "'.", line)
