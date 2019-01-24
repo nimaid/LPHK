@@ -254,6 +254,7 @@ For the keyboard commands, all single character keys and the following key names
 ## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
+* Merge `M_TAP`, `M_PRESS`, and `M_RELEASE` commands into their keyboard counterparts
 * Add button move/swap/copy feature
 * Add script status icons (bound, playing, queued)
 * Add GUI scaling
