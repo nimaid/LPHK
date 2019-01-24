@@ -145,17 +145,6 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
       * Accepts any non-whitespace single character.
     * If (argument 2) supplied, tap (argument 2) number of times.
     * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
-  * `SP_PRESS`
-    * Presses the special character (argument 1).
-      * See below for a list of valid key names.
-  * `SP_RELEASE`
-    * Releases the special character (argument 1).
-      * See below for a list of valid key names.
-  * `SP_TAP`
-    * Taps the special character (argument 1).
-        * See below for a list of valid key names.
-    * If (argument 2) supplied, tap (argument 2) number of times.
-    * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
 * **Mouse**
   * `M_LINE`
     * Move the mouse in a line from absolute point (argument 1),(argument 2) to absolute point (argument 3),(argument 4).
@@ -213,7 +202,7 @@ For `M_PRESS`, `M_RELEASE`, and `M_TAP`, the folowing button names are allowed:
 * `middle`
 * `right`
 
-For the `SP_*` commands, the following key names are allowed:
+For the keyboard commands, all single character keys and the following key names are allowed:
 * `alt`
 * `alt_gr`
 * `backspace`
@@ -252,14 +241,14 @@ For the `SP_*` commands, the following key names are allowed:
 ## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Fix syntax checking being done in `main_logic()` instead of the, you know, syntax checker?
-  * I'm looking at you, `TAP`!
-* Merge `SP_` functions into smart versions of their single-character counterparts
+* Do syntax checks on loading a layout
 * Add `@SIMPLE` header for simple keybinding of single keyboard keys
-  * @ASYNC
-  * PRESS (argument 1)
-  * WAIT_UNPRESSED
-  * RELEASE (argument 1)
+  * Rest of file must only have comments
+  * Template:
+    * @ASYNC
+    * PRESS (argument 1)
+    * WAIT_UNPRESSED
+    * RELEASE (argument 1)
 * Add button move/swap/copy feature
 * Add script status icons (bound, playing, queued)
 * Add GUI scaling
@@ -313,3 +302,5 @@ For the `SP_*` commands, the following key names are allowed:
 * ~~Add `IF_PRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is still pressed n number of times max~~
 * ~~Add `IF_UNPRESSED_REPEAT_LABEL` command to jump from this line to a `LABEL` if the key is unpressed n number of times max~~
 * ~~Add `M_STORE`, `M_RECALL`, and `M_RECALL_LINE` functions to remember where the mouse was before execution~~
+* ~~Fix syntax checking being done in `main_logic()` instead of the, you know, syntax checker?~~
+* ~~Merge `SP_` functions into smart versions of their single-character counterparts~~

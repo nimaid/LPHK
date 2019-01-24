@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE"]
+VALID_COMMANDS = ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE"]
 
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -122,176 +122,79 @@ def run_script(script_str, x, y):
                 print("[scripts] " + coords + "    Type out string " + type_string)
                 kb.keyboard.write(type_string)
             elif split_line[0] == "DELAY":
-                delay = None
-                try:
-                    delay =float(split_line[1])
-                except:
-                    print("[scripts] " + coords + "     Invalid time to delay, skipping...")
-
-                if delay != None:
-                    print("[scripts] " + coords + "    Delay for " + split_line[1] + " seconds")
-                    while delay > DELAY_EXIT_CHECK:
-                        sleep(DELAY_EXIT_CHECK)
-                        delay -= DELAY_EXIT_CHECK
+                print("[scripts] " + coords + "    Delay for " + split_line[1] + " seconds")
+                
+                delay = float(split_line[1])
+                while delay > DELAY_EXIT_CHECK:
+                    sleep(DELAY_EXIT_CHECK)
+                    delay -= DELAY_EXIT_CHECK
+                    if threads[x][y].kill.is_set():
+                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                        threads[x][y].kill.clear()
+                        if not is_async:
+                            running = False
+                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                        return idx + 1
+                if delay > 0:
+                    sleep(delay)
+            elif split_line[0] == "TAP":
+                key = kb.sp(split_line[1])
+                if len(split_line) <= 2:
+                    print("[scripts] " + coords + "    Tap key " + split_line[1])
+                    kb.tap(key)
+                elif len(split_line) <= 3:
+                    print("[scripts] " + coords + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
+                    
+                    taps = int(split_line[2])
+                    for tap in range(taps):
                         if threads[x][y].kill.is_set():
                             print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                             threads[x][y].kill.clear()
                             if not is_async:
                                 running = False
+                            kb.release(split_line[1])
                             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                             return idx + 1
-                    if delay > 0:
-                        sleep(delay)
-            elif split_line[0] == "TAP":
-                if len(split_line) <= 2:
-                    print("[scripts] " + coords + "    Tap key " + split_line[1])
-                    kb.tap(split_line[1])
-                elif len(split_line) <= 3:
-                    taps = None
-                    try:
-                        taps = int(split_line[2])
-                    except:
-                        print("[scripts] " + coords + "     Invalid number of times to tap, skipping...")
-
-                    if (taps != None):
-                        print("[scripts] " + coords + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
-
-                        for tap in range(taps):
-                            if threads[x][y].kill.is_set():
-                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                threads[x][y].kill.clear()
-                                if not is_async:
-                                    running = False
-                                kb.release(split_line[1])
-                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return idx + 1
-                            kb.tap(split_line[1])
+                        kb.tap(key)
                 else:
-                    taps = None
-                    try:
-                        taps = int(split_line[2])
-                    except:
-                        print("[scripts] " + coords + "     Invalid number of times to tap, skipping...")
-                    delay = None
-                    try:
-                        delay =float(split_line[3])
-                    except:
-                        print("[scripts] " + coords + "     Invalid time to tap, skipping...")
+                    print("[scripts] " + coords + "    Tap key " + split_line[1] + " " + split_line[2] + " times for " + str(split_line[3]) + " seconds each")
+                    
+                    taps = int(split_line[2])
+                    delay = float(split_line[3])
+                    for tap in range(taps):
+                        temp_delay = delay
+                        if threads[x][y].kill.is_set():
+                            print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+                            threads[x][y].kill.clear()
+                            if not is_async:
+                                running = False
+                            kb.release(key)
+                            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                            return idx + 1
 
-                    if (taps != None) and (delay != None):
-                        print("[scripts] " + coords + "    Tap key " + split_line[1] + " " + split_line[2] + " times for " + str(split_line[3]) + " seconds each")
-                        for tap in range(taps):
-                            temp_delay = delay
+                        kb.press(key)
+                        while temp_delay > DELAY_EXIT_CHECK:
+                            sleep(DELAY_EXIT_CHECK)
+                            temp_delay -= DELAY_EXIT_CHECK
                             if threads[x][y].kill.is_set():
                                 print("[scripts] " + coords + " Recieved exit flag, script exiting...")
                                 threads[x][y].kill.clear()
                                 if not is_async:
                                     running = False
-                                kb.release(split_line[1])
+                                kb.release(key)
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
                                 return idx + 1
-
-                            kb.press(split_line[1])
-                            while temp_delay > DELAY_EXIT_CHECK:
-                                sleep(DELAY_EXIT_CHECK)
-                                temp_delay -= DELAY_EXIT_CHECK
-                                if threads[x][y].kill.is_set():
-                                    print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                    threads[x][y].kill.clear()
-                                    if not is_async:
-                                        running = False
-                                    kb.release(split_line[1])
-                                    threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                    return idx + 1
-                            if temp_delay > 0:
-                                sleep(temp_delay)
-                            kb.release(split_line[1])
+                        if temp_delay > 0:
+                            sleep(temp_delay)
+                        kb.release(key)
             elif split_line[0] == "PRESS":
                 print("[scripts] " + coords + "    Press key " + split_line[1])
-                kb.press(split_line[1])
+                key = kb.sp(split_line[1])
+                kb.press(key)
             elif split_line[0] == "RELEASE":
                 print("[scripts] " + coords + "    Release key " + split_line[1])
-                kb.release(split_line[1])
-            elif split_line[0] == "SP_TAP":
-                if kb.sp(split_line[1]) != None:
-                    key = kb.sp(split_line[1])
-                    if len(split_line) <= 2:
-                        print("[scripts] " + coords + "    Tap special key " + split_line[1])
-                        kb.tap(key)
-                    elif len(split_line) <= 3:
-                        taps = None
-                        try:
-                            taps = int(split_line[2])
-                        except:
-                            print("[scripts] " + coords + "     Invalid number of times to tap, skipping...")
-
-                        if (taps != None):
-                            print("[scripts] " + coords + "    Tap special key " + split_line[1] + " " + split_line[2] + " times")
-
-                            for tap in range(taps):
-                                if threads[x][y].kill.is_set():
-                                    print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                    threads[x][y].kill.clear()
-                                    if not is_async:
-                                        running = False
-                                    kb.release(key)
-                                    threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                    return idx + 1
-                                kb.tap(key)
-                    else:
-                        taps = None
-                        try:
-                            taps = int(split_line[2])
-                        except:
-                            print("[scripts] " + coords + "     Invalid number of times to tap, skipping...")
-                        delay = None
-                        try:
-                            delay =float(split_line[3])
-                        except:
-                            print("[scripts] " + coords + "     Invalid time to tap, skipping...")
-
-                        if (taps != None) and (delay != None):
-                            print("[scripts] " + coords + "    Tap special key " + split_line[1] + " " + split_line[2] + " times for " + str(split_line[3]) + " seconds each")
-                            for tap in range(taps):
-                                temp_delay = delay
-                                if threads[x][y].kill.is_set():
-                                    print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                    threads[x][y].kill.clear()
-                                    if not is_async:
-                                        running = False
-                                    kb.release(key)
-                                    threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                    return idx + 1
-
-                                kb.press(key)
-                                while temp_delay > DELAY_EXIT_CHECK:
-                                    sleep(DELAY_EXIT_CHECK)
-                                    temp_delay -= DELAY_EXIT_CHECK
-                                    if threads[x][y].kill.is_set():
-                                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                        threads[x][y].kill.clear()
-                                        if not is_async:
-                                            running = False
-                                        kb.release(key)
-                                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                        return idx + 1
-                                if temp_delay > 0:
-                                    sleep(temp_delay)
-                                kb.release(key)
-                else:
-                    print("[scripts] " + coords + "    Invalid special character to tap: " + split_line[1] + ", skipping...")
-            elif split_line[0] == "SP_PRESS":
-                if kb.sp(split_line[1]) != None:
-                    print("[scripts] " + coords + "    Press special key " + split_line[1])
-                    kb.press(kb.sp(split_line[1]))
-                else:
-                    print("[scripts] " + coords + "    Invalid special character to press: " + split_line[1] + ", skipping...")
-            elif split_line[0] == "SP_RELEASE":
-                if kb.sp(split_line[1]) != None:
-                    print("[scripts] " + coords + "    Release special key " + split_line[1])
-                    kb.release(kb.sp(split_line[1]))
-                else:
-                    print("[scripts] " + coords + "    Invalid special character to release: " + split_line[1] + ", skipping...")
+                key = kb.sp(split_line[1])
+                kb.release(key)
             elif split_line[0] == "WEB":
                 link = split_line[1]
                 if "http" not in link:
@@ -729,36 +632,33 @@ def validate_script(script_str):
                         return ("@ASYNC is a header and can only be used on the first line.", line)
                     else:
                         return ("Command '" + split_line[0] + "' not valid.", line)
-                if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "SP_TAP", "SP_PRESS", "SP_RELEASE", "WEB", "WEB_NEW", "SOUND", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP"]:
+                if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "M_MOVE", "M_SET", "M_PRESS", "M_RELEASE", "M_SCROLL", "M_TAP"]:
                     if len(split_line) < 2:
                         return ("Too few arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["WAIT_UNPRESSED"]:
                     if len(split_line) > 1:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
-                if split_line[0] in ["DELAY", "WEB", "WEB_NEW", "PRESS", "RELEASE", "SP_PRESS", "SP_RELEASE", "M_PRESS", "M_RELEASE"]:
+                if split_line[0] in ["DELAY", "WEB", "WEB_NEW", "PRESS", "RELEASE", "M_PRESS", "M_RELEASE"]:
                     if len(split_line) > 2:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["SOUND", "M_MOVE", "M_SCROLL", "M_SET"]:
                     if len(split_line) > 3:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
-                if split_line[0] in ["TAP", "SP_TAP", "M_TAP"]:
+                if split_line[0] in ["TAP", "M_TAP"]:
                     if len(split_line) > 4:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["M_LINE"]:
                     if len(split_line) > 7:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
-                if split_line[0] in ["SP_TAP", "SP_PRESS", "SP_RELEASE"]:
-                    if kb.sp(split_line[1]) == None:
-                        return ("No special character named '" + split_line[1] + "'.", line)
                 if split_line[0] in ["TAP", "PRESS", "RELEASE"]:
-                    if len(split_line[1]) > 1:
-                        return ("More than 1 character supplied.", line)
+                    if kb.sp(split_line[1]) == None:
+                        return ("No character named '" + split_line[1] + "'.", line)
                 if split_line[0] == "DELAY":
                     try:
                         temp = float(split_line[1])
                     except:
                         return ("Delay time '" + split_line[1] + "' not valid.", line)
-                if split_line[0] in ["TAP", "SP_TAP", "M_TAP"]:
+                if split_line[0] in ["TAP", "M_TAP"]:
                     func_name = "Tap"
                     if split_line[0] == "SP_TAP":
                         func_name = "Special tap"
