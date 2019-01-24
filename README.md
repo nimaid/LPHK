@@ -211,7 +211,7 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * `left`
 * `menu`
 * `mouse_left`
-* `mouse_midle`
+* `mouse_middle`
 * `mouse_right`
 * `mute`
 * `next_track`
