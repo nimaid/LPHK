@@ -68,8 +68,17 @@ class Main_Window(tk.Frame):
         self.m_Layout.add_command(label="Save layout...", command=self.save_layout)
         self.m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
         self.m.add_cascade(label="Layout", menu=self.m_Layout)
+        
+        self.m_Button = tk.Menu(self.m, tearoff=False)
+        def nop():
+            pass
+        self.m_Button.add_command(label="(WIP) Move button...", command=nop)
+        self.m_Button.add_command(label="(WIP) Swap buttons...", command=nop)
+        self.m_Button.add_command(label="(WIP) Copy button...", command=nop)
+        self.m.add_cascade(label="Button", menu=self.m_Button)
 
         self.disable_menu("Layout")
+        self.disable_menu("Button")
 
         c_gap = int(BUTTON_SIZE // 4)
 
@@ -104,6 +113,7 @@ class Main_Window(tk.Frame):
                 lp_events.start(lp_object)
                 self.draw_canvas()
                 self.enable_menu("Layout")
+                self.enable_menu("Button")
                 self.enable_lp_disconnect()
 
                 self.stat["text"] = "Connected to Launchpad MkII"
@@ -126,6 +136,7 @@ class Main_Window(tk.Frame):
         self.clear_canvas()
 
         self.disable_menu("Layout")
+        self.disable_menu("Button")
         self.disable_lp_disconnect()
 
         self.stat["text"] = "No Launchpad Connected"
@@ -257,7 +268,6 @@ class Main_Window(tk.Frame):
 
         import_script_func = lambda: self.import_script(t, w)
         e_m_Script.add_command(label="Import script...", command=import_script_func)
-
         export_script_func = lambda: self.export_script(t, w)
         e_m_Script.add_command(label="Export script...", command=export_script_func)
         e_m.add_cascade(label="Script", menu=e_m_Script)
@@ -301,7 +311,6 @@ class Main_Window(tk.Frame):
         t.focus_set()
         w.wait_window()
         
-
     def ask_color(self, window, button, x, y, default_color):
         global colors_to_set
         color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
@@ -411,7 +420,7 @@ class Main_Window(tk.Frame):
         popup.wait_visibility()
         popup.grab_set()
         popup.wait_window()
-
+    
 def make():
     global root
     global app
