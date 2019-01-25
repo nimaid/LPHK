@@ -1,8 +1,8 @@
 # LPHK (LaunchPad HotKey)
 A Novation Launchpad macro scripting system.
 
-![logo](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK.png | height=250)
-![Update 2](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_2.png | height=250)
+![logo](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK.png =250x)
+![Update 2](https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_2.png =250x)
 
 [First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
 
