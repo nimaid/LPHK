@@ -2,7 +2,7 @@
 A Novation Launchpad macro scripting system.
 
 <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK.png" alt="logo" height="300px" />
-<img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_2.png" alt="Update 2" width="600px" />
+<img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_2.png" alt="Update 2" width="700px" />
 
 [First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
 
