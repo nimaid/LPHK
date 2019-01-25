@@ -82,6 +82,7 @@ def load_layout(name, add_path=True):
                     script_validation = scripts.validate_script(script_text)
                     if script_validation != True:
                         lp_colors.update_all()
+                        window.app.draw_canvas()
                         in_error = True
                         window.app.save_script(window.app, x, y, script_text, open_editor = True, color = color)
                         in_error = False
@@ -90,6 +91,7 @@ def load_layout(name, add_path=True):
                 else:
                     lp_colors.setXY(x, y, color)
         lp_colors.update_all()
+        window.app.draw_canvas()
     curr_layout = final_path
     print("[files] Loaded layout " + final_path)
 

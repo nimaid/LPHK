@@ -177,6 +177,7 @@ class Main_Window(tk.Frame):
             self.save_layout_as()
         else:
             files.save_layout(files.curr_layout, False)
+            files.load_layout(files.curr_layout, False)
 
     def click(self, event):
         gap = int(BUTTON_SIZE // 4)
