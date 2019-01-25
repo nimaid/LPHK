@@ -624,12 +624,12 @@ def validate_script(script_str):
                         try:
                             temp = float(split_line[3])
                         except:
-                            return (func_name + "Tap wait time '" + split_line[3] + "' not valid.", line)
+                            return (split_line[0] + "Tap wait time '" + split_line[3] + "' not valid.", line)
                     if len(split_line) > 2:
                         try:
                             temp = int(split_line[2])
                         except:
-                            return (func_name + " repetitions '" + split_line[2] + "' not valid.", line)
+                            return (split_line[0] + " repetitions '" + split_line[2] + "' not valid.", line)
                 if split_line[0] in ["M_LINE"]:
                     if len(split_line) > 7:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)

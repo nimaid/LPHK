@@ -238,6 +238,10 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * `:LPHK_ENTRY_SEP:`
 * `:LPHK_NEWLINE_REP:`
 
+## Known Issues
+
+* If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
+
 ## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
   * I can't implement this until I have one of the above to test the code with. Message me if you'd like to lend/give/sell me one to speed up the process. :) 
