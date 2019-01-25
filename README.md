@@ -246,8 +246,11 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Support for Launchpad Classic/S/Mini
   * I can't implement this until I have one of the above to test the code with. Message me if you'd like to lend/give/sell me one to speed up the process. :) 
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add button move/swap/copy feature
-  * If moving/copying to already bound button, prompt to swap/overwrite/cancel/
+* Add button move/copy feature
+  * Modes: Script Edit, Button Move, Button Copy
+    * Use upper right corner for mode switch button
+  * If moving to already bound button, prompt to swap/overwrite/cancel
+  * If copying to already bound button, prompt to overwrite/cancel
 * Add script status icons (bound, playing, queued)
 * Add GUI scaling
 * Support for Launchpad Pro

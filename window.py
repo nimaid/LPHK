@@ -68,17 +68,8 @@ class Main_Window(tk.Frame):
         self.m_Layout.add_command(label="Save layout...", command=self.save_layout)
         self.m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
         self.m.add_cascade(label="Layout", menu=self.m_Layout)
-        
-        self.m_Button = tk.Menu(self.m, tearoff=False)
-        def nop():
-            pass
-        self.m_Button.add_command(label="(WIP) Move button...", command=nop)
-        self.m_Button.add_command(label="(WIP) Swap buttons...", command=nop)
-        self.m_Button.add_command(label="(WIP) Copy button...", command=nop)
-        self.m.add_cascade(label="Button", menu=self.m_Button)
 
         self.disable_menu("Layout")
-        self.disable_menu("Button")
 
         c_gap = int(BUTTON_SIZE // 4)
 
@@ -113,7 +104,6 @@ class Main_Window(tk.Frame):
                 lp_events.start(lp_object)
                 self.draw_canvas()
                 self.enable_menu("Layout")
-                self.enable_menu("Button")
                 self.enable_lp_disconnect()
 
                 self.stat["text"] = "Connected to Launchpad MkII"
@@ -136,7 +126,6 @@ class Main_Window(tk.Frame):
         self.clear_canvas()
 
         self.disable_menu("Layout")
-        self.disable_menu("Button")
         self.disable_lp_disconnect()
 
         self.stat["text"] = "No Launchpad Connected"
