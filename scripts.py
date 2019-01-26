@@ -635,8 +635,8 @@ def validate_script(script_str):
     
     for idx, line in enumerate(script_lines):
         for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR, files.NEWLINE_REPLACE):
-            if sep in line:
-                return ("You cannot use the string '" + sep + "' in any script.", line)
+            if sep[1:-1] in line:
+                return ("You cannot use the string '" + sep[1:-1] + "' in any script.", line)
         line = line.strip()
         if line != "":
             if line[0] != "-":

@@ -244,9 +244,9 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * `vol_up`
 
 For all commands, the arguments cannot contain the following strings, as they are reserved for the LPHKlayout file format:
-* `:LPHK_BUTTON_SEP:`
-* `:LPHK_ENTRY_SEP:`
-* `:LPHK_NEWLINE_REP:`
+* `LPHK_BUTTON_SEP`
+* `LPHK_ENTRY_SEP`
+* `LPHK_NEWLINE_REP`
 
 ## Known Issues
 
@@ -281,7 +281,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Support for Launchpad MkII~~
 * ~~Events system~~
 * ~~Colors system~~
-* ~~LPScript base iteration~~
+* ~~LPHKScript base iteration~~
 * ~~Keyboard lib base~~
 * ~~Proof of concept demo~~
 * ~~Saving/Loading~~

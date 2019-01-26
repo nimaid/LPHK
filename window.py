@@ -80,7 +80,7 @@ class Main_Window(tk.Frame):
         c_size = (BUTTON_SIZE * 9) + (c_gap * 9)
         self.c = tk.Canvas(self, width=c_size, height=c_size)
         self.c.bind("<Button-1>", self.click)
-        self.c.grid(row=0, column=0, padx=0, pady=0)
+        self.c.grid(row=0, column=0, padx=round(c_gap/2), pady=round(c_gap/2))
 
         self.stat = tk.Label(self, text="No Launchpad Connected", bg=STAT_INACTIVE_COLOR, fg="#fff")
         self.stat.grid(row=1, column=0, sticky=tk.EW)
