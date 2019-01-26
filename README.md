@@ -254,7 +254,9 @@ For all commands, the arguments cannot contain the following strings, as they ar
 
 ## What still needs to be written? (in order of priority)
 * Support for Launchpad Classic/S/Mini
-  * I can't implement this until I have one of the above to test the code with. Message me if you'd like to lend/give/sell me one to speed up the process. :) 
+  * I can't implement this until I have one of the above to test the code with.
+  * If I get about $90 on Patreon, I can buy one and add this feature. ;)
+  * Message me if you'd like to lend/give/sell me one, as that woulf work too.
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
 * Add warning prompts to move/copy
   * If moving to already bound button, prompt to swap/overwrite/cancel
