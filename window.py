@@ -11,6 +11,7 @@ HS_SIZE = 200
 V_WIDTH = 50
 STAT_ACTIVE_COLOR = "#080"
 STAT_INACTIVE_COLOR = "#444"
+SELECT_COLOR = "#f00"
 DEFAULT_COLOR = [0, 0, 255]
 INDICATOR_BPM = 480
 BUTTON_FONT = ("helvetica", 11, "bold")
@@ -46,6 +47,9 @@ class Main_Window(tk.Frame):
         self.scare_image = ImageTk.PhotoImage(Image.open("resources/scare.png"))
         self.grid_drawn = False
         self.grid_rects = [[None for y in range(9)] for x in range(9)]
+        self.button_mode = "edit"
+        self.last_clicked = None
+        self.outline_box = None
 
     def init_window(self):
         self.master.title("LPHK - Novation Launchpad Macro Scripting System")
@@ -167,16 +171,45 @@ class Main_Window(tk.Frame):
         else:
             files.save_layout(files.curr_layout, False)
             files.load_layout(files.curr_layout, False)
-
+    
     def click(self, event):
         gap = int(BUTTON_SIZE // 4)
 
         column = int((event.x + (gap / 2)) // (BUTTON_SIZE + gap))
         row = int((event.y + (gap / 2)) // (BUTTON_SIZE + gap))
 
-        if self.grid_drawn and ((column, row) != (8, 0)):
-            self.script_entry_window(column, row)
-
+        if self.grid_drawn:
+            if(column, row) == (8, 0):
+            #mode change
+                self.last_clicked = None
+                if self.button_mode == "edit":
+                    self.button_mode = "move"
+                elif self.button_mode == "move":
+                    self.button_mode = "swap"
+                elif self.button_mode == "swap":
+                    self.button_mode = "copy"
+                else:
+                    self.button_mode = "edit"
+                
+                self.draw_canvas()
+            else:
+                
+                if self.button_mode == "edit":
+                    self.script_entry_window(column, row)
+                else:
+                    if self.last_clicked == None:
+                        self.last_clicked = (column, row)
+                        self.draw_canvas()
+                    else:
+                        if self.button_mode == "move":
+                            scripts.move(self.last_clicked[0], self.last_clicked[1], column, row)
+                        elif self.button_mode == "copy":
+                            scripts.copy(self.last_clicked[0], self.last_clicked[1], column, row)
+                        elif self.button_mode == "swap":
+                            scripts.swap(self.last_clicked[0], self.last_clicked[1], column, row)
+                        self.last_clicked = None
+                        self.draw_canvas()
+                    
     def draw_button(self, column, row, color="#000000", shape="square"):
         gap = int(BUTTON_SIZE // 4)
 
@@ -192,6 +225,22 @@ class Main_Window(tk.Frame):
             return self.c.create_oval(x_start + shrink, y_start + shrink, x_end - shrink, y_end - shrink, fill=color, outline="")
 
     def draw_canvas(self):
+        if self.last_clicked != None:
+            if self.outline_box == None:
+                gap = int(BUTTON_SIZE // 4)
+
+                x_start = round((BUTTON_SIZE * self.last_clicked[0]) + (gap * self.last_clicked[0]) - (gap / 2))
+                y_start = round((BUTTON_SIZE * self.last_clicked[1]) + (gap * self.last_clicked[1]) - (gap / 2))
+                x_end = round(x_start + BUTTON_SIZE + (gap))
+                y_end = round(y_start + BUTTON_SIZE + (gap))
+
+                self.outline_box = self.c.create_rectangle(x_start, y_start, x_end, y_end, fill=SELECT_COLOR, outline="")
+                self.c.tag_lower(self.outline_box)
+        else:
+            if self.outline_box != None:
+                self.c.delete(self.outline_box)
+                self.outline_box = None
+        
         if self.grid_drawn:
             for x in range(8):
                 y = 0
@@ -204,6 +253,8 @@ class Main_Window(tk.Frame):
             for x in range(8):
                 for y in range(1, 9):
                     self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
+            
+            self.c.itemconfig(self.grid_rects[8][0], text=self.button_mode.capitalize())
         else:
             for x in range(8):
                 y = 0
@@ -216,6 +267,12 @@ class Main_Window(tk.Frame):
             for x in range(8):
                 for y in range(1, 9):
                     self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y))
+            
+            gap = int(BUTTON_SIZE // 4)
+            text_x = round((BUTTON_SIZE * 8) + (gap * 8) + (BUTTON_SIZE / 2))
+            text_y = round(BUTTON_SIZE / 2)
+            self.grid_rects[8][0] = self.c.create_text(text_x, text_y, text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold"))
+            
             self.grid_drawn = True
 
     def clear_canvas(self):

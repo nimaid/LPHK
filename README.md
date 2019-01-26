@@ -73,15 +73,25 @@ Before using the program, there are some dependencies/libraries that you will ne
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
     * (If this fails, use "python LPHK.py".)
 
-### Post-Install Instructions
+### Program Usage (Post-Install)
 * Before starting the program, make sure your Launchpad MkII (for now, Pro and others are coming) is connected to the computer.
 * Click `Launchpad > Connect to Launchpad MkII...`.
   * If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
-* Click on a button to open the Script Edit window for that button.
-  * All scripts are saved in the `.LPHKlayout` files, but the editor also has the ability to import/export single `.LPHKscript` files.
-    * For examples, you can click `Import Script` and look through the `user_scripts/examples/` folder.
-  * Select the button color and brightness, then click `Bind Button (x, y)`.
-    * If there are syntax errors, this is when they will be caught, and you will be informed without the editor closing.
+* The current mode is displayed in the upper right, in the gap between the circular buttons. There are four modes:
+    * "Edit" mode: Click on a button to open the Script Edit window for that button.
+      * All scripts are saved in the `.LPHKlayout` files, but the editor also has the ability to import/export single `.LPHKscript` files.
+        * For examples, you can click `Import Script` and look through the `user_scripts/examples/` folder.
+      * Select the button color and brightness, then click `Bind Button (x, y)`.
+        * If there are syntax errors, this is when they will be caught, and you will be informed without the editor closing.
+    * "Move" mode: Click on a button to highlight it, then click on a second button to move the script/color from the highlighted one.
+      * The selected button will be unbound
+      * The second button will have the selected button's old script and color bound to it.
+    * "Swap" mode: Click on a button to highlight it, then click on a second button to swap the script/color with the highlighted one.
+      * The selected button will have the second button's script and color bound to it.
+      * The second button will have the selected button's old script and color bound to it.
+    * "Copy" mode: Click on a button to highlight it, then click on a second button to copy the script/color to the highlighted one.
+      * The selected button will remain unchanged.
+      * The second button will have the selected button's old script and color bound to it.
 * Go to `Layout > Save layout as...` to save your current layout for future use, colors and all.
 * Go to `Layout > Load layout...` to load an existing layout. Examples are in `user_layouts/examples/`.
 
@@ -246,12 +256,12 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Support for Launchpad Classic/S/Mini
   * I can't implement this until I have one of the above to test the code with. Message me if you'd like to lend/give/sell me one to speed up the process. :) 
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add button move/copy feature
-  * Modes: Script Edit, Button Move, Button Copy
-    * Use upper right corner for mode switch button
+* Add warning prompts to move/copy
   * If moving to already bound button, prompt to swap/overwrite/cancel
   * If copying to already bound button, prompt to overwrite/cancel
+* Fix button highlighting clipping at screen edges
 * Add script status icons (bound, playing, queued)
+* Add syntax highlighting
 * Add GUI scaling
 * Support for Launchpad Pro
   * The lack of tactile feedback, ability to utilize the pressure sensitive inputs, and inconvenient function keys where the hand rests makes support for the LP Pro a lower priority.
@@ -307,3 +317,4 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Do syntax checks on loading a layout~~
 * ~~Add `@SIMPLE` header for simple keybinding of single keyboard keys~~
 * ~~Merge `M_TAP`, `M_PRESS`, and `M_RELEASE` commands into their keyboard counterparts~~
+* ~~Add button move/swap/copy feature~~
