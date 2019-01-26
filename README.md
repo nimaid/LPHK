@@ -85,13 +85,13 @@ Before using the program, there are some dependencies/libraries that you will ne
         * If there are syntax errors, this is when they will be caught, and you will be informed without the editor closing.
     * "Move" mode: Click on a button to highlight it, then click on a second button to move the script/color from the highlighted one.
       * The selected button will be unbound
-      * The second button will have the selected button's old script and color bound to it.
+      * The second button will have the selected button's old script and color bound to it, overwiting any current binding.
     * "Swap" mode: Click on a button to highlight it, then click on a second button to swap the script/color with the highlighted one.
       * The selected button will have the second button's script and color bound to it.
       * The second button will have the selected button's old script and color bound to it.
     * "Copy" mode: Click on a button to highlight it, then click on a second button to copy the script/color to the highlighted one.
       * The selected button will remain unchanged.
-      * The second button will have the selected button's old script and color bound to it.
+      * The second button will have the selected button's old script and color bound to it, overwiting any current binding.
 * Go to `Layout > Save layout as...` to save your current layout for future use, colors and all.
 * Go to `Layout > Load layout...` to load an existing layout. Examples are in `user_layouts/examples/`.
 
