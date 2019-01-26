@@ -233,8 +233,11 @@ class Main_Window(tk.Frame):
                 y_start = round((BUTTON_SIZE * self.last_clicked[1]) + (gap * self.last_clicked[1]))
                 x_end = round(x_start + BUTTON_SIZE + gap)
                 y_end = round(y_start + BUTTON_SIZE + gap)
-
-                self.outline_box = self.c.create_rectangle(x_start, y_start, x_end, y_end, fill=SELECT_COLOR, outline="")
+                
+                if (self.last_clicked[1] == 0) or (self.last_clicked[0] == 8):
+                    self.outline_box = self.c.create_oval(x_start + (gap // 2), y_start + (gap // 2), x_end - (gap // 2), y_end - (gap // 2), fill=SELECT_COLOR, outline="")
+                else:
+                    self.outline_box = self.c.create_rectangle(x_start, y_start, x_end, y_end, fill=SELECT_COLOR, outline="")
                 self.c.tag_lower(self.outline_box)
         else:
             if self.outline_box != None:
