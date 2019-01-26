@@ -264,7 +264,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Add syntax highlighting
 * Add GUI scaling
 * Support for Launchpad Pro
-  * The lack of tactile feedback, ability to utilize the pressure sensitive inputs, and inconvenient function keys where the hand rests makes support for the LP Pro a lower priority.
+  * The lack of tactile feedback, inability to utilize the pressure sensitive inputs (launchpad.py limitation), and inconvenient function keys where the hand rests makes support for the LP Pro a lower priority.
 * Add generalized macro recorder wizard
 * Make `Add Command...` menu that acts as a guided helper for making commands
 * Add mouse event capture prompts to `Add Command...` menu boxes

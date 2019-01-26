@@ -572,8 +572,16 @@ def copy(x1, y1, x2, y2):
     lp_colors.updateXY(x2, y2)
 
 def move(x1, y1, x2, y2):
-    copy(x1, y1, x2, y2)
+    global text
+    color_1 = lp_colors.curr_colors[x1][y1]
+    
+    script_1 = text[x1][y1]
+    
     unbind(x1, y1)
+    unbind(x2, y2)
+    if script_1 != "":
+        bind(x2, y2, script_1, color_1)
+    lp_colors.updateXY(x2, y2)
 
 def unbind_all():
     global threads
