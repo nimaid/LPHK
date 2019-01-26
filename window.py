@@ -189,17 +189,14 @@ class Main_Window(tk.Frame):
                 elif self.button_mode == "swap":
                     self.button_mode = "copy"
                 else:
-                    self.button_mode = "edit"
-                
+                    self.button_mode = "edit"  
                 self.draw_canvas()
             else:
-                
                 if self.button_mode == "edit":
                     self.script_entry_window(column, row)
                 else:
                     if self.last_clicked == None:
                         self.last_clicked = (column, row)
-                        self.draw_canvas()
                     else:
                         if self.button_mode == "move":
                             scripts.move(self.last_clicked[0], self.last_clicked[1], column, row)
@@ -208,7 +205,7 @@ class Main_Window(tk.Frame):
                         elif self.button_mode == "swap":
                             scripts.swap(self.last_clicked[0], self.last_clicked[1], column, row)
                         self.last_clicked = None
-                        self.draw_canvas()
+                    self.draw_canvas()
                     
     def draw_button(self, column, row, color="#000000", shape="square"):
         gap = int(BUTTON_SIZE // 4)
