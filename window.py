@@ -199,8 +199,12 @@ class Main_Window(tk.Frame):
                         self.last_clicked = (column, row)
                     else:
                         if self.button_mode == "move":
+                            if scripts.is_bound(column, row):
+                                print("[window] Overwritting ", (column, row))
                             scripts.move(self.last_clicked[0], self.last_clicked[1], column, row)
                         elif self.button_mode == "copy":
+                            if scripts.is_bound(column, row):
+                                print("[window] Overwritting ", (column, row))
                             scripts.copy(self.last_clicked[0], self.last_clicked[1], column, row)
                         elif self.button_mode == "swap":
                             scripts.swap(self.last_clicked[0], self.last_clicked[1], column, row)

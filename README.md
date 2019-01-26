@@ -2,6 +2,7 @@
 A Novation Launchpad macro scripting system.
 
 <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK.png" alt="logo" height="300px" />
+<a href="https://discord.gg/mDCzB8X"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/discord.png" alt="logo" height="300px" /></a>
 <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_2.png" alt="Update 2" width="800px" />
 
 [First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
@@ -276,7 +277,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * Check if layout currently exists when binding to a button (incl during load layout)
     * If not, prompt user if they want to continue anyway
 * MIDI output command? (Low priority)
-* Load layout command? (That could get messy, maybe not a script func, but a seperate GUI option to bind loading a specific layout)
+* Load layout header?
 
 ## What have you done so far?
 * ~~Support for Launchpad MkII~~

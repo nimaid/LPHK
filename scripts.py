@@ -583,6 +583,12 @@ def move(x1, y1, x2, y2):
         bind(x2, y2, script_1, color_1)
     lp_colors.updateXY(x2, y2)
 
+def is_bound(x, y):
+    if text[x][y] == "":
+        return False
+    else:
+        return True
+
 def unbind_all():
     global threads
     global text
