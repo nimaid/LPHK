@@ -77,7 +77,7 @@ Before using the program, there are some dependencies/libraries that you will ne
 * Before starting the program, make sure your Launchpad MkII (for now, Pro and others are coming) is connected to the computer.
 * Click `Launchpad > Connect to Launchpad MkII...`.
   * If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
-* The current mode is displayed in the upper right, in the gap between the circular buttons. There are four modes:
+* The current mode is displayed in the upper right, in the gap between the circular buttons. Clicking this text will change the mode. There are four modes:
     * "Edit" mode: Click on a button to open the Script Edit window for that button.
       * All scripts are saved in the `.LPHKlayout` files, but the editor also has the ability to import/export single `.LPHKscript` files.
         * For examples, you can click `Import Script` and look through the `user_scripts/examples/` folder.
