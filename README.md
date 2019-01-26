@@ -259,6 +259,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Add warning prompts to move/copy
   * If moving to already bound button, prompt to swap/overwrite/cancel
   * If copying to already bound button, prompt to overwrite/cancel
+* Add option to disable warning prompts for move/copy, and to always overwrite
 * Add script status icons (bound, playing, queued)
 * Add syntax highlighting
 * Add GUI scaling
