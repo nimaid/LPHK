@@ -259,7 +259,6 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Add warning prompts to move/copy
   * If moving to already bound button, prompt to swap/overwrite/cancel
   * If copying to already bound button, prompt to overwrite/cancel
-* Fix button highlighting clipping at screen edges
 * Add script status icons (bound, playing, queued)
 * Add syntax highlighting
 * Add GUI scaling
@@ -318,3 +317,4 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Add `@SIMPLE` header for simple keybinding of single keyboard keys~~
 * ~~Merge `M_TAP`, `M_PRESS`, and `M_RELEASE` commands into their keyboard counterparts~~
 * ~~Add button move/swap/copy feature~~
+* ~~Fix button highlighting clipping at screen edges~~

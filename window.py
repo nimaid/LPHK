@@ -77,10 +77,10 @@ class Main_Window(tk.Frame):
 
         c_gap = int(BUTTON_SIZE // 4)
 
-        c_size = (BUTTON_SIZE * 9) + (c_gap * 8)
+        c_size = (BUTTON_SIZE * 9) + (c_gap * 9)
         self.c = tk.Canvas(self, width=c_size, height=c_size)
         self.c.bind("<Button-1>", self.click)
-        self.c.grid(row=0, column=0, padx=c_gap, pady=c_gap)
+        self.c.grid(row=0, column=0, padx=0, pady=0)
 
         self.stat = tk.Label(self, text="No Launchpad Connected", bg=STAT_INACTIVE_COLOR, fg="#fff")
         self.stat.grid(row=1, column=0, sticky=tk.EW)
@@ -175,8 +175,8 @@ class Main_Window(tk.Frame):
     def click(self, event):
         gap = int(BUTTON_SIZE // 4)
 
-        column = int((event.x + (gap / 2)) // (BUTTON_SIZE + gap))
-        row = int((event.y + (gap / 2)) // (BUTTON_SIZE + gap))
+        column = int(event.x // (BUTTON_SIZE + gap))
+        row = int(event.y // (BUTTON_SIZE + gap))
 
         if self.grid_drawn:
             if(column, row) == (8, 0):
@@ -213,8 +213,8 @@ class Main_Window(tk.Frame):
     def draw_button(self, column, row, color="#000000", shape="square"):
         gap = int(BUTTON_SIZE // 4)
 
-        x_start = (BUTTON_SIZE * column) + (gap * column)
-        y_start = (BUTTON_SIZE * row) + (gap * row)
+        x_start = round((BUTTON_SIZE * column) + (gap * column) + (gap / 2))
+        y_start = round((BUTTON_SIZE * row) + (gap * row) + (gap / 2))
         x_end = x_start + BUTTON_SIZE
         y_end = y_start + BUTTON_SIZE
 
@@ -229,10 +229,10 @@ class Main_Window(tk.Frame):
             if self.outline_box == None:
                 gap = int(BUTTON_SIZE // 4)
 
-                x_start = round((BUTTON_SIZE * self.last_clicked[0]) + (gap * self.last_clicked[0]) - (gap / 2))
-                y_start = round((BUTTON_SIZE * self.last_clicked[1]) + (gap * self.last_clicked[1]) - (gap / 2))
-                x_end = round(x_start + BUTTON_SIZE + (gap))
-                y_end = round(y_start + BUTTON_SIZE + (gap))
+                x_start = round((BUTTON_SIZE * self.last_clicked[0]) + (gap * self.last_clicked[0]))
+                y_start = round((BUTTON_SIZE * self.last_clicked[1]) + (gap * self.last_clicked[1]))
+                x_end = round(x_start + BUTTON_SIZE + gap)
+                y_end = round(y_start + BUTTON_SIZE + gap)
 
                 self.outline_box = self.c.create_rectangle(x_start, y_start, x_end, y_end, fill=SELECT_COLOR, outline="")
                 self.c.tag_lower(self.outline_box)
@@ -269,8 +269,8 @@ class Main_Window(tk.Frame):
                     self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y))
             
             gap = int(BUTTON_SIZE // 4)
-            text_x = round((BUTTON_SIZE * 8) + (gap * 8) + (BUTTON_SIZE / 2))
-            text_y = round(BUTTON_SIZE / 2)
+            text_x = round((BUTTON_SIZE * 8) + (gap * 8) + (BUTTON_SIZE / 2) + (gap / 2))
+            text_y = round((BUTTON_SIZE / 2) + (gap / 2))
             self.grid_rects[8][0] = self.c.create_text(text_x, text_y, text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold"))
             
             self.grid_drawn = True
