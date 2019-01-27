@@ -85,13 +85,15 @@ Before using the program, there are some dependencies/libraries that you will ne
         * If there are syntax errors, this is when they will be caught, and you will be informed without the editor closing.
     * "Move" mode: Click on a button to highlight it, then click on a second button to move the script/color from the highlighted one.
       * The selected button will be unbound
-      * The second button will have the selected button's old script and color bound to it, overwiting any current binding.
+      * The second button will have the selected button's old script and color bound to it
+        * If the second button is already bound, you will get a dialog box with options.
     * "Swap" mode: Click on a button to highlight it, then click on a second button to swap the script/color with the highlighted one.
       * The selected button will have the second button's script and color bound to it.
       * The second button will have the selected button's old script and color bound to it.
     * "Copy" mode: Click on a button to highlight it, then click on a second button to copy the script/color to the highlighted one.
       * The selected button will remain unchanged.
-      * The second button will have the selected button's old script and color bound to it, overwiting any current binding.
+      * The second button will have the selected button's old script and color bound to it.
+        * If the second button is already bound, you will get a dialog box with options.
 * Go to `Layout > Save layout as...` to save your current layout for future use, colors and all.
 * Go to `Layout > Load layout...` to load an existing layout. Examples are in `user_layouts/examples/`.
 
@@ -258,11 +260,9 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * If I get about $90 on Patreon, I can buy one and add this feature. ;)
   * Message me if you'd like to lend/give/sell me one, as that would work too.
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add warning prompts to move/copy
-  * If moving to already bound button, prompt to swap/overwrite/cancel
-  * If copying to already bound button, prompt to overwrite/cancel
 * Add option to disable warning prompts for move/copy, and to always overwrite
 * Add "Edit Layout Only..." under "Launchpad" menu.
+* Add "Do you want to save your layout?" popup on exit if layout is unsaved.
 * Add script status icons (bound, playing, queued)
 * Add syntax highlighting
 * Add GUI scaling
@@ -322,3 +322,4 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Merge `M_TAP`, `M_PRESS`, and `M_RELEASE` commands into their keyboard counterparts~~
 * ~~Add button move/swap/copy feature~~
 * ~~Fix button highlighting clipping at screen edges~~
+* ~~Add warning prompts to move/copy~~

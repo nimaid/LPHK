@@ -85,7 +85,7 @@ class Main_Window(tk.Frame):
         self.stat = tk.Label(self, text="No Launchpad Connected", bg=STAT_INACTIVE_COLOR, fg="#fff")
         self.stat.grid(row=1, column=0, sticky=tk.EW)
         self.stat.config(font=("Courier", BUTTON_SIZE // 3, "bold"))
-
+        
     def enable_menu(self, name):
         self.m.entryconfig(name, state="normal")
 
@@ -198,16 +198,22 @@ class Main_Window(tk.Frame):
                     if self.last_clicked == None:
                         self.last_clicked = (column, row)
                     else:
+                        move_func = partial(scripts.move, self.last_clicked[0], self.last_clicked[1], column, row)
+                        swap_func = partial(scripts.swap, self.last_clicked[0], self.last_clicked[1], column, row)
+                        copy_func = partial(scripts.copy, self.last_clicked[0], self.last_clicked[1], column, row)
+                        
                         if self.button_mode == "move":
                             if scripts.is_bound(column, row):
-                                print("[window] Overwritting ", (column, row))
-                            scripts.move(self.last_clicked[0], self.last_clicked[1], column, row)
+                                self.popup_choice(self, "Button Already Bound", self.warning_image, "You are attempting to move a button to an already\nbound button. What would you like to do?", [["Overwrite", move_func], ["Swap", swap_func], ["Cancel", None]])
+                            else:
+                                move_func()
                         elif self.button_mode == "copy":
                             if scripts.is_bound(column, row):
-                                print("[window] Overwritting ", (column, row))
-                            scripts.copy(self.last_clicked[0], self.last_clicked[1], column, row)
+                                self.popup_choice(self, "Button Already Bound", self.warning_image, "You are attempting to copy a button to an already\nbound button. What would you like to do?", [["Overwrite", copy_func], ["Swap", swap_func], ["Cancel", None]])
+                            else:
+                                copy_func()
                         elif self.button_mode == "swap":
-                            scripts.swap(self.last_clicked[0], self.last_clicked[1], column, row)
+                            swap_func()
                         self.last_clicked = None
                     self.draw_canvas()
                     
@@ -466,8 +472,30 @@ class Main_Window(tk.Frame):
         picture_label = tk.Label(popup, image=image)
         picture_label.photo = image
         picture_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
-        tk.Label(popup, text=text, justify=tk.LEFT).grid(column=1, row=0, padx=10, pady=10)
+        tk.Label(popup, text=text, justify=tk.CENTER).grid(column=1, row=0, padx=10, pady=10)
         tk.Button(popup, text=button_text, command=run_end).grid(column=1, row=1, padx=10, pady=10)
+        popup.wait_visibility()
+        popup.grab_set()
+        popup.wait_window()
+    
+    def popup_choice(self, window, title, image, text, choices):
+        popup = tk.Toplevel(window)
+        popup.resizable(False, False)
+        popup.wm_title(title)
+        popup.tkraise(window)
+        
+        def run_end(func):
+            popup.destroy()
+            if func != None:
+                func()
+
+        picture_label = tk.Label(popup, image=image)
+        picture_label.photo = image
+        picture_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
+        tk.Label(popup, text=text, justify=tk.CENTER).grid(column=1, row=0, columnspan=len(choices), padx=10, pady=10)
+        for idx, choice in enumerate(choices):
+            run_end_func = partial(run_end, choices[idx][1])
+            tk.Button(popup, text=choice[0], command=run_end_func).grid(column=1 + idx, row=1, padx=10, pady=10)
         popup.wait_visibility()
         popup.grab_set()
         popup.wait_window()
