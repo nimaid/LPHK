@@ -513,7 +513,8 @@ def make():
 
 def close():
     global root_destroyed
+    if files.layout_changed_since_load == True:
+        app.popup_choice(app, "Save Changes?", app.warning_image, "You have made changes to this layout.\nWould you like to save this layout before exiting?", [["Save", app.save_layout], ["Save As...", app.save_layout_as], ["Discard", None]])
     if not root_destroyed:
         root.destroy()
         root_destroyed = True
-

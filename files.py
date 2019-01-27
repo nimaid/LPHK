@@ -15,6 +15,7 @@ import window
 
 curr_layout = None
 in_error = False
+layout_changed_since_load = False
 
 def init(path_in):
     global PATH
@@ -52,6 +53,8 @@ def save_layout(name, add_path=True):
 def load_layout(name, add_path=True):
     global curr_layout
     global in_error
+    global layout_changed_since_load
+    
     scripts.unbind_all()
     window.app.draw_canvas()
     
@@ -93,6 +96,7 @@ def load_layout(name, add_path=True):
         lp_colors.update_all()
         window.app.draw_canvas()
     curr_layout = final_path
+    layout_changed_since_load = False
     print("[files] Loaded layout " + final_path)
 
 def import_script(name, add_path=True):

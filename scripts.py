@@ -529,6 +529,7 @@ def bind(x, y, script_down, color):
 
     lp_events.bind_func_with_colors(x, y, schedule_script_bindable, color)
     text[x][y] = script_down
+    files.layout_changed_since_load = True
 
 def unbind(x, y):
     global to_run
@@ -541,7 +542,8 @@ def unbind(x, y):
         return
     if threads[x][y] != None:
         threads[x][y].kill.set()
-
+    files.layout_changed_since_load = True
+    
 def swap(x1, y1, x2, y2):
     global text
     color_1 = lp_colors.curr_colors[x1][y1]
@@ -559,6 +561,7 @@ def swap(x1, y1, x2, y2):
     if script_1 != "":
         bind(x2, y2, script_1, color_1)
     lp_colors.updateXY(x2, y2)
+    files.layout_changed_since_load = True
 
 def copy(x1, y1, x2, y2):
     global text
@@ -570,6 +573,7 @@ def copy(x1, y1, x2, y2):
     if script_1 != "":
         bind(x2, y2, script_1, color_1)
     lp_colors.updateXY(x2, y2)
+    files.layout_changed_since_load = True
 
 def move(x1, y1, x2, y2):
     global text
@@ -582,6 +586,7 @@ def move(x1, y1, x2, y2):
     if script_1 != "":
         bind(x2, y2, script_1, color_1)
     lp_colors.updateXY(x2, y2)
+    files.layout_changed_since_load = True
 
 def is_bound(x, y):
     if text[x][y] == "":
@@ -601,7 +606,9 @@ def unbind_all():
             if threads[x][y] != None:
                 if threads[x][y].isAlive():
                     threads[x][y].kill.set()
-
+    files.curr_layout = None
+    files.layout_changed_since_load = False
+    
 def validate_script(script_str):
     if script_str == "":
         return True

@@ -260,10 +260,8 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * If I get about $90 on Patreon, I can buy one and add this feature. ;)
   * Message me if you'd like to lend/give/sell me one, as that would work too.
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add option to disable warning prompts for move/copy, and to always overwrite
-* Add "Edit Layout Only..." under "Launchpad" menu.
-* Add "Do you want to save your layout?" popup on exit if layout is unsaved.
 * Add script status icons (bound, playing, queued)
+* Let program function as a layout editor without LP connection
 * Add syntax highlighting
 * Add GUI scaling
 * Support for Launchpad Pro
@@ -323,3 +321,4 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Add button move/swap/copy feature~~
 * ~~Fix button highlighting clipping at screen edges~~
 * ~~Add warning prompts to move/copy~~
+* ~~Add "Do you want to save your layout?" popup on exit if layout is unsaved.~~
