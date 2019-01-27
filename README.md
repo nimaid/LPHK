@@ -256,12 +256,13 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Support for Launchpad Classic/S/Mini
   * I can't implement this until I have one of the above to test the code with.
   * If I get about $90 on Patreon, I can buy one and add this feature. ;)
-  * Message me if you'd like to lend/give/sell me one, as that woulf work too.
+  * Message me if you'd like to lend/give/sell me one, as that would work too.
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
 * Add warning prompts to move/copy
   * If moving to already bound button, prompt to swap/overwrite/cancel
   * If copying to already bound button, prompt to overwrite/cancel
 * Add option to disable warning prompts for move/copy, and to always overwrite
+* Add "Edit Layout Only..." under "Launchpad" menu.
 * Add script status icons (bound, playing, queued)
 * Add syntax highlighting
 * Add GUI scaling
