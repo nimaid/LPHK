@@ -141,11 +141,13 @@ class Main_Window(tk.Frame):
         close()
 
     def unbind_lp(self):
+        self.modified_layout_save_prompt()
         scripts.unbind_all()
         files.curr_layout = None
         self.draw_canvas()
 
     def load_layout(self):
+        self.modified_layout_save_prompt()
         name = tk.filedialog.askopenfilename(parent=app,
                                           initialdir=os.getcwd() + files.LAYOUT_PATH,
                                           title="Load layout...",
@@ -500,6 +502,10 @@ class Main_Window(tk.Frame):
         popup.grab_set()
         popup.wait_window()
     
+    def modified_layout_save_prompt(self):
+        if files.layout_changed_since_load == True:
+            self.popup_choice(self, "Save Changes?", self.warning_image, "You have made changes to this layout.\nWould you like to save this layout before exiting?", [["Save", self.save_layout], ["Save As...", self.save_layout_as], ["Discard", None]])
+
 def make():
     global root
     global app
@@ -513,8 +519,7 @@ def make():
 
 def close():
     global root_destroyed
-    if files.layout_changed_since_load == True:
-        app.popup_choice(app, "Save Changes?", app.warning_image, "You have made changes to this layout.\nWould you like to save this layout before exiting?", [["Save", app.save_layout], ["Save As...", app.save_layout_as], ["Discard", None]])
+    app.modified_layout_save_prompt()
     if not root_destroyed:
         root.destroy()
         root_destroyed = True
