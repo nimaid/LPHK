@@ -260,7 +260,6 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * If I get about $90 on Patreon, I can buy one and add this feature. ;)
   * Message me if you'd like to lend/give/sell me one, as that would work too.
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Do not prompt to save blank layout
 * Do not warn about moving/copying to the same button 
 * Add script status icons (bound, playing, queued)
 * Let program function as a layout editor without LP connection
@@ -325,3 +324,4 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Add warning prompts to move/copy~~
 * ~~Add "Do you want to save your layout?" popup on exit if layout is unsaved.~~
 * ~~Add save layout if changed prompt to load/new layout~~
+* ~~Do not prompt to save blank layout~~

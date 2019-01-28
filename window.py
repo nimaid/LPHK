@@ -504,7 +504,15 @@ class Main_Window(tk.Frame):
     
     def modified_layout_save_prompt(self):
         if files.layout_changed_since_load == True:
-            self.popup_choice(self, "Save Changes?", self.warning_image, "You have made changes to this layout.\nWould you like to save this layout before exiting?", [["Save", self.save_layout], ["Save As...", self.save_layout_as], ["Discard", None]])
+            layout_empty = True
+            for x_texts in scripts.text:
+                for text in x_texts:
+                    if text != "":
+                        layout_empty = False
+                        break
+            
+            if not layout_empty:
+                self.popup_choice(self, "Save Changes?", self.warning_image, "You have made changes to this layout.\nWould you like to save this layout before exiting?", [["Save", self.save_layout], ["Save As...", self.save_layout_as], ["Discard", None]])
 
 def make():
     global root
