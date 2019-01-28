@@ -81,7 +81,7 @@ Before using the program, there are some dependencies/libraries that you will ne
     * "Edit" mode: Click on a button to open the Script Edit window for that button.
       * All scripts are saved in the `.LPHKlayout` files, but the editor also has the ability to import/export single `.LPHKscript` files.
         * For examples, you can click `Import Script` and look through the `user_scripts/examples/` folder.
-      * Select the button color and brightness, then click `Bind Button (x, y)`.
+      * Select the button color, then click `Bind Button (x, y)`.
         * If there are syntax errors, this is when they will be caught, and you will be informed without the editor closing.
     * "Move" mode: Click on a button to highlight it, then click on a second button to move the script/color from the highlighted one.
       * The selected button will be unbound
