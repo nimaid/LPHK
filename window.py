@@ -205,12 +205,12 @@ class Main_Window(tk.Frame):
                         copy_func = partial(scripts.copy, self.last_clicked[0], self.last_clicked[1], column, row)
                         
                         if self.button_mode == "move":
-                            if scripts.is_bound(column, row):
+                            if scripts.is_bound(column, row) and ((self.last_clicked) != (column, row)):
                                 self.popup_choice(self, "Button Already Bound", self.warning_image, "You are attempting to move a button to an already\nbound button. What would you like to do?", [["Overwrite", move_func], ["Swap", swap_func], ["Cancel", None]])
                             else:
                                 move_func()
                         elif self.button_mode == "copy":
-                            if scripts.is_bound(column, row):
+                            if scripts.is_bound(column, row) and ((self.last_clicked) != (column, row)):
                                 self.popup_choice(self, "Button Already Bound", self.warning_image, "You are attempting to copy a button to an already\nbound button. What would you like to do?", [["Overwrite", copy_func], ["Swap", swap_func], ["Cancel", None]])
                             else:
                                 copy_func()
