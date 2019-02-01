@@ -502,8 +502,9 @@ def run_script(script_str, x, y):
                 #RELEASE
                 kb.release(key)
             elif split_line[0] == "OPEN":
-                print("[scripts] " + coords + "    Open file or folder " + split_line[1])
-                files.open_file_folder(split_line[1])
+                path_name = " ".join(split_line[1:])
+                print("[scripts] " + coords + "    Open file or folder " + path_name)
+                files.open_file_folder(path_name)
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
         return idx + 1
@@ -668,7 +669,7 @@ def validate_script(script_str):
                 if split_line[0] in ["WAIT_UNPRESSED"]:
                     if len(split_line) > 1:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
-                if split_line[0] in ["DELAY", "WEB", "WEB_NEW", "PRESS", "RELEASE", "OPEN"]:
+                if split_line[0] in ["DELAY", "WEB", "WEB_NEW", "PRESS", "RELEASE"]:
                     if len(split_line) > 2:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["SOUND", "M_MOVE", "M_SCROLL", "M_SET"]:
@@ -834,6 +835,7 @@ def validate_script(script_str):
                     except:
                         return (split_line[0] + " number of repeats '" + split_line[2] + "' not valid.", line)
                 if split_line[0] == "OPEN":
-                    if (not os.path.isfile(split_line[1])) and (not os.path.isdir(split_line[1])):
-                        return (split_line[0] + " folder or file location '" + split_line[1] + "' does not exist.", line)
+                    path_name = " ".join(split_line[1:])
+                    if (not os.path.isfile(path_name)) and (not os.path.isdir(path_name)):
+                        return (split_line[0] + " folder or file location '" + path_name + "' does not exist.", line)
     return True
