@@ -136,7 +136,7 @@ def run_script(script_str, x, y):
                         if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return idx + 1
+                        return -1
                 if delay > 0:
                     sleep(delay)
             elif split_line[0] == "TAP":
@@ -172,7 +172,7 @@ def run_script(script_str, x, y):
                                 running = False
                             kb.release(key)
                             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                            return idx + 1
+                            return -1
 
                         kb.press(key)
                         while temp_delay > DELAY_EXIT_CHECK:
@@ -185,7 +185,7 @@ def run_script(script_str, x, y):
                                     running = False
                                 kb.release(key)
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return idx + 1
+                                return -1
                         if temp_delay > 0:
                             sleep(temp_delay)
                         kb.release(key)
@@ -261,7 +261,7 @@ def run_script(script_str, x, y):
                         if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return idx + 1
+                        return -1
                     ms.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
                         temp_delay = delay
@@ -274,7 +274,7 @@ def run_script(script_str, x, y):
                                 if not is_async:
                                     running = False
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return idx + 1
+                                return -1
                         if temp_delay > 0:
                             sleep(temp_delay)
             elif split_line[0] == "M_MOVE":
@@ -323,7 +323,7 @@ def run_script(script_str, x, y):
                         if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return idx + 1
+                        return -1
                     ms.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
                         temp_delay = delay
@@ -336,7 +336,7 @@ def run_script(script_str, x, y):
                                 if not is_async:
                                     running = False
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return idx + 1
+                                return -1
                         if temp_delay > 0:
                             sleep(temp_delay)
             elif split_line[0] == "M_LINE_MOVE":
@@ -366,7 +366,7 @@ def run_script(script_str, x, y):
                         if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return idx + 1
+                        return -1
                     ms.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
                         temp_delay = delay
@@ -379,7 +379,7 @@ def run_script(script_str, x, y):
                                 if not is_async:
                                     running = False
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return idx + 1
+                                return -1
                         if temp_delay > 0:
                             sleep(temp_delay)
             elif split_line[0] == "M_LINE_SET":
@@ -408,7 +408,7 @@ def run_script(script_str, x, y):
                         if not is_async:
                             running = False
                         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return idx + 1
+                        return -1
                     ms.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
                         temp_delay = delay
@@ -421,7 +421,7 @@ def run_script(script_str, x, y):
                                 if not is_async:
                                     running = False
                                 threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return idx + 1
+                                return -1
                         if temp_delay > 0:
                             sleep(temp_delay)
             elif split_line[0] == "LABEL":
@@ -657,7 +657,6 @@ def validate_script(script_str):
                 if split_line[0][0] == "@":
                     if idx != 0:
                         return ("Headers must only be used on the first line of a script.", line)
-                print("'" + split_line[0] + "'")
                 if split_line[0] not in VALID_COMMANDS:
                     return ("Command '" + split_line[0] + "' not valid.", line)
                 if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "M_MOVE", "M_SET", "M_SCROLL"]:
