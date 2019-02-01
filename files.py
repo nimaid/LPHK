@@ -1,5 +1,6 @@
 import lp_colors, scripts
 from time import sleep
+import os, platform, subprocess
 
 PATH = None
 LAYOUT_EXT = ".LPHKlayout"
@@ -122,3 +123,11 @@ def export_script(name, script, add_path=True):
 
 def strip_lines(text):
     return "\n".join([line.strip() for line in text.split("\n")])
+
+def open_file_folder(path):
+    if platform.system() == "Windows":
+        os.startfile(path)
+    elif platform.system() == "Darwin":
+        subprocess.Popen(["open", path])
+    else:
+        subprocess.Popen(["xdg-open", path])

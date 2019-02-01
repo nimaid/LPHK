@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE"]
+VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN"]
 ASYNC_HEADERS = ["@ASYNC", "@SIMPLE"]
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -439,7 +439,7 @@ def run_script(script_str, x, y):
                 print("[scripts] " + coords + "    Goto LABEL " + split_line[1])
                 return labels[split_line[1]]
             elif split_line[0] == "REPEAT_LABEL":
-                print("[scripts] " + coords + "    Repeat LABEL " + split_line[1] + " " + split_line[2] + " times max.")
+                print("[scripts] " + coords + "    Repeat LABEL " + split_line[1] + " " + split_line[2] + " times max")
                 if idx in repeats:
                     if repeats[idx] > 0:
                         print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
@@ -453,7 +453,7 @@ def run_script(script_str, x, y):
                     repeats[idx] -= 1
                     return labels[split_line[1]]
             elif split_line[0] == "IF_PRESSED_REPEAT_LABEL":
-                print("[scripts] " + coords + "    If key is pressed repeat LABEL " + split_line[1] + " " + split_line[2] + " times max.")
+                print("[scripts] " + coords + "    If key is pressed repeat LABEL " + split_line[1] + " " + split_line[2] + " times max")
                 if lp_events.pressed[x][y]:
                     if idx in repeats:
                         if repeats[idx] > 0:
@@ -468,7 +468,7 @@ def run_script(script_str, x, y):
                         repeats[idx] -= 1
                         return labels[split_line[1]]
             elif split_line[0] == "IF_UNPRESSED_REPEAT_LABEL":
-                print("[scripts] " + coords + "    If key is not pressed repeat LABEL " + split_line[1] + " " + split_line[2] + " times max.")
+                print("[scripts] " + coords + "    If key is not pressed repeat LABEL " + split_line[1] + " " + split_line[2] + " times max")
                 if not lp_events.pressed[x][y]:
                     if idx in repeats:
                         if repeats[idx] > 0:
@@ -501,6 +501,12 @@ def run_script(script_str, x, y):
                         return idx + 1
                 #RELEASE
                 kb.release(key)
+            elif split_line[0] == "OPEN":
+                print("[scripts] " + coords + "    Open file or folder " + split_line[1])
+                try:
+                    files.open_file_folder(split_line[1])
+                except:
+                    print("[scripts] " + coords + "        Unable to open file or folder, skipping...")
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
         return idx + 1
@@ -659,13 +665,13 @@ def validate_script(script_str):
                         return ("Headers must only be used on the first line of a script.", line)
                 if split_line[0] not in VALID_COMMANDS:
                     return ("Command '" + split_line[0] + "' not valid.", line)
-                if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "M_MOVE", "M_SET", "M_SCROLL"]:
+                if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "M_MOVE", "M_SET", "M_SCROLL", "OPEN"]:
                     if len(split_line) < 2:
                         return ("Too few arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["WAIT_UNPRESSED"]:
                     if len(split_line) > 1:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
-                if split_line[0] in ["DELAY", "WEB", "WEB_NEW", "PRESS", "RELEASE"]:
+                if split_line[0] in ["DELAY", "WEB", "WEB_NEW", "PRESS", "RELEASE", "OPEN"]:
                     if len(split_line) > 2:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["SOUND", "M_MOVE", "M_SCROLL", "M_SET"]:
@@ -830,4 +836,7 @@ def validate_script(script_str):
                             return (split_line[0] + " requires a minimum of 1 repeat.", line)
                     except:
                         return (split_line[0] + " number of repeats '" + split_line[2] + "' not valid.", line)
+                if split_line[0] == "OPEN":
+                    if (not os.path.isfile(split_line[1])) and (not os.path.isdir(split_line[1])):
+                        return (split_line[0] + " folder or file location '" + split_line[1] + "' does not exist.", line)
     return True

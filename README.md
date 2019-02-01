@@ -144,6 +144,8 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * If the button the script is bound to is not pressed, goto label (argument 1) a maximum of (argument 2) times.
   * `LABEL`
     * Sets a label named (argument 1) for use with the `*GOTO_LABEL` commands.
+  * `OPEN`
+    * Opens the file or folder (argument 1).
   * `REPEAT_LABEL`
     * Goto label (argument 1) a maximum of (argument 2) times.
   * `SOUND`
@@ -258,6 +260,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Support for Launchpad Classic/S/Mini
   * Thanks to Patreon patron Korbinian Maag for fully funding the purchase of a LP Mini for developing this feature! Stay tuned!
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
+* Add `OPEN` command to open folders and files
 * Add script status icons (bound, playing, queued)
 * Let program function as a layout editor without LP connection
 * Add syntax highlighting
