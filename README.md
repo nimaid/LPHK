@@ -258,6 +258,8 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Support for Launchpad Classic/S/Mini
   * Thanks to Patreon patron Korbinian Maag for fully funding the purchase of a LP Mini for developing this feature! Stay tuned!
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
+* Make script being edited highlighted
+* Fix wierd bug where GOTO and DELAY didn't obey a kill command (caught on video)
 * Add script status icons (bound, playing, queued)
 * Let program function as a layout editor without LP connection
 * Add syntax highlighting
