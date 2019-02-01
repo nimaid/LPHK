@@ -125,9 +125,12 @@ def strip_lines(text):
     return "\n".join([line.strip() for line in text.split("\n")])
 
 def open_file_folder(path):
-    if platform.system() == "Windows":
-        os.startfile(path)
-    elif platform.system() == "Darwin":
-        subprocess.Popen(["open", path])
-    else:
-        subprocess.Popen(["xdg-open", path])
+    try:
+        if platform.system() == "Windows":
+            os.startfile(path)
+        elif platform.system() == "Darwin":
+            subprocess.Popen(["open", path])
+        else:
+            subprocess.Popen(["xdg-open", path])
+    except:
+        print("[files] Could not open file or folder " + path)

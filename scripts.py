@@ -503,10 +503,7 @@ def run_script(script_str, x, y):
                 kb.release(key)
             elif split_line[0] == "OPEN":
                 print("[scripts] " + coords + "    Open file or folder " + split_line[1])
-                try:
-                    files.open_file_folder(split_line[1])
-                except:
-                    print("[scripts] " + coords + "        Unable to open file or folder, skipping...")
+                files.open_file_folder(split_line[1])
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
         return idx + 1
