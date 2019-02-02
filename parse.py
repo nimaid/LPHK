@@ -16,7 +16,10 @@ def set_var(var_string, val):
             variables[var_string] = value
 
 def get_var(var_string):
-    return variables[var_string]
+    try:
+        return variables[var_string]
+    except:
+        return None
 
 def eval_string_and_vars(eq_string, vars_in):
     for var in vars_in:

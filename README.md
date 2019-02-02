@@ -260,7 +260,9 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Support for Launchpad Classic/S/Mini
   * Thanks to Patreon patron Korbinian Maag for fully funding the purchase of a LP Mini for developing this feature! Stay tuned!
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add `OPEN` command to open folders and files
+* Add variables and mathematical evaluation (mostly done!)
+* Let `SOUND` use spaces in it's path, and auto-detect if the last chunk is a valid int
+* Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) 
 * Add script status icons (bound, playing, queued)
 * Let program function as a layout editor without LP connection
 * Add syntax highlighting
@@ -328,3 +330,4 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Do not warn about moving/copying to the same button~~
 * ~~Make script being edited highlighted~~
 * ~~Fix wierd bug where GOTO and DELAY didn't obey a kill command (caught on video)~~
+* ~~Add `OPEN` command to open folders and files~~
