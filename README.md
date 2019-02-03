@@ -260,6 +260,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Support for Launchpad Classic/S/Mini
   * Thanks to Patreon patron Korbinian Maag for fully funding the purchase of a LP Mini for developing this feature! Stay tuned!
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
+* Add `RESET_REPEATS` command to reset the counter on all repeats
 * Add variables and mathematical evaluation (mostly done!)
 * Let `SOUND` use spaces in it's path, and auto-detect if the last chunk is a valid int
 * Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) 
