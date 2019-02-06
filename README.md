@@ -166,6 +166,8 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * `RELEASE`
     * Releases the key (argument 1).
       * See valid key names below.
+  * `RELEASE_ALL`
+    * Releases all pressed keys, including those pressed by other scripts.
   * `STRING`
     * Types whatever text comes after it.
   * `TAP`
@@ -273,13 +275,13 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Support for Launchpad Classic/S/Mini
   * Thanks to Patreon patron Korbinian Maag for fully funding the purchase of a LP Mini for developing this feature! Stay tuned!
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add `RELEASE_ALL` command
 * Add `RESET_REPEATS` command to reset the counter on all repeats
-* Add variables and mathematical evaluation (mostly done!)
+* Make `PRESS`, `RELEASE`, and `TAP` accept multiple keys
 * Let `SOUND` use spaces in it's path if it has double quotes around it
 * Rework sound module to use the `sounddevice` library
 * Add a `Sound` menu with `Choose default output device...` option
 * Add a third argument to `SOUND` for overriding the default sound device
+* Add variables and mathematical evaluation (mostly done!)
 * Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) 
 * Add script status icons (bound, playing, queued)
 * Let program function as a layout editor without LP connection
@@ -349,3 +351,4 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Make script being edited highlighted~~
 * ~~Fix wierd bug where GOTO and DELAY didn't obey a kill command (caught on video)~~
 * ~~Add `OPEN` command to open folders and files~~
+* ~~Add `RELEASE_ALL` command~~
