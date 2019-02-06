@@ -263,7 +263,10 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Add `RELEASE_ALL` command
 * Add `RESET_REPEATS` command to reset the counter on all repeats
 * Add variables and mathematical evaluation (mostly done!)
-* Let `SOUND` use spaces in it's path, and auto-detect if the last chunk is a valid int
+* Let `SOUND` use spaces in it's path if it has double quotes around it
+* Rework sound module to use the `sounddevice` library
+* Add a `Sound` menu with `Choose default output device...` option
+* Add a third argument to `SOUND` for overriding the default sound device
 * Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) 
 * Add script status icons (bound, playing, queued)
 * Let program function as a layout editor without LP connection
