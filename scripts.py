@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL"]
+VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
 ASYNC_HEADERS = ["@ASYNC", "@SIMPLE"]
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -100,6 +100,7 @@ def run_script(script_str, x, y):
     
     #prepare repeat counter {idx:repeats_left}
     repeats = dict()
+    repeats_original = dict()
     
     m_pos = ()
     
@@ -449,6 +450,7 @@ def run_script(script_str, x, y):
                         print("[scripts] " + coords + "        No repeats left, not repeating.")
                 else:
                     repeats[idx] = int(split_line[2])
+                    repeats_original[idx] = int(split_line[2])
                     print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
                     repeats[idx] -= 1
                     return labels[split_line[1]]
@@ -508,6 +510,10 @@ def run_script(script_str, x, y):
             elif split_line[0] == "RELEASE_ALL":
                 print("[scripts] " + coords + "    Release all keys")
                 kb.release_all()
+            elif split_line[0] == "RESET_REPEATS":
+                print("[scripts] " + coords + "    Reset all repeats")
+                for i in repeats:
+                    repeats[i] = repeats_original[i]
             else:
                 print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
         return idx + 1
@@ -669,7 +675,7 @@ def validate_script(script_str):
                 if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "M_MOVE", "M_SET", "M_SCROLL", "OPEN"]:
                     if len(split_line) < 2:
                         return ("Too few arguments for command '" + split_line[0] + "'.", line)
-                if split_line[0] in ["WAIT_UNPRESSED", "RELEASE_ALL"]:
+                if split_line[0] in ["WAIT_UNPRESSED", "RELEASE_ALL", "RESET_REPEATS"]:
                     if len(split_line) > 1:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["DELAY", "WEB", "WEB_NEW", "PRESS", "RELEASE"]:

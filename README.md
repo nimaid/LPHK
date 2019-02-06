@@ -148,6 +148,8 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * Opens the file or folder (argument 1).
   * `REPEAT_LABEL`
     * Goto label (argument 1) a maximum of (argument 2) times.
+  * `RESET_REPEATS`
+    * Reset the counter on all repeats. (no arguments)
   * `SOUND`
     * Play a sound named (argument 1) inside the `user_sounds/` folder.
       * Supports `.wav`, `.flac`, and `.ogg` only.
@@ -167,7 +169,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * Releases the key (argument 1).
       * See valid key names below.
   * `RELEASE_ALL`
-    * Releases all pressed keys, including those pressed by other scripts.
+    * Releases all pressed keys, including those pressed by other scripts. (no arguments)
   * `STRING`
     * Types whatever text comes after it.
   * `TAP`
@@ -275,7 +277,6 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Support for Launchpad Classic/S/Mini
   * Thanks to Patreon patron Korbinian Maag for fully funding the purchase of a LP Mini for developing this feature! Stay tuned!
   * Includes Behringer CMD Touch TC64 in Novation compatability mode
-* Add `RESET_REPEATS` command to reset the counter on all repeats
 * Make `PRESS`, `RELEASE`, and `TAP` accept multiple keys
 * Let `SOUND` use spaces in it's path if it has double quotes around it
 * Rework sound module to use the `sounddevice` library
@@ -352,3 +353,4 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Fix wierd bug where GOTO and DELAY didn't obey a kill command (caught on video)~~
 * ~~Add `OPEN` command to open folders and files~~
 * ~~Add `RELEASE_ALL` command~~
+* ~~Add `RESET_REPEATS` command to reset the counter on all repeats~~
