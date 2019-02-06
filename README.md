@@ -252,8 +252,21 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * `LPHK_ENTRY_SEP`
 * `LPHK_NEWLINE_REP`
 
-## Known Issues
-
+## Known Issues / Troubleshooting
+* The USB connection on the Launchpads, quite frankly, suck. If the angle is wrong, the Launchpad may recieve power, but will not be able to transmit or recieve data. While using the Launchpad, if you wiggle the connection somehow, it will straight up break the MIDI library I use. You will have to do the following:
+  * Click on "Launchpad > Disconnect to Launchpad xxx..."
+  * Unplug your Launchpad and wait about 5 seconds for the capacitors inside the Launchpad to drain. (It stays powered for a few seconds after losing it's connection, we want it dead as a doorknob.)
+  * Connect the Launchpad via USB.
+    * If you see the rainbow wipe effect and are left with no lights on, the connection is good.
+    * If the pad has psychadelic waves of colors exploding everywhere, it is getting power but cannot transmit or recieve data. Try again, maybe with a different cable.
+    * If it does not light up at all, try again with a different cable or USB port.
+  * Click on "Launchpad > Redetect...". This will kill the program and restart it. This resets the MIDI library.
+  * If this does not fix the problem, or if the LP can connect and light up, but not recieve input:
+    * Try a different cable
+    * Try a different USB port
+    * Unplug and restart the program manually
+    * Maybe restart your computer?
+    * At this point IDK, maybe the USB on your Launchpad needs to be replaced.
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
 ## What still needs to be written? (in order of priority)
