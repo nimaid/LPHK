@@ -4,6 +4,8 @@ A Novation Launchpad macro scripting system.
 <a href="https://github.com/nimaid/LPHK"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK.png" alt="logo" height="300px" hspace="5"/></a><a href="https://discord.gg/mDCzB8X"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/discord.png" alt="logo" height="300px" hspace="5"/></a><a href="https://www.patreon.com/user?u=16848673"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/patreon.png" alt="logo" height="300px" hspace="5"/></a>
 <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_3.png" alt="Update 3" width="800px" />
 
+[Tutorial, Updates, and Plans](https://www.youtube.com/watch?v=XdJutWBEAqI)
+
 [First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
 
 [Scheduling System](https://www.youtube.com/watch?v=rv2YmPQvMr0&t=164s)
