@@ -16,7 +16,7 @@ import lp_events, scripts, kb, files, sound, window
 
 PATH = sys.path[0]
 
-lp = launchpad.LaunchpadMk2()
+lp = launchpad.Launchpad()
 
 def init():
     global EXIT_ON_WINDOW_CLOSE
@@ -51,7 +51,7 @@ def shutdown():
 
 def main():
     init()
-    window.init(lp)
+    window.init(lp, launchpad)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
 

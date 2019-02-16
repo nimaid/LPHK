@@ -16,6 +16,8 @@ DEFAULT_COLOR = [0, 0, 255]
 INDICATOR_BPM = 480
 BUTTON_FONT = ("helvetica", 11, "bold")
 
+launchpad = None
+
 root = None
 app = None
 root_destroyed = None
@@ -28,9 +30,11 @@ script_filetypes = [('LPHK script files', files.SCRIPT_EXT)]
 lp_connected = False
 colors_to_set = [[[0, 0, 255] for y in range(9)] for x in range(9)]
 
-def init(lp_object_in):
+def init(lp_object_in, launchpad_in):
     global lp_object
+    global launchpad
     lp_object = lp_object_in
+    launchpad = launchpad_in
 
     make()
 
@@ -59,7 +63,7 @@ class Main_Window(tk.Frame):
         self.master.config(menu=self.m)
 
         self.m_Launchpad = tk.Menu(self.m, tearoff=False)
-        self.m_Launchpad.add_command(label="Connect to Launchpad MkII...", command=self.connect_MkII)
+        self.m_Launchpad.add_command(label="Connect to Launchpad...", command=self.connect_lp)
         self.m_Launchpad.add_command(label="Disonnect from Launchpad...", command=self.disconnect_lp)
         self.m_Launchpad.add_command(label="Redetect...", command=self.redetect_lp)
         self.m.add_cascade(label="Launchpad", menu=self.m_Launchpad)
@@ -98,24 +102,45 @@ class Main_Window(tk.Frame):
     def disable_lp_disconnect(self):
         self.m_Launchpad.entryconfig("Disonnect from Launchpad...", state="disabled")
 
-    def connect_MkII(self):
+    def connect_lp(self):
         global lp_connected
+        global lp_mode
+        global lp_object
         try:
-            if lp_object.Open(0, "mk2"):
-                lp_connected = True
-                lp_object.ButtonFlush()
-                lp_object.LedCtrlBpm(INDICATOR_BPM)
-                lp_events.start(lp_object)
-                self.draw_canvas()
-                self.enable_menu("Layout")
-                self.enable_lp_disconnect()
+            if lp_object.Check( 0, "mk2" ):
+                lp_object = launchpad.LaunchpadMk2()
+                if lp_object.Open( 0, "mk2" ):
+                    lp_connected = True
+                    lp_mode = "Mk2"
+                    lp_object.ButtonFlush()
+                    lp_object.LedCtrlBpm(INDICATOR_BPM)
+                    lp_events.start(lp_object)
+                    self.draw_canvas()
+                    self.enable_menu("Layout")
+                    self.enable_lp_disconnect()
 
-                self.stat["text"] = "Connected to Launchpad MkII"
-                self.stat["bg"] = STAT_ACTIVE_COLOR
+                    self.stat["text"] = "Connected to Launchpad MkII"
+                    self.stat["bg"] = STAT_ACTIVE_COLOR                
+            elif lp_object.Check( 0, "pro" ):
+                self.popup(self, "Connect to Launchpad Pro...", self.error_image, "There is currently no support for the Launchpad Pro.\nThis feature is planned for the future, see the GitHub page.", "OK")
+            elif lp_object.Check( 0, "control xl" ) or lp_object.Check( 0, "launchkey" ) or lp_object.Check( 0, "dicer" ):
+                self.popup(self, "Connect to Unsupported Device...", self.error_image, "The device you are attempting to use is not currently supported by LPHK, and there are no plans to add support for it.\nPlease voice your feature requests on the Discord or on GitHub.", "OK")
             else:
-                self.popup(self, "Connect to Launchpad MkII...", self.error_image, "Could not connect to Launchpad MkII!\nPlug in your USB cable and try the 'Redetect...' option from the 'Launchpad' menu.", "OK")
+                self.popup(self, "Connect to Launchpad Classic/Mini/S...", self.error_image, "Support for the Launchpad Classic/Mini/S is currently in development.\nStay tuned to the GitHub or Discord for updates!", "OK")
+                # if lp_object.Open():
+                    # lp_connected = True
+                    # lp_mode = "Mk1"
+                    # lp_object.ButtonFlush()
+                    # lp_object.LedCtrlBpm(INDICATOR_BPM)
+                    # lp_events.start(lp_object)
+                    # self.draw_canvas()
+                    # self.enable_menu("Layout")
+                    # self.enable_lp_disconnect()
+
+                    # self.stat["text"] = "Connected to Launchpad Classic/Mini/S"
+                    # self.stat["bg"] = STAT_ACTIVE_COLOR                
         except:
-            self.popup(self, "Connect to Launchpad MkII...", self.error_image, "Fatal error while connecting to Launchpad MkII!\nDisconnect and reconnect your USB cable, then use the 'Redetect...' option from the 'Launchpad' menu.", "OK")
+            self.popup(self, "Connect to Launchpad...", self.error_image, "Fatal error while connecting to Launchpad!\nDisconnect and reconnect your USB cable, then use the 'Redetect...' option from the 'Launchpad' menu.", "OK")
 
     def disconnect_lp(self):
         global lp_connected
