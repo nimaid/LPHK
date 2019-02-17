@@ -125,7 +125,7 @@ class Main_Window(tk.Frame):
                 self.popup(self, "Connect to Launchpad Pro...", self.error_image, "There is currently no support for the Launchpad Pro.\nThis feature is planned for the future, see the GitHub page.", "OK")
             elif lp_object.Check( 0, "control xl" ) or lp_object.Check( 0, "launchkey" ) or lp_object.Check( 0, "dicer" ):
                 self.popup(self, "Connect to Unsupported Device...", self.error_image, "The device you are attempting to use is not currently supported by LPHK, and there are no plans to add support for it.\nPlease voice your feature requests on the Discord or on GitHub.", "OK")
-            else:
+            elif lp_object.Check():
                 self.popup(self, "Connect to Launchpad Classic/Mini/S...", self.error_image, "Support for the Launchpad Classic/Mini/S is currently in development.\nStay tuned to the GitHub or Discord for updates!", "OK")
                 # if lp_object.Open():
                     # lp_connected = True
@@ -138,9 +138,11 @@ class Main_Window(tk.Frame):
                     # self.enable_lp_disconnect()
 
                     # self.stat["text"] = "Connected to Launchpad Classic/Mini/S"
-                    # self.stat["bg"] = STAT_ACTIVE_COLOR                
+                    # self.stat["bg"] = STAT_ACTIVE_COLOR 
+            else:
+                raise Exception()
         except:
-            self.popup(self, "Connect to Launchpad...", self.error_image, "Fatal error while connecting to Launchpad!\nDisconnect and reconnect your USB cable, then use the 'Redetect...' option from the 'Launchpad' menu.", "OK")
+            self.popup(self, "Connect to Launchpad...", self.error_image, "Fatal error while connecting to Launchpad!\nDisconnect and reconnect your USB cable, then use the\n'Redetect...' option from the 'Launchpad' menu.", "OK")
 
     def disconnect_lp(self):
         global lp_connected
