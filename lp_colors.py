@@ -1,68 +1,4 @@
-BLACK = 0
-WHITE_THIRD = 1
-WHITE_HALF = 2
-WHITE = 3
-RED = 5
-RED_HALF = 6
-RED_THIRD = 7
-AMBER = 9
-AMBER_HALF = 10
-AMBER_THIRD = 11
-GREEN = 21
-GREEN_HALF = 22
-GREEN_THIRD = 23
-YELLOW = 13
-YELLOW_HALF = 14
-YELLOW_THIRD = 15
-MINT = 29
-MINT_HALF = 30
-MINT_THIRD = 31
-LIGHTBLUE = 37
-LIGHTBLUE_HALF = 38
-LIGHTBLUE_THIRD = 39
-BLUE = 45
-BLUE_HALF = 46
-BLUE_THIRD = 47
-PINK = 53
-PINK_HALF = 54
-PINK_THIRD = 55
-PURPLE = 48
-PURPLE_HALF = 49
-PURPLE_THIRD = 50
-
-RGB = {BLACK: "#000",
-       WHITE_THIRD: "#555",
-       WHITE_HALF: "#aaa",
-       WHITE: "#fff",
-       RED: "#f00",
-       RED_HALF: "#a00",
-       RED_THIRD: "#500",
-       AMBER: "#f90",
-       AMBER_HALF: "#a60",
-       AMBER_THIRD: "#530",
-       GREEN: "#0f0",
-       GREEN_HALF: "#0a0",
-       GREEN_THIRD: "#050",
-       YELLOW: "#ff0",
-       YELLOW_HALF: "#aa0",
-       YELLOW_THIRD: "#550",
-       MINT: "#0ff",
-       MINT_HALF: "#0aa",
-       MINT_THIRD: "#055",
-       LIGHTBLUE: "#0bf",
-       LIGHTBLUE_HALF: "#08a",
-       LIGHTBLUE_THIRD: "#045",
-       BLUE: "#00f",
-       BLUE_HALF: "#00a",
-       BLUE_THIRD: "#005",
-       PINK: "#f0f",
-       PINK_HALF: "#a0a",
-       PINK_THIRD: "#505",
-       PURPLE: "#96f",
-       PURPLE_HALF: "#64a",
-       PURPLE_THIRD: "#325"}
-
-curr_colors = [[BLACK for y in range(9)] for x in range(9)]
+curr_colors = [[[0,0,0] for y in range(9)] for x in range(9)]
 color_modes = [["solid" for y in range(9)] for x in range(9)]
 
 import lp_events, scripts, window
@@ -73,6 +9,57 @@ lp_object = None
 def init(lp_object_in):
     global lp_object
     lp_object = lp_object_in
+
+def code_to_RGB(code):
+    # Used to convert old layouts to the new format only
+    RGB = {0: "#000",
+           1: "#555",
+           2: "#aaa",
+           3: "#fff",
+           5: "#f00",
+           6: "#a00",
+           7: "#500",
+           9: "#f90",
+           10: "#a60",
+           11: "#530",
+           21: "#0f0",
+           22: "#0a0",
+           23: "#050",
+           13: "#ff0",
+           14: "#aa0",
+           15: "#550",
+           29: "#0ff",
+           30: "#0aa",
+           31: "#055",
+           37: "#0bf",
+           38: "#08a",
+           39: "#045",
+           45: "#00f",
+           46: "#00a",
+           47: "#005",
+           53: "#f0f",
+           54: "#a0a",
+           55: "#505",
+           48: "#96f",
+           49: "#64a",
+           50: "#325"}
+    rgb = []
+    for c in range(3):
+        val = RGB[code][c + 1]
+        rgb.append(int(val + val, 16))
+    return rgb
+
+def RGB_to_RG(rgb):
+    if rgb[2] != 0:
+        color = list(colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2]))
+        color[0] = color[0] * (106/330)
+        color = list(colorsys.hsv_to_rgb(color[0], color[1], color[2]))
+        color = [round(x) for x in color]
+        for x in range(2):
+            color[x] = round(color[x])
+        return color[:2] + [0]
+    else:
+        return rgb
 
 def setXY(x, y, color):
     curr_colors[x][y] = color
@@ -91,11 +78,8 @@ def list_RGB_to_string(color):
 
 def getXY_RGB(x, y):
     color = getXY(x, y)
-    if type(color) is list:
-        color_string = list_RGB_to_string(color)
-        return color_string
-    else:
-        return RGB[color]
+    color_string = list_RGB_to_string(color)
+    return color_string
 
 def luminance(r, g, b):
 	return ((0.299 * r) + (0.587 * g) + (0.114 * b)) / 255.0
@@ -125,22 +109,27 @@ def updateXY(x, y):
                 set_color = curr_colors[x][y]
                 color_modes[x][y] = "solid"
 
-            if (color_modes[x][y] == "solid") or is_func_key:
-                #pulse and flash only work on main grid
-                if type(set_color) is list:
-                    lp_object.LedCtrlXYByRGB(x, y, [c//4 for c in set_color])
-                else:
-                    lp_object.LedCtrlXYByCode(x, y, set_color)
-            elif color_modes[x][y] == "pulse":
-                lp_object.LedCtrlPulseXYByCode(x, y, set_color)
-            elif color_modes[x][y] == "flash":
-                lp_object.LedCtrlXYByCode(x, y, BLACK)
-                lp_object.LedCtrlFlashXYByCode(x, y, set_color)
+            if window.lp_mode == "Mk1":
+                if type(set_color) is int:
+                    set_color = code_to_RGB(set_color)
+                lp_object.LedCtrlXY(x, y, set_color[0]//64, set_color[1]//64)
             else:
-                if type(set_color) is list:
-                    lp_object.LedCtrlXYByRGB(x, y, [c//4 for c in set_color])
+                if (color_modes[x][y] == "solid") or is_func_key:
+                    #pulse and flash only work on main grid
+                    if type(set_color) is list:
+                        lp_object.LedCtrlXYByRGB(x, y, [c//4 for c in set_color])
+                    else:
+                        lp_object.LedCtrlXYByCode(x, y, set_color)
+                elif color_modes[x][y] == "pulse":
+                    lp_object.LedCtrlPulseXYByCode(x, y, set_color)
+                elif color_modes[x][y] == "flash":
+                    lp_object.LedCtrlXYByCode(x, y, 0)
+                    lp_object.LedCtrlFlashXYByCode(x, y, set_color)
                 else:
-                    lp_object.LedCtrlXYByCode(x, y, set_color)
+                    if type(set_color) is list:
+                        lp_object.LedCtrlXYByRGB(x, y, [c//4 for c in set_color])
+                    else:
+                        lp_object.LedCtrlXYByCode(x, y, set_color)
     else:
         print("[lp_colors] (" + str(x) + ", " + str(y) + ") Launchpad is disconnected, cannot update.")
 
@@ -155,4 +144,7 @@ def update_all():
 def raw_clear():
     for x in range(9):
         for y in range(9):
-            lp_object.LedCtrlXYByCode(x, y, BLACK)
+            if window.lp_mode == "Mk1":
+                 lp_object.LedCtrlXY(x, y, 0, 0)
+            else:
+                lp_object.LedCtrlXYByCode(x, y, 0)

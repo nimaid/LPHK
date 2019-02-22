@@ -32,14 +32,12 @@ def save_layout(name, add_path=True):
         for x in range(9):
             for y in range(9):
                 color = lp_colors.curr_colors[x][y]
-                if type(color) == list:
-                    f.write(str(color[0]))
-                    f.write(",")
-                    f.write(str(color[1]))
-                    f.write(",")
-                    f.write(str(color[2]))
-                else:
-                    f.write(str(color))
+
+                f.write(str(color[0]))
+                f.write(",")
+                f.write(str(color[1]))
+                f.write(",")
+                f.write(str(color[2]))
 
                 f.write(ENTRY_SEPERATOR)
 
@@ -56,6 +54,8 @@ def load_layout(name, add_path=True):
     global in_error
     global layout_changed_since_load
     
+    converted_to_rg = False
+    
     scripts.unbind_all()
     window.app.draw_canvas()
     
@@ -71,17 +71,21 @@ def load_layout(name, add_path=True):
             line = l[x][:-1].split(BUTTON_SEPERATOR)
             for y in range(9):
                 info = line[y].split(ENTRY_SEPERATOR)
-                color = info[0]
-                if not color.isdigit():
-                    split = color.split(",")
+                color = None
+                if not info[0].isdigit():
+                    split = info[0].split(",")
                     color = []
                     color.append(int(split[0]))
                     color.append(int(split[1]))
                     color.append(int(split[2]))
                 else:
-                    color = int(info[0])
+                    color = lp_colors.code_to_RGB(int(info[0]))
+                if window.lp_mode == "Mk1":
+                    if color[2] != 0:
+                        color = lp_colors.RGB_to_RG(color)
+                        converted_to_rg = True
+                
                 script_text = info[1].replace(NEWLINE_REPLACE, "\n")
-
                 if script_text != "":
                     script_validation = scripts.validate_script(script_text)
                     if script_validation != True:
@@ -97,7 +101,11 @@ def load_layout(name, add_path=True):
         lp_colors.update_all()
         window.app.draw_canvas()
     curr_layout = final_path
-    layout_changed_since_load = False
+    if converted_to_rg:
+        window.app.popup(window.app, "Layout converted to Classic/Mini/S...", window.app.info_image, "The colors in this layout have been converted to be\ncompatable with the Launchpad Classic/Mini/S.\n\nChanges have not yet been saved to the file.", "OK")
+        layout_changed_since_load = True
+    else:
+        layout_changed_since_load = False
     print("[files] Loaded layout " + final_path)
 
 def import_script(name, add_path=True):

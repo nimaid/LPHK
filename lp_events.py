@@ -49,7 +49,7 @@ def bind_func_with_colors(x, y, func, off_color):
 def unbind(x, y):
     global press_funcs
     press_funcs[x][y] = unbound_press
-    lp_colors.setXY(x, y, lp_colors.BLACK)
+    lp_colors.setXY(x, y, [0,0,0])
     lp_colors.updateXY(x, y)
 
 def unbind_all():
@@ -57,6 +57,6 @@ def unbind_all():
     press_funcs = [[unbound_press for y in range(9)] for x in range(9)]
     for x in range(9):
         for y in range(9):
-            lp_colors.setXY(x, y, lp_colors.BLACK)
+            lp_colors.setXY(x, y, [0,0,0])
     lp_colors.raw_clear()
 

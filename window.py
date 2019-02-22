@@ -28,7 +28,8 @@ layout_filetypes = [('LPHK layout files', files.LAYOUT_EXT)]
 script_filetypes = [('LPHK script files', files.SCRIPT_EXT)]
 
 lp_connected = False
-colors_to_set = [[[0, 0, 255] for y in range(9)] for x in range(9)]
+lp_mode = None
+colors_to_set = [[DEFAULT_COLOR for y in range(9)] for x in range(9)]
 
 def init(lp_object_in, launchpad_in):
     global lp_object
@@ -126,19 +127,16 @@ class Main_Window(tk.Frame):
             elif lp_object.Check( 0, "control xl" ) or lp_object.Check( 0, "launchkey" ) or lp_object.Check( 0, "dicer" ):
                 self.popup(self, "Connect to Unsupported Device...", self.error_image, "The device you are attempting to use is not currently supported by LPHK, and there are no plans to add support for it.\nPlease voice your feature requests on the Discord or on GitHub.", "OK")
             elif lp_object.Check():
-                self.popup(self, "Connect to Launchpad Classic/Mini/S...", self.error_image, "Support for the Launchpad Classic/Mini/S is currently in development.\nStay tuned to the GitHub or Discord for updates!", "OK")
-                # if lp_object.Open():
-                    # lp_connected = True
-                    # lp_mode = "Mk1"
-                    # lp_object.ButtonFlush()
-                    # lp_object.LedCtrlBpm(INDICATOR_BPM)
-                    # lp_events.start(lp_object)
-                    # self.draw_canvas()
-                    # self.enable_menu("Layout")
-                    # self.enable_lp_disconnect()
-
-                    # self.stat["text"] = "Connected to Launchpad Classic/Mini/S"
-                    # self.stat["bg"] = STAT_ACTIVE_COLOR 
+                if lp_object.Open():
+                    lp_connected = True
+                    lp_mode = "Mk1"
+                    lp_object.ButtonFlush()
+                    lp_events.start(lp_object)
+                    self.draw_canvas()
+                    self.enable_menu("Layout")
+                    self.enable_lp_disconnect()
+                    self.stat["text"] = "Connected to Launchpad Classic/Mini/S"
+                    self.stat["bg"] = STAT_ACTIVE_COLOR 
             else:
                 raise Exception()
         except:
@@ -367,11 +365,7 @@ class Main_Window(tk.Frame):
             colors_to_set[x][y] = color_override
         
         if type(colors_to_set[x][y]) == int:
-            rgb = lp_colors.RGB[colors_to_set[x][y]]
-            colors_to_set[x][y] = []
-            for c in range(3):
-                val = rgb[c + 1]
-                colors_to_set[x][y].append(int(val + val, 16))
+            colors_to_set[x][y] = lp_colors.code_to_RGB(colors_to_set[x][y])
         
         if all(c < 4 for c in colors_to_set[x][y]):
             colors_to_set[x][y] = DEFAULT_COLOR

@@ -76,8 +76,8 @@ Before using the program, there are some dependencies/libraries that you will ne
     * (If this fails, use "python LPHK.py".)
 
 ### Program Usage (Post-Install)
-* Before starting the program, make sure your Launchpad MkII (for now, Pro and others are coming) is connected to the computer.
-* Click `Launchpad > Connect to Launchpad MkII...`.
+* Before starting the program, make sure your Launchpad Classic/Mini/S or MkII (for now, Pro is coming) is connected to the computer.
+* Click `Launchpad > Connect to Launchpad...`.
   * If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
 * The current mode is displayed in the upper right, in the gap between the circular buttons. Clicking this text will change the mode. There are four modes:
     * "Edit" mode: Click on a button to open the Script Edit window for that button.
@@ -276,9 +276,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
 ## What still needs to be written? (in order of priority)
-* Support for Launchpad Classic/S/Mini
-  * Thanks to Patreon patron Korbinian Maag for fully funding the purchase of a LP Mini for developing this feature! Stay tuned!
-  * Includes Behringer CMD Touch TC64 in Novation compatability mode
+* Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue atm, it will have the blue component ignored.
 * Make `PRESS`, `RELEASE`, and `TAP` accept multiple keys
 * Let `SOUND` use spaces in it's path if it has double quotes around it
 * Rework sound module to use the `sounddevice` library
@@ -356,3 +354,6 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Add `OPEN` command to open folders and files~~
 * ~~Add `RELEASE_ALL` command~~
 * ~~Add `RESET_REPEATS` command to reset the counter on all repeats~~
+* ~~Basic support for Launchpad Classic/S/Mini~~
+  * Thanks to Patreon patron Korbinian Maag for fully funding the purchase of a LP Mini for developing this feature!
+  * Includes Behringer CMD Touch TC64 in Novation compatability mode

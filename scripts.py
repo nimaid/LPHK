@@ -3,8 +3,8 @@ from time import sleep
 from functools import partial
 import lp_events, lp_colors, kb, sound, ms
 
-COLOR_PRIMED = lp_colors.RED
-COLOR_FUNC_KEYS_PRIMED = lp_colors.AMBER
+COLOR_PRIMED = 5 #red
+COLOR_FUNC_KEYS_PRIMED = 9 #amber
 EXIT_UPDATE_DELAY = 0.1
 DELAY_EXIT_CHECK = 0.025
 
