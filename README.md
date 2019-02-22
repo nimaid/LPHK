@@ -277,6 +277,9 @@ For all commands, the arguments cannot contain the following strings, as they ar
 
 ## What still needs to be written? (in order of priority)
 * Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue atm, it will have the blue component ignored.
+* Refactor code to make LPHKscript functions in autoimplementing modules, for ease of delevopment
+  * Make modules w/ funcs that can either validate or run
+  * Issue # tbd
 * Make `PRESS`, `RELEASE`, and `TAP` accept multiple keys
 * Let `SOUND` use spaces in it's path if it has double quotes around it
 * Rework sound module to use the `sounddevice` library
