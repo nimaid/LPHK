@@ -1,0 +1,35 @@
+# All variables ignored except for IMPORTS and F
+IMPORTS = ['kb']
+F = dict()
+
+# --------- Function to press (and not release) a key. ---------
+F['PRESS'] = dict()
+
+def press_verify(args):
+    # Check number of arguments
+    if (len(args) != 1):
+        return (False, "PRESS takes exactly 1 argument.")
+    # Check if key name is valid
+    if kb.sp(args[0]) == None:
+        return (False, "No key named '{}'".format(args[0]))
+F['PRESS']['verify'] = press_verify
+
+def press_run(args):
+    key = kb.sp(args[0])
+    kb.press(key)
+F['PRESS']['run'] = press_run
+# --------------------------------------------------------------
+
+
+# --------- Function to release (but not press) a key. ---------
+F['RELEASE'] = dict()
+
+# Same verification function.
+F['RELEASE']['verify'] = press_verify 
+
+def release_run(args):
+    key = kb.sp(args[0])
+    kb.release(key)
+F['RELEASE']['run'] = release_run
+# --------------------------------------------------------------
+
