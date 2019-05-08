@@ -47,7 +47,7 @@ def shutdown():
         window.lp_connected = False
     if window.restart:
         os.execv(sys.executable, ["\"" + sys.executable + "\""] + sys.argv)
-    sys.exit("[LPHK] Sutting down...")
+    sys.exit("[LPHK] Shutting down...")
 
 def main():
     init()
