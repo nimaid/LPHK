@@ -281,14 +281,23 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * There are a few complex refactoring tasks required for this, I will be crossing them off here on the testing branch:
     * Make a killable delay/time library that monitors thread kill flags
     * ~~Port keyboard functions over to LPHKfunction modules~~
+    * Move `@SIMPLE` to keyboard module.
+      * Allow F['COMMAND']['macro'] = True to disallow other non-comment lines in the script. Default is False.
+        * Macros will automatically have `_` added to the beginning (`@` will only be for headers)
+        * `validate_script()` will take care of making sure macros are alone (after comment/nl stripping)
+      * Allow F['COMMAND']['macro_async'] = True to enable async on a macro. Default is False, ignored if not a macro.
+        * When importing functions on startup, make a dict to keep track of what macros are async
+        * `scripts.py` will have a `run_async` dict to keep track of if a script is async
+        * (Comments/nl stripped) During scheduling of the script, if first line is `@ASYNC` or is an async macro (1 functional line), then run_async[x][y] is set, otherwise unset
     * Write the importer library (test standalone w/ simple delay)
-    * Lobotomize the program (read: remove the hellish logic in scripts.py)
+    * ~~Lobotomize the program (read: remove the hellish logic in scripts.py)~~
     * Integrate the importer into the main program (scripts.py)
     * Find and kill all of the bugs
     * Port the rest of the old logic to LPHKfuction modules
     * Deal with the Pandora's box that porting those functions will open (this list will probably grow)
     * Take a drink and merge the branches
 * Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue atm, it will have the blue component ignored.
+* Simply strip comments and empty lines before sending to logic, that way, first line can be a comment and second a header.
 * Make `PRESS`, `RELEASE`, and `TAP` accept multiple keys
 * Let `SOUND` use spaces in it's path if it has double quotes around it
 * Rework sound module to use the `sounddevice` library

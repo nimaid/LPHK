@@ -1,4 +1,5 @@
-#TODO - Make killable delay lib (for tap)
+##TODO - Make killable delay lib (for tap)
+##TODO - Add SIMPLE async macro
 # All variables ignored except for IMPORTS and F
 IMPORTS = ['kb']
 F = dict()
@@ -9,10 +10,10 @@ F['PRESS'] = dict()
 def press_verify(args):
     # Check number of arguments
     if len(args) != 1:
-        return (False, "PRESS takes exactly 1 argument. [key]")
+        return "PRESS takes exactly 1 argument. [key]"
     # Check if key name is valid
     if kb.sp(args[0]) == None:
-        return (False, "No key named '{}'".format(args[0]))
+        return "No key named '{}'".format(args[0])
     return True
 F['PRESS']['verify'] = press_verify
 
@@ -29,10 +30,10 @@ F['RELEASE'] = dict()
 def release_verify(args):
     # Check number of arguments
     if len(args) != 1:
-        return (False, "RELEASE takes exactly 1 argument. [key]")
+        return "RELEASE takes exactly 1 argument. [key]"
     # Check if key name is valid
     if kb.sp(args[0]) == None:
-        return (False, "No key named '{}'".format(args[0]))
+        return "No key named '{}'".format(args[0])
     return True
 F['RELEASE']['verify'] = release_verify 
 
@@ -49,26 +50,26 @@ F['TAP'] = dict()
 def tap_verify(args):
     # Check number of arguments
     if (len(args) < 1) or (len(args) > 3):
-        return (False, "TAP takes 1-3 arguments. [key, (repeat), (delay)]")
+        return "TAP takes 1-3 arguments. [key, (repeat), (delay)]"
     # Check if key name is valid
     if kb.sp(args[0]) == None:
-        return (False, "No key named '{}'".format(args[0]))
+        return "No key named '{}'".format(args[0])
     # Check if repeats are valid
     if len(args) >= 2:
         try:
             temp = int(args[1])
             if temp < 1:
-                return (False, "TAP number of repeats must be at least 1.")
+                return "TAP number of repeats must be at least 1."
         except:
-            return (False, "TAP number of repeats must be a valid decimal integer.")
+            return "TAP number of repeats must be a valid decimal integer."
     # Check if delay is valid
     if len(args) >= 3:
         try:
             temp = float(args[2])
             if temp < 0.0:
-                return (False, "TAP delay time must be larger than 0.")
+                return "TAP delay time must be larger than 0."
         except:
-            return (False, "TAP delay time must be a valid decimal number.")
+            return "TAP delay time must be a valid decimal number."
     return True
 F['TAP']['verify'] = tap_verify
 
@@ -110,7 +111,7 @@ F['RELEASE_ALL'] = dict()
 
 def ra_verify(args):
     if len(args) > 0:
-        return (False, "RELEASE_ALL takes no arguments.")
+        return "RELEASE_ALL takes no arguments."
     return True
 F['RELEASE_ALL']['verify'] = ra_verify
 
