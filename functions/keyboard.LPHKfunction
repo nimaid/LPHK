@@ -1,3 +1,4 @@
+#TODO - Make killable delay lib (for tap)
 # All variables ignored except for IMPORTS and F
 IMPORTS = ['kb']
 F = dict()
@@ -72,7 +73,48 @@ def tap_verify(args):
 F['TAP']['verify'] = tap_verify
 
 def tap_run(args):
-    #WIP
-    pass
+    key = kb.sp(args[0])
+    if len(args) == 1:
+        kb.tap(key)
+    elif len(args) >= 2: 
+        taps = int(args[1])
+        delay = None
+        if len(args) == 3:
+            delay = float(args[2])
+        for tap in range(taps):
+            kb.press(key)
+            if delay != None:
+                pass#KILLABLE DELAY HERE
+            kb.release(key)
 F['TAP']['run'] = tap_run
+# --------------------------------------------------------------
+
+
+# ----------------- Function to type a string. -----------------
+F['STRING'] = dict()
+
+def string_verify(args):
+    # STRING always types literally what comes after it, so no wrong inputs.
+    return True
+F['STRING']['verify'] = string_verify
+
+def string_run(args):
+    type_string = " ".join(args)
+    kb.keyboard.write(type_string)
+F['STRING']['run'] = string_run
+# --------------------------------------------------------------
+
+
+# ---------------- Function to release all keys. ---------------
+F['RELEASE_ALL'] = dict()
+
+def ra_verify(args):
+    if len(args) > 0:
+        return (False, "RELEASE_ALL takes no arguments.")
+    return True
+F['RELEASE_ALL']['verify'] = ra_verify
+
+def ra_run(args):
+    kb.release_all()
+F['RELEASE_ALL']['run'] = ra_run
 # --------------------------------------------------------------
