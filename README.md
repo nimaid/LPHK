@@ -55,10 +55,12 @@ Yes! It does not have all the features I want just yet, and still has bugs, but 
 This is still WIP and still a beta version. See below for a todo list. I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help! You can see project updates and ask questions on the [official Discord server](https://discord.gg/mDCzB8X)! You can also donate on the [official Patreon page](https://www.patreon.com/user?u=16848673) to help speed up development, or just say thanks!
 
 ## How do I use it?
+First, get a local copy of the GitHub repository. Click the green "Clone or download" button. The easiest path forward if you don't know what any of this this means is to then click "Download ZIP". Extract that .zip file, and you have a local copy of the repository!
+
 Before using the program, there are some dependencies/libraries that you will need to install:
 
 ### Linux Install/Run Instructions
-* Simply clone the project and run `install_dependencies.sh`. If it fails, run with `sudo`.
+* Run `install_dependencies.sh`. If it fails, run with `sudo`.
 * Many distros will let you double click on `LPHK.py` to run it. If yours doesn't, look up how to associate `.py` files with the `python3` binary on your distro.
   * At this point, you should be able to use whatever functionality the program currently has.
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
@@ -68,7 +70,6 @@ Before using the program, there are some dependencies/libraries that you will ne
 * Install it, make a note of the default install location.
   * I suggest checking the option "Add Python 3.x to PATH", as it lets you easily use Python from the command line.
   * If performing a "Custom Installation" of Python 3, ensure "pip" and "tcl/tk and IDLE" are selected for install, at minimum.
-* Clone LPHK into a folder of your choice. You can move the folder later, even to a USB drive.
 * Run "install_dependencies.bat" to install required libraries via pip, which you just installed with Python 3.
 * After installing all dependencies, right click on LPHK.py and select "Open with", then "Look for another app on this PC". Browse to that install location you noted earlier and select "python.exe".
   * At this point, you should be able to use whatever functionality the program currently has.
