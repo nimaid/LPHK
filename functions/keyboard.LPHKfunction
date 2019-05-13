@@ -1,8 +1,11 @@
 ##TODO - Make killable delay lib (for tap)
 ##TODO - Add SIMPLE async macro
+##TODO - Make stdlib for function breakout
 # All variables ignored except for IMPORTS and F
-IMPORTS = ['kb']
+IMPORTS = ['kb', 'safetime']
 F = dict()
+
+# The module "command" will be auto imported
 
 # --------- Function to press (and not release) a key. ---------
 F['PRESS'] = dict()

@@ -279,8 +279,9 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * [Refactor code to make LPHKscript functions in auto-implementing modules, for ease of delevopment](https://github.com/nimaid/LPHK/issues/3)
   * A new testing branch will be created while the functional code is re-worked. To avoid merging issues, pull requests may have acceptance delayed until the refactor is complete.
   * There are a few complex refactoring tasks required for this, I will be crossing them off here on the testing branch:
-    * Make a killable delay/time library that monitors thread kill flags
+    * ~~Make a killable delay/time library that monitors thread kill flags~~
     * ~~Port keyboard functions over to LPHKfunction modules~~
+    * Make `commands.py` module to house the actual command logic
     * Move `@SIMPLE` to keyboard module.
       * Allow F['COMMAND']['macro'] = True to disallow other non-comment lines in the script. Default is False.
         * Macros will automatically have `_` added to the beginning (`@` will only be for headers)
@@ -295,6 +296,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
     * Find and kill all of the bugs
     * Port the rest of the old logic to LPHKfuction modules
     * Deal with the Pandora's box that porting those functions will open (this list will probably grow)
+    * Make a way for modules to use standard commands, and to use other modules
     * Take a drink and merge the branches
 * Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue atm, it will have the blue component ignored.
 * Simply strip comments and empty lines before sending to logic, that way, first line can be a comment and second a header.

@@ -5,10 +5,10 @@ import lp_events, lp_colors, kb, sound, ms
 
 COLOR_PRIMED = 5 #red
 COLOR_FUNC_KEYS_PRIMED = 9 #amber
-EXIT_UPDATE_DELAY = 0.1
-DELAY_EXIT_CHECK = 0.025
 
-import files
+EXIT_UPDATE_DELAY = 0.1
+
+import files, safetime
 
 '''
     Hard-coded functions:
@@ -21,8 +21,9 @@ import files
     * IF_PRESSED_REPEAT_LABEL
     * IF_UNPRESSED_REPEAT_LABEL
     * RESET_REPEATS (resets all REPEAT_LABEL counters)
+    * DELAY (TEMPORARY FOR DEVELOPMENT)
 '''
-HARDCODE_COMMANDS = ["@ASYNC", "LABEL", "GOTO_LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "RESET_REPEATS"]
+HARDCODE_COMMANDS = ["@ASYNC", "LABEL", "GOTO_LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "RESET_REPEATS", "DELAY"]
 
 threads = [[None for y in range(9)] for x in range(9)]
 running = False
@@ -205,6 +206,10 @@ def run_script(script_str, x, y):
             for i in repeats:
                 repeats[i] = repeats_original[i]
         
+        if cmd == "DELAY":
+            # Delay in a killable way
+            delay_time = float(args[0])
+            safetime.safe_delay(delay_time, x, y)
         return idx + 1 # If nothing above returned, return next index
     run = True
     idx = 0
