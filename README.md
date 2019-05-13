@@ -55,10 +55,12 @@ Yes! It does not have all the features I want just yet, and still has bugs, but 
 This is still WIP and still a beta version. See below for a todo list. I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help! You can see project updates and ask questions on the [official Discord server](https://discord.gg/mDCzB8X)! You can also donate on the [official Patreon page](https://www.patreon.com/user?u=16848673) to help speed up development, or just say thanks!
 
 ## How do I use it?
+First, get a local copy of the GitHub repository. Click the green "Clone or download" button. The easiest path forward if you don't know what any of this this means is to then click "Download ZIP". Extract that .zip file, and you have a local copy of the repository!
+
 Before using the program, there are some dependencies/libraries that you will need to install:
 
 ### Linux Install/Run Instructions
-* Simply clone the project and run `install_dependencies.sh`. If it fails, run with `sudo`.
+* Run `install_dependencies.sh`. If it fails, run with `sudo`.
 * Many distros will let you double click on `LPHK.py` to run it. If yours doesn't, look up how to associate `.py` files with the `python3` binary on your distro.
   * At this point, you should be able to use whatever functionality the program currently has.
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
@@ -68,7 +70,6 @@ Before using the program, there are some dependencies/libraries that you will ne
 * Install it, make a note of the default install location.
   * I suggest checking the option "Add Python 3.x to PATH", as it lets you easily use Python from the command line.
   * If performing a "Custom Installation" of Python 3, ensure "pip" and "tcl/tk and IDLE" are selected for install, at minimum.
-* Clone LPHK into a folder of your choice. You can move the folder later, even to a USB drive.
 * Run "install_dependencies.bat" to install required libraries via pip, which you just installed with Python 3.
 * After installing all dependencies, right click on LPHK.py and select "Open with", then "Look for another app on this PC". Browse to that install location you noted earlier and select "python.exe".
   * At this point, you should be able to use whatever functionality the program currently has.
@@ -279,16 +280,27 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * [Refactor code to make LPHKscript functions in auto-implementing modules, for ease of delevopment](https://github.com/nimaid/LPHK/issues/3)
   * A new testing branch will be created while the functional code is re-worked. To avoid merging issues, pull requests may have acceptance delayed until the refactor is complete.
   * There are a few complex refactoring tasks required for this, I will be crossing them off here on the testing branch:
-    * Make a killable delay/time library that monitors thread kill flags
+    * ~~Make a killable delay/time library that monitors thread kill flags~~
     * ~~Port keyboard functions over to LPHKfunction modules~~
+    * Make `commands.py` module to house the actual command logic
+    * Move `@SIMPLE` to keyboard module.
+      * Allow F['COMMAND']['macro'] = True to disallow other non-comment lines in the script. Default is False.
+        * Macros will automatically have `_` added to the beginning (`@` will only be for headers)
+        * `validate_script()` will take care of making sure macros are alone (after comment/nl stripping)
+      * Allow F['COMMAND']['macro_async'] = True to enable async on a macro. Default is False, ignored if not a macro.
+        * When importing functions on startup, make a dict to keep track of what macros are async
+        * `scripts.py` will have a `run_async` dict to keep track of if a script is async
+        * (Comments/nl stripped) During scheduling of the script, if first line is `@ASYNC` or is an async macro (1 functional line), then run_async[x][y] is set, otherwise unset
     * Write the importer library (test standalone w/ simple delay)
-    * Lobotomize the program (read: remove the hellish logic in scripts.py)
+    * ~~Lobotomize the program (read: remove the hellish logic in scripts.py)~~
     * Integrate the importer into the main program (scripts.py)
     * Find and kill all of the bugs
     * Port the rest of the old logic to LPHKfuction modules
     * Deal with the Pandora's box that porting those functions will open (this list will probably grow)
+    * Make a way for modules to use standard commands, and to use other modules
     * Take a drink and merge the branches
 * Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue atm, it will have the blue component ignored.
+* Simply strip comments and empty lines before sending to logic, that way, first line can be a comment and second a header.
 * Make `PRESS`, `RELEASE`, and `TAP` accept multiple keys
 * Let `SOUND` use spaces in it's path if it has double quotes around it
 * Rework sound module to use the `sounddevice` library
