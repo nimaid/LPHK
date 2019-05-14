@@ -60,7 +60,7 @@ First, get a local copy of the GitHub repository. Click the green "Clone or down
 Before using the program, there are some dependencies/libraries that you will need to install:
 
 ### Linux Install/Run Instructions
-* Run `install_dependencies.sh`. If it fails, run with `sudo`.
+* Run `sudo install_dependencies.sh`.
 * Many distros will let you double click on `LPHK.py` to run it. If yours doesn't, look up how to associate `.py` files with the `python3` binary on your distro.
   * At this point, you should be able to use whatever functionality the program currently has.
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
@@ -70,7 +70,7 @@ Before using the program, there are some dependencies/libraries that you will ne
 * Install it, make a note of the default install location.
   * I suggest checking the option "Add Python 3.x to PATH", as it lets you easily use Python from the command line.
   * If performing a "Custom Installation" of Python 3, ensure "pip" and "tcl/tk and IDLE" are selected for install, at minimum.
-* Run "install_dependencies.bat" to install required libraries via pip, which you just installed with Python 3.
+* Run "install_dependencies.bat" AS AN ADMINISTRATOR to install required libraries via pip, which you just installed with Python 3.
 * After installing all dependencies, right click on LPHK.py and select "Open with", then "Look for another app on this PC". Browse to that install location you noted earlier and select "python.exe".
   * At this point, you should be able to use whatever functionality the program currently has.
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
