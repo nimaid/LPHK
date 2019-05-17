@@ -68,8 +68,8 @@ Before using the program, there are some dependencies/libraries that you will ne
 ### Windows Install/Run Instructions
 * First, download the lastest release of Python 3.x from https://www.python.org/.
 * Install it, make a note of the default install location.
-  * I suggest checking the option "Add Python 3.x to PATH", as it lets you easily use Python from the command line.
-  * If performing a "Custom Installation" of Python 3, ensure "pip" and "tcl/tk and IDLE" are selected for install, at minimum.
+  * **YOU MUST** check the option "Add Python 3.x to PATH", as it lets Python and it's programs be used from the command line.
+  * If performing a "Custom Installation" of Python 3, **YOU MUST** ensure "pip" and "tcl/tk and IDLE" are selected for install, at minimum.
 * Run "install_dependencies.bat" to install required libraries via pip, which you just installed with Python 3.
 * After installing all dependencies, right click on LPHK.py and select "Open with", then "Look for another app on this PC". Browse to that install location you noted earlier and select "python.exe".
   * At this point, you should be able to use whatever functionality the program currently has.
