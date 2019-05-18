@@ -277,6 +277,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
 ## What still needs to be written? (in order of priority)
+* Switch TAP delay and times
 * [Refactor code to make LPHKscript functions in auto-implementing modules, for ease of delevopment](https://github.com/nimaid/LPHK/issues/3)
   * A new testing branch will be created while the functional code is re-worked. To avoid merging issues, pull requests may have acceptance delayed until the refactor is complete.
   * There are a few complex refactoring tasks required for this, I will be crossing them off here on the testing branch:
