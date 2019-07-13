@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
+VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "OPEN_APP", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
 ASYNC_HEADERS = ["@ASYNC", "@SIMPLE"]
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -124,6 +124,12 @@ def run_script(script_str, x, y):
                 type_string = " ".join(split_line[1:])
                 print("[scripts] " + coords + "    Type out string " + type_string)
                 kb.keyboard.write(type_string)
+            elif split_line[0] == "OPEN_APP":
+                from sys import platform # need this for os check
+                if platform == "darwin": # check if the os is mac (currently work only for mac)
+                    app_name = line.split(' ', 1)[1] # remove the first word from line (OPEN_APP)
+                    app_name = app_name.replace(' ', '\ ') # replace ' ' with '\ ' for apps with more than one word
+                    os.system("open /Applications/"+app_name+".app")
             elif split_line[0] == "DELAY":
                 print("[scripts] " + coords + "    Delay for " + split_line[1] + " seconds")
                 
