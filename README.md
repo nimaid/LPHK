@@ -277,6 +277,10 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
 ## What still needs to be written? (in order of priority)
+* Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue atm, it will have the blue component ignored.
+* Make an installer for Windows and Mac
+* Rework sound module to use the `sounddevice` library
+* Add a `Sound` menu with `Choose default output device...` option
 * Switch TAP delay and times
 * [Refactor code to make LPHKscript functions in auto-implementing modules, for ease of delevopment](https://github.com/nimaid/LPHK/issues/3)
   * A new testing branch will be created while the functional code is re-worked. To avoid merging issues, pull requests may have acceptance delayed until the refactor is complete.
@@ -300,12 +304,10 @@ For all commands, the arguments cannot contain the following strings, as they ar
     * Deal with the Pandora's box that porting those functions will open (this list will probably grow)
     * Make a way for modules to use standard commands, and to use other modules
     * Take a drink and merge the branches
-* Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue atm, it will have the blue component ignored.
 * Simply strip comments and empty lines before sending to logic, that way, first line can be a comment and second a header.
 * Make `PRESS`, `RELEASE`, and `TAP` accept multiple keys
 * Let `SOUND` use spaces in it's path if it has double quotes around it
-* Rework sound module to use the `sounddevice` library
-* Add a `Sound` menu with `Choose default output device...` option
+* Add a `Choose default MIDI device` option to the `Sound` menu. (For multiple launchpads plugged in)
 * Add a third argument to `SOUND` for overriding the default sound device
 * Add variables and mathematical evaluation (mostly done!)
 * Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) 
