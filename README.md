@@ -221,7 +221,7 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * `backspace`
 * `caps_lock`
 * `cmd`
-* `crtl`
+* `ctrl`
 * `delete`
 * `down`
 * `end`
