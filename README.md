@@ -279,8 +279,16 @@ For all commands, the arguments cannot contain the following strings, as they ar
 ## What still needs to be written? (in order of priority)
 * Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue atm, it will have the blue component ignored.
 * Make an installer for Windows and Mac
+* Add `@LOAD_LAYOUT` header command to load a specified layout
+  * Check if layout currently exists when binding to a button (incl during load layout)
+    * If not, prompt user if they want to continue anyway
+* Add startup config file
+  * Default layout specification
+  * Auto connect setting
+  * Force launchpad model setting
 * Rework sound module to use the `sounddevice` library
 * Add a `Sound` menu with `Choose default output device...` option
+* Add a command to stop a playing sound... if possible.
 * Switch TAP delay and times
 * [Refactor code to make LPHKscript functions in auto-implementing modules, for ease of delevopment](https://github.com/nimaid/LPHK/issues/3)
   * A new testing branch will be created while the functional code is re-worked. To avoid merging issues, pull requests may have acceptance delayed until the refactor is complete.
@@ -324,9 +332,6 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Add `CMD` command to run OS commands
   * Make multi-level scary warning dialog boxes when binding to a button (incl during load layout)
   * Give option (and strongly reccomend its use) for users to run command once and verify it does what they want before binding to button (incl during load layout)
-* Add `@LOAD_LAYOUT` header command to load a specified layout
-  * Check if layout currently exists when binding to a button (incl during load layout)
-    * If not, prompt user if they want to continue anyway
 * MIDI output command? (Low priority)
 * Load layout header?
 
