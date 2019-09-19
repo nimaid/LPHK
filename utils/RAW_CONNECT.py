@@ -9,15 +9,15 @@ except ImportError:
 lp = launchpad.Launchpad()
 
 
-if lp.Check( 0, "mk2" ):
+if lp.Check( 0, "Launchpad MK2" ):
     lp = launchpad.LaunchpadMk2()
-    if lp.Open( 0, "mk2" ):
+    if lp.Open( 0, "Launchpad MK2" ):
         print('Connected to MkII! Yay!')
     else:
         raise Exception('MkII detected, but connection failed!')
-elif lp.Check( 0, "pro" ):
+elif lp.Check( 0, "Launchpad Pro" ):
     lp = launchpad.LaunchpadPro()
-    if lp.Open( 0, "pro" ):
+    if lp.Open( 0, "Launchpad Pro" ):
         print('Connected to Pro! Yay!')
     else:
         raise Exception('Pro detected, but connection failed!')
