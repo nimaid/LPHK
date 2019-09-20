@@ -16,6 +16,12 @@ DEFAULT_COLOR = [0, 0, 255]
 INDICATOR_BPM = 480
 BUTTON_FONT = ("helvetica", 11, "bold")
 
+MK2_NAME = "Launchpad MK2"
+PRO_NAME = "Launchpad Pro"
+CTRL_XL_NAME = "control xl"
+LAUNCHKEY_NAME = "launchkey"
+DICER_NAME = "dicer"
+
 launchpad = None
 
 root = None
@@ -108,9 +114,9 @@ class Main_Window(tk.Frame):
         global lp_mode
         global lp_object
         try:
-            if lp_object.Check( 0, "mk2" ):
+            if lp_object.Check( 0, MK2_NAME ):
                 lp_object = launchpad.LaunchpadMk2()
-                if lp_object.Open( 0, "mk2" ):
+                if lp_object.Open( 0, MK2_NAME ):
                     lp_connected = True
                     lp_mode = "Mk2"
                     lp_object.ButtonFlush()
@@ -122,9 +128,9 @@ class Main_Window(tk.Frame):
 
                     self.stat["text"] = "Connected to Launchpad MkII"
                     self.stat["bg"] = STAT_ACTIVE_COLOR                
-            elif lp_object.Check( 0, "pro" ):
+            elif lp_object.Check( 0, PRO_NAME ):
                 self.popup(self, "Connect to Launchpad Pro...", self.error_image, "There is currently no support for the Launchpad Pro.\nThis feature is planned for the future, see the GitHub page.", "OK")
-            elif lp_object.Check( 0, "control xl" ) or lp_object.Check( 0, "launchkey" ) or lp_object.Check( 0, "dicer" ):
+            elif lp_object.Check( 0, CTRL_XL_NAME ) or lp_object.Check( 0, LAUNCHKEY_NAME ) or lp_object.Check( 0, DICER_NAME ):
                 self.popup(self, "Connect to Unsupported Device...", self.error_image, "The device you are attempting to use is not currently supported by LPHK, and there are no plans to add support for it.\nPlease voice your feature requests on the Discord or on GitHub.", "OK")
             elif lp_object.Check():
                 if lp_object.Open():
