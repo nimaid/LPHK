@@ -286,6 +286,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * Default layout specification
   * Auto connect setting
   * Force launchpad model setting
+* Add partial Pro support (left and bottom rows not enabled)
 * Rework sound module to use the `sounddevice` library
 * Add a `Sound` menu with `Choose default output device...` option
 * Add a command to stop a playing sound... if possible.
@@ -323,7 +324,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Let program function as a layout editor without LP connection
 * Add syntax highlighting
 * Add GUI scaling
-* Support for Launchpad Pro
+* Full support for Launchpad Pro
   * The lack of tactile feedback, inability to utilize the pressure sensitive inputs (launchpad.py limitation), and inconvenient function keys where the hand rests makes support for the LP Pro a lower priority.
 * Add generalized macro recorder wizard
 * Make `Add Command...` menu that acts as a guided helper for making commands
