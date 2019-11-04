@@ -279,6 +279,9 @@ For all commands, the arguments cannot contain the following strings, as they ar
 ## What still needs to be written? (in order of priority)
 * Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue atm, it will have the blue component ignored.
 * Make an installer for Windows and Mac
+  * Should use a `conda` environment created from an `environment.yml` file
+  * Should copy LPHK files into an appropriate directory (like `Program Files`)
+  * Should give options to add various shortcuts
 * Add `@LOAD_LAYOUT` header command to load a specified layout
   * Check if layout currently exists when binding to a button (incl during load layout)
     * If not, prompt user if they want to continue anyway
@@ -286,6 +289,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * Default layout specification
   * Auto connect setting
   * Force launchpad model setting
+* Add `@PRESS_COLOR` command to set the active "blinking" color
 * Add partial Pro support (left and bottom rows not enabled)
 * Rework sound module to use the `sounddevice` library
 * Add a `Sound` menu with `Choose default output device...` option
