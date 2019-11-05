@@ -33,16 +33,19 @@ reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" 
 if %OS%==32BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe
 if %OS%==64BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
 
-set CONDAEXE="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%-condainstall.exe"
+set CONDAEXE=%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%-condainstall.exe
 
 echo Downloading Miniconda3...
-powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDAEXE%')"
+powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDAEXE%')" > nul
 if errorlevel 1 goto ERROREND
 
 echo Installing Miniconda3...
-start /wait /min "%CONDAEXE% /S /D=%USERPROFILE%\Miniconda3"
+start /wait /min %CONDAEXE% /InstallationType=JustMe /S /D=%USERPROFILE%\Miniconda3
 if errorlevel 1 goto CONDAERROR
 if not exist %USERPROFILE%\Miniconda3\ (goto CONDAERROR)
+
+%USERPROFILE%\Miniconda3\Scripts\conda.exe init
+if errorlevel 1 goto CONDAERROR
 
 echo Miniconda3 has been installed...
 echo Please re-run this installer in order to install LPHK!
@@ -65,7 +68,9 @@ goto NOINSTALLLPHK
 
 :INSTALLLPHK
 echo Installing LPHK...
-call conda env create -f %~dp0\environment.yml
+set STARTPATH=%CD%
+cd %~dp0
+call conda env create -f environment.yml
 if errorlevel 1 goto INSTALLLPHKFAIL
 
 call conda activate LPHK
@@ -73,8 +78,7 @@ FOR /F "tokens=*" %%g IN ('where python ^| findstr /R /C:"LPHK"') do (set LPHKPY
 call conda deactivate
 if errorlevel 1 goto INSTALLLPHKFAIL
 
-set STARTPATH=%CD%
-cd %~dp0\..
+cd ..
 set MAINDIR=%CD%
 cd %STARTPATH%
 
@@ -139,7 +143,7 @@ goto END
 echo Installation done! Shortcut created at %LINKPATH%
 
 set "AREYOUSURE="
-set /P AREYOUSURE=Install desktop shortcut? (Y/[N]) 
+set /P AREYOUSURE=Install desktop shortcut? (Y/[N])
 if /I "%AREYOUSURE%" EQU "Y" goto INSTALLSHORTCUT
 
 echo Run this installer again to uninstall LPHK.
