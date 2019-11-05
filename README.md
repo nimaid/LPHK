@@ -54,7 +54,7 @@ Yes! It does not have all the features I want just yet, and still has bugs, but 
 
 This is still WIP and still a beta version. See below for a todo list. I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help! You can see project updates and ask questions on the [official Discord server](https://discord.gg/mDCzB8X)! You can also donate on the [official Patreon page](https://www.patreon.com/user?u=16848673) to help speed up development, or just say thanks!
 
-## How do I use it?
+## How do I get it? (Installation)
 First, get a local copy of the GitHub repository. Click the green "Clone or download" button. The easiest path forward if you don't know what any of this this means is to then click "Download ZIP". Extract that .zip file, and you have a local copy of the repository!
 
 Before using the program, there are some dependencies/libraries that you will need to install:
@@ -91,7 +91,7 @@ ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
     * (If this fails, use "python LPHK.py".)
 
-### Program Usage (Post-Install)
+## How do I use it? (Post-Install)
 * Before starting the program, make sure your Launchpad Classic/Mini/S or MkII (for now, Pro is coming) is connected to the computer.
 * Click `Launchpad > Connect to Launchpad...`.
   * If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
