@@ -50,6 +50,7 @@ if defined LPHKENV goto ALREADYINSTALLED
 set /P AREYOUSURE=Install LPHK? (Y/[N]) 
 if /I "%AREYOUSURE%" NEQ "Y" goto NOINSTALLLPHK
 
+:INSTALLLPHK
 echo Installing LPHK...
 call conda env create -f %~dp0\environment.yml
 
@@ -83,6 +84,17 @@ goto END
 
 :ALREADYINSTALLED
 echo LPHK is already installed!
+set /P AREYOUSURE=Uninstall LPHK? (Y/[N]) 
+if /I "%AREYOUSURE%" NEQ "Y" goto UNINSTALLLPHK
+goto END
+
+:UNINSTALLLPHK
+echo Uninstalling LPHK...
+call conda env remove -n LPHK
+
+if not errorlevel 1 echo LPHK conda environment unistalled.
+if not errorlevel 1 echo Please manually delete shortcuts, program files, and if desired, uninstall Miniconda3.
+if not errorlevel 1 echo Run this installer again ro re-install.
 goto END
 
 :NOINSTALLCONDA
@@ -102,8 +114,8 @@ if not errorlevel 1 if /I "%AREYOUSURE%" NEQ "Y" goto ENDINSTALL
 if not errorlevel 1 set DESKTOPLINK=%USERPROFILE%\Desktop\
 if not errorlevel 1 copy "%LINKPATH%" "%DESKTOPLINK%"
 if not errorlevel 1 echo Copied shortcut to Desktop.
-
 goto END
 
 :END
+echo Program is done running, press enter to exit.
 pause
