@@ -40,13 +40,19 @@ powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDA
 if errorlevel 1 goto ERROREND
 
 echo Installing Miniconda3...
-start /wait %CONDAEXE% /InstallationType=JustMe /S /D=%USERPROFILE%\Miniconda3
-if errorlevel 1 goto ERROREND
+start /wait /min "%CONDAEXE% /S /D=%USERPROFILE%\Miniconda3"
+if errorlevel 1 goto CONDAERROR
+if not exist %USERPROFILE%\Miniconda3\ (goto CONDAERROR)
 
 echo Miniconda3 has been installed...
 echo Please re-run this installer in order to install LPHK!
 del %CONDAEXE%
 goto END
+
+:CONDAERROR
+echo Miniconda3 install failed!
+del %CONDAEXE%
+goto ERROREND
 
 :CONDADONE
 FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV=%%g)
@@ -88,7 +94,6 @@ echo oLink.Save >> %SHORTCUTSCRIPT%
 call cscript /nologo %SHORTCUTSCRIPT%
 del %SHORTCUTSCRIPT%
 if errorlevel 1 goto INSTALLLPHKFAIL
-
 goto DESKTOPLINKMAKE
 
 :INSTALLLPHKFAIL
