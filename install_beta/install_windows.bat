@@ -3,7 +3,9 @@ REM in making the installation process painless. All you have
 REM to do is install MiniConda 3 (or Anaconda 3).
 REM See https://docs.conda.io/en/latest/miniconda.html
 REM After installing that, run this. A shortcut should be
-REM created for LPHK in the main folder!
+REM created for LPHK in the main LPHK folder! Just copy that
+REM wherever you want, but don't move the LPHK folder, or it
+REM will break the shortcut.
 
 REM Please let me know if this does or does not work in the Discord!
 
@@ -65,3 +67,4 @@ echo LPHK is already installed!
 goto END
 
 :END
+pause
