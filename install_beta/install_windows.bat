@@ -1,3 +1,5 @@
+REM @echo off
+
 REM This is a beta installer script that is the first step
 REM in making the installation process painless. All you have
 REM to do is install MiniConda 3 (or Anaconda 3).
@@ -7,8 +9,6 @@ REM wherever you want, but don't move the LPHK folder, or it
 REM will break the shortcut.
 
 REM Please let me know if this does or does not work in the Discord!
-
-@echo off
 
 set "LPHKENV="
 set "LPHKPYTHON="
@@ -23,9 +23,12 @@ where conda >nul 2>nul
 if %ERRORLEVEL% EQU 0 goto CONDADONE
 
 :NOCONDA
+set "AREYOUSURE="
 set /P AREYOUSURE=No conda found. Install Miniconda3? (Y/[N]) 
-if /I "%AREYOUSURE%" NEQ "Y" goto NOINSTALLCONDA
+if /I "%AREYOUSURE%" EQU "Y" goto INSTALLCONDA
+goto NOINSTALLCONDA
 
+:INSTALLCONDA
 reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OS=32BIT || set OS=64BIT
 if %OS%==32BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe
 if %OS%==64BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
@@ -47,8 +50,10 @@ goto END
 FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV=%%g)
 if defined LPHKENV goto ALREADYINSTALLED
 
+set "AREYOUSURE="
 set /P AREYOUSURE=Install LPHK? (Y/[N]) 
-if /I "%AREYOUSURE%" NEQ "Y" goto NOINSTALLLPHK
+if /I "%AREYOUSURE%" EQU "Y" goto INSTALLLPHK
+goto NOINSTALLLPHK
 
 :INSTALLLPHK
 echo Installing LPHK...
@@ -84,9 +89,10 @@ goto END
 
 :ALREADYINSTALLED
 echo LPHK is already installed!
+set "AREYOUSURE="
 set /P AREYOUSURE=Uninstall LPHK? (Y/[N]) 
-if /I "%AREYOUSURE%" NEQ "Y" goto UNINSTALLLPHK
-goto END
+if /I "%AREYOUSURE%" EQU "Y" goto UNINSTALLLPHK
+goto NOUNINSTALLLPHK
 
 :UNINSTALLLPHK
 echo Uninstalling LPHK...
@@ -95,6 +101,14 @@ call conda env remove -n LPHK
 if not errorlevel 1 echo LPHK conda environment unistalled.
 if not errorlevel 1 echo Please manually delete shortcuts, program files, and if desired, uninstall Miniconda3.
 if not errorlevel 1 echo Run this installer again ro re-install.
+goto END
+
+:NOUNINSTALLLPHK
+echo Not uninstalling LPHK, exiting...
+goto END
+
+:NOINSTALLLPHK
+echo Not installing LPHK, exiting...
 goto END
 
 :NOINSTALLCONDA
@@ -108,14 +122,17 @@ goto END
 :DESKTOPLINKMAKE
 echo Installation done! Shortcut created at %LINKPATH%
 
-if not errorlevel 1 set /P AREYOUSURE=Install desktop shortcut? (Y/[N]) 
-if not errorlevel 1 if /I "%AREYOUSURE%" NEQ "Y" goto ENDINSTALL
+set "AREYOUSURE="
+set /P AREYOUSURE=Install desktop shortcut? (Y/[N]) 
+if /I "%AREYOUSURE%" EQU "Y" goto INSTALLSHORTCUT
+goto END
 
-if not errorlevel 1 set DESKTOPLINK=%USERPROFILE%\Desktop\
-if not errorlevel 1 copy "%LINKPATH%" "%DESKTOPLINK%"
+:INSTALLSHORTCUT
+set DESKTOPLINK=%USERPROFILE%\Desktop\
+copy "%LINKPATH%" "%DESKTOPLINK%"
 if not errorlevel 1 echo Copied shortcut to Desktop.
 goto END
 
 :END
-echo Program is done running, press enter to exit.
+echo LPHK installer is done running.
 pause
