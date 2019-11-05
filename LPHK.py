@@ -51,7 +51,7 @@ def shutdown():
 
 def main():
     init()
-    window.init(lp, launchpad)
+    window.init(lp, launchpad, PATH)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
 

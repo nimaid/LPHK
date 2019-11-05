@@ -22,6 +22,8 @@ CTRL_XL_NAME = "control xl"
 LAUNCHKEY_NAME = "launchkey"
 DICER_NAME = "dicer"
 
+PATH = None
+
 launchpad = None
 
 root = None
@@ -37,11 +39,13 @@ lp_connected = False
 lp_mode = None
 colors_to_set = [[DEFAULT_COLOR for y in range(9)] for x in range(9)]
 
-def init(lp_object_in, launchpad_in):
+def init(lp_object_in, launchpad_in, path_in):
     global lp_object
     global launchpad
+    global PATH
     lp_object = lp_object_in
     launchpad = launchpad_in
+    PATH = path_in
 
     make()
 
@@ -51,11 +55,11 @@ class Main_Window(tk.Frame):
         self.master = master
         self.init_window()
 
-        self.info_image = ImageTk.PhotoImage(Image.open("resources/info.png"))
-        self.warning_image = ImageTk.PhotoImage(Image.open("resources/warning.png"))
-        self.error_image = ImageTk.PhotoImage(Image.open("resources/error.png"))
-        self.alert_image = ImageTk.PhotoImage(Image.open("resources/alert.png"))
-        self.scare_image = ImageTk.PhotoImage(Image.open("resources/scare.png"))
+        self.info_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/info.png"))
+        self.warning_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/warning.png"))
+        self.error_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/error.png"))
+        self.alert_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/alert.png"))
+        self.scare_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/scare.png"))
         self.grid_drawn = False
         self.grid_rects = [[None for y in range(9)] for x in range(9)]
         self.button_mode = "edit"
