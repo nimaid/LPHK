@@ -23,37 +23,36 @@ set "SHORTCUTSCRIPT="
 where conda >nul 2>nul
 if %ERRORLEVEL% NEQ 0 goto NOCONDA
 
-
 FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV=%%g)
 if defined LPHKENV goto ALREADYINSTALLED
 
 echo Installing LPHK...
 call conda env create -f %~dp0\environment.yml
 
-call conda activate LPHK
-FOR /F "tokens=*" %%g IN ('where python ^| findstr /R /C:"LPHK"') do (set LPHKPYTHON=%%g)
-call conda deactivate
+if not errorlevel 1 call conda activate LPHK
+if not errorlevel 1 FOR /F "tokens=*" %%g IN ('where python ^| findstr /R /C:"LPHK"') do (set LPHKPYTHON=%%g)
+if not errorlevel 1 call conda deactivate
 
-set STARTPATH=%CD%
-cd %~dp0\..
-set MAINDIR=%CD%
-cd %STARTPATH%
+if not errorlevel 1 set STARTPATH=%CD%
+if not errorlevel 1 cd %~dp0\..
+if not errorlevel 1 set MAINDIR=%CD%
+if not errorlevel 1 cd %STARTPATH%
 
-set LPHKSCRIPT=%MAINDIR%\LPHK.py
+if not errorlevel 1 set LPHKSCRIPT=%MAINDIR%\LPHK.py
 
-set LINKPATH=%MAINDIR%\LPHK.lnk
-set LPHKICON=%MAINDIR%\resources\LPHK.ico
+if not errorlevel 1 set LINKPATH=%MAINDIR%\LPHK.lnk
+if not errorlevel 1 set LPHKICON=%MAINDIR%\resources\LPHK.ico
 
-set SHORTCUTSCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
-echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SHORTCUTSCRIPT%
-echo sLinkFile = "%LINKPATH%" >> %SHORTCUTSCRIPT%
-echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SHORTCUTSCRIPT%
-echo oLink.TargetPath = "%LPHKPYTHON%" >> %SHORTCUTSCRIPT%
-echo oLink.Arguments = "%LPHKSCRIPT%" >> %SHORTCUTSCRIPT%
-echo oLink.IconLocation = "%LPHKICON%" >> %SHORTCUTSCRIPT%
-echo oLink.Save >> %SHORTCUTSCRIPT%
-call cscript /nologo %SHORTCUTSCRIPT%
-del %SHORTCUTSCRIPT%
+if not errorlevel 1 set SHORTCUTSCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
+if not errorlevel 1 echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SHORTCUTSCRIPT%
+if not errorlevel 1 echo sLinkFile = "%LINKPATH%" >> %SHORTCUTSCRIPT%
+if not errorlevel 1 echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SHORTCUTSCRIPT%
+if not errorlevel 1 echo oLink.TargetPath = "%LPHKPYTHON%" >> %SHORTCUTSCRIPT%
+if not errorlevel 1 echo oLink.Arguments = "%LPHKSCRIPT%" >> %SHORTCUTSCRIPT%
+if not errorlevel 1 echo oLink.IconLocation = "%LPHKICON%" >> %SHORTCUTSCRIPT%
+if not errorlevel 1 echo oLink.Save >> %SHORTCUTSCRIPT%
+if not errorlevel 1 call cscript /nologo %SHORTCUTSCRIPT%
+if not errorlevel 1 del %SHORTCUTSCRIPT%
 
 echo Installation done! Shortcut created at %LINKPATH%
 goto END
