@@ -3,10 +3,12 @@
 REM This is a beta installer script that is the first step
 REM in making the installation process painless. All you have
 REM to do is run this. It will install Miniconda3 if you don't
-REM have a conda installation. A shortcut should be
-REM created for LPHK in the main LPHK folder! Just copy that
-REM wherever you want, but don't move the LPHK folder, or it
-REM will break the shortcut.
+REM have a conda installation, then you should run this again.
+REM A shortcut will be created for LPHK in the main LPHK folder.
+REM It will also offer to create a desktop shortcut. Just don't move
+REM the LPHK folder, or it will break the shortcut. If you wish to
+REM uninstall, run this after LPHK is installed. You will have to
+REM remove the shortcuts, and manually delete the files.
 
 REM Please let me know if this does or does not work in the Discord!
 
