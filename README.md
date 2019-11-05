@@ -77,7 +77,7 @@ Before using the program, there are some dependencies/libraries that you will ne
 * To run LPHK, click the shortcut. Clicking the `LPHK.py` file will not work with this method.
   * The command to run LPHK is `%USERPROFILE%\Anaconda3\envs\LPHK\python.exe _[your lphk directory]_\LPHK.py`
 
-**~~~~~~~~~ LEGACY INSTALL INSTRUCTIONS ~~~~~~~~~**
+** ~~~~~~~~~ LEGACY INSTALL INSTRUCTIONS ~~~~~~~~~ **
 
 **ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR AS AN ISSUE.**
 
