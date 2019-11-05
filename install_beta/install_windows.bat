@@ -145,7 +145,7 @@ set DESKTOPLINK=%USERPROFILE%\Desktop\
 copy "%LINKPATH%" "%DESKTOPLINK%"
 if errorlevel 1 goto ERROREND
 
-echo Copied shortcut to Desktop.
+echo Copied shortcut to desktop.
 echo Run this installer again to uninstall LPHK.
 goto END
 
