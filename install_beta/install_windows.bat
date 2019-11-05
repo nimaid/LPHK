@@ -102,7 +102,7 @@ goto DESKTOPLINKMAKE
 
 :INSTALLLPHKFAIL
 call conda env remove -n LPHK
-rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q
+rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q > nul
 goto ERROREND
 
 :ALREADYINSTALLED
@@ -115,7 +115,7 @@ goto NOUNINSTALLLPHK
 :UNINSTALLLPHK
 echo Uninstalling LPHK...
 call conda env remove -n LPHK
-rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q
+rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q > nul
 if errorlevel 1 goto ERROREND
 
 echo LPHK conda environment unistalled.
