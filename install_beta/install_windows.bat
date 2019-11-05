@@ -20,6 +20,11 @@ set "LPHKSCRIPT="
 set "LINKPATH="
 set "LPHKICON="
 set "SHORTCUTSCRIPT="
+set "MINICONDAPATH="
+set "CONDAEXE="
+set "OS="
+set "MCLINK="
+set "DESKTOPLINK="
 
 where conda >nul 2>nul
 if %ERRORLEVEL% EQU 0 goto CONDADONE
@@ -42,11 +47,12 @@ powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDA
 if errorlevel 1 goto ERROREND
 
 echo Installing Miniconda3...
-start /wait /min %CONDAEXE% /InstallationType=JustMe /S /D=%USERPROFILE%\Miniconda3
+set MINICONDAPATH=%USERPROFILE%\Miniconda3
+start /wait /min %CONDAEXE% /InstallationType=JustMe /S /D=%MINICONDAPATH%
 if errorlevel 1 goto CONDAERROR
-if not exist %USERPROFILE%\Miniconda3\ (goto CONDAERROR)
+if not exist %MINICONDAPATH%\ (goto CONDAERROR)
 
-%USERPROFILE%\Miniconda3\Scripts\conda.exe init
+%MINICONDAPATH%\Scripts\conda.exe init
 if errorlevel 1 goto CONDAERROR
 
 echo Miniconda3 has been installed...
