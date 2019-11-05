@@ -1,4 +1,4 @@
-REM @echo off
+@echo off
 
 REM This is a beta installer script that is the first step
 REM in making the installation process painless. All you have
@@ -37,12 +37,14 @@ set CONDAEXE="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%-condainstall.exe"
 
 echo Downloading Miniconda3...
 powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDAEXE%')"
+if errorlevel 1 goto ERROREND
 
-if not errorlevel 1 echo Installing Miniconda3...
-if not errorlevel 1 start /wait %CONDAEXE% /InstallationType=JustMe /S /D=%USERPROFILE%\Miniconda3
+echo Installing Miniconda3...
+start /wait %CONDAEXE% /InstallationType=JustMe /S /D=%USERPROFILE%\Miniconda3
+if errorlevel 1 goto ERROREND
 
-if not errorlevel 1 echo Miniconda3 has been installed...
-if not errorlevel 1 echo Please re-run this installer in order to install LPHK!
+echo Miniconda3 has been installed...
+echo Please re-run this installer in order to install LPHK!
 del %CONDAEXE%
 goto END
 
@@ -58,34 +60,41 @@ goto NOINSTALLLPHK
 :INSTALLLPHK
 echo Installing LPHK...
 call conda env create -f %~dp0\environment.yml
+if errorlevel 1 goto INSTALLLPHKFAIL
 
-if not errorlevel 1 call conda activate LPHK
-if not errorlevel 1 FOR /F "tokens=*" %%g IN ('where python ^| findstr /R /C:"LPHK"') do (set LPHKPYTHON=%%g)
-if not errorlevel 1 call conda deactivate
+call conda activate LPHK
+FOR /F "tokens=*" %%g IN ('where python ^| findstr /R /C:"LPHK"') do (set LPHKPYTHON=%%g)
+call conda deactivate
+if errorlevel 1 goto INSTALLLPHKFAIL
 
-if not errorlevel 1 set STARTPATH=%CD%
-if not errorlevel 1 cd %~dp0\..
-if not errorlevel 1 set MAINDIR=%CD%
-if not errorlevel 1 cd %STARTPATH%
+set STARTPATH=%CD%
+cd %~dp0\..
+set MAINDIR=%CD%
+cd %STARTPATH%
 
-if not errorlevel 1 set LPHKSCRIPT=%MAINDIR%\LPHK.py
+set LPHKSCRIPT=%MAINDIR%\LPHK.py
 
-if not errorlevel 1 set LINKPATH=%MAINDIR%\LPHK.lnk
-if not errorlevel 1 set LPHKICON=%MAINDIR%\resources\LPHK.ico
+set LINKPATH=%MAINDIR%\LPHK.lnk
+set LPHKICON=%MAINDIR%\resources\LPHK.ico
 
-if not errorlevel 1 set SHORTCUTSCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
-if not errorlevel 1 echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SHORTCUTSCRIPT%
-if not errorlevel 1 echo sLinkFile = "%LINKPATH%" >> %SHORTCUTSCRIPT%
-if not errorlevel 1 echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SHORTCUTSCRIPT%
-if not errorlevel 1 echo oLink.TargetPath = "%LPHKPYTHON%" >> %SHORTCUTSCRIPT%
-if not errorlevel 1 echo oLink.Arguments = "%LPHKSCRIPT%" >> %SHORTCUTSCRIPT%
-if not errorlevel 1 echo oLink.IconLocation = "%LPHKICON%" >> %SHORTCUTSCRIPT%
-if not errorlevel 1 echo oLink.Save >> %SHORTCUTSCRIPT%
-if not errorlevel 1 call cscript /nologo %SHORTCUTSCRIPT%
-if not errorlevel 1 del %SHORTCUTSCRIPT%
+set SHORTCUTSCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
+echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SHORTCUTSCRIPT%
+echo sLinkFile = "%LINKPATH%" >> %SHORTCUTSCRIPT%
+echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SHORTCUTSCRIPT%
+echo oLink.TargetPath = "%LPHKPYTHON%" >> %SHORTCUTSCRIPT%
+echo oLink.Arguments = "%LPHKSCRIPT%" >> %SHORTCUTSCRIPT%
+echo oLink.IconLocation = "%LPHKICON%" >> %SHORTCUTSCRIPT%
+echo oLink.Save >> %SHORTCUTSCRIPT%
+call cscript /nologo %SHORTCUTSCRIPT%
+del %SHORTCUTSCRIPT%
+if errorlevel 1 goto INSTALLLPHKFAIL
 
-if not errorlevel 1 goto DESKTOPLINKMAKE
-goto END
+goto DESKTOPLINKMAKE
+
+:INSTALLLPHKFAIL
+call conda env remove -n LPHK
+rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q
+goto ERROREND
 
 :ALREADYINSTALLED
 echo LPHK is already installed!
@@ -97,10 +106,12 @@ goto NOUNINSTALLLPHK
 :UNINSTALLLPHK
 echo Uninstalling LPHK...
 call conda env remove -n LPHK
+rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q
+if errorlevel 1 goto ERROREND
 
-if not errorlevel 1 echo LPHK conda environment unistalled.
-if not errorlevel 1 echo Please manually delete shortcuts, program files, and if desired, uninstall Miniconda3.
-if not errorlevel 1 echo Run this installer again ro re-install.
+echo LPHK conda environment unistalled.
+echo Please manually delete shortcuts, program files, and if desired, uninstall Miniconda3.
+echo Run this installer again ro re-install.
 goto END
 
 :NOUNINSTALLLPHK
@@ -125,12 +136,22 @@ echo Installation done! Shortcut created at %LINKPATH%
 set "AREYOUSURE="
 set /P AREYOUSURE=Install desktop shortcut? (Y/[N]) 
 if /I "%AREYOUSURE%" EQU "Y" goto INSTALLSHORTCUT
+
+echo Run this installer again to uninstall LPHK.
 goto END
 
 :INSTALLSHORTCUT
 set DESKTOPLINK=%USERPROFILE%\Desktop\
 copy "%LINKPATH%" "%DESKTOPLINK%"
-if not errorlevel 1 echo Copied shortcut to Desktop.
+if errorlevel 1 goto ERROREND
+
+echo Copied shortcut to Desktop.
+echo Run this installer again to uninstall LPHK.
+goto END
+
+:ERROREND
+echo The installer has failed!
+echo Please try running again, or seek help in the Discord.
 goto END
 
 :END
