@@ -2,9 +2,9 @@ name: LPHK
 channels:
   - defaults
 dependencies:
-  - pillow
+  - python=3.7*
   - pip
-  - python
+  - pillow
   - tk
   - pip:
     - keyboard
