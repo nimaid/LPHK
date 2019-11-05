@@ -75,7 +75,7 @@ THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS
 * After the installation is done, it will ask if you would like to make a desktop shortcut.
   * I reccomend you answer `y`, but if you don't want one, you can find the shortcut in the LPHK main folder. 
 * To run LPHK, click the shortcut. Clicking the `LPHK.py` file will not work with this method.
-  * The command to run LPHK is `%USERPROFILE%\Anaconda3\envs\LPHK\python.exe _[your lphk directory]_\LPHK.py`
+  * The command to run LPHK is `%USERPROFILE%\Anaconda3\envs\LPHK\python.exe [your lphk directory]\LPHK.py`
 
 ---------- LEGACY WINDOWS INSTALL INSTRUCTIONS ----------
 
