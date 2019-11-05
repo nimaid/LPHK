@@ -4,11 +4,11 @@ channels:
 dependencies:
   - python=3.7*
   - pip
-  - pillow
   - tk
   - pip:
     - keyboard
     - launchpad-py
+    - pillow
     - pygame
     - pynput
     - tkcolorpicker
