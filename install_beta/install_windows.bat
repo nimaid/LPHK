@@ -23,12 +23,20 @@ where conda >nul 2>nul
 if %ERRORLEVEL% EQU 0 goto CONDADONE
 
 :NOCONDA
+set /P AREYOUSURE=No conda found. Install MiniConda3? (Y/[N]) 
+if /I "%AREYOUSURE%" NEQ "Y" goto NOINSTALLCONDA
+
+echo Installing MiniConda3...
 reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OS=32BIT || set OS=64BIT
 if %OS%==32BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe
 if %OS%==64BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
 
+set CONDAEXE="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%-condainstall.exe"
+
+powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDAEXE%')"
+
 echo Please install MiniConda3 before attempting to install LPHK.
-echo Download it here: %MCLINK%
+echo Run it here: %CONDAEXE%
 goto END
 
 :CONDADONE
@@ -68,6 +76,10 @@ goto END
 
 :ALREADYINSTALLED
 echo LPHK is already installed!
+goto END
+
+:NOINSTALLCONDA
+echo Not installing MiniConda3, exiting...
 goto END
 
 :END
