@@ -23,25 +23,32 @@ where conda >nul 2>nul
 if %ERRORLEVEL% EQU 0 goto CONDADONE
 
 :NOCONDA
-set /P AREYOUSURE=No conda found. Install MiniConda3? (Y/[N]) 
+set /P AREYOUSURE=No conda found. Install Miniconda3? (Y/[N]) 
 if /I "%AREYOUSURE%" NEQ "Y" goto NOINSTALLCONDA
 
-echo Installing MiniConda3...
 reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OS=32BIT || set OS=64BIT
 if %OS%==32BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe
 if %OS%==64BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
 
 set CONDAEXE="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%-condainstall.exe"
 
+echo Downloading Miniconda3...
 powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDAEXE%')"
 
-echo Please install MiniConda3 before attempting to install LPHK.
-echo Run it here: %CONDAEXE%
+if not errorlevel 1 echo Installing Miniconda3...
+if not errorlevel 1 start /wait %CONDAEXE% /InstallationType=JustMe /S /D=%USERPROFILE%\Miniconda3
+
+if not errorlevel 1 echo Miniconda3 has been installed...
+if not errorlevel 1 echo Please re-run this installer in order to install LPHK!
+del %CONDAEXE%
 goto END
 
 :CONDADONE
 FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV=%%g)
 if defined LPHKENV goto ALREADYINSTALLED
+
+set /P AREYOUSURE=Install LPHK? (Y/[N]) 
+if /I "%AREYOUSURE%" NEQ "Y" goto NOINSTALLLPHK
 
 echo Installing LPHK...
 call conda env create -f %~dp0\environment.yml
@@ -71,7 +78,7 @@ if not errorlevel 1 echo oLink.Save >> %SHORTCUTSCRIPT%
 if not errorlevel 1 call cscript /nologo %SHORTCUTSCRIPT%
 if not errorlevel 1 del %SHORTCUTSCRIPT%
 
-echo Installation done! Shortcut created at %LINKPATH%
+if not errorlevel 1 goto DESKTOPLINKMAKE
 goto END
 
 :ALREADYINSTALLED
@@ -80,6 +87,22 @@ goto END
 
 :NOINSTALLCONDA
 echo Not installing MiniConda3, exiting...
+goto END
+
+:NOINSTALLCONDA
+echo Not installing LPHK, exiting...
+goto END
+
+:DESKTOPLINKMAKE
+echo Installation done! Shortcut created at %LINKPATH%
+
+if not errorlevel 1 set /P AREYOUSURE=Install desktop shortcut? (Y/[N]) 
+if not errorlevel 1 if /I "%AREYOUSURE%" NEQ "Y" goto ENDINSTALL
+
+if not errorlevel 1 set DESKTOPLINK=%USERPROFILE%\Desktop\
+if not errorlevel 1 copy "%LINKPATH%" "%DESKTOPLINK%"
+if not errorlevel 1 echo Copied shortcut to Desktop.
+
 goto END
 
 :END
