@@ -66,6 +66,21 @@ Before using the program, there are some dependencies/libraries that you will ne
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
 
 ### Windows Install/Run Instructions
+**THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY INSTALL INSTRUCTIONS`.**
+
+* Run `install_beta\install_windows.bat` by double clicking it.
+* If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3. Type `y` and press `enter`.
+  * After installing Miniconda3, you will have to press `enter` to close the window, then run the `install_windows.bat` file again.
+* If a conda distribution is installed (as in the above step), it will prompt you if you want to install LPHK. Type `y` and press `enter`.
+* After the installation is done, it will ask if you would like to make a desktop shortcut.
+  * I reccomend you answer `y`, but if you don't want one, you can find the shortcut in the LPHK main folder. 
+* To run LPHK, click the shortcut. Clicking the `LPHK.py` file will not work with this method.
+  * The command to run LPHK is `%USERPROFILE%\Anaconda3\envs\LPHK\python.exe _[your lphk directory]_\LPHK.py`
+
+**~~~~~~~~~ LEGACY INSTALL INSTRUCTIONS ~~~~~~~~~**
+
+**ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR AS AN ISSUE.**
+
 * First, download the lastest release of Python 3.x from https://www.python.org/.
 * Install it, make a note of the default install location.
   * **YOU MUST** check the option "Add Python 3.x to PATH", as it lets Python and it's programs be used from the command line.
