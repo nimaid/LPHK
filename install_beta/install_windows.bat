@@ -1,7 +1,6 @@
 REM This is a beta installer script that is the first step
 REM in making the installation process painless. All you have
 REM to do is install MiniConda 3 (or Anaconda 3).
-REM See https://docs.conda.io/en/latest/miniconda.html
 REM After installing that, run this. A shortcut should be
 REM created for LPHK in the main LPHK folder! Just copy that
 REM wherever you want, but don't move the LPHK folder, or it
@@ -21,8 +20,18 @@ set "LPHKICON="
 set "SHORTCUTSCRIPT="
 
 where conda >nul 2>nul
-if %ERRORLEVEL% NEQ 0 goto NOCONDA
+if %ERRORLEVEL% EQU 0 goto CONDADONE
 
+:NOCONDA
+reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OS=32BIT || set OS=64BIT
+if %OS%==32BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe
+if %OS%==64BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
+
+echo Please install MiniConda3 before attempting to install LPHK.
+echo Download it here: %MCLINK%
+goto END
+
+:CONDADONE
 FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV=%%g)
 if defined LPHKENV goto ALREADYINSTALLED
 
@@ -55,10 +64,6 @@ if not errorlevel 1 call cscript /nologo %SHORTCUTSCRIPT%
 if not errorlevel 1 del %SHORTCUTSCRIPT%
 
 echo Installation done! Shortcut created at %LINKPATH%
-goto END
-
-:NOCONDA
-echo Please install either Anaconda or MiniConda before attempting to install LPHK.
 goto END
 
 :ALREADYINSTALLED
