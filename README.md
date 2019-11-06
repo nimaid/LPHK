@@ -44,7 +44,7 @@ Because it could be immensely useful for a wide variety of tasks, such as:
 * Programming, to bind:
   * Commenting code
   * Autotyping function/loop templates
-  * Compiling/excuting
+  * Compiling/executing
   * Breakpoints
   * Debugger
 * ... and many more!
@@ -57,7 +57,7 @@ This is still WIP and still a beta version. See below for a todo list. I have a 
 ## How do I get it? (Installation)
 First, get a local copy of the GitHub repository. Click the green "Clone or download" button. The easiest path forward if you don't know what any of this this means is to then click "Download ZIP". Extract that .zip file, and you have a local copy of the repository!
 
-Before using the program, there are some dependencies/libraries that you will need to install:
+Before using the program, we need to install some things:
 
 ### Linux Install/Run Instructions
 * Run `install_dependencies.sh`. If it fails, run with `sudo`.
@@ -73,15 +73,15 @@ THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS
   * After installing Miniconda3, you will have to press `enter` to close the window, then run the `install_windows.bat` file again.
 * If a conda distribution is installed (as in the above step), it will prompt you if you want to install LPHK. Type `y` and press `enter`.
 * After the installation is done, it will ask if you would like to make a desktop shortcut.
-  * I reccomend you answer `y`, but if you don't want one, you can find the shortcut in the LPHK main folder. 
+  * I recommend you answer `y`, but if you don't want one, you can find the shortcut in the LPHK main folder. 
 * To run LPHK, click the shortcut. Clicking the `LPHK.py` file will not work with this method.
   * The command to run LPHK is `%USERPROFILE%\Anaconda3\envs\LPHK\python.exe [your lphk directory]\LPHK.py`
 
----------- LEGACY WINDOWS INSTALL INSTRUCTIONS ----------
+---- LEGACY WINDOWS INSTALL INSTRUCTIONS ----
 
 ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR AS AN ISSUE.
 
-* First, download the lastest release of Python 3.x from https://www.python.org/.
+* First, download the latest release of Python 3.x from https://www.python.org/.
 * Install it, make a note of the default install location.
   * **YOU MUST** check the option "Add Python 3.x to PATH", as it lets Python and it's programs be used from the command line.
   * If performing a "Custom Installation" of Python 3, **YOU MUST** ensure "pip" and "tcl/tk and IDLE" are selected for install, at minimum.
@@ -115,7 +115,7 @@ ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR
 * Go to `Layout > Save layout as...` to save your current layout for future use, colors and all.
 * Go to `Layout > Load layout...` to load an existing layout. Examples are in `user_layouts/examples/`.
 
-#### The whole GUI is still rough around the edges, so don't be too supprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :) And don't feel shy making feature requests, either!
+#### The whole GUI is still rough around the edges, so don't be too surprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :) And don't feel shy making feature requests, either!
 
 ## What is LPHKscript?
 LPHKscript is a simple macro scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript.
@@ -132,7 +132,7 @@ Headers are commands that start with `@` and go on the first line of a script. T
 There is one exception to the scheduling system. If the script has the `@ASYNC` header, it will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. If this is used, it must be on the very first line.
 
 #### The `@SIMPLE` Header
-This is a quick way to bind a controller button to a simple keypress of (argument 1). This has the equivilant code to:
+This is a quick way to bind a controller button to a simple keypress of (argument 1). This has the equivalent code to:
 ```
 @ASYNC
 PRESS (argument 1)
@@ -145,7 +145,7 @@ If this is used, all other lines in the file must either be whitespace or commen
 Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. If a header is used, a comment cannot come before the header, as those must be on the first line, always.
 
 ### Commands List
-Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines seperating commands.
+Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines separating commands.
 
 * **Utility**
   * `DELAY`
@@ -226,7 +226,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * Scrolls the mouse vertically by (argument 1).
     * If (argument 2) supplied, scroll horizontally by (argument 2).
   * `M_SET`
-    * Sets the absolute cursor posistion to (argument 1) horizontal and (argument 2) vertical.
+    * Sets the absolute cursor position to (argument 1) horizontal and (argument 2) vertical.
   * `M_STORE`
     * Stores the current mouse position for use with the `M_RECALL*` commands.
 
@@ -275,15 +275,15 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * `LPHK_NEWLINE_REP`
 
 ## Known Issues / Troubleshooting
-* The USB connection on the Launchpads, quite frankly, suck. If the angle is wrong, the Launchpad may recieve power, but will not be able to transmit or recieve data. While using the Launchpad, if you wiggle the connection somehow, it will straight up break the MIDI library I use. You will have to do the following:
+* The USB connection on the Launchpads, quite frankly, suck. If the angle is wrong, the Launchpad may receive power, but will not be able to transmit or receive data. While using the Launchpad, if you wiggle the connection somehow, it will straight up break the MIDI library I use. You will have to do the following:
   * Click on "Launchpad > Disconnect from Launchpad xxx..."
   * Unplug your Launchpad and wait about 5 seconds for the capacitors inside the Launchpad to drain. (It stays powered for a few seconds after losing it's connection, we want it dead as a doorknob)
   * Connect the Launchpad via USB
     * If you see the rainbow wipe effect and are left with no lights on, the connection is good
-    * If the pad has psychadelic waves of colors exploding everywhere, it is getting power but cannot transmit or recieve data. Try again, maybe with a different cable
+    * If the pad has psychedelic waves of colors exploding everywhere, it is getting power but cannot transmit or receive data. Try again, maybe with a different cable
     * If it does not light up at all, try again with a different cable or USB port
   * Click on "Launchpad > Redetect...". This will kill the program and restart it. This resets the MIDI library
-  * If this does not fix the problem, or if the LP can connect and light up, but not recieve input:
+  * If this does not fix the problem, or if the LP can connect and light up, but not receive input:
     * Try a different cable
     * Try a different USB port
     * Unplug and restart the program manually
@@ -292,7 +292,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
 ## What still needs to be written? (in order of priority)
-* Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue atm, it will have the blue component ignored.
+* Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue ATM, it will have the blue component ignored.
 * Make an installer for Windows and Mac
   * Should use a `conda` environment created from an `environment.yml` file
   * Should copy LPHK files into an appropriate directory (like `Program Files`)
@@ -351,7 +351,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * Add keyboard event capture (incl. unknown keycodes) to `Add Commands...` menu boxes
 * Add `CMD` command to run OS commands
   * Make multi-level scary warning dialog boxes when binding to a button (incl during load layout)
-  * Give option (and strongly reccomend its use) for users to run command once and verify it does what they want before binding to button (incl during load layout)
+  * Give option (and strongly recommend its use) for users to run command once and verify it does what they want before binding to button (incl during load layout)
 * MIDI output command? (Low priority)
 * Load layout header?
 
@@ -402,10 +402,10 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Do not prompt to save blank layout~~
 * ~~Do not warn about moving/copying to the same button~~
 * ~~Make script being edited highlighted~~
-* ~~Fix wierd bug where GOTO and DELAY didn't obey a kill command (caught on video)~~
+* ~~Fix weird bug where GOTO and DELAY didn't obey a kill command (caught on video)~~
 * ~~Add `OPEN` command to open folders and files~~
 * ~~Add `RELEASE_ALL` command~~
 * ~~Add `RESET_REPEATS` command to reset the counter on all repeats~~
 * ~~Basic support for Launchpad Classic/S/Mini~~
   * Thanks to Patreon patron Korbinian Maag for fully funding the purchase of a LP Mini for developing this feature!
-  * Includes Behringer CMD Touch TC64 in Novation compatability mode
+  * Includes Behringer CMD Touch TC64 in Novation compatibility mode
