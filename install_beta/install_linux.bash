@@ -6,6 +6,7 @@ CONDA=
 DOINSTALLCONDA=
 DOINSTALLLPHK=
 DOUNINSTALLLPHK=
+DOUNINSTALLMC=
 
 SCRIPTDIR=$(dirname $0)
 CONDAENVDIR=~/.conda/envs
@@ -24,21 +25,33 @@ function prompt_yn () {
 	fi
 }
 
+function exit_if_error () {
+	if [ ! $? = 0 ]; then
+		echo "An error has occured! Exiting..."
+		exit 1
+	fi
+}
+
 
 
 function install_conda () {
 	CONDAEXE=/tmp/$RANDOM-$RANDOM-$RANDOM-$RANDOM-condainstall.sh
 	CONDAPATH=~/miniconda3
 
-	if [ $(uname -m) == 'x86_64' ]; then wget 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh' -O $CONDAEXE; else wget 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86.sh' -O $CONDAEXE; fi
-	sudo chmod +x $CONDAEXE
-	sudo $CONDAEXE -b -p $CONDAPATH
+	if [ $(uname -m) == 'x86_64' ]; then
+		wget 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh' -O $CONDAEXE
+    else
+        wget 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86.sh' -O $CONDAEXE
+    fi; exit_if_error
+
+	sudo chmod +x $CONDAEXE; exit_if_error
+	sudo $CONDAEXE -b -p $CONDAPATH; exit_if_error
 	sudo rm $CONDAEXE
 
 	CONDA=$CONDAPATH/bin/conda
 
-	$CONDA init
-	source ~/.bashrc
+	$CONDA init; exit_if_error
+	source ~/.bashrc; exit_if_error
 
 	conda config --set auto_activate_base False
 }
@@ -51,17 +64,57 @@ function uninstall_conda () {
 }
 
 function install_LPHK () {
-	conda env create -f $SCRIPTDIR/environment.yml
+	conda env create -f $SCRIPTDIR/environment.yml; exit_if_error
 }
 
 function uninstall_LPHK () {
-	conda env remove -n LPHK
+	conda env remove -n LPHK; exit_if_error
 	sudo rm -rf $CONDAENVDIR/LPHK/
+}
+
+
+function help_message () {
+	echo "Usage: install_linux.bash [-t]"
+	echo "-t | Total uninstall (Miniconda3 + LPHK)"
 }
 
 
 
 conda > /dev/null 2>1 && CONDAGOOD=1 || CONDAGOOD=0
+
+while getopts ":ht" opt; do
+	case ${opt} in
+		t )
+		 if [ $CONDAGOOD = 1 ]; then
+			 echo "Uninstall Miniconda3 and LPHK?"
+			 prompt_yn
+			 DOUNINSTALLMC=$?
+			 if [ $DOUNINSTALLMC = 1 ]; then
+			 	echo "Uninstalling LPHK..."
+				uninstall_LPHK
+				echo "Uninstalling Miniconda3..."
+				uninstall_conda
+				echo "Minoconda3 and LPHK uninstalled!"
+			 else
+			 	echo "Not uninstalling anything, exiting..."
+			 fi
+		 else
+		 	 echo "Miniconda3 and LPHK are not installed! Exiting..."
+		 fi
+		 exit
+		  ;;        
+		h )
+		 help_message
+		 exit
+		  ;;
+		\? )
+		 echo "Invalid option..."
+		 help_message
+		 exit
+		  ;;
+	esac	
+done
+shift $((OPTIND -1))
 
 if [ $CONDAGOOD = 0 ]; then
 	echo "No conda found. Install Miniconda3?"
