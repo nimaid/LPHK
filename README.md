@@ -70,8 +70,8 @@ THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS
 
 * Run `install_beta\install_windows.bat` by double clicking it.
 * If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3. Type `y` and press `enter`.
-  * After installing Miniconda3, you will have to press `enter` to close the window, then run the `install_windows.bat` file again.
-* If a conda distribution is installed (as in the above step), it will prompt you if you want to install LPHK. Type `y` and press `enter`.
+  * After it is done installing Miniconda3, either press `enter` or wait 5 seconds and the intaller will restart itself and you can proceed.
+* If a conda distribution is installed (as in the above step), the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
 * After the installation is done, it will ask if you would like to make a desktop shortcut.
   * I recommend you answer `y`, but if you don't want one, you can find the shortcut in the LPHK main folder. 
 * To run LPHK, click the shortcut. Clicking the `LPHK.py` file will not work with this method.

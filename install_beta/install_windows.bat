@@ -3,7 +3,7 @@
 REM This is a beta installer script that is the first step
 REM in making the installation process painless. All you have
 REM to do is run this. It will install Miniconda3 if you don't
-REM have a conda installation, then you should run this again.
+REM have a conda installation, and will ask if you want to install LPHK.
 REM A shortcut will be created for LPHK in the main LPHK folder.
 REM It will also offer to create a desktop shortcut. Just don't move
 REM the LPHK folder, or it will break the shortcut. If you wish to
@@ -49,6 +49,7 @@ if errorlevel 1 goto ERROREND
 echo Installing Miniconda3...
 set MINICONDAPATH=%USERPROFILE%\Miniconda3
 start /wait /min %CONDAEXE% /InstallationType=JustMe /S /D=%MINICONDAPATH%
+del %CONDAEXE%
 if errorlevel 1 goto CONDAERROR
 if not exist %MINICONDAPATH%\ (goto CONDAERROR)
 
@@ -56,13 +57,12 @@ if not exist %MINICONDAPATH%\ (goto CONDAERROR)
 if errorlevel 1 goto CONDAERROR
 
 echo Miniconda3 has been installed...
-echo Please re-run this installer in order to install LPHK!
-del %CONDAEXE%
-goto END
+timeout 5
+start cmd /c %0
+goto HARDEND
 
 :CONDAERROR
 echo Miniconda3 install failed!
-del %CONDAEXE%
 goto ERROREND
 
 :CONDADONE
@@ -174,3 +174,5 @@ goto END
 :END
 echo LPHK installer is done running.
 pause
+
+:HARDEND
