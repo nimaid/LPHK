@@ -43,10 +43,6 @@ function exit_if_error () {
 	fi
 }
 
-function re_source_bashrc () {
-	source ~/.bashrc
-}
-
 
 
 function install_conda () {
