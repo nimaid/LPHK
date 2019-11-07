@@ -1,7 +1,6 @@
 #!/bin/bash
 
 CONDAEXE=
-CONDAPATH=
 CONDA=
 DOINSTALLCONDA=0
 DOINSTALLLPHK=0
@@ -10,6 +9,7 @@ DOUNINSTALLCONDA=0
 
 SCRIPTDIR=$(dirname $0)
 CONDAENVDIR=~/.conda/envs
+MINICONDADIR=~/miniconda3
 
 function pause () {
 	read -rsp $'Press any key to continue...\n' -n1 key
@@ -37,7 +37,6 @@ function exit_if_error () {
 
 function install_conda () {
 	CONDAEXE=/tmp/$RANDOM-$RANDOM-$RANDOM-$RANDOM-condainstall.sh
-	CONDAPATH=~/miniconda3
 
 	if [ $(uname -m) == 'x86_64' ]; then
 		wget 'https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh' -O $CONDAEXE
@@ -46,10 +45,10 @@ function install_conda () {
     fi; exit_if_error
 
 	sudo chmod +x $CONDAEXE; exit_if_error
-	sudo $CONDAEXE -b -p $CONDAPATH; exit_if_error
+	sudo $CONDAEXE -b -p $MINICONDADIR; exit_if_error
 	sudo rm $CONDAEXE
 
-	CONDA=$CONDAPATH/bin/conda
+	CONDA=$MINICONDADIR/bin/conda
 
 	$CONDA init; exit_if_error
 	source ~/.bashrc; exit_if_error
@@ -71,12 +70,6 @@ function install_LPHK () {
 function uninstall_LPHK () {
 	conda env remove -n LPHK; exit_if_error
 	sudo rm -rf $CONDAENVDIR/LPHK/
-}
-
-
-function help_message () {
-	echo "Usage: install_linux.bash [-t]"
-	echo "-t | Total uninstall (Miniconda3 + LPHK)"
 }
 
 
@@ -104,10 +97,14 @@ if [ -d "$CONDAENVDIR/LPHK" ]; then
 	prompt_yn
 	DOUNINSTALLLPHK=$?
 	if [ $DOUNINSTALLLPHK = 1 ]; then
-		echo "Uninstall Miniconda3 as well? (THIS WILL DELETE YOUR ENVIRONMENTS)"
-		prompt_yn
-		DOUNINSTALLCONDA=$?
-		
+		if [ -d "$MINICONDADIR" ]; then
+			echo "Uninstall Miniconda3 as well? (THIS WILL DELETE ALL OTHER CONDA ENVIRONMENTS)"
+			prompt_yn
+			DOUNINSTALLCONDA=$?
+		else
+			DOUNINSTALLCONDA=0
+		fi
+			
 		echo "Uninstalling LPHK..."
 		uninstall_LPHK
 		echo "LPHK uninstalled!"
