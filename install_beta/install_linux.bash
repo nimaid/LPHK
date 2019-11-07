@@ -146,7 +146,7 @@ else
 	if [ $DOINSTALLLPHK = 1 ]; then
 		echo "Installing LPHK..."
 		install_LPHK
-		echo "LPHK environment set up. Run '~/.conda/envs/LPHK/python [your lphk directory]/LPHK.py'"
+		echo "LPHK environment set up. Run '$LPHKENVDIR/python [your lphk directory]/LPHK.py'"
 	else
 		echo "Not installing LPHK, exiting..."
 		pause
