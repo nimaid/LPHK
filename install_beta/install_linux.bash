@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -i
 
 # This is a beta installer script that is the first step
 # in making the installation process painless. All you have
@@ -12,13 +12,13 @@
 
 CONDAEXE=
 CONDA=
+LPHKENVDIR=
 DOINSTALLCONDA=0
 DOINSTALLLPHK=0
 DOUNINSTALLLPHK=0
 DOUNINSTALLCONDA=0
 
 SCRIPTDIR=$(dirname $0)
-CONDAENVDIR=~/.conda/envs
 MINICONDADIR=~/miniconda3
 
 function pause () {
@@ -43,6 +43,10 @@ function exit_if_error () {
 	fi
 }
 
+function re_source_bashrc () {
+	source ~/.bashrc
+}
+
 
 
 function install_conda () {
@@ -61,6 +65,7 @@ function install_conda () {
 	CONDA=$MINICONDADIR/bin/conda
 
 	$CONDA init; exit_if_error
+	
 	source ~/.bashrc; exit_if_error
 
 	conda config --set auto_activate_base False
@@ -79,7 +84,7 @@ function install_LPHK () {
 
 function uninstall_LPHK () {
 	conda env remove -n LPHK; exit_if_error
-	sudo rm -rf $CONDAENVDIR/LPHK/
+	sudo rm -rf $LPHKENVDIR
 }
 
 
@@ -102,7 +107,8 @@ if [ $CONDAGOOD = 0 ]; then
 fi
 
 # If LPHK is already installed, offer to uninstall
-if [ -d "$CONDAENVDIR/LPHK" ]; then
+LPHKENVDIR=$(cat ~/.conda/environments.txt | grep LPHK) > /dev/null 2>1
+if [ ! -z $LPHKENVDIR ]; then
 	echo "LPHK already installed! Uninstall LPHK?"
 	prompt_yn
 	DOUNINSTALLLPHK=$?
