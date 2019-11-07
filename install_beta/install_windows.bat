@@ -68,6 +68,7 @@ echo Miniconda3 install failed!
 goto ERROREND
 
 :CONDADONE
+REM TODO: Use environments.txt
 FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV=%%g)
 if defined LPHKENV goto ALREADYINSTALLED
 
@@ -117,6 +118,7 @@ goto DESKTOPLINKMAKE
 
 :INSTALLLPHKFAIL
 call conda env remove -n LPHK
+REM TODO: Use environments.txt
 rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q > nul
 goto ERROREND
 
@@ -130,6 +132,7 @@ goto NOUNINSTALLLPHK
 :UNINSTALLLPHK
 echo Uninstalling LPHK...
 call conda env remove -n LPHK
+REM TODO: Use environments.txt
 rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q > nul
 if errorlevel 1 goto ERROREND
 
