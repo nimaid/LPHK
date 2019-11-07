@@ -16,6 +16,8 @@ A Novation Launchpad macro scripting system.
 
 [Mouse Commands Demo - Maze](https://www.youtube.com/watch?v=w1YGSpT6aI8)
 
+[Medium.com Advanced Soundboard Writeup](https://medium.com/@lloydduhon/podcasting-tips-converting-a-novation-launchpad-to-a-soundboard-for-your-podcast-660962bbcf6c)
+
 ## What does it do?
 The goal of this project is to implement a macro scripting system for the Novation Launchpad, in order to use the launchpad as a scriptable, general purpose macro keyboard.
 
@@ -60,7 +62,24 @@ First, get a local copy of the GitHub repository. Click the green "Clone or down
 Before using the program, we need to install some things:
 
 ### Linux Install/Run Instructions
-* Run `install_dependencies.sh`. If it fails, run with `sudo`.
+THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY LINUX INSTALL INSTRUCTIONS`.
+
+* Run `install_beta/install_linux.bash`
+  * You can do this via terminal or, if it's set up, by double clicking it.
+* One of three things will happen:
+  * If LPHK is already installed, it will prompt if you would like to uninstall it. Type either `y` or `n` and press `enter`.
+    * At the moment, this only uninstalls the conda environment. You still have to manually delete the LPHK files and shortcuts.
+    * If Miniconda3 is installed in `~/miniconda3/`, it will prompt if you would like to uninstall that as well. Type either `y` or `n` and press `enter`.
+  * If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3 and LPHK. Type `y` and press `enter`.
+  * If a conda distribution is already installed, the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
+* To run LPHK, use the command `~/.conda/envs/LPHK/python [your lphk directory]/LPHK.py`.
+  * `.desktop` shortcuts are coming soon!
+  
+---- LEGACY LINUX INSTALL INSTRUCTIONS ----
+
+ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR AS AN ISSUE.
+
+* Run `install_dependencies.bash`. If it fails, run with `sudo`.
 * Many distros will let you double click on `LPHK.py` to run it. If yours doesn't, look up how to associate `.py` files with the `python3` binary on your distro.
   * At this point, you should be able to use whatever functionality the program currently has.
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
@@ -69,13 +88,17 @@ Before using the program, we need to install some things:
 THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY WINDOWS INSTALL INSTRUCTIONS`.
 
 * Run `install_beta\install_windows.bat` by double clicking it.
-* If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3. Type `y` and press `enter`.
-  * After it is done installing Miniconda3, either press `enter` or wait 5 seconds and the intaller will restart itself and you can proceed.
-* If a conda distribution is installed (as in the above step), the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
+* One of three things will happen:
+  * If LPHK is already installed, it will prompt if you would like to uninstall it. Type either `y` or `n` and press `enter`.
+    * At the moment, this only uninstalls the conda environment. You still have to manually delete the LPHK files and shortcuts.
+    * You can also manually uninstall Miniconda3.
+  * If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3 and LPHK. Type `y` and press `enter`.
+    * After it is done installing Miniconda3, either press `enter` or wait 5 seconds and the intaller will restart itself and automatically install LPHK.
+  * If a conda distribution is already installed, the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
 * After the installation is done, it will ask if you would like to make a desktop shortcut.
   * I recommend you answer `y`, but if you don't want one, you can find the shortcut in the LPHK main folder. 
 * To run LPHK, click the shortcut. Clicking the `LPHK.py` file will not work with this method.
-  * The command to run LPHK is `%USERPROFILE%\Anaconda3\envs\LPHK\python.exe [your lphk directory]\LPHK.py`
+  * The command to run LPHK is `%USERPROFILE%\Miniconda3\envs\LPHK\python.exe [your lphk directory]\LPHK.py`
 
 ---- LEGACY WINDOWS INSTALL INSTRUCTIONS ----
 
