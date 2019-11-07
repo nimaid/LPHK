@@ -64,7 +64,7 @@ Before using the program, we need to install some things:
 ### Linux Install/Run Instructions
 THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY LINUX INSTALL INSTRUCTIONS`.
 
-* Run `install_beta/install_linux.bash`
+* Run `install_beta/install_linux.bash` via a `bash` shell (NOT `sh`, `fish`, etc.)
   * You can do this via terminal or, if it's set up, by double clicking it.
 * One of three things will happen:
   * If LPHK is already installed, it will prompt if you would like to uninstall it. Type either `y` or `n` and press `enter`.

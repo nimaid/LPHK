@@ -44,7 +44,7 @@ if %OS%==64BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-
 
 set CONDAEXE=%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%-condainstall.exe
 
-echo Downloading Miniconda3...
+echo Downloading Miniconda3 (This will take while, please wait)...
 powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDAEXE%')" > nul
 if errorlevel 1 goto ERROREND
 
