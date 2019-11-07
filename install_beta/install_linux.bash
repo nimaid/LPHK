@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# This is a beta installer script that is the first step
+# in making the installation process painless. All you have
+# to do is run this. It will install Miniconda3 if you don't
+# have a conda installation, and will ask if you want to install LPHK.
+# A shortcut will be created for LPHK in the main LPHK folder.
+# If you wish to uninstall, run this after LPHK is installed. You will
+# have to remove the shortcuts, and manually delete the files.
+
+# Please let me know if this does or does not work in the Discord!
+
 CONDAEXE=
 CONDA=
 DOINSTALLCONDA=0
@@ -134,7 +144,7 @@ else
 	if [ $DOINSTALLLPHK = 1 ]; then
 		echo "Installing LPHK..."
 		install_LPHK
-		echo "LPHK environment set up. Run 'conda activate LPHK', then 'python LPHK.py'"
+		echo "LPHK environment set up. Run '~/.conda/envs/LPHK/python [your lphk directory]/LPHK.py'"
 	else
 		echo "Not installing LPHK, exiting..."
 		pause
