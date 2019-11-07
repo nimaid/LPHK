@@ -3,10 +3,10 @@
 CONDAEXE=
 CONDAPATH=
 CONDA=
-DOINSTALLCONDA=
-DOINSTALLLPHK=
-DOUNINSTALLLPHK=
-DOUNINSTALLMC=
+DOINSTALLCONDA=0
+DOINSTALLLPHK=0
+DOUNINSTALLLPHK=0
+DOUNINSTALLCONDA=0
 
 SCRIPTDIR=$(dirname $0)
 CONDAENVDIR=~/.conda/envs
@@ -28,6 +28,7 @@ function prompt_yn () {
 function exit_if_error () {
 	if [ ! $? = 0 ]; then
 		echo "An error has occured! Exiting..."
+		pause
 		exit 1
 	fi
 }
@@ -80,44 +81,10 @@ function help_message () {
 
 
 
+# If conda isn't found, prompt to install it as well
 conda > /dev/null 2>1 && CONDAGOOD=1 || CONDAGOOD=0
-
-while getopts ":ht" opt; do
-	case ${opt} in
-		t )
-		 if [ $CONDAGOOD = 1 ]; then
-			 echo "Uninstall Miniconda3 and LPHK?"
-			 prompt_yn
-			 DOUNINSTALLMC=$?
-			 if [ $DOUNINSTALLMC = 1 ]; then
-			 	echo "Uninstalling LPHK..."
-				uninstall_LPHK
-				echo "Uninstalling Miniconda3..."
-				uninstall_conda
-				echo "Minoconda3 and LPHK uninstalled!"
-			 else
-			 	echo "Not uninstalling anything, exiting..."
-			 fi
-		 else
-		 	 echo "Miniconda3 and LPHK are not installed! Exiting..."
-		 fi
-		 exit
-		  ;;        
-		h )
-		 help_message
-		 exit
-		  ;;
-		\? )
-		 echo "Invalid option..."
-		 help_message
-		 exit
-		  ;;
-	esac	
-done
-shift $((OPTIND -1))
-
 if [ $CONDAGOOD = 0 ]; then
-	echo "No conda found. Install Miniconda3?"
+	echo "No conda found. Install Miniconda3 and LPHK?"
 	prompt_yn
 	DOINSTALLCONDA=$?
 	if [ $DOINSTALLCONDA = 1 ]; then
@@ -131,30 +98,49 @@ if [ $CONDAGOOD = 0 ]; then
 	fi
 fi
 
-
+# If LPHK is already installed, offer to uninstall
 if [ -d "$CONDAENVDIR/LPHK" ]; then
 	echo "LPHK already installed! Uninstall LPHK?"
 	prompt_yn
 	DOUNINSTALLLPHK=$?
 	if [ $DOUNINSTALLLPHK = 1 ]; then
+		echo "Uninstall Miniconda3 as well? (THIS WILL DELETE YOUR ENVIRONMENTS)"
+		prompt_yn
+		DOUNINSTALLCONDA=$?
+		
 		echo "Uninstalling LPHK..."
 		uninstall_LPHK
 		echo "LPHK uninstalled!"
+
+		if [ $DOUNINSTALLCONDA = 1 ]; then
+			echo "Uninstalling Miniconda3..."
+			uninstall_conda
+			echo "Miniconda3 uninstalled!"
+		fi
+
+		pause
+		exit
 	else
 		echo "Not uninstalling LPHK, exiting..."
+		pause
 		exit
 	fi
-
+# If LPHK is not installed, offer to install
 else
-	echo "Install LPHK?"
-	prompt_yn
-	DOINSTALLLPHK=$?
+	if [ $DOINSTALLCONDA = 1 ]; then
+		DOINSTALLLPHK=1
+	else
+		echo "Install LPHK?"
+		prompt_yn
+		DOINSTALLLPHK=$?
+	fi
 	if [ $DOINSTALLLPHK = 1 ]; then
 		echo "Installing LPHK..."
 		install_LPHK
 		echo "LPHK environment set up. Run 'conda activate LPHK', then 'python LPHK.py'"
 	else
 		echo "Not installing LPHK, exiting..."
+		pause
 		exit
 	fi
 fi
