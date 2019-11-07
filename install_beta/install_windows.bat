@@ -26,12 +26,14 @@ set "OS="
 set "MCLINK="
 set "DESKTOPLINK="
 
+set "CONDAWASINSTALLEDFLAG=\CONDAWASJUSTINSTALLED"
+
 where conda >nul 2>nul
 if %ERRORLEVEL% EQU 0 goto CONDADONE
 
 :NOCONDA
 set "AREYOUSURE="
-set /P AREYOUSURE=No conda found. Install Miniconda3? (Y/[N]) 
+set /P AREYOUSURE=No conda found. Install Miniconda3 and LPHK? (Y/[N]) 
 if /I "%AREYOUSURE%" EQU "Y" goto INSTALLCONDA
 goto NOINSTALLCONDA
 
@@ -58,7 +60,7 @@ if errorlevel 1 goto CONDAERROR
 
 echo Miniconda3 has been installed...
 timeout 5
-start cmd /c %0
+start cmd /c "%0 %CONDAWASINSTALLEDFLAG%"
 goto HARDEND
 
 :CONDAERROR
@@ -69,10 +71,15 @@ goto ERROREND
 FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV=%%g)
 if defined LPHKENV goto ALREADYINSTALLED
 
+if "%1"=="%CONDAWASINSTALLEDFLAG%" goto CONDAWASINSTALLED
 set "AREYOUSURE="
 set /P AREYOUSURE=Install LPHK? (Y/[N]) 
 if /I "%AREYOUSURE%" EQU "Y" goto INSTALLLPHK
 goto NOINSTALLLPHK
+
+:CONDAWASINSTALLED
+echo Miniconda was previously installed successfully!
+goto INSTALLLPHK
 
 :INSTALLLPHK
 echo Installing LPHK...
@@ -140,7 +147,7 @@ echo Not installing LPHK, exiting...
 goto END
 
 :NOINSTALLCONDA
-echo Not installing MiniConda3, exiting...
+echo Not installing MiniConda3 or LPHK, exiting...
 goto END
 
 :NOINSTALLCONDA
@@ -172,7 +179,6 @@ echo Please try running again, or seek help in the Discord.
 goto END
 
 :END
-echo LPHK installer is done running.
 pause
 
 :HARDEND
