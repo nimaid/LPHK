@@ -33,7 +33,7 @@ if %ERRORLEVEL% EQU 0 goto CONDADONE
 
 :NOCONDA
 set "AREYOUSURE="
-set /P AREYOUSURE=No conda found. Install Miniconda3 and LPHK? (Y/[N]) 
+set /P AREYOUSURE=No conda found. Install Miniconda3 and LPHK? (Y/[N]): 
 if /I "%AREYOUSURE%" EQU "Y" goto INSTALLCONDA
 goto NOINSTALLCONDA
 
@@ -74,7 +74,7 @@ if defined LPHKENV goto ALREADYINSTALLED
 
 if "%1"=="%CONDAWASINSTALLEDFLAG%" goto CONDAWASINSTALLED
 set "AREYOUSURE="
-set /P AREYOUSURE=Install LPHK? (Y/[N]) 
+set /P AREYOUSURE=Install LPHK? (Y/[N]): 
 if /I "%AREYOUSURE%" EQU "Y" goto INSTALLLPHK
 goto NOINSTALLLPHK
 
@@ -104,29 +104,38 @@ set LPHKSCRIPT=%MAINDIR%\LPHK.py
 set LINKPATH=%MAINDIR%\LPHK.lnk
 set LPHKICON=%MAINDIR%\resources\LPHK.ico
 
+del %LINKPATH% 2> nul
+
 set SHORTCUTSCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
 echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SHORTCUTSCRIPT%
 echo sLinkFile = "%LINKPATH%" >> %SHORTCUTSCRIPT%
 echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SHORTCUTSCRIPT%
 echo oLink.TargetPath = "%LPHKPYTHON%" >> %SHORTCUTSCRIPT%
-echo oLink.Arguments = "%LPHKSCRIPT%" >> %SHORTCUTSCRIPT%
+echo oLink.Arguments = """%LPHKSCRIPT%""" >> %SHORTCUTSCRIPT%
 echo oLink.IconLocation = "%LPHKICON%" >> %SHORTCUTSCRIPT%
 echo oLink.Save >> %SHORTCUTSCRIPT%
 call cscript /nologo %SHORTCUTSCRIPT%
 del %SHORTCUTSCRIPT%
-if errorlevel 1 goto INSTALLLPHKFAIL
+if not exist %LINKPATH% goto INSTALLSHORTCUTFAILED
+if errorlevel 1 goto INSTALLSHORTCUTFAILED
 goto DESKTOPLINKMAKE
 
 :INSTALLLPHKFAIL
 call conda env remove -n LPHK
 REM TODO: Use environments.txt
-rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q > nul
+rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q 2> nul
+goto ERROREND
+
+:INSTALLSHORTCUTFAILED
+echo LPHK conda environment was installed, but a link could not be created!
+echo Please run "%LPHKPYTHON%" "%LPHKSCRIPT%" to use LPHK!
+echo Also, please report this bug via the Discord or GitHub issues.
 goto ERROREND
 
 :ALREADYINSTALLED
 echo LPHK is already installed!
 set "AREYOUSURE="
-set /P AREYOUSURE=Uninstall LPHK? (Y/[N]) 
+set /P AREYOUSURE=Uninstall LPHK? (Y/[N]): 
 if /I "%AREYOUSURE%" EQU "Y" goto UNINSTALLLPHK
 goto NOUNINSTALLLPHK
 
@@ -134,7 +143,7 @@ goto NOUNINSTALLLPHK
 echo Uninstalling LPHK...
 call conda env remove -n LPHK
 REM TODO: Use environments.txt
-rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q > nul
+rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q 2> nul
 if errorlevel 1 goto ERROREND
 
 echo LPHK conda environment unistalled.
