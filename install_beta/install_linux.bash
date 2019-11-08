@@ -146,6 +146,8 @@ else
 	if [ $DOINSTALLLPHK = 1 ]; then
 		echo "Installing LPHK..."
 		install_LPHK
+        # Get the new location after install
+        LPHKENVDIR=$(cat ~/.conda/environments.txt | grep LPHK) > /dev/null 2>1
 		echo "LPHK environment set up. Run '$LPHKENVDIR/python [your lphk directory]/LPHK.py'"
 	else
 		echo "Not installing LPHK, exiting..."
