@@ -18,7 +18,10 @@ A Novation Launchpad macro scripting system.
   * [Headers](https://github.com/nimaid/LPHK#headers-table-of-contents)
   * [Comments](https://github.com/nimaid/LPHK#comments-table-of-contents)
   * [Commands List](https://github.com/nimaid/LPHK#commands-list-table-of-contents)
-    * [Key Names](https://github.com/nimaid/LPHK#key-names-table-of-contents)
+    * [Utility](https://github.com/nimaid/LPHK#utility-table-of-contents)
+    * [Keypresses](https://github.com/nimaid/LPHK#keypresses-table-of-contents)
+    * [Mouse Movement](https://github.com/nimaid/LPHK#mouse-movement-table-of-contents)
+  * [Key Names](https://github.com/nimaid/LPHK#key-names-table-of-contents)
 * [Known Issues / Troubleshooting](https://github.com/nimaid/LPHK#known-issues--troubleshooting-table-of-contents)
 * [What still needs to be written? (in order of priority)](https://github.com/nimaid/LPHK#what-still-needs-to-be-written-in-order-of-priority-table-of-contents)
 * [What have you done so far?](https://github.com/nimaid/LPHK#what-have-you-done-so-far-table-of-contents)
@@ -185,90 +188,92 @@ Any line that starts with a dash `-` will be considered a comment, and will be i
 ### Commands List [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines separating commands.
 
-* **Utility**
-  * `DELAY`
-    * Delays the script for (argument 1) seconds.
-  * `GOTO_LABEL`
-    * Goto label (argument 1).
-  * `IF_PRESSED_GOTO_LABEL`
-    * If the button the script is bound to is pressed, goto label (argument 1).
-  * `IF_PRESSED_REPEAT_LABEL`
-    * If the button the script is bound to is pressed, goto label (argument 1) a maximum of (argument 2) times.
-  * `IF_UNPRESSED_GOTO_LABEL`
-    * If the button the script is bound to is not pressed, goto label (argument 1).
-  * `IF_UNPRESSED_REPEAT_LABEL`
-    * If the button the script is bound to is not pressed, goto label (argument 1) a maximum of (argument 2) times.
-  * `LABEL`
-    * Sets a label named (argument 1) for use with the `*GOTO_LABEL` commands.
-  * `OPEN`
-    * Opens the file or folder (argument 1).
-  * `REPEAT_LABEL`
-    * Goto label (argument 1) a maximum of (argument 2) times.
-  * `RESET_REPEATS`
-    * Reset the counter on all repeats. (no arguments)
-  * `SOUND`
-    * Play a sound named (argument 1) inside the `user_sounds/` folder.
-      * Supports `.wav`, `.flac`, and `.ogg` only.
-    * If (argument 2) supplied, set volume to (argument 2).
-      * Range is 0 to 100
-  * `WAIT_UNPRESSED`
-    * Waits until the button the script is bound to is unpressed. (no arguments)
-  * `WEB`
-    * Open website (argument 1) in default browser.
-  * `WEB_NEW`
-    * Open website (argument 1) in default browser, try new window.
-* **Keypresses**
-  * `PRESS`
-    * Presses the key (argument 1).
-      * See valid key names below.
-  * `RELEASE`
-    * Releases the key (argument 1).
-      * See valid key names below.
-  * `RELEASE_ALL`
-    * Releases all pressed keys, including those pressed by other scripts. (no arguments)
-  * `STRING`
-    * Types whatever text comes after it.
-  * `TAP`
-    * Taps the key (argument 1).
-      * See valid key names below.
-    * If (argument 2) supplied, tap (argument 2) number of times.
-    * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
-* **Mouse Movement**
-  * `M_LINE`
-    * Move the mouse in a line from absolute point (argument 1),(argument 2) to absolute point (argument 3),(argument 4).
-    * If (argument 5) supplied, delay (argument 5) milliseconds between each step.
-    * If (argument 6) supplied, move (argument 6) pixels per step.
-      * If not supplied, assumed to be 1
-  * `M_LINE_MOVE`
-    * Move the mouse cursor in a line (argument 1) horizontally and (argument 2) vertically, relative to current position
-    * If (argument 3) supplied, delay (argument 3) milliseconds between each step.
-    * If (argument 4) supplied, move (argument 4) pixels per step.
-      * If not supplied, assumed to be 1
-  * `M_LINE_SET`
-    * Move the mouse cursor in a line to absolute point (argument 1),(argument 2)
-    * If (argument 3) supplied, delay (argument 3) milliseconds between each step.
-    * If (argument 4) supplied, move (argument 4) pixels per step.
-      * If not supplied, assumed to be 1
-  * `M_MOVE`
-    * Moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position.
-  * `M_RECALL`
-    * Sets the mouse position to the last location stored with `M_STORE`.
-      * Will not do anything if `M_STORE` has not been called in that script.
-  * `M_RECALL_LINE`
-    * Move the mouse cursor in a line to the last location stored with `M_STORE`.
-      * Will not do anything if `M_STORE` has not been called in that script.
-    * If (argument 1) supplied, delay (argument 1) milliseconds between each step.
-    * If (argument 2) supplied, move (argument 2) pixels per step.
-      * If not supplied, assumed to be 1
-  * `M_SCROLL`
-    * Scrolls the mouse vertically by (argument 1).
-    * If (argument 2) supplied, scroll horizontally by (argument 2).
-  * `M_SET`
-    * Sets the absolute cursor position to (argument 1) horizontal and (argument 2) vertical.
-  * `M_STORE`
-    * Stores the current mouse position for use with the `M_RECALL*` commands.
+#### Utility [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `DELAY`
+  * Delays the script for (argument 1) seconds.
+* `GOTO_LABEL`
+  * Goto label (argument 1).
+* `IF_PRESSED_GOTO_LABEL`
+  * If the button the script is bound to is pressed, goto label (argument 1).
+* `IF_PRESSED_REPEAT_LABEL`
+  * If the button the script is bound to is pressed, goto label (argument 1) a maximum of (argument 2) times.
+* `IF_UNPRESSED_GOTO_LABEL`
+  * If the button the script is bound to is not pressed, goto label (argument 1).
+* `IF_UNPRESSED_REPEAT_LABEL`
+  * If the button the script is bound to is not pressed, goto label (argument 1) a maximum of (argument 2) times.
+* `LABEL`
+  * Sets a label named (argument 1) for use with the `*GOTO_LABEL` commands.
+* `OPEN`
+  * Opens the file or folder (argument 1).
+* `REPEAT_LABEL`
+  * Goto label (argument 1) a maximum of (argument 2) times.
+* `RESET_REPEATS`
+  * Reset the counter on all repeats. (no arguments)
+* `SOUND`
+  * Play a sound named (argument 1) inside the `user_sounds/` folder.
+    * Supports `.wav`, `.flac`, and `.ogg` only.
+  * If (argument 2) supplied, set volume to (argument 2).
+    * Range is 0 to 100
+* `WAIT_UNPRESSED`
+  * Waits until the button the script is bound to is unpressed. (no arguments)
+* `WEB`
+  * Open website (argument 1) in default browser.
+* `WEB_NEW`
+  * Open website (argument 1) in default browser, try new window.
+  
+#### Keypresses [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `PRESS`
+  * Presses the key (argument 1).
+    * See valid key names below.
+* `RELEASE`
+  * Releases the key (argument 1).
+    * See valid key names below.
+* `RELEASE_ALL`
+  * Releases all pressed keys, including those pressed by other scripts. (no arguments)
+* `STRING`
+  * Types whatever text comes after it.
+* `TAP`
+  * Taps the key (argument 1).
+    * See valid key names below.
+  * If (argument 2) supplied, tap (argument 2) number of times.
+  * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
+  
+#### Mouse Movement [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `M_LINE`
+  * Move the mouse in a line from absolute point (argument 1),(argument 2) to absolute point (argument 3),(argument 4).
+  * If (argument 5) supplied, delay (argument 5) milliseconds between each step.
+  * If (argument 6) supplied, move (argument 6) pixels per step.
+    * If not supplied, assumed to be 1
+* `M_LINE_MOVE`
+  * Move the mouse cursor in a line (argument 1) horizontally and (argument 2) vertically, relative to current position
+  * If (argument 3) supplied, delay (argument 3) milliseconds between each step.
+  * If (argument 4) supplied, move (argument 4) pixels per step.
+    * If not supplied, assumed to be 1
+* `M_LINE_SET`
+  * Move the mouse cursor in a line to absolute point (argument 1),(argument 2)
+  * If (argument 3) supplied, delay (argument 3) milliseconds between each step.
+  * If (argument 4) supplied, move (argument 4) pixels per step.
+    * If not supplied, assumed to be 1
+* `M_MOVE`
+  * Moves the mouse cursor (argument 1) horizontally and (argument 2) vertically, relative to current position.
+* `M_RECALL`
+  * Sets the mouse position to the last location stored with `M_STORE`.
+    * Will not do anything if `M_STORE` has not been called in that script.
+* `M_RECALL_LINE`
+  * Move the mouse cursor in a line to the last location stored with `M_STORE`.
+    * Will not do anything if `M_STORE` has not been called in that script.
+  * If (argument 1) supplied, delay (argument 1) milliseconds between each step.
+  * If (argument 2) supplied, move (argument 2) pixels per step.
+    * If not supplied, assumed to be 1
+* `M_SCROLL`
+  * Scrolls the mouse vertically by (argument 1).
+  * If (argument 2) supplied, scroll horizontally by (argument 2).
+* `M_SET`
+  * Sets the absolute cursor position to (argument 1) horizontal and (argument 2) vertical.
+* `M_STORE`
+  * Stores the current mouse position for use with the `M_RECALL*` commands.
 
-#### Key Names [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+### Key Names [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitespace keys and the following key names are allowed:
 * `alt`
 * `alt_gr`
