@@ -115,7 +115,8 @@ ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR
     * (If this fails, use "python LPHK.py".)
 
 ## How do I use it? (Post-Install)
-* Before starting the program, make sure your Launchpad Classic/Mini/S or MkII (for now, Pro is coming) is connected to the computer.
+* Before starting the program, make sure your Launchpad Classic/Mini/S or MkII is connected to the computer.
+  * If you have a Launchpad Pro, there is currently beta support for it. Please put it in `Live` mode by following the instructions in the pop-up when trying to connect in the next step.
 * Click `Launchpad > Connect to Launchpad...`.
   * If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
 * The current mode is displayed in the upper right, in the gap between the circular buttons. Clicking this text will change the mode. There are four modes:
@@ -328,7 +329,6 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * Auto connect setting
   * Force launchpad model setting
 * Add `@PRESS_COLOR` command to set the active "blinking" color
-* Add partial Pro support (left and bottom rows not enabled)
 * Rework sound module to use the `sounddevice` library
 * Add a `Sound` menu with `Choose default output device...` option
 * Add a command to stop a playing sound... if possible.
@@ -432,3 +432,5 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Basic support for Launchpad Classic/S/Mini~~
   * Thanks to Patreon patron Korbinian Maag for fully funding the purchase of a LP Mini for developing this feature!
   * Includes Behringer CMD Touch TC64 in Novation compatibility mode
+* ~~Add partial Pro support (left and bottom rows not enabled)~~
+  * A huge shoutout to MiniStumpy Bloopers in the Discord, who was able to find out that adding this feature was actually fairly simple! I really need a Pro to develop with.

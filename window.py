@@ -133,7 +133,20 @@ class Main_Window(tk.Frame):
                     self.stat["text"] = "Connected to Launchpad MkII"
                     self.stat["bg"] = STAT_ACTIVE_COLOR                
             elif lp_object.Check( 0, PRO_NAME ):
-                self.popup(self, "Connect to Launchpad Pro...", self.error_image, "There is currently no support for the Launchpad Pro.\nThis feature is planned for the future, see the GitHub page.", "OK")
+                lp_object = launchpad.LaunchpadPro()
+                if lp_object.Open( 0, PRO_NAME ):
+                    self.popup(self, "Connect to Launchpad Pro...", self.error_image, "This is a BETA feature! The Pro is not fully supported yet, as the bottom and left rows are not mappable currently. I (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)\nYou must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the upper left corner, then release the 'Setup' key. Please only continue once this step is completed.", "I am in Live mode.")
+                    lp_connected = True
+                    lp_mode = "Pro"
+                    lp_object.ButtonFlush()
+                    lp_object.LedCtrlBpm(INDICATOR_BPM)
+                    lp_events.start(lp_object)
+                    self.draw_canvas()
+                    self.enable_menu("Layout")
+                    self.enable_lp_disconnect()
+                    
+                    self.stat["text"] = "Connected to Launchpad Pro (BETA)"
+                    self.stat["bg"] = STAT_ACTIVE_COLOR   
             elif lp_object.Check( 0, CTRL_XL_NAME ) or lp_object.Check( 0, LAUNCHKEY_NAME ) or lp_object.Check( 0, DICER_NAME ):
                 self.popup(self, "Connect to Unsupported Device...", self.error_image, "The device you are attempting to use is not currently supported by LPHK, and there are no plans to add support for it.\nPlease voice your feature requests on the Discord or on GitHub.", "OK")
             elif lp_object.Check():
