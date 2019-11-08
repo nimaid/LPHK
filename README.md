@@ -10,8 +10,8 @@ A Novation Launchpad macro scripting system.
 * [Why would you do that?](https://github.com/nimaid/LPHK#why-would-you-do-that-table-of-contents)
 * [Does it work yet?](https://github.com/nimaid/LPHK#does-it-work-yet-table-of-contents) (yes)
 * [How do I get it? (Installation)](https://github.com/nimaid/LPHK#how-do-i-get-it-installation-table-of-contents)
-  * [Linux Install/Run Instructions](https://github.com/nimaid/LPHK#linux-installrun-instructions-table-of-contents)
   * [Windows Install/Run Instructions](https://github.com/nimaid/LPHK#windows-installrun-instructions-table-of-contents)
+  * [Linux Install/Run Instructions](https://github.com/nimaid/LPHK#linux-installrun-instructions-table-of-contents)
 * [How do I use it? (Post-Install)](https://github.com/nimaid/LPHK#how-do-i-use-it-post-install-table-of-contents)
 * [What is LPHKscript?](https://github.com/nimaid/LPHK#what-is-lphkscript-table-of-contents)
   * [Scheduling](https://github.com/nimaid/LPHK#scheduling-table-of-contents)
@@ -74,29 +74,6 @@ First, get a local copy of the GitHub repository. Click the green "Clone or down
 
 Before using the program, we need to install some things:
 
-### Linux Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY LINUX INSTALL INSTRUCTIONS`.
-
-* Run `install_beta/install_linux.bash` via a `bash` shell (NOT `sh`, `fish`, etc.)
-  * You can do this via terminal or, if it's set up, by double clicking it.
-* One of three things will happen:
-  * If LPHK is already installed, it will prompt if you would like to uninstall it. Type either `y` or `n` and press `enter`.
-    * At the moment, this only uninstalls the conda environment. You still have to manually delete the LPHK files and shortcuts.
-    * If Miniconda3 is installed in `~/miniconda3/`, it will prompt if you would like to uninstall that as well. Type either `y` or `n` and press `enter`.
-  * If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3 and LPHK. Type `y` and press `enter`.
-  * If a conda distribution is already installed, the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
-* To run LPHK, use the command `~/.conda/envs/LPHK/python [your lphk directory]/LPHK.py`.
-  * `.desktop` shortcuts are coming soon!
-  
----- LEGACY LINUX INSTALL INSTRUCTIONS ----
-
-ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR AS AN ISSUE.
-
-* Run `install_dependencies.bash`. If it fails, run with `sudo`.
-* Many distros will let you double click on `LPHK.py` to run it. If yours doesn't, look up how to associate `.py` files with the `python3` binary on your distro.
-  * At this point, you should be able to use whatever functionality the program currently has.
-  * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
-
 ### Windows Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY WINDOWS INSTALL INSTRUCTIONS`.
 
@@ -126,6 +103,29 @@ ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR
   * At this point, you should be able to use whatever functionality the program currently has.
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
     * (If this fails, use "python LPHK.py".)
+
+### Linux Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY LINUX INSTALL INSTRUCTIONS`.
+
+* Run `install_beta/install_linux.bash` via a `bash` shell (NOT `sh`, `fish`, etc.)
+  * You can do this via terminal or, if it's set up, by double clicking it.
+* One of three things will happen:
+  * If LPHK is already installed, it will prompt if you would like to uninstall it. Type either `y` or `n` and press `enter`.
+    * At the moment, this only uninstalls the conda environment. You still have to manually delete the LPHK files and shortcuts.
+    * If Miniconda3 is installed in `~/miniconda3/`, it will prompt if you would like to uninstall that as well. Type either `y` or `n` and press `enter`.
+  * If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3 and LPHK. Type `y` and press `enter`.
+  * If a conda distribution is already installed, the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
+* To run LPHK, use the command `~/.conda/envs/LPHK/python [your lphk directory]/LPHK.py`.
+  * `.desktop` shortcuts are coming soon!
+  
+---- LEGACY LINUX INSTALL INSTRUCTIONS ----
+
+ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR AS AN ISSUE.
+
+* Run `install_dependencies.bash`. If it fails, run with `sudo`.
+* Many distros will let you double click on `LPHK.py` to run it. If yours doesn't, look up how to associate `.py` files with the `python3` binary on your distro.
+  * At this point, you should be able to use whatever functionality the program currently has.
+  * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
 
 ## How do I use it? (Post-Install) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * Before starting the program, make sure your Launchpad Classic/Mini/S or MkII is connected to the computer.
