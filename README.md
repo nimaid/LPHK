@@ -4,6 +4,25 @@ A Novation Launchpad macro scripting system.
 <a href="https://github.com/nimaid/LPHK"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK.png" alt="logo" height="300px" hspace="5"/></a><a href="https://discord.gg/mDCzB8X"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/discord.png" alt="logo" height="300px" hspace="5"/></a><a href="https://www.patreon.com/user?u=16848673"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/patreon.png" alt="logo" height="300px" hspace="5"/></a>
 <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_3.png" alt="Update 3" width="800px" />
 
+## Table Of Contents
+* [Links](https://github.com/nimaid/LPHK#links)
+* [What does it do?](https://github.com/nimaid/LPHK#what-does-it-do)
+* [Why would you do that?](https://github.com/nimaid/LPHK#why-would-you-do-that)
+* [Does it work yet?](https://github.com/nimaid/LPHK#does-it-work-yet) (yes)
+* [How do I get it? (Installation)](https://github.com/nimaid/LPHK#how-do-i-get-it-installation)
+  * [Linux Install/Run Instructions](https://github.com/nimaid/LPHK#linux-installrun-instructions)
+  * [Windows Install/Run Instructions](https://github.com/nimaid/LPHK#windows-installrun-instructions)
+* [How do I use it? (Post-Install)](https://github.com/nimaid/LPHK#how-do-i-use-it-post-install)
+* [What is LPHKscript?](https://github.com/nimaid/LPHK#what-is-lphkscript)
+  * [Scheduling](https://github.com/nimaid/LPHK#scheduling)
+  * [Headers](https://github.com/nimaid/LPHK#headers)
+  * [Comments](https://github.com/nimaid/LPHK#comments)
+  * [Commands List](https://github.com/nimaid/LPHK#commands-list)
+* [Known Issues / Troubleshooting](https://github.com/nimaid/LPHK#known-issues--troubleshooting)
+* [What still needs to be written? (in order of priority)](https://github.com/nimaid/LPHK#what-still-needs-to-be-written-in-order-of-priority)
+* [What have you done so far?](https://github.com/nimaid/LPHK#what-have-you-done-so-far)
+
+## Links
 [Video Tutorial, Updates, and Plans](https://www.youtube.com/watch?v=XdJutWBEAqI)
 
 [First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
