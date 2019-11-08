@@ -22,7 +22,7 @@ A Novation Launchpad macro scripting system.
 * [What still needs to be written? (in order of priority)](https://github.com/nimaid/LPHK#what-still-needs-to-be-written-in-order-of-priority)
 * [What have you done so far?](https://github.com/nimaid/LPHK#what-have-you-done-so-far)
 
-## Links [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## Links [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * [Video Tutorial, Updates, and Plans](https://www.youtube.com/watch?v=XdJutWBEAqI)
 * [First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
 * [Scheduling System](https://www.youtube.com/watch?v=rv2YmPQvMr0&t=164s)
@@ -31,14 +31,14 @@ A Novation Launchpad macro scripting system.
 * [Mouse Commands Demo - Maze](https://www.youtube.com/watch?v=w1YGSpT6aI8)
 * [Medium.com Advanced Soundboard Writeup](https://medium.com/@lloydduhon/podcasting-tips-converting-a-novation-launchpad-to-a-soundboard-for-your-podcast-660962bbcf6c)
 
-## What does it do? [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## What does it do? [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 The goal of this project is to implement a macro scripting system for the Novation Launchpad, in order to use the launchpad as a scriptable, general purpose macro keyboard.
 
 It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript), and has a GUI to enter scripts, set colors, and to save/load your setup.
 
 I have specifically chosen to do my best to develop this using as many cross platform libraries as possible, with a hard requirement that Linux and Windows be supported, and a strong preference for Mac as well. The GUI is driven by TK, which works on all of the above plus Unix. The interface with the launchpad and several script functions are built on pygame, which is compatable with basically everything ever. Pretty much everything else is standard Python 3.
 
-## Why would you do that? [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## Why would you do that? [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Because it could be immensely useful for a wide variety of tasks, such as:
 * Gaming, to bind:
   * Items
@@ -64,17 +64,17 @@ Because it could be immensely useful for a wide variety of tasks, such as:
   * Debugger
 * ... and many more!
 
-## Does it work yet? [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## Does it work yet? [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Yes! It does not have all the features I want just yet, and still has bugs, but it works! You can use the GUI to load/save layouts and edit button scripts/colors. It's not nearly as polished as I want yet, but it is functional!
 
 This is still WIP and still a beta version. See below for a todo list. I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help! You can see project updates and ask questions on the [official Discord server](https://discord.gg/mDCzB8X)! You can also donate on the [official Patreon page](https://www.patreon.com/user?u=16848673) to help speed up development, or just say thanks!
 
-## How do I get it? (Installation) [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## How do I get it? (Installation) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 First, get a local copy of the GitHub repository. Click the green "Clone or download" button. The easiest path forward if you don't know what any of this this means is to then click "Download ZIP". Extract that .zip file, and you have a local copy of the repository!
 
 Before using the program, we need to install some things:
 
-### Linux Install/Run Instructions [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+### Linux Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY LINUX INSTALL INSTRUCTIONS`.
 
 * Run `install_beta/install_linux.bash` via a `bash` shell (NOT `sh`, `fish`, etc.)
@@ -97,7 +97,7 @@ ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR
   * At this point, you should be able to use whatever functionality the program currently has.
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
 
-### Windows Install/Run Instructions [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+### Windows Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY WINDOWS INSTALL INSTRUCTIONS`.
 
 * Run `install_beta\install_windows.bat` by double clicking it.
@@ -127,7 +127,7 @@ ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR
   * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
     * (If this fails, use "python LPHK.py".)
 
-## How do I use it? (Post-Install) [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## How do I use it? (Post-Install) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * Before starting the program, make sure your Launchpad Classic/Mini/S or MkII is connected to the computer.
   * If you have a Launchpad Pro, there is currently beta support for it. Please put it in `Live` mode by following the instructions in the pop-up when trying to connect in the next step. For more info, see the [User Manual](https://d2xhy469pqj8rc.cloudfront.net/sites/default/files/novation/downloads/10581/launchpad-pro-gsg-en.pdf).
 * Click `Launchpad > Connect to Launchpad...`.
@@ -154,21 +154,21 @@ ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR
 
 #### The whole GUI is still rough around the edges, so don't be too surprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :) And don't feel shy making feature requests, either!
 
-## What is LPHKscript? [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## What is LPHKscript? [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 LPHKscript is a simple macro scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript.
 
-### Scheduling [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+### Scheduling [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Only one script runs at a time, and there is a scheduling system for them. If a script is scheduled, it's button will pulse red. If the script is running, the button will flash red quickly. This is true for the 8x8 grid, however, the function keys cannot flash or pulse, as a hardware limitation. These keys will be bright orange for scheduled and bright red for running.
 
 When you press a script button, if there is a script running, it adds the script to the queue. If no scripts are running, the script is added to the queue and the queue execution is started. Tapping a scheduled script's button will unschedule it, and tapping a running scripts button will kill it. If that sounds confusing, load up `user_layouts/examples/all_delays_all_day.LPHKlayout` and press a bunch of buttons.
 
-### Headers [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+### Headers [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Headers are commands that start with `@` and go on the first line of a script. They are used to put the scripting engine into different "modes", allowing you to do some interesting things.
 
-#### The `@ASYNC` Header [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+#### The `@ASYNC` Header [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 There is one exception to the scheduling system. If the script has the `@ASYNC` header, it will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. If this is used, it must be on the very first line.
 
-#### The `@SIMPLE` Header [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+#### The `@SIMPLE` Header [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 This is a quick way to bind a controller button to a simple keypress of (argument 1). This has the equivalent code to:
 ```
 @ASYNC
@@ -178,10 +178,10 @@ RELEASE (argument 1)
 ```
 If this is used, all other lines in the file must either be whitespace or comments. In addition, it must be on the very first line.
 
-### Comments [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+### Comments [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. If a header is used, a comment cannot come before the header, as those must be on the first line, always.
 
-### Commands List [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+### Commands List [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines separating commands.
 
 * **Utility**
@@ -311,7 +311,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * `LPHK_ENTRY_SEP`
 * `LPHK_NEWLINE_REP`
 
-## Known Issues / Troubleshooting [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## Known Issues / Troubleshooting [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * The USB connection on the Launchpads, quite frankly, suck. If the angle is wrong, the Launchpad may receive power, but will not be able to transmit or receive data. While using the Launchpad, if you wiggle the connection somehow, it will straight up break the MIDI library I use. You will have to do the following:
   * Click on "Launchpad > Disconnect from Launchpad xxx..."
   * Unplug your Launchpad and wait about 5 seconds for the capacitors inside the Launchpad to drain. (It stays powered for a few seconds after losing it's connection, we want it dead as a doorknob)
@@ -328,7 +328,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
     * At this point IDK, maybe the USB on your Launchpad needs to be replaced.
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
-## What still needs to be written? (in order of priority) [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## What still needs to be written? (in order of priority) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue ATM, it will have the blue component ignored.
 * Make an installer for Windows and Mac
   * Should use a `conda` environment created from an `environment.yml` file
@@ -391,7 +391,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * MIDI output command? (Low priority)
 * Load layout header?
 
-## What have you done so far? [[Return to Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## What have you done so far? [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * ~~Support for Launchpad MkII~~
 * ~~Events system~~
 * ~~Colors system~~
