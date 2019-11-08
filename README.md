@@ -23,19 +23,13 @@ A Novation Launchpad macro scripting system.
 * [What have you done so far?](https://github.com/nimaid/LPHK#what-have-you-done-so-far)
 
 ## Links
-[Video Tutorial, Updates, and Plans](https://www.youtube.com/watch?v=XdJutWBEAqI)
-
-[First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
-
-[Scheduling System](https://www.youtube.com/watch?v=rv2YmPQvMr0&t=164s)
-
-[Hackaday Early Writeup](https://hackaday.com/2018/11/04/launchpad-midi-controller-put-to-work-with-python/)
-
-[DOOM on a Launchpad](https://www.youtube.com/watch?v=4o_fh3n8FME)
-
-[Mouse Commands Demo - Maze](https://www.youtube.com/watch?v=w1YGSpT6aI8)
-
-[Medium.com Advanced Soundboard Writeup](https://medium.com/@lloydduhon/podcasting-tips-converting-a-novation-launchpad-to-a-soundboard-for-your-podcast-660962bbcf6c)
+* [Video Tutorial, Updates, and Plans](https://www.youtube.com/watch?v=XdJutWBEAqI)
+* [First Look](https://www.youtube.com/watch?v=zZPt_lknhks)
+* [Scheduling System](https://www.youtube.com/watch?v=rv2YmPQvMr0&t=164s)
+* [Hackaday Early Writeup](https://hackaday.com/2018/11/04/launchpad-midi-controller-put-to-work-with-python/)
+* [DOOM on a Launchpad](https://www.youtube.com/watch?v=4o_fh3n8FME)
+* [Mouse Commands Demo - Maze](https://www.youtube.com/watch?v=w1YGSpT6aI8)
+* [Medium.com Advanced Soundboard Writeup](https://medium.com/@lloydduhon/podcasting-tips-converting-a-novation-launchpad-to-a-soundboard-for-your-podcast-660962bbcf6c)
 
 ## What does it do?
 The goal of this project is to implement a macro scripting system for the Novation Launchpad, in order to use the launchpad as a scriptable, general purpose macro keyboard.
