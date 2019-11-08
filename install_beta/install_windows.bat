@@ -89,6 +89,7 @@ cd %~dp0
 call conda env create -f environment.yml
 if errorlevel 1 goto INSTALLLPHKFAIL
 
+REM TODO: Use environments.txt
 call conda activate LPHK
 FOR /F "tokens=*" %%g IN ('where python ^| findstr /R /C:"LPHK"') do (set LPHKPYTHON=%%g)
 call conda deactivate

@@ -26,7 +26,7 @@ function pause () {
 }
 
 function prompt_yn () {
-	read -p "Do you wish to continue? (Y/[N])" -n 1 -r
+	read -p "Do you wish to continue? (Y/[N]): " -n 1 -r
     echo 
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
 		return 1
