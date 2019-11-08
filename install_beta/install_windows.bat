@@ -42,14 +42,14 @@ reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" 
 if %OS%==32BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86.exe
 if %OS%==64BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
 
-set CONDAEXE=%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%-condainstall.exe
+set CONDAEXE="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%-condainstall.exe"
 
 echo Downloading Miniconda3 (This will take while, please wait)...
-powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDAEXE%')" > nul
+powershell -Command "(New-Object Net.WebClient).DownloadFile("%MCLINK%", %CONDAEXE%)" > nul
 if errorlevel 1 goto ERROREND
 
 echo Installing Miniconda3...
-set MINICONDAPATH=%USERPROFILE%\Miniconda3
+set MINICONDAPATH="%USERPROFILE%\Miniconda3"
 start /wait /min %CONDAEXE% /InstallationType=JustMe /S /D=%MINICONDAPATH%
 del %CONDAEXE%
 if errorlevel 1 goto CONDAERROR
@@ -69,7 +69,7 @@ goto ERROREND
 
 :CONDADONE
 REM TODO: Use environments.txt
-FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV=%%g)
+FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV="%%g")
 if defined LPHKENV goto ALREADYINSTALLED
 
 if "%1"=="%CONDAWASINSTALLEDFLAG%" goto CONDAWASINSTALLED
@@ -84,14 +84,14 @@ goto INSTALLLPHK
 
 :INSTALLLPHK
 echo Installing LPHK...
-set STARTPATH=%CD%
-cd %~dp0
+set STARTPATH="%CD%"
+cd "%~dp0"
 call conda env create -f environment.yml
 if errorlevel 1 goto INSTALLLPHKFAIL
 
 REM TODO: Use environments.txt
 call conda activate LPHK
-FOR /F "tokens=*" %%g IN ('where python ^| findstr /R /C:"LPHK"') do (set LPHKPYTHON=%%g)
+FOR /F "tokens=*" %%g IN ('where python ^| findstr /R /C:"LPHK"') do (set LPHKPYTHON="%%g")
 call conda deactivate
 if errorlevel 1 goto INSTALLLPHKFAIL
 
@@ -99,20 +99,20 @@ cd ..
 set MAINDIR=%CD%
 cd %STARTPATH%
 
-set LPHKSCRIPT=%MAINDIR%\LPHK.py
+set LPHKSCRIPT="%MAINDIR%\LPHK.py"
 
-set LINKPATH=%MAINDIR%\LPHK.lnk
-set LPHKICON=%MAINDIR%\resources\LPHK.ico
+set LINKPATH="%MAINDIR%\LPHK.lnk"
+set LPHKICON="%MAINDIR%\resources\LPHK.ico"
 
 del %LINKPATH% 2> nul
 
 set SHORTCUTSCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
 echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SHORTCUTSCRIPT%
-echo sLinkFile = "%LINKPATH%" >> %SHORTCUTSCRIPT%
+echo sLinkFile = %LINKPATH% >> %SHORTCUTSCRIPT%
 echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SHORTCUTSCRIPT%
-echo oLink.TargetPath = """%LPHKPYTHON%""" >> %SHORTCUTSCRIPT%
-echo oLink.Arguments = """%LPHKSCRIPT%""" >> %SHORTCUTSCRIPT%
-echo oLink.IconLocation = "%LPHKICON%" >> %SHORTCUTSCRIPT%
+echo oLink.TargetPath = ""%LPHKPYTHON%"" >> %SHORTCUTSCRIPT%
+echo oLink.Arguments = ""%LPHKSCRIPT%"" >> %SHORTCUTSCRIPT%
+echo oLink.IconLocation = %LPHKICON% >> %SHORTCUTSCRIPT%
 echo oLink.Save >> %SHORTCUTSCRIPT%
 call cscript /nologo %SHORTCUTSCRIPT%
 del %SHORTCUTSCRIPT%
@@ -179,7 +179,7 @@ goto END
 
 :INSTALLSHORTCUT
 set DESKTOPLINK=%USERPROFILE%\Desktop\
-copy "%LINKPATH%" "%DESKTOPLINK%"
+copy %LINKPATH% "%DESKTOPLINK%"
 if errorlevel 1 goto ERROREND
 
 echo Copied shortcut to desktop.
