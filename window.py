@@ -135,7 +135,7 @@ class Main_Window(tk.Frame):
             elif lp_object.Check( 0, PRO_NAME ):
                 lp_object = launchpad.LaunchpadPro()
                 if lp_object.Open( 0, PRO_NAME ):
-                    self.popup(self, "Connect to Launchpad Pro...", self.error_image, "This is a BETA feature! The Pro is not fully supported yet, as the bottom and left rows are not mappable currently. I (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)\nYou must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the upper left corner, then release the 'Setup' key. Please only continue once this step is completed.", "I am in Live mode.")
+                    self.popup(self, "Connect to Launchpad Pro...", self.error_image, "This is a BETA feature! The Pro is not fully supported yet, as the bottom and left rows are not mappable currently.\nI (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)\nYou must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the\nupper left corner, then release the 'Setup' key. Please only continue once this step is completed.", "I am in Live mode.")
                     lp_connected = True
                     lp_mode = "Pro"
                     lp_object.ButtonFlush()
