@@ -18,6 +18,7 @@ A Novation Launchpad macro scripting system.
   * [Headers](https://github.com/nimaid/LPHK#headers-table-of-contents)
   * [Comments](https://github.com/nimaid/LPHK#comments-table-of-contents)
   * [Commands List](https://github.com/nimaid/LPHK#commands-list-table-of-contents)
+    * [Key Names](https://github.com/nimaid/LPHK#key-names-table-of-contents)
 * [Known Issues / Troubleshooting](https://github.com/nimaid/LPHK#known-issues--troubleshooting-table-of-contents)
 * [What still needs to be written? (in order of priority)](https://github.com/nimaid/LPHK#what-still-needs-to-be-written-in-order-of-priority-table-of-contents)
 * [What have you done so far?](https://github.com/nimaid/LPHK#what-have-you-done-so-far-table-of-contents)
@@ -267,6 +268,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * `M_STORE`
     * Stores the current mouse position for use with the `M_RECALL*` commands.
 
+#### Key Names [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitespace keys and the following key names are allowed:
 * `alt`
 * `alt_gr`
