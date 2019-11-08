@@ -110,7 +110,7 @@ set SHORTCUTSCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
 echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SHORTCUTSCRIPT%
 echo sLinkFile = "%LINKPATH%" >> %SHORTCUTSCRIPT%
 echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SHORTCUTSCRIPT%
-echo oLink.TargetPath = "%LPHKPYTHON%" >> %SHORTCUTSCRIPT%
+echo oLink.TargetPath = """%LPHKPYTHON%""" >> %SHORTCUTSCRIPT%
 echo oLink.Arguments = """%LPHKSCRIPT%""" >> %SHORTCUTSCRIPT%
 echo oLink.IconLocation = "%LPHKICON%" >> %SHORTCUTSCRIPT%
 echo oLink.Save >> %SHORTCUTSCRIPT%
