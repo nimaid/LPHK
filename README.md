@@ -337,10 +337,10 @@ For all commands, the arguments cannot contain the following strings, as they ar
 
 ## What still needs to be written? (in order of priority) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue ATM, it will have the blue component ignored.
-* Make an installer for Windows and Mac
+* Make an installer for Windows and Linux
   * ~~Should use a `conda` environment created from an `environment.yml` file~~
   * Should copy LPHK files into an appropriate directory (like `Program Files`)
-  * ~~Should give options to add various shortcuts~~
+  * ~~Should give options to add various shortcuts~~ (Linux stull TODO)
 * Add `@LOAD_LAYOUT` header command to load a specified layout
   * Check if layout currently exists when binding to a button (incl during load layout)
     * If not, prompt user if they want to continue anyway
