@@ -356,10 +356,29 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * Default layout specification
   * Auto connect setting
   * Force launchpad model setting
-* Add `@PRESS_COLOR` command to set the active "blinking" color
-* Rework sound module to use the `sounddevice` library
+  * Option to minimize to system tray
+* Add settings menu to configure the startup config
+* Add color customization commands
+    * Make color get stored as an `@COLOR` header (uneditable)
+    * Add `@RUN_COLOR` header to set the "running" color
+      * Default is red
+    * Add `@SCHEDULE_COLOR` header to set the "scheduled" color
+      * Default is red
+    * Add `@RUN_COLOR_MODE` header to set the "running" color mode
+      * `flash` is a quick blinking (default)
+      * `pulse` is a slow fade in and fade out
+      * `solid` is coninuously on
+    * Add `@SCHEDULE_COLOR_MODE` header to set the "scheduled" color mode
+      * `pulse` is a slow fade in and fade out (default)
+      * `flash` is a quick blinking
+      * `solid` is coninuously on
 * Add a `Sound` menu with `Choose default output device...` option
-* Add a command to stop a playing sound... if possible.
+* Add more sound commands
+  * Use different sound library that supports playing an arbitrary number of sounds, and controlling each sound individually while it plays
+  * Add optional label argument to `SOUND`
+  * Add `SOUND_VOLUME` to set the sound volume by label
+  * Add `SOUND_STOP` to stop playing sound by label and delete the sound label
+  * Add `SOUND_ALL_*` commands to stop/change the volume of all sounds
 * Switch TAP delay and times
 * [Refactor code to make LPHKscript functions in auto-implementing modules, for ease of delevopment](https://github.com/nimaid/LPHK/issues/3)
   * A new testing branch will be created while the functional code is re-worked. To avoid merging issues, pull requests may have acceptance delayed until the refactor is complete.
