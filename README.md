@@ -350,6 +350,8 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * Should copy LPHK files into an appropriate directory (like `Program Files`)
   * ~~Should give options to add various shortcuts~~ (Linux stull TODO)
 * Make `PRESS`, `RELEASE`, `TAP`, and `@SIMPLE` accept multiple keys
+  * Will accept multiple arguemnts seperated by spaces
+  * Will be pressed in the order `arg1`, `arg2`... and unpress in the order ...`arg2`, `arg1`
 * Add `@LOAD_LAYOUT` header command to load a specified layout
   * Check if layout currently exists when binding to a button (incl during load layout)
     * If not, prompt user if they want to continue anyway
