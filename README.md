@@ -349,6 +349,7 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * ~~Should use a `conda` environment created from an `environment.yml` file~~
   * Should copy LPHK files into an appropriate directory (like `Program Files`)
   * ~~Should give options to add various shortcuts~~ (Linux stull TODO)
+* Make `PRESS`, `RELEASE`, `TAP`, and `@SIMPLE` accept multiple keys
 * Add `@LOAD_LAYOUT` header command to load a specified layout
   * Check if layout currently exists when binding to a button (incl during load layout)
     * If not, prompt user if they want to continue anyway
@@ -403,7 +404,6 @@ For all commands, the arguments cannot contain the following strings, as they ar
     * Make a way for modules to use standard commands, and to use other modules
     * Take a drink and merge the branches
 * Simply strip comments and empty lines before sending to logic, that way, first line can be a comment and second a header.
-* Make `PRESS`, `RELEASE`, and `TAP` accept multiple keys
 * Let `SOUND` use spaces in it's path if it has double quotes around it
 * Add a `Choose default MIDI device` option to the `Sound` menu. (For multiple launchpads plugged in)
 * Add a third argument to `SOUND` for overriding the default sound device
