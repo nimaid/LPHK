@@ -5,6 +5,7 @@ import os
 from functools import partial
 
 import scripts, files, lp_colors, lp_events
+import classiccolorpicker
 
 BUTTON_SIZE = 40
 HS_SIZE = 200
@@ -419,7 +420,11 @@ class Main_Window(tk.Frame):
         
     def ask_color(self, window, button, x, y, default_color):
         global colors_to_set
-        color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
+        
+        if lp_mode == "Mk1":
+            color = classiccolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
+        else:
+            color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
         if color[0] != None:
             color_to_set = [int(min(255, max(0, c))) for c in color[0]]
             if all(c < 4 for c in color_to_set):
