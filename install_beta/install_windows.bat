@@ -118,7 +118,7 @@ call cscript /nologo %SHORTCUTSCRIPT%
 del %SHORTCUTSCRIPT%
 if not exist %LINKPATH% goto INSTALLSHORTCUTFAILED
 if errorlevel 1 goto INSTALLSHORTCUTFAILED
-goto DESKTOPLINKMAKE
+goto STARTLINKMAKE
 
 :INSTALLLPHKFAIL
 call conda env remove -n LPHK
@@ -167,9 +167,31 @@ goto END
 echo Not installing LPHK, exiting...
 goto END
 
-:DESKTOPLINKMAKE
-echo Installation done! Shortcut created at %LINKPATH%
+:STARTLINKMAKE
+echo Shortcut created at %LINKPATH%
 
+set "AREYOUSURE="
+set /P AREYOUSURE=Install Start Menu shortcut? (Y/[N])
+if /I "%AREYOUSURE%" EQU "Y" goto INSTALLSTARTLINK
+
+echo Not installing Start Menu link.
+goto DESKTOPLINKMAKE
+
+:INSTALLSTARTLINK
+set STARTMENUPATH="%APPDATA%\Microsoft\Windows\Start Menu\Programs"
+copy %LINKPATH% %STARTMENUPATH%
+if errorlevel 1 goto INSTALLSTARTLINKFAILED
+
+echo Installed Start Menu shortcut!
+goto DESKTOPLINKMAKE
+
+:INSTALLSTARTLINKFAILED
+echo Start Menu link could NOT be created!
+echo Please manually copy "%LINKPATH%" to "%STARTMENUPATH%" to install it.
+echo Also, please report this bug via the Discord or GitHub issues.
+goto DESKTOPLINKMAKE
+
+:DESKTOPLINKMAKE
 set "AREYOUSURE="
 set /P AREYOUSURE=Install desktop shortcut? (Y/[N])
 if /I "%AREYOUSURE%" EQU "Y" goto INSTALLSHORTCUT
@@ -192,6 +214,7 @@ echo Please try running again, or seek help in the Discord.
 goto END
 
 :END
+echo Installation done!
 pause
 
 :HARDEND
