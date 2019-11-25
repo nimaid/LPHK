@@ -336,7 +336,6 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
 ## What still needs to be written? (in order of priority) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-* Make a special color picker for Classic/Mini/S that only has the 16 possible colors (you can select colors with blue ATM, it will have the blue component ignored.
 * Re-write `files.py` to use a JSON format for layouts (and scripts).
   * Use `legacy_files.py` to auto-convert the old formats to the newest one
   * Include an `LPHK_version` entry to make backwards compatibility much easier
@@ -483,3 +482,4 @@ For all commands, the arguments cannot contain the following strings, as they ar
   * Includes Behringer CMD Touch TC64 in Novation compatibility mode
 * ~~Add partial Pro support (left and bottom rows not enabled)~~
   * A huge shoutout to MiniStumpy Bloopers in the Discord, who was able to find out that adding this feature was actually fairly simple! I really need a Pro to develop with.
+* ~~Make a special color picker for Classic/Mini/S that only has the 16 possible colors~~

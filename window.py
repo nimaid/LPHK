@@ -5,7 +5,6 @@ import os
 from functools import partial
 
 import scripts, files, lp_colors, lp_events
-import classiccolorpicker
 
 BUTTON_SIZE = 40
 HS_SIZE = 200
@@ -417,12 +416,67 @@ class Main_Window(tk.Frame):
         w.grab_set()
         t.focus_set()
         w.wait_window()
+
+    def classic_askcolor(self, color=(255, 0, 0), title="Color Chooser"):
+        w = tk.Toplevel(self)
+        w.winfo_toplevel().title(title)
+        w.resizable(False, False)
         
+        w.protocol("WM_DELETE_WINDOW", w.destroy)
+        
+        color = ""
+        
+        def return_color(col):
+            nonlocal color
+            color = col
+            w.destroy()
+        
+        button_frame = tk.Frame(w)
+        button_frame.grid(padx=(10, 0), pady=(10, 0))
+        
+        def make_grid_button(column, row, color_hex, func=None, size=100):
+            nonlocal w
+            f = tk.Frame(button_frame, width=size, height=size)
+
+            b = tk.Button(f, command=func)
+            
+            f.rowconfigure(0, weight = 1)
+            f.columnconfigure(0, weight = 1)
+            f.grid_propagate(0)
+            
+            f.grid(column=column, row=row)
+            b.grid(padx=(0,10), pady=(0,10), sticky="nesw")
+            b.config(bg=color_hex)
+        
+        def make_color_button(button_color, column, row, size=100):
+            button_color_hex = "#%02x%02x%02x" % button_color
+            
+            b_func = lambda: return_color(button_color)
+            make_grid_button(column, row, button_color_hex, b_func, size)
+        
+        for c in range(4):
+            for r in range(4):
+                if not (c == 0 and r == 3):
+                    red = max(0, (c * 64) - 1)
+                    green = max(0, ((3 - r) * 64) - 1)
+                    
+                    make_color_button((red, green, 0), c, r)
+
+        w.wait_visibility()
+        w.grab_set()
+        w.wait_window()
+        
+        if color:
+            hex = "#%02x%02x%02x" % color
+            return color, hex
+        else:
+            return None, None
+       
     def ask_color(self, window, button, x, y, default_color):
         global colors_to_set
         
         if lp_mode == "Mk1":
-            color = classiccolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
+            color = self.classic_askcolor(color=tuple(default_color), title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
         else:
             color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
         if color[0] != None:
