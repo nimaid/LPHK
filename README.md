@@ -338,8 +338,8 @@ For all commands, the arguments cannot contain the following strings, as they ar
 ## What still needs to be written? (in order of priority) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * Re-write `files.py` to use a JSON format for layouts (and scripts).
   * Use `legacy_files.py` to auto-convert the old formats to the newest one
-  * Include an `LPHK_version` entry to make backwards compatibility much easier
-  * Also add a `VERSION` file in the main directory with the current version string
+  * Include an `version` entry to make backwards compatibility much easier
+  * A version string will be put at the top of the new `files.py`
   * Add small version text in the bottom corner of the program
   * Make LPHKSCRIPT files JSON as well
     * An array of lines, which are arrays of tokens
