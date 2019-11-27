@@ -3,6 +3,7 @@ import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox, tkcolorpick
 from PIL import ImageTk, Image
 import os
 from functools import partial
+import webbrowser
 
 import scripts, files, lp_colors, lp_events
 
@@ -77,21 +78,30 @@ class Main_Window(tk.Frame):
         self.master.config(menu=self.m)
 
         self.m_Launchpad = tk.Menu(self.m, tearoff=False)
-        self.m_Launchpad.add_command(label="Connect to Launchpad...", command=self.connect_lp)
-        self.m_Launchpad.add_command(label="Disonnect from Launchpad...", command=self.disconnect_lp)
-        self.m_Launchpad.add_command(label="Redetect...", command=self.redetect_lp)
+        self.m_Launchpad.add_command(label="Connect to Launchpad", command=self.connect_lp)
+        self.m_Launchpad.add_command(label="Disonnect from Launchpad", command=self.disconnect_lp)
+        self.m_Launchpad.add_command(label="Redetect", command=self.redetect_lp)
         self.m.add_cascade(label="Launchpad", menu=self.m_Launchpad)
 
         self.disable_lp_disconnect()
 
         self.m_Layout = tk.Menu(self.m, tearoff=False)
-        self.m_Layout.add_command(label="New layout...", command=self.unbind_lp)
-        self.m_Layout.add_command(label="Load layout...", command=self.load_layout)
-        self.m_Layout.add_command(label="Save layout...", command=self.save_layout)
+        self.m_Layout.add_command(label="New layout", command=self.unbind_lp)
+        self.m_Layout.add_command(label="Load layout", command=self.load_layout)
+        self.m_Layout.add_command(label="Save layout", command=self.save_layout)
         self.m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
         self.m.add_cascade(label="Layout", menu=self.m_Layout)
 
         self.disable_menu("Layout")
+        
+        self.m_Help = tk.Menu(self.m, tearoff=False)
+        open_readme = lambda: webbrowser.open("https://github.com/nimaid/LPHK#lphk-launchpad-hotkey")
+        self.m_Help.add_command(label="Open README...", command=open_readme)
+        open_scripting = lambda: webbrowser.open("https://github.com/nimaid/LPHK#what-is-lphkscript-table-of-contents")
+        self.m_Help.add_command(label="Scripting help...", command=open_scripting)
+        display_info = lambda: self.popup(self, "About LPHK", self.info_image, "A Novation Launchpad Macro Scripting System\nMade by Ella Jameson (nimaid)\n\nVersion: " + files.PROG_VERSION, "Done")
+        self.m_Help.add_command(label="About LPHK", command=display_info)
+        self.m.add_cascade(label="Help", menu=self.m_Help)
 
         c_gap = int(BUTTON_SIZE // 4)
 
@@ -111,10 +121,10 @@ class Main_Window(tk.Frame):
         self.m.entryconfig(name, state="disabled")
 
     def enable_lp_disconnect(self):
-        self.m_Launchpad.entryconfig("Disonnect from Launchpad...", state="normal")
+        self.m_Launchpad.entryconfig("Disonnect from Launchpad", state="normal")
 
     def disable_lp_disconnect(self):
-        self.m_Launchpad.entryconfig("Disonnect from Launchpad...", state="disabled")
+        self.m_Launchpad.entryconfig("Disonnect from Launchpad", state="disabled")
 
     def connect_lp(self):
         global lp_connected
@@ -138,7 +148,7 @@ class Main_Window(tk.Frame):
             elif lp_object.Check( 0, PRO_NAME ):
                 lp_object = launchpad.LaunchpadPro()
                 if lp_object.Open( 0, PRO_NAME ):
-                    self.popup(self, "Connect to Launchpad Pro...", self.error_image, "This is a BETA feature! The Pro is not fully supported yet, as the bottom and left rows are not mappable currently.\nI (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)\nYou must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the\nupper left corner, then release the 'Setup' key. Please only continue once this step is completed.", "I am in Live mode.")
+                    self.popup(self, "Connect to Launchpad Pro", self.error_image, "This is a BETA feature! The Pro is not fully supported yet, as the bottom and left rows are not mappable currently.\nI (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)\nYou must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the\nupper left corner, then release the 'Setup' key. Please only continue once this step is completed.", "I am in Live mode.")
                     lp_connected = True
                     lp_mode = "Pro"
                     lp_object.ButtonFlush()
@@ -151,7 +161,7 @@ class Main_Window(tk.Frame):
                     self.stat["text"] = "Connected to Launchpad Pro (BETA)"
                     self.stat["bg"] = STAT_ACTIVE_COLOR   
             elif lp_object.Check( 0, CTRL_XL_NAME ) or lp_object.Check( 0, LAUNCHKEY_NAME ) or lp_object.Check( 0, DICER_NAME ):
-                self.popup(self, "Connect to Unsupported Device...", self.error_image, "The device you are attempting to use is not currently supported by LPHK, and there are no plans to add support for it.\nPlease voice your feature requests on the Discord or on GitHub.", "OK")
+                self.popup(self, "Connect to Unsupported Device", self.error_image, "The device you are attempting to use is not currently supported by LPHK, and there are no plans to add support for it.\nPlease voice your feature requests on the Discord or on GitHub.", "OK")
             elif lp_object.Check():
                 if lp_object.Open():
                     lp_connected = True
@@ -166,7 +176,7 @@ class Main_Window(tk.Frame):
             else:
                 raise Exception()
         except:
-            self.popup(self, "Connect to Launchpad...", self.error_image, "Fatal error while connecting to Launchpad!\nDisconnect and reconnect your USB cable, then use the\n'Redetect...' option from the 'Launchpad' menu.", "OK")
+            self.popup(self, "Connect to Launchpad", self.error_image, "Fatal error while connecting to Launchpad!\nDisconnect and reconnect your USB cable, then use the\n'Redetect...' option from the 'Launchpad' menu.", "OK")
 
     def disconnect_lp(self):
         global lp_connected
@@ -201,7 +211,7 @@ class Main_Window(tk.Frame):
         self.modified_layout_save_prompt()
         name = tk.filedialog.askopenfilename(parent=app,
                                           initialdir=os.getcwd() + files.LAYOUT_PATH,
-                                          title="Load layout...",
+                                          title="Load layout",
                                           filetypes=load_layout_filetypes)
         if name:
             files.load_layout_to_lp(name)
@@ -350,7 +360,7 @@ class Main_Window(tk.Frame):
         global color_to_set
         
         w = tk.Toplevel(self)
-        w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")...")
+        w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
         w.resizable(False, False)
         
         def validate_func():
@@ -380,9 +390,9 @@ class Main_Window(tk.Frame):
         t.bind("<Control-Key-a>", self.select_all)
 
         import_script_func = lambda: self.import_script(t, w)
-        e_m_Script.add_command(label="Import script...", command=import_script_func)
+        e_m_Script.add_command(label="Import script", command=import_script_func)
         export_script_func = lambda: self.export_script(t, w)
-        e_m_Script.add_command(label="Export script...", command=export_script_func)
+        e_m_Script.add_command(label="Export script", command=export_script_func)
         e_m.add_cascade(label="Script", menu=e_m_Script)
         
         if color_override == None:
@@ -479,9 +489,9 @@ class Main_Window(tk.Frame):
         global colors_to_set
         
         if lp_mode == "Mk1":
-            color = self.classic_askcolor(color=tuple(default_color), title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
+            color = self.classic_askcolor(color=tuple(default_color), title="Select Color for Button (" + str(x) + ", " + str(y) + ")")
         else:
-            color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
+            color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")")
         if color[0] != None:
             color_to_set = [int(min(255, max(0, c))) for c in color[0]]
             if all(c < 4 for c in color_to_set):
@@ -549,7 +559,7 @@ class Main_Window(tk.Frame):
     def import_script(self, textbox, window):
         name = tk.filedialog.askopenfilename(parent=window,
                                              initialdir=os.getcwd() + files.SCRIPT_PATH,
-                                             title="Import script...",
+                                             title="Import script",
                                              filetypes=load_script_filetypes)
         if name:
             text = files.import_script(name)
@@ -560,7 +570,7 @@ class Main_Window(tk.Frame):
     def export_script(self, textbox, window):
         name = tk.filedialog.asksaveasfilename(parent=window,
                                                initialdir=os.getcwd() + files.SCRIPT_PATH,
-                                               title="Export script...",
+                                               title="Export script",
                                                filetypes=save_script_filetypes)
         if name:
             if files.SCRIPT_EXT not in name:
