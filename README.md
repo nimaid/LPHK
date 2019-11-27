@@ -368,7 +368,6 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
   * Add `SOUND_VOLUME` to set the sound volume by label
   * Add `SOUND_STOP` to stop playing sound by label and delete the sound label
   * Add `SOUND_ALL_*` commands to stop/change the volume of all sounds
-* Switch TAP delay and times
 * [Refactor code to make LPHKscript functions in auto-implementing modules, for ease of delevopment](https://github.com/nimaid/LPHK/issues/3)
   * A new testing branch will be created while the functional code is re-worked. To avoid merging issues, pull requests may have acceptance delayed until the refactor is complete.
   * There are a few complex refactoring tasks required for this, I will be crossing them off here on the testing branch:
@@ -391,6 +390,7 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
     * Deal with the Pandora's box that porting those functions will open (this list will probably grow)
     * Make a way for modules to use standard commands, and to use other modules
     * Take a drink and merge the branches
+* Allow named arguments for certain commands
 * Simply strip comments and empty lines before sending to logic, that way, first line can be a comment and second a header.
 * Let `SOUND` use spaces in it's path if it has double quotes around it
 * Add a `Choose default MIDI device` option to the `Sound` menu. (For multiple launchpads plugged in)
