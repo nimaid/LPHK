@@ -99,7 +99,7 @@ class Main_Window(tk.Frame):
         self.m_Help.add_command(label="Open README...", command=open_readme)
         open_scripting = lambda: webbrowser.open("https://github.com/nimaid/LPHK#what-is-lphkscript-table-of-contents")
         self.m_Help.add_command(label="Scripting help...", command=open_scripting)
-        display_info = lambda: self.popup(self, "About LPHK", self.info_image, "A Novation Launchpad Macro Scripting System\nMade by Ella Jameson (nimaid)\n\nVersion: " + files.PROG_VERSION, "Done")
+        display_info = lambda: self.popup(self, "About LPHK", self.info_image, "A Novation Launchpad Macro Scripting System\nMade by Ella Jameson (nimaid)\n\nVersion: " + files.PROG_VERSION + "\nFile format version: " + files.FILE_VERSION, "Done")
         self.m_Help.add_command(label="About LPHK", command=display_info)
         self.m.add_cascade(label="Help", menu=self.m_Help)
 

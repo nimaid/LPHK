@@ -8,7 +8,7 @@ PROG_VERSION = None
 LAYOUT_PATH = "/user_layouts/"
 SCRIPT_PATH = "/user_scripts/"
 
-FILE_VERSION = "0.01"
+FILE_VERSION = "0.1"
 
 LAYOUT_EXT = ".lpl"
 SCRIPT_EXT = ".lps"
