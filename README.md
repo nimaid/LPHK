@@ -337,6 +337,10 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
   * Should copy LPHK files into an appropriate directory (like `Program Files`)
   * ~~Should give options to add various shortcuts~~ (Linux stull TODO)
 * Add auto-update feature using `git`
+  * ~~There will be a VERSION file in the main directory with the version string~~
+  * This can be polled at `https://raw.githubusercontent.com/nimaid/LPHK/master/VERSION`
+  * This will be displayed in the lower right corner of the main program
+  * If this string does not match the newest one at the above link, prompt to update
 * Make `PRESS`, `RELEASE`, `TAP`, and `@SIMPLE` accept multiple keys
   * Will accept multiple arguemnts seperated by spaces
   * Will be pressed in the order `arg1`, `arg2`... and unpress in the order ...`arg2`, `arg1`
