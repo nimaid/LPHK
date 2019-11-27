@@ -331,6 +331,7 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
 ## What still needs to be written? (in order of priority) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* Let program function as a layout editor without LP connection
 * Make an installer for Windows and Linux
   * ~~Should use a `conda` environment created from an `environment.yml` file~~
   * Should copy LPHK files into an appropriate directory (like `Program Files`)
@@ -399,7 +400,6 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * Add variables and mathematical evaluation (mostly done!)
 * Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) 
 * Add script status icons (bound, playing, queued)
-* Let program function as a layout editor without LP connection
 * Add syntax highlighting
 * Add GUI scaling
 * Full support for Launchpad Pro
