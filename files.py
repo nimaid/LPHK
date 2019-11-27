@@ -1,4 +1,4 @@
-import lp_colors, scripts, files_legacy
+import lp_colors, scripts
 from time import sleep
 import os, json, platform, subprocess
 
@@ -11,6 +11,13 @@ LAYOUT_EXT = ".lpl"
 SCRIPT_EXT = ".lps"
 
 FILE_VERSION = "0.01"
+
+LEGACY_LAYOUT_EXT = ".LPHKlayout"
+LEGACY_SCRIPT_EXT = ".LPHKscript"
+
+LEGACY_BUTTON_SEPERATOR = ":LPHK_BUTTON_SEP:"
+LEGACY_ENTRY_SEPERATOR = ":LPHK_ENTRY_SEP:"
+LEGACY_NEWLINE_REPLACE = ":LPHK_NEWLINE_REP:"
 
 import window
 
@@ -32,7 +39,35 @@ def load_layout(name):
         layout = json.load(f)
     print("[files] Loaded layout " + name)
     return layout
+  
+def load_legacy_layout(name):
+    layout = dict()
+    layout["version"] = "LEGACY"
     
+    layout["buttons"] = []
+    with open(name, "r") as f:
+        l = f.readlines()
+
+        for x in range(9):
+            layout["buttons"].append([])
+            line = l[x][:-1].split(LEGACY_BUTTON_SEPERATOR)
+            for y in range(9):
+                info = line[y].split(LEGACY_ENTRY_SEPERATOR)
+                
+                color = None
+                if not info[0].isdigit():
+                    split = info[0].split(",")
+                    color = [int(x) for x in split[:3]]
+                else:
+                    color = lp_colors.code_to_RGB(int(info[0]))
+                
+                script_text = info[1].replace(LEGACY_NEWLINE_REPLACE, "\n")
+                
+                layout["buttons"][-1].append({"color": color, "text": script_text})
+    
+    print("[files] Loaded legacy layout " + name)
+    return layout
+  
 def save_lp_to_layout(name):
     layout = dict()
     layout["version"] = FILE_VERSION
@@ -62,9 +97,9 @@ def load_layout_to_lp(name):
     ext = basename_list[-1]
     title = os.path.extsep.join(basename_list[:-1])
     
-    if "." + ext == files_legacy.LEGACY_LAYOUT_EXT:
+    if "." + ext == LEGACY_LAYOUT_EXT:
         # TODO: Error checking on resultant JSON
-        layout = files_legacy.load_legacy_layout(name)
+        layout = load_legacy_layout(name)
         
         name = os.path.dirname(name) + os.path.sep + title + LAYOUT_EXT
         window.app.popup(window.app, "Legacy layout loaded...", window.app.info_image, "The layout is in the legacy .LPHKlayout format. It will be\nconverted to the new .lpl format, and will be saved as such.", "OK")

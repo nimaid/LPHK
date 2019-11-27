@@ -32,8 +32,8 @@ root_destroyed = None
 restart = False
 lp_object = None
 
-load_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT, files.files_legacy.LEGACY_LAYOUT_EXT])]
-load_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT, files.files_legacy.LEGACY_SCRIPT_EXT])]
+load_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT, files.LEGACY_LAYOUT_EXT])]
+load_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT, files.LEGACY_SCRIPT_EXT])]
 
 save_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT])]
 save_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT])]
