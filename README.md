@@ -138,7 +138,7 @@ ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR
   * If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
 * The current mode is displayed in the upper right, in the gap between the circular buttons. Clicking this text will change the mode. There are four modes:
     * "Edit" mode: Click on a button to open the Script Edit window for that button.
-      * All scripts are saved in the `.LPHKlayout` files, but the editor also has the ability to import/export single `.LPHKscript` files.
+      * All scripts are saved in the `.lpl` (LaunchPad Layout) files, but the editor also has the ability to import/export single `.lps` (LaunchPad Script) files.
         * For examples, you can click `Import Script` and look through the `user_scripts/examples/` folder.
       * Select the button color, then click `Bind Button (x, y)`.
         * If there are syntax errors, this is when they will be caught, and you will be informed without the editor closing.
@@ -164,7 +164,7 @@ LPHKscript is a simple macro scripting language tailor made for LPHK. Syntax is 
 ### Scheduling [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Only one script runs at a time, and there is a scheduling system for them. If a script is scheduled, it's button will pulse red. If the script is running, the button will flash red quickly. This is true for the 8x8 grid, however, the function keys cannot flash or pulse, as a hardware limitation. These keys will be bright orange for scheduled and bright red for running.
 
-When you press a script button, if there is a script running, it adds the script to the queue. If no scripts are running, the script is added to the queue and the queue execution is started. Tapping a scheduled script's button will unschedule it, and tapping a running scripts button will kill it. If that sounds confusing, load up `user_layouts/examples/all_delays_all_day.LPHKlayout` and press a bunch of buttons.
+When you press a script button, if there is a script running, it adds the script to the queue. If no scripts are running, the script is added to the queue and the queue execution is started. Tapping a scheduled script's button will unschedule it, and tapping a running scripts button will kill it. If that sounds confusing, load up `user_layouts/examples/all_delays_all_day.lpl` and press a bunch of buttons.
 
 ### Headers [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Headers are commands that start with `@` and go on the first line of a script. They are used to put the scripting engine into different "modes", allowing you to do some interesting things.
@@ -313,11 +313,6 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * `vol_down`
 * `vol_up`
 
-For all commands, the arguments cannot contain the following strings, as they are reserved for the LPHKlayout file format:
-* `LPHK_BUTTON_SEP`
-* `LPHK_ENTRY_SEP`
-* `LPHK_NEWLINE_REP`
-
 ## Known Issues / Troubleshooting [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * The USB connection on the Launchpads, quite frankly, suck. If the angle is wrong, the Launchpad may receive power, but will not be able to transmit or receive data. While using the Launchpad, if you wiggle the connection somehow, it will straight up break the MIDI library I use. You will have to do the following:
   * Click on "Launchpad > Disconnect from Launchpad xxx..."
@@ -336,14 +331,6 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
 ## What still needs to be written? (in order of priority) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-* Re-write `files.py` to use a JSON format for layouts (and scripts).
-  * Use `legacy_files.py` to auto-convert the old formats to the newest one
-  * Include an `version` entry to make backwards compatibility much easier
-  * A version string will be put at the top of the new `files.py`
-  * Add small version text in the bottom corner of the program
-  * Make LPHKSCRIPT files JSON as well
-    * An array of lines, which are arrays of tokens
-    * A version string
 * Make an installer for Windows and Linux
   * ~~Should use a `conda` environment created from an `environment.yml` file~~
   * Should copy LPHK files into an appropriate directory (like `Program Files`)
@@ -483,3 +470,4 @@ For all commands, the arguments cannot contain the following strings, as they ar
 * ~~Add partial Pro support (left and bottom rows not enabled)~~
   * A huge shoutout to MiniStumpy Bloopers in the Discord, who was able to find out that adding this feature was actually fairly simple! I really need a Pro to develop with.
 * ~~Make a special color picker for Classic/Mini/S that only has the 16 possible colors~~
+* ~~Re-write `files.py` to use a JSON format for layouts.~~

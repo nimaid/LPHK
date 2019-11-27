@@ -660,9 +660,6 @@ def validate_script(script_str):
                 labels.append(split_line[1])
     
     for idx, line in enumerate(script_lines):
-        for sep in (files.ENTRY_SEPERATOR, files.BUTTON_SEPERATOR, files.NEWLINE_REPLACE):
-            if sep[1:-1] in line:
-                return ("You cannot use the string '" + sep[1:-1] + "' in any script.", line)
         line = line.strip()
         if line != "":
             if line[0] != "-":

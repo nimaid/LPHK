@@ -32,8 +32,11 @@ root_destroyed = None
 restart = False
 lp_object = None
 
-layout_filetypes = [('LPHK layout files', files.LAYOUT_EXT)]
-script_filetypes = [('LPHK script files', files.SCRIPT_EXT)]
+load_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT, files.files_legacy.LEGACY_LAYOUT_EXT])]
+load_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT, files.files_legacy.LEGACY_SCRIPT_EXT])]
+
+save_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT])]
+save_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT])]
 
 lp_connected = False
 lp_mode = None
@@ -199,28 +202,28 @@ class Main_Window(tk.Frame):
         name = tk.filedialog.askopenfilename(parent=app,
                                           initialdir=os.getcwd() + files.LAYOUT_PATH,
                                           title="Load layout...",
-                                          filetypes=layout_filetypes)
+                                          filetypes=load_layout_filetypes)
         if name:
-            files.load_layout(name, False)
+            files.load_layout_to_lp(name)
             self.draw_canvas()
 
     def save_layout_as(self):
         name = tk.filedialog.asksaveasfilename(parent=app,
                                             initialdir=os.getcwd() + files.LAYOUT_PATH,
                                             title="Save layout as...",
-                                            filetypes=layout_filetypes)
+                                            filetypes=save_layout_filetypes)
         if name:
             if files.LAYOUT_EXT not in name:
                 name += files.LAYOUT_EXT
-            files.save_layout(name, False)
-            files.load_layout(name, False)
+            files.save_lp_to_layout(name)
+            files.load_layout_to_lp(name)
 
     def save_layout(self):
         if files.curr_layout == None:
             self.save_layout_as()
         else:
-            files.save_layout(files.curr_layout, False)
-            files.load_layout(files.curr_layout, False)
+            files.save_lp_to_layout(files.curr_layout)
+            files.load_layout_to_lp(files.curr_layout)
     
     def click(self, event):
         gap = int(BUTTON_SIZE // 4)
@@ -547,9 +550,9 @@ class Main_Window(tk.Frame):
         name = tk.filedialog.askopenfilename(parent=window,
                                              initialdir=os.getcwd() + files.SCRIPT_PATH,
                                              title="Import script...",
-                                             filetypes=script_filetypes)
+                                             filetypes=load_script_filetypes)
         if name:
-            text = files.import_script(name, False)
+            text = files.import_script(name)
             text = files.strip_lines(text)
             textbox.delete("1.0", tk.END)
             textbox.insert(tk.INSERT, text)
@@ -558,13 +561,13 @@ class Main_Window(tk.Frame):
         name = tk.filedialog.asksaveasfilename(parent=window,
                                                initialdir=os.getcwd() + files.SCRIPT_PATH,
                                                title="Export script...",
-                                               filetypes=script_filetypes)
+                                               filetypes=save_script_filetypes)
         if name:
             if files.SCRIPT_EXT not in name:
                 name += files.SCRIPT_EXT
             text = textbox.get("1.0", tk.END)
             text = files.strip_lines(text)
-            files.export_script(name, text, False)
+            files.export_script(name, text)
 
     def popup(self, window, title, image, text, button_text, end_command=None):
         popup = tk.Toplevel(window)
