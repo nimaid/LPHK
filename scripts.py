@@ -18,25 +18,32 @@ running = False
 to_run = []
 text = [["" for y in range(9)] for x in range(9)]
 
-def safe_sleep(time, x, y, is_async, endfunc=None):
-    #WIP
+def check_kill(x, y, is_async, killfunc=None):
     coords = "(" + str(x) + ", " + str(y) + ")"
+    
+    if threads[x][y].kill.is_set():
+        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+        threads[x][y].kill.clear()
+        if not is_async:
+            running = False
+        if killfunc:
+            killfunc()
+        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+        return True
+    else:
+        return False
+
+def safe_sleep(time, x, y, is_async, endfunc=None):
     while time > DELAY_EXIT_CHECK:
         sleep(DELAY_EXIT_CHECK)
         time -= DELAY_EXIT_CHECK
-        if threads[x][y].kill.is_set():
-            print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-            threads[x][y].kill.clear()
-            if not is_async:
-                running = False
-            if endfunc:
-                endfunc()
-            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-            return -1
+        if check_kill(x, y, is_async, endfunc):
+            return False
     if time > 0:
         sleep(time)
     if endfunc:
         endfunc()
+    return True
 
 def schedule_script(script_in, x, y):
     global threads
@@ -126,13 +133,10 @@ def run_script(script_str, x, y):
     
     def main_logic(idx):
         nonlocal m_pos
-        if threads[x][y].kill.is_set():
-            print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-            threads[x][y].kill.clear()
-            if not is_async:
-                running = False
-            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+        
+        if check_kill(x, y, is_async):
             return idx + 1
+            
         line = script_lines[idx].strip()
         if line == "":
             print("[scripts] " + coords + "    Empty line")
@@ -146,70 +150,32 @@ def run_script(script_str, x, y):
                 kb.keyboard.write(type_string)
             elif split_line[0] == "DELAY":
                 print("[scripts] " + coords + "    Delay for " + split_line[1] + " seconds")
-                
                 delay = float(split_line[1])
-                while delay > DELAY_EXIT_CHECK:
-                    sleep(DELAY_EXIT_CHECK)
-                    delay -= DELAY_EXIT_CHECK
-                    if threads[x][y].kill.is_set():
-                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                        threads[x][y].kill.clear()
-                        if not is_async:
-                            running = False
-                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return -1
-                if delay > 0:
-                    sleep(delay)
+                if not safe_sleep(delay, x, y, is_async):
+                    return -1
             elif split_line[0] == "TAP":
                 key = kb.sp(split_line[1])
+                releasefunc = lambda: kb.release(key)
                 if len(split_line) <= 2:
                     print("[scripts] " + coords + "    Tap key " + split_line[1])
                     kb.tap(key)
                 elif len(split_line) <= 3:
                     print("[scripts] " + coords + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
-                    
                     taps = int(split_line[2])
                     for tap in range(taps):
-                        if threads[x][y].kill.is_set():
-                            print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                            threads[x][y].kill.clear()
-                            if not is_async:
-                                running = False
-                            kb.release(split_line[1])
-                            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                        if check_kill(x, y, is_async, releasefunc):
                             return idx + 1
                         kb.tap(key)
                 else:
                     print("[scripts] " + coords + "    Tap key " + split_line[1] + " " + split_line[2] + " times for " + str(split_line[3]) + " seconds each")
-                    
                     taps = int(split_line[2])
                     delay = float(split_line[3])
                     for tap in range(taps):
-                        temp_delay = delay
-                        if threads[x][y].kill.is_set():
-                            print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                            threads[x][y].kill.clear()
-                            if not is_async:
-                                running = False
-                            kb.release(key)
-                            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                        if check_kill(x, y, is_async, releasefunc):
                             return -1
-
                         kb.press(key)
-                        while temp_delay > DELAY_EXIT_CHECK:
-                            sleep(DELAY_EXIT_CHECK)
-                            temp_delay -= DELAY_EXIT_CHECK
-                            if threads[x][y].kill.is_set():
-                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                threads[x][y].kill.clear()
-                                if not is_async:
-                                    running = False
-                                kb.release(key)
-                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return -1
-                        if temp_delay > 0:
-                            sleep(temp_delay)
-                        kb.release(key)
+                        if not safe_sleep(delay, x, y, is_async, releasefunc):
+                            return -1
             elif split_line[0] == "PRESS":
                 print("[scripts] " + coords + "    Press key " + split_line[1])
                 key = kb.sp(split_line[1])
@@ -241,13 +207,8 @@ def run_script(script_str, x, y):
                 print("[scripts] " + coords + "    Wait for script key to be unpressed")
                 while lp_events.pressed[x][y]:
                     sleep(DELAY_EXIT_CHECK)
-                    if threads[x][y].kill.is_set():
-                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                        threads[x][y].kill.clear()
-                        if not is_async:
-                            running = False
-                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                        return idx + 1
+                    if check_kill(x, y, is_async):
+                        return idx + 1             
             elif split_line[0] == "M_STORE":
                 print("[scripts] " + coords + "    Store mouse position")
                 m_pos = ms.getXY()
@@ -276,28 +237,12 @@ def run_script(script_str, x, y):
                 x_C, y_C = ms.getXY()
                 points = ms.line_coords(x_C, y_C, x1, y1)
                 for x_M, y_M in points[::skip]:
-                    if threads[x][y].kill.is_set():
-                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                        threads[x][y].kill.clear()
-                        if not is_async:
-                            running = False
-                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                    if check_kill(x, y, is_async):
                         return -1
                     ms.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
-                        temp_delay = delay
-                        while temp_delay > DELAY_EXIT_CHECK:
-                            sleep(DELAY_EXIT_CHECK)
-                            temp_delay -= DELAY_EXIT_CHECK
-                            if threads[x][y].kill.is_set():
-                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                threads[x][y].kill.clear()
-                                if not is_async:
-                                    running = False
-                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return -1
-                        if temp_delay > 0:
-                            sleep(temp_delay)
+                        if not safe_sleep(delay, x, y, is_async):
+                            return -1
             elif split_line[0] == "M_MOVE":
                 if len(split_line) >= 3:
                     print("[scripts] " + coords + "    Relative mouse movement (" + split_line[1] + ", " + str(split_line[2]) + ")")
@@ -338,28 +283,12 @@ def run_script(script_str, x, y):
 
                 points = ms.line_coords(x1, y1, x2, y2)
                 for x_M, y_M in points[::skip]:
-                    if threads[x][y].kill.is_set():
-                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                        threads[x][y].kill.clear()
-                        if not is_async:
-                            running = False
-                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                    if check_kill(x, y, is_async):
                         return -1
                     ms.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
-                        temp_delay = delay
-                        while temp_delay > DELAY_EXIT_CHECK:
-                            sleep(DELAY_EXIT_CHECK)
-                            temp_delay -= DELAY_EXIT_CHECK
-                            if threads[x][y].kill.is_set():
-                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                threads[x][y].kill.clear()
-                                if not is_async:
-                                    running = False
-                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return -1
-                        if temp_delay > 0:
-                            sleep(temp_delay)
+                        if not safe_sleep(delay, x, y, is_async):
+                            return -1
             elif split_line[0] == "M_LINE_MOVE":
                 x1 = int(split_line[1])
                 y1 = int(split_line[2])
@@ -381,28 +310,12 @@ def run_script(script_str, x, y):
                 x_N, y_N = x_C + x1, y_C + y1
                 points = ms.line_coords(x_C, y_C, x_N, y_N)
                 for x_M, y_M in points[::skip]:
-                    if threads[x][y].kill.is_set():
-                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                        threads[x][y].kill.clear()
-                        if not is_async:
-                            running = False
-                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                    if check_kill(x, y, is_async):
                         return -1
                     ms.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
-                        temp_delay = delay
-                        while temp_delay > DELAY_EXIT_CHECK:
-                            sleep(DELAY_EXIT_CHECK)
-                            temp_delay -= DELAY_EXIT_CHECK
-                            if threads[x][y].kill.is_set():
-                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                threads[x][y].kill.clear()
-                                if not is_async:
-                                    running = False
-                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return -1
-                        if temp_delay > 0:
-                            sleep(temp_delay)
+                        if not safe_sleep(delay, x, y, is_async):
+                            return -1
             elif split_line[0] == "M_LINE_SET":
                 x1 = int(split_line[1])
                 y1 = int(split_line[2])
@@ -423,28 +336,12 @@ def run_script(script_str, x, y):
                 x_C, y_C = ms.getXY()
                 points = ms.line_coords(x_C, y_C, x1, y1)
                 for x_M, y_M in points[::skip]:
-                    if threads[x][y].kill.is_set():
-                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                        threads[x][y].kill.clear()
-                        if not is_async:
-                            running = False
-                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                    if check_kill(x, y, is_async):
                         return -1
                     ms.setXY(x_M, y_M)
                     if (delay != None) and (delay > 0):
-                        temp_delay = delay
-                        while temp_delay > DELAY_EXIT_CHECK:
-                            sleep(DELAY_EXIT_CHECK)
-                            temp_delay -= DELAY_EXIT_CHECK
-                            if threads[x][y].kill.is_set():
-                                print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                                threads[x][y].kill.clear()
-                                if not is_async:
-                                    running = False
-                                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-                                return -1
-                        if temp_delay > 0:
-                            sleep(temp_delay)
+                        if not safe_sleep(delay, x, y, is_async):
+                            return -1
             elif split_line[0] == "LABEL":
                print("[scripts] " + coords + "    Label: " + split_line[1])
                return idx + 1
@@ -506,20 +403,14 @@ def run_script(script_str, x, y):
                         return labels[split_line[1]]
             elif split_line[0] == "@SIMPLE":
                 print("[scripts] " + coords + "    Simple keybind: " + split_line[1])
-                
                 #PRESS
                 key = kb.sp(split_line[1])
+                releasefunc = kb.release(key)
                 kb.press(key)
-                
                 #WAIT_UNPRESSED
                 while lp_events.pressed[x][y]:
                     sleep(DELAY_EXIT_CHECK)
-                    if threads[x][y].kill.is_set():
-                        print("[scripts] " + coords + " Recieved exit flag, script exiting...")
-                        threads[x][y].kill.clear()
-                        if not is_async:
-                            running = False
-                        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+                    if check_kill(x, y, is_async, releasefunc):
                         return idx + 1
                 #RELEASE
                 kb.release(key)
