@@ -18,6 +18,26 @@ running = False
 to_run = []
 text = [["" for y in range(9)] for x in range(9)]
 
+def safe_sleep(time, x, y, is_async, endfunc=None):
+    #WIP
+    coords = "(" + str(x) + ", " + str(y) + ")"
+    while time > DELAY_EXIT_CHECK:
+        sleep(DELAY_EXIT_CHECK)
+        time -= DELAY_EXIT_CHECK
+        if threads[x][y].kill.is_set():
+            print("[scripts] " + coords + " Recieved exit flag, script exiting...")
+            threads[x][y].kill.clear()
+            if not is_async:
+                running = False
+            if endfunc:
+                endfunc()
+            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+            return -1
+    if time > 0:
+        sleep(time)
+    if endfunc:
+        endfunc()
+
 def schedule_script(script_in, x, y):
     global threads
     global to_run
