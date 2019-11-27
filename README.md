@@ -347,20 +347,21 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
   * Force launchpad model setting
   * Option to minimize to system tray
 * Add settings menu to configure the startup config
-* Add color customization commands
-    * Make color get stored as an `@COLOR` header (uneditable)
-    * Add `@RUN_COLOR` header to set the "running" color
-      * Default is red
-    * Add `@SCHEDULE_COLOR` header to set the "scheduled" color
-      * Default is red
-    * Add `@RUN_COLOR_MODE` header to set the "running" color mode
-      * `flash` is a quick blinking (default)
-      * `pulse` is a slow fade in and fade out
-      * `solid` is coninuously on
-    * Add `@SCHEDULE_COLOR_MODE` header to set the "scheduled" color mode
-      * `pulse` is a slow fade in and fade out (default)
-      * `flash` is a quick blinking
-      * `solid` is coninuously on
+* Add more color customization
+    * Make new fields in the `.lpl` layout format
+      * Add `run_color` to set the "running" color
+        * Default is red (255, 0, 0)
+      * Add `schedule_color` to set the "scheduled" color
+        * Default is red (255, 0, 0)
+      * Add `run_color_mode` to set the "running" color mode
+        * `flash` is a quick blinking (default)
+        * `pulse` is a slow fade in and fade out
+        * `solid` is coninuously on
+      * Add `schedule_color_mode` to set the "scheduled" color mode
+        * `pulse` is a slow fade in and fade out (default)
+        * `flash` is a quick blinking
+        * `solid` is coninuously on
+    * Add more selectors to script entry window
 * Add a `Sound` menu with `Choose default output device...` option
 * Add more sound commands
   * Use different sound library that supports playing an arbitrary number of sounds, and controlling each sound individually while it plays
