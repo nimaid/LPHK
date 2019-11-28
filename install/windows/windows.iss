@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "LPHK"
-#define MyAppVersion "b0.1.2"
+#define MyAppVersion "b0.1.3"
 #define MyAppPublisher "Ella Jameson (nimaid)"
 #define MyAppURL "https://github.com/nimaid/LPHK"
 #define MyAppExeName "run.bat"
