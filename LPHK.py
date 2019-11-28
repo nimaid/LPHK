@@ -5,6 +5,7 @@ def datetime_str():
    return now.strftime("%d/%m/%Y %H:%M:%S")
 
 print("LPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
+print("!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!")
 print("-------- BEGIN LOG", datetime_str(), "--------\n")
 
 import sys, os
