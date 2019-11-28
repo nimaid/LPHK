@@ -23,7 +23,7 @@ DisableProgramGroupPage=yes
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 OutputDir=..\__setup__
-OutputBaseFilename=LPHK_setup_b0.1.0
+OutputBaseFilename=LPHK_setup_{#MyAppVersion}
 SetupIconFile=..\resources\LPHK.ico
 Compression=lzma
 SolidCompression=yes
@@ -37,28 +37,48 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\run.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\bresenham.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\files.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\kb.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\lp_colors.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\lp_events.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\LPHK.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\ms.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\parse.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\scripts.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\sound.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\window.py"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\*.py"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\VERSION"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\user_layouts\*"; DestDir: "{app}\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\user_scripts\*"; DestDir: "{app}\user_scripts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\user_sounds\*"; DestDir: "{app}\user_sounds"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\install_beta\environment.yml"; DestDir: "{tmp}"; Flags: ignoreversion
+Source: "..\install_beta\install_conda_windows.bat"; DestDir: "{tmp}"; Flags: ignoreversion; AfterInstall: MyAfterInstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "..\resources\LPHK.ico"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "..\resources\LPHK.ico"
 
+[Code]
+var CancelWithoutPrompt: boolean;
+
+function InitializeSetup(): Boolean;
+begin
+  CancelWithoutPrompt := false;
+  result := true;
+end;
+
+procedure MyAfterInstall();
+var ResultCode: integer;
+begin
+  Exec(ExpandConstant('{tmp}\install_conda_windows.bat'), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
+  if ResultCode <> 0 then begin
+    MsgBox('Conda could not be installed!',mbError,MB_OK)
+    CancelWithoutPrompt := true;
+    WizardForm.Close;
+  end;
+end;
+
+procedure CancelButtonClick(CurPageID: Integer; var Cancel, Confirm: Boolean);
+begin
+  if CurPageID=wpInstalling then
+    Confirm := not CancelWithoutPrompt;
+end;
+
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: shellexec postinstall skipifsilent
 
+[UninstallDelete]
+Type: filesandordirs; Name: "{app}"
