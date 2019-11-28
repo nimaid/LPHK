@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "LPHK"
-#define MyAppVersion "b0.1.0"
+#define MyAppVersion "b0.1.1"
 #define MyAppPublisher "Ella Jameson (nimaid)"
 #define MyAppURL "https://github.com/nimaid/LPHK"
 #define MyAppExeName "run.bat"
@@ -65,7 +65,7 @@ end;
 procedure MyAfterInstall();
 var ResultCode: integer;
 begin
-  WizardForm.StatusLabel.Caption := 'Installing Conda (if not installed)...'
+  WizardForm.StatusLabel.Caption := 'Installing Conda...'
   Exec(ExpandConstant('{tmp}\install_conda_windows.bat'), '', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
   if ResultCode <> 0 then begin
     MsgBox('Conda could not be installed!',mbError,MB_OK)
