@@ -58,7 +58,8 @@ class Main_Window(tk.Frame):
         tk.Frame.__init__(self, master)
         self.master = master
         self.init_window()
-
+        
+        self.about_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/LPHK.png"))
         self.info_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/info.png"))
         self.warning_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/warning.png"))
         self.error_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/error.png"))
@@ -102,7 +103,7 @@ class Main_Window(tk.Frame):
         self.m_Help.add_command(label="Scripting help...", command=open_scripting)
         open_main_folder = lambda: files.open_file_folder(PATH)
         self.m_Help.add_command(label="Program folder...", command=open_main_folder)
-        display_info = lambda: self.popup(self, "About LPHK", self.info_image, "A Novation Launchpad Macro Scripting System\nMade by Ella Jameson (nimaid)\n\nVersion: " + files.PROG_VERSION + "\nFile format version: " + files.FILE_VERSION, "Done")
+        display_info = lambda: self.popup(self, "About LPHK", self.about_image, "A Novation Launchpad Macro Scripting System\nMade by Ella Jameson (nimaid)\n\nVersion: " + files.PROG_VERSION + "\nFile format version: " + files.FILE_VERSION, "Done")
         self.m_Help.add_command(label="About LPHK", command=display_info)
         self.m.add_cascade(label="Help", menu=self.m_Help)
 
@@ -116,7 +117,11 @@ class Main_Window(tk.Frame):
         self.stat = tk.Label(self, text="No Launchpad Connected", bg=STAT_INACTIVE_COLOR, fg="#fff")
         self.stat.grid(row=1, column=0, sticky=tk.EW)
         self.stat.config(font=("Courier", BUTTON_SIZE // 3, "bold"))
-        
+    
+    def raise_above_all(self):
+        self.master.attributes('-topmost', 1)
+        self.master.attributes('-topmost', 0)
+    
     def enable_menu(self, name):
         self.m.entryconfig(name, state="normal")
 
@@ -656,7 +661,9 @@ def make():
     root_destroyed = False
     root.protocol("WM_DELETE_WINDOW", close)
     root.resizable(False, False)
+    root.iconbitmap(os.path.join(PATH, "resources", "LPHK.ico"))
     app = Main_Window(root)
+    app.raise_above_all()
     app.mainloop()
 
 def close():

@@ -1,4 +1,11 @@
-#! /usr/bin/python3
+from datetime import datetime
+
+def datetime_str():
+   now = datetime.now()
+   return now.strftime("%d/%m/%Y %H:%M:%S")
+
+print("LPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
+print("-------- BEGIN LOG", datetime_str(), "--------\n")
 
 import sys, os
 

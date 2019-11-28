@@ -1,4 +1,3 @@
 @echo off
-set STARTPATH="%CD%"
-cd "%~dp0"
-conda activate LPHK & python LPHK.py & conda deactivate & cd %STARTPATH%
+
+start "LPHK Log (Do Not Close)" /min /D "%~dp0" cmd /c "conda activate LPHK & python -u LPHK.py & conda deactivate & exit"
