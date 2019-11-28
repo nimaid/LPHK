@@ -27,14 +27,12 @@
 AppId={{A6E030E7-C7D0-4EA7-BBD9-4AD52745451B}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
-; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 OutputDir=..\__setup__
 OutputBaseFilename=LPHK_setup_{#MyAppVersion}
@@ -109,7 +107,7 @@ begin
   begin
     Exec(ExpandConstant('{app}\uninstall_env_windows.bat'), '', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
     if ResultCode <> 0 then begin
-      MsgBox('Could not uninstall Conda environment. You can manually remove it with \"conda env remove -n LPHK\".',mbError,MB_OK)
+      MsgBox('Could not uninstall Conda environment. You can manually remove it with "conda env remove -n LPHK".',mbError,MB_OK)
     end;
   end;
 end;
