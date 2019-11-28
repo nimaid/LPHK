@@ -93,7 +93,7 @@ THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS
 ### Linux Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT.
 
-* Run `install_beta/install_linux.bash` via a `bash` shell (NOT `sh`, `fish`, etc.)
+* Run `install/linux_beta/install_linux.bash"` via a `bash` shell (NOT `sh`, `fish`, etc.)
   * You can do this via terminal or, if it's set up, by double clicking it.
 * One of three things will happen:
   * If LPHK is already installed, it will prompt if you would like to uninstall it. Type either `y` or `n` and press `enter`.
@@ -101,7 +101,7 @@ THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS
     * If Miniconda3 is installed in `~/miniconda3/`, it will prompt if you would like to uninstall that as well. Type either `y` or `n` and press `enter`.
   * If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3 and LPHK. Type `y` and press `enter`.
   * If a conda distribution is already installed, the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
-* To run LPHK, use the command `[your lphk directory]/run.bash`.
+* To run LPHK, run `[your lphk directory]/run.bash`.
   * `.desktop` shortcuts are coming soon!
 
 ## How do I use it? (Post-Install) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)

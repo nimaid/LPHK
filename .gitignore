@@ -104,4 +104,4 @@ venv.bak/
 .mypy_cache/
 LPHK.lnk
 user_layouts/*.*
-__setup__/*
+install/install_win/__setup__/*
