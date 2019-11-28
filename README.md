@@ -81,7 +81,7 @@ Before using the program, we need to install some things:
 ### Windows Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY WINDOWS INSTALL INSTRUCTIONS`.
 
-* Download the latest `.exe` setup file from https://github.com/nimaid/LPHK/releases
+* Download the latest `.exe` setup file from https://github.com/nimaid/LPHK/releases/latest
 * Run the `.exe` file and follow the on-screen setup instructions.
   * It is recommend to use the default install location
   * The setup wizard will install MiniConda3 if no conda is found
