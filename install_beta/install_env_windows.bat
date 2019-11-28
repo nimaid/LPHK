@@ -13,13 +13,14 @@ REM TODO: Use environments.txt
 FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV="%%g")
 if defined LPHKENV goto ALREADYINSTALLED
 
-echo Installing LPHK...
+echo Installing LPHK Conda environment...
 set STARTPATH="%CD%"
 cd "%~dp0"
 call conda env create -f environment.yml
 if errorlevel 1 goto INSTALLENVFAIL
 
 cd %STARTPATH%
+echo LPHK Conda environment installed!
 goto END
 
 :CONDAMISSING
@@ -37,7 +38,7 @@ echo LPHK is already installed!
 goto END
 
 :ERROREND
-echo The LPHK environment could not be installed!
+echo The LPHK Conda environment could not be installed!
 exit /B 1
 
 :END

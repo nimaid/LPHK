@@ -43,8 +43,10 @@ Source: "..\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recur
 Source: "..\user_layouts\*"; DestDir: "{app}\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\user_scripts\*"; DestDir: "{app}\user_scripts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\user_sounds\*"; DestDir: "{app}\user_sounds"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\install_beta\uninstall_env_windows.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\install_beta\environment.yml"; DestDir: "{tmp}"; Flags: ignoreversion
-Source: "..\install_beta\install_conda_windows.bat"; DestDir: "{tmp}"; Flags: ignoreversion; AfterInstall: MyAfterInstall
+Source: "..\install_beta\install_conda_windows.bat"; DestDir: "{tmp}"; Flags: ignoreversion
+Source: "..\install_beta\install_env_windows.bat"; DestDir: "{tmp}"; Flags: ignoreversion; AfterInstall: MyAfterInstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -63,9 +65,18 @@ end;
 procedure MyAfterInstall();
 var ResultCode: integer;
 begin
-  Exec(ExpandConstant('{tmp}\install_conda_windows.bat'), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
+  WizardForm.StatusLabel.Caption := 'Installing Conda (if not installed)...'
+  Exec(ExpandConstant('{tmp}\install_conda_windows.bat'), '', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
   if ResultCode <> 0 then begin
     MsgBox('Conda could not be installed!',mbError,MB_OK)
+    CancelWithoutPrompt := true;
+    WizardForm.Close;
+  end;
+
+  WizardForm.StatusLabel.Caption := 'Installing LPHK Conda environment...'
+  Exec(ExpandConstant('{tmp}\install_env_windows.bat'), '', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
+  if ResultCode <> 0 then begin
+    MsgBox('LPHK Conda environment could not be installed!',mbError,MB_OK)
     CancelWithoutPrompt := true;
     WizardForm.Close;
   end;
@@ -75,6 +86,18 @@ procedure CancelButtonClick(CurPageID: Integer; var Cancel, Confirm: Boolean);
 begin
   if CurPageID=wpInstalling then
     Confirm := not CancelWithoutPrompt;
+end;
+
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+var ResultCode : Integer;    
+begin
+  if CurUninstallStep = usUninstall then
+  begin
+    Exec(ExpandConstant('{app}\uninstall_env_windows.bat'), '', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
+    if ResultCode <> 0 then begin
+      MsgBox('Could not uninstall Conda environment. You can manually remove it with \"conda env remove -n LPHK\".',mbError,MB_OK)
+    end;
+  end;
 end;
 
 [Run]
