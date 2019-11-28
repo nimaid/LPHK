@@ -79,7 +79,7 @@ First, get a local copy of the GitHub repository. Click the green "Clone or down
 Before using the program, we need to install some things:
 
 ### Windows Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY WINDOWS INSTALL INSTRUCTIONS`.
+THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT AND USING `run.bat`.
 
 * Download the latest `.exe` setup file from https://github.com/nimaid/LPHK/releases/latest
 * Run the `.exe` file and follow the on-screen setup instructions.
@@ -90,22 +90,8 @@ THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS
 * You can uninstall LPHK like any other program, with the Windows `Add or remove programs` utility.
   * There will also be an uninstaller named `unins000.exe` in the program folder.
 
----- LEGACY WINDOWS INSTALL INSTRUCTIONS ----
-
-ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR AS AN ISSUE.
-
-* First, download the latest release of Python 3.x from https://www.python.org/.
-* Install it, make a note of the default install location.
-  * **YOU MUST** check the option "Add Python 3.x to PATH", as it lets Python and it's programs be used from the command line.
-  * If performing a "Custom Installation" of Python 3, **YOU MUST** ensure "pip" and "tcl/tk and IDLE" are selected for install, at minimum.
-* Run "install_dependencies.bat" to install required libraries via pip, which you just installed with Python 3.
-* After installing all dependencies, right click on LPHK.py and select "Open with", then "Look for another app on this PC". Browse to that install location you noted earlier and select "python.exe".
-  * At this point, you should be able to use whatever functionality the program currently has.
-  * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
-    * (If this fails, use "python LPHK.py".)
-
 ### Linux Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY LINUX INSTALL INSTRUCTIONS`.
+THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT.
 
 * Run `install_beta/install_linux.bash` via a `bash` shell (NOT `sh`, `fish`, etc.)
   * You can do this via terminal or, if it's set up, by double clicking it.
@@ -117,15 +103,6 @@ THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS
   * If a conda distribution is already installed, the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
 * To run LPHK, use the command `[your lphk directory]/run.bash`.
   * `.desktop` shortcuts are coming soon!
-  
----- LEGACY LINUX INSTALL INSTRUCTIONS ----
-
-ONLY USE IF THE ABOVE INSTALLER FAILS, AND AFTER SHARING THE ERROR ON DISCORD OR AS AN ISSUE.
-
-* Run `install_dependencies.bash`. If it fails, run with `sudo`.
-* Many distros will let you double click on `LPHK.py` to run it. If yours doesn't, look up how to associate `.py` files with the `python3` binary on your distro.
-  * At this point, you should be able to use whatever functionality the program currently has.
-  * If you have errors (or nothing happens), run the script in the command line by running "python3 LPHK.py" in the LPHK directory. Please open an issue on GitHub and copy the output when trying and failing to run via command prompt.
 
 ## How do I use it? (Post-Install) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * Before starting the program, make sure your Launchpad Classic/Mini/S or MkII is connected to the computer.
@@ -329,10 +306,10 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 ## What still needs to be written? (in order of priority) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * Let program function as a layout editor without LP connection
   * Would probably be easier to write a "Dummy LP" class
-* Make an installer for Windows and Linux
+* Make an installer for Linux
   * ~~Should use a `conda` environment created from an `environment.yml` file~~
-  * Should copy LPHK files into an appropriate directory (like `Program Files`)
-  * ~~Should give options to add various shortcuts~~ (Linux stull TODO)
+  * Should copy LPHK files into an appropriate directory
+  * Should give options to add various shortcuts
 * Add auto-update feature using `git`
   * ~~There will be a VERSION file in the main directory with the version string~~
     * This can be polled at `https://raw.githubusercontent.com/nimaid/LPHK/master/VERSION`
@@ -475,3 +452,4 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
   * A huge shoutout to MiniStumpy Bloopers in the Discord, who was able to find out that adding this feature was actually fairly simple! I really need a Pro to develop with.
 * ~~Make a special color picker for Classic/Mini/S that only has the 16 possible colors~~
 * ~~Re-write `files.py` to use a JSON format for layouts.~~
+* ~~Make an installer for Windows~~
