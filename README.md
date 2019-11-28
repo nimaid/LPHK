@@ -119,7 +119,7 @@ THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS
     * If Miniconda3 is installed in `~/miniconda3/`, it will prompt if you would like to uninstall that as well. Type either `y` or `n` and press `enter`.
   * If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3 and LPHK. Type `y` and press `enter`.
   * If a conda distribution is already installed, the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
-* To run LPHK, use the command `~/.conda/envs/LPHK/python [your lphk directory]/LPHK.py`.
+* To run LPHK, use the command `[your lphk directory]/run.bash`.
   * `.desktop` shortcuts are coming soon!
   
 ---- LEGACY LINUX INSTALL INSTRUCTIONS ----
