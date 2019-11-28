@@ -75,7 +75,7 @@ function uninstall_conda () {
 }
 
 function install_LPHK () {
-	conda env create -f $SCRIPTDIR/environment.yml; exit_if_error
+	conda env create -f $SCRIPTDIR/../environment.yml; exit_if_error
 }
 
 function uninstall_LPHK () {

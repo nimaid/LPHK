@@ -81,18 +81,14 @@ Before using the program, we need to install some things:
 ### Windows Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY THE `LEGACY WINDOWS INSTALL INSTRUCTIONS`.
 
-* Run `install_beta\install_windows.bat` by double clicking it.
-* One of three things will happen:
-  * If LPHK is already installed, it will prompt if you would like to uninstall it. Type either `y` or `n` and press `enter`.
-    * At the moment, this only uninstalls the conda environment. You still have to manually delete the LPHK files and shortcuts.
-    * You can also manually uninstall Miniconda3.
-  * If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3 and LPHK. Type `y` and press `enter`.
-    * After it is done installing Miniconda3, either press `enter` or wait 5 seconds and the intaller will restart itself and automatically install LPHK.
-  * If a conda distribution is already installed, the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
-* After the installation is done, it will ask if you would like to make a desktop shortcut.
-  * I recommend you answer `y`, but if you don't want one, you can find the shortcut in the LPHK main folder. 
-* To run LPHK, click the shortcut. Clicking the `LPHK.py` file will not work with this method.
-  * The command to run LPHK is `[your lphk directory]\run.bat`
+* Download the latest `.exe` setup file from https://github.com/nimaid/LPHK/releases
+* Run the `.exe` file and follow the on-screen setup instructions.
+  * It is recommend to use the default install location
+  * The setup wizard will install MiniConda3 if no conda is found
+  * It will also create various shortcuts
+* To run LPHK, use one of the shortcuts, either the `Start Menu` or `Desktop` one.
+* You can uninstall LPHK like any other program, with the Windows `Add or remove programs` utility.
+  * There will also be an uninstaller named `unins000.exe` in the program folder.
 
 ---- LEGACY WINDOWS INSTALL INSTRUCTIONS ----
 

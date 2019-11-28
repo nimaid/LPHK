@@ -39,14 +39,14 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "..\run.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\*.py"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\VERSION"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\environment.yml"; DestDir: "{tmp}"; Flags: ignoreversion
 Source: "..\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\user_layouts\*"; DestDir: "{app}\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\user_scripts\*"; DestDir: "{app}\user_scripts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\user_sounds\*"; DestDir: "{app}\user_sounds"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\install_beta\uninstall_env_windows.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\install_beta\environment.yml"; DestDir: "{tmp}"; Flags: ignoreversion
-Source: "..\install_beta\install_conda_windows.bat"; DestDir: "{tmp}"; Flags: ignoreversion
-Source: "..\install_beta\install_env_windows.bat"; DestDir: "{tmp}"; Flags: ignoreversion; AfterInstall: MyAfterInstall
+Source: ".\uninstall_env_windows.bat"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\install_conda_windows.bat"; DestDir: "{tmp}"; Flags: ignoreversion
+Source: ".\install_env_windows.bat"; DestDir: "{tmp}"; Flags: ignoreversion; AfterInstall: MyAfterInstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
