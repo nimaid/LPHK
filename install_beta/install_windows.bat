@@ -13,10 +13,9 @@ REM remove the shortcuts, and manually delete the files.
 REM Please let me know if this does or does not work in the Discord!
 
 set "LPHKENV="
-set "LPHKPYTHON="
 set "STARTPATH="
 set "MAINDIR="
-set "LPHKSCRIPT="
+set "LPHKRUN="
 set "LINKPATH="
 set "LPHKICON="
 set "SHORTCUTSCRIPT="
@@ -89,17 +88,11 @@ cd "%~dp0"
 call conda env create -f environment.yml
 if errorlevel 1 goto INSTALLLPHKFAIL
 
-REM TODO: Use environments.txt
-call conda activate LPHK
-FOR /F "tokens=*" %%g IN ('where python ^| findstr /R /C:"LPHK"') do (set LPHKPYTHON="%%g")
-call conda deactivate
-if errorlevel 1 goto INSTALLLPHKFAIL
-
 cd ..
 set MAINDIR=%CD%
 cd %STARTPATH%
 
-set LPHKSCRIPT="%MAINDIR%\LPHK.py"
+set LPHKRUN="%MAINDIR%\run.bat"
 
 set LINKPATH="%MAINDIR%\LPHK.lnk"
 set LPHKICON="%MAINDIR%\resources\LPHK.ico"
@@ -110,8 +103,8 @@ set SHORTCUTSCRIPT="%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.vbs"
 echo Set oWS = WScript.CreateObject("WScript.Shell") >> %SHORTCUTSCRIPT%
 echo sLinkFile = %LINKPATH% >> %SHORTCUTSCRIPT%
 echo Set oLink = oWS.CreateShortcut(sLinkFile) >> %SHORTCUTSCRIPT%
-echo oLink.TargetPath = ""%LPHKPYTHON%"" >> %SHORTCUTSCRIPT%
-echo oLink.Arguments = ""%LPHKSCRIPT%"" >> %SHORTCUTSCRIPT%
+echo oLink.TargetPath = ""%LPHKRUN%"" >> %SHORTCUTSCRIPT%
+REM echo oLink.Arguments = ""%MYARGSHERE%"" >> %SHORTCUTSCRIPT%
 echo oLink.IconLocation = %LPHKICON% >> %SHORTCUTSCRIPT%
 echo oLink.Save >> %SHORTCUTSCRIPT%
 call cscript /nologo %SHORTCUTSCRIPT%
@@ -128,7 +121,7 @@ goto ERROREND
 
 :INSTALLSHORTCUTFAILED
 echo LPHK conda environment was installed, but a link could not be created!
-echo Please run "%LPHKPYTHON%" "%LPHKSCRIPT%" to use LPHK!
+echo Please run "%LPHKRUN%" to use LPHK!
 echo Also, please report this bug via the Discord or GitHub issues.
 goto ERROREND
 

@@ -80,7 +80,8 @@ class Main_Window(tk.Frame):
         self.m_Launchpad = tk.Menu(self.m, tearoff=False)
         self.m_Launchpad.add_command(label="Connect to Launchpad", command=self.connect_lp)
         self.m_Launchpad.add_command(label="Disonnect from Launchpad", command=self.disconnect_lp)
-        self.m_Launchpad.add_command(label="Redetect", command=self.redetect_lp)
+        #self.m_Launchpad.add_command(label="Edit layot only", command=self.connect_dummy)
+        self.m_Launchpad.add_command(label="Redetect (restart)", command=self.redetect_lp)
         self.m.add_cascade(label="Launchpad", menu=self.m_Launchpad)
 
         self.disable_lp_disconnect()
@@ -125,7 +126,19 @@ class Main_Window(tk.Frame):
 
     def disable_lp_disconnect(self):
         self.m_Launchpad.entryconfig("Disonnect from Launchpad", state="disabled")
-
+    
+    def connect_dummy(self):
+        #WIP
+        global lp_connected
+        global lp_mode
+        global lp_object
+        
+        lp_connected = True
+        lp_mode = "Dummy"
+        self.draw_canvas()
+        self.enable_menu("Layout")
+        self.enable_lp_disconnect()
+    
     def connect_lp(self):
         global lp_connected
         global lp_mode

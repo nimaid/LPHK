@@ -92,7 +92,7 @@ THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS
 * After the installation is done, it will ask if you would like to make a desktop shortcut.
   * I recommend you answer `y`, but if you don't want one, you can find the shortcut in the LPHK main folder. 
 * To run LPHK, click the shortcut. Clicking the `LPHK.py` file will not work with this method.
-  * The command to run LPHK is `%USERPROFILE%\Miniconda3\envs\LPHK\python.exe [your lphk directory]\LPHK.py`
+  * The command to run LPHK is `[your lphk directory]\run.bat`
 
 ---- LEGACY WINDOWS INSTALL INSTRUCTIONS ----
 
@@ -332,6 +332,7 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 
 ## What still needs to be written? (in order of priority) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * Let program function as a layout editor without LP connection
+  * Would probably be easier to write a "Dummy LP" class
 * Make an installer for Windows and Linux
   * ~~Should use a `conda` environment created from an `environment.yml` file~~
   * Should copy LPHK files into an appropriate directory (like `Program Files`)
