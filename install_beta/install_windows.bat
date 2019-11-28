@@ -156,10 +156,6 @@ goto END
 echo Not installing MiniConda3 or LPHK, exiting...
 goto END
 
-:NOINSTALLCONDA
-echo Not installing LPHK, exiting...
-goto END
-
 :STARTLINKMAKE
 echo Shortcut created at %LINKPATH%
 
