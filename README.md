@@ -309,6 +309,7 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * Let program function as a layout editor without LP connection
   * Would probably be easier to write a "Dummy LP" class
 * Make an installer for Linux
+  * Should be a `.deb` installer package
   * ~~Should use a `conda` environment created from an `environment.yml` file~~
   * Should copy LPHK files into an appropriate directory
   * Should give options to add various shortcuts

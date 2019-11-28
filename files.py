@@ -8,7 +8,7 @@ PROG_VERSION = None
 LAYOUT_PATH = "/user_layouts/"
 SCRIPT_PATH = "/user_scripts/"
 
-FILE_VERSION = "0.1"
+FILE_VERSION = "0.1.1"
 
 LAYOUT_EXT = ".lpl"
 SCRIPT_EXT = ".lps"
@@ -31,7 +31,7 @@ def init(path_in):
 
 def save_layout(layout, name):
     with open(name, "w") as f:
-        json.dump(layout, f)
+        json.dump(layout, f, indent=2, sort_keys=True)
     print("[files] Saved layout as " + name)
 
 def load_layout(name):
