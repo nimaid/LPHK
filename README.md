@@ -1,6 +1,6 @@
-# LPHK (LaunchPad HotKey)
-<div style="text-align: center">A Novation Launchpad macro scripting system. <a href="https://github.com/nimaid/LPHK"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK.png" alt="logo" height="50px" hspace="0"/></a><a href="https://discord.gg/mDCzB8X"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/discord.png" alt="logo" height="50px" hspace="0"/></a><a href="https://www.patreon.com/user?u=16848673"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/patreon.png" alt="logo" height="50px" hspace="0"/></a>
+<div style="text-align: center"><h1>LPHK (LaunchPad HotKey)</h1><a href="https://github.com/nimaid/LPHK"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK.png" alt="logo" height="50px" hspace="0"/></a><a href="https://discord.gg/mDCzB8X"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/discord.png" alt="logo" height="50px" hspace="0"/></a><a href="https://www.patreon.com/user?u=16848673"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/patreon.png" alt="logo" height="50px" hspace="0"/></a>
 <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_3.png" alt="Update 3" width="500px" /></ div>
+A Novation Launchpad macro scripting system.
 
 ## Table of Contents
 * [Links](https://github.com/nimaid/LPHK#links-table-of-contents)
