@@ -18,7 +18,7 @@ DOINSTALLLPHK=0
 DOUNINSTALLLPHK=0
 DOUNINSTALLCONDA=0
 
-SCRIPTDIR=$(dirname $0)
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 MINICONDADIR=~/miniconda3
 
 function pause () {
@@ -148,7 +148,7 @@ else
 		install_LPHK
         # Get the new location after install
         LPHKENVDIR=$(cat ~/.conda/environments.txt | grep LPHK) > /dev/null 2>1
-		echo "LPHK environment set up. Run '$LPHKENVDIR/python [your lphk directory]/LPHK.py'"
+		echo "LPHK environment set up. Run '[your lphk directory]/run.bash'"
 	else
 		echo "Not installing LPHK, exiting..."
 		pause
