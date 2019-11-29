@@ -5,22 +5,24 @@ REM DO NOT USE THIS SCRIPT. It is for the new Inno Setup installer.
 set "LPHKENV="
 set "STARTPATH="
 
+set "ENVNAME=LPHK-build"
+
 where conda >nul 2>nul
 if %ERRORLEVEL% NEQ 0 goto CONDAMISSING
 
 :INSTALLENV
 REM TODO: Use environments.txt
-FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"LPHK"') do (set LPHKENV="%%g")
+FOR /F "tokens=*" %%g IN ('conda env list ^| findstr /R /C:"%ENVNAME%"') do (set LPHKENV="%%g")
 if defined LPHKENV goto ALREADYINSTALLED
 
-echo Installing LPHK Conda environment...
+echo Installing LPHK build environment...
 set STARTPATH="%CD%"
 cd "%~dp0"
 call conda env create -f environment.yml
 if errorlevel 1 goto INSTALLENVFAIL
 
 cd %STARTPATH%
-echo LPHK Conda environment installed!
+echo LPHK build environment installed!
 goto END
 
 :CONDAMISSING
@@ -28,17 +30,16 @@ echo "Conda is not installed!"
 goto ERROREND
 
 :INSTALLENVFAIL
-call conda env remove -n LPHK
 REM TODO: Use environments.txt
-rmdir %USERPROFILE%\Miniconda3\envs\LPHK /s /q 2> nul
+rmdir %USERPROFILE%\Miniconda3\envs\%ENVNAME% /s /q 2> nul
 goto ERROREND
 
 :ALREADYINSTALLED
-echo LPHK is already installed!
+echo LPHK build environment is already installed!
 goto END
 
 :ERROREND
-echo The LPHK Conda environment could not be installed!
+echo The LPHK build environment could not be installed!
 exit /B 1
 
 :END

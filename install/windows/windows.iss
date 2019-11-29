@@ -19,7 +19,7 @@
 #define MyAppName "LPHK"
 #define MyAppPublisher "Ella Jameson (nimaid)"
 #define MyAppURL "https://github.com/nimaid/LPHK"
-#define MyAppExeName "run.bat"
+#define MyAppExeName "LPHK.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -34,7 +34,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
-OutputDir=..\__setup__
+OutputDir=..\..\__setup__
 OutputBaseFilename=LPHK_setup_{#MyAppVersion}
 SetupIconFile=..\..\resources\LPHK.ico
 Compression=lzma
@@ -48,22 +48,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\..\run.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\*.py"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\VERSION"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\dist\LPHK.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\user_layouts\*"; DestDir: "{app}\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\user_scripts\*"; DestDir: "{app}\user_scripts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\user_sounds\*"; DestDir: "{app}\user_sounds"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\environment.yml"; DestDir: "{tmp}"; Flags: ignoreversion
-Source: ".\uninstall_env_windows.bat"; DestDir: "{app}"; Flags: ignoreversion
-Source: ".\install_conda_windows.bat"; DestDir: "{tmp}"; Flags: ignoreversion
-Source: ".\install_env_windows.bat"; DestDir: "{tmp}"; Flags: ignoreversion; AfterInstall: MyAfterInstall
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\resources\LPHK.ico"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\resources\LPHK.ico"
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\LPHK.exe"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\LPHK.exe"
 
 [Code]
 var CancelWithoutPrompt: boolean;
@@ -72,44 +65,6 @@ function InitializeSetup(): Boolean;
 begin
   CancelWithoutPrompt := false;
   result := true;
-end;
-
-procedure MyAfterInstall();
-var ResultCode: integer;
-begin
-  WizardForm.StatusLabel.Caption := 'Installing Conda...'
-  Exec(ExpandConstant('{tmp}\install_conda_windows.bat'), '', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
-  if ResultCode <> 0 then begin
-    MsgBox('Conda could not be installed!',mbError,MB_OK)
-    CancelWithoutPrompt := true;
-    WizardForm.Close;
-  end;
-
-  WizardForm.StatusLabel.Caption := 'Installing LPHK Conda environment...'
-  Exec(ExpandConstant('{tmp}\install_env_windows.bat'), '', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
-  if ResultCode <> 0 then begin
-    MsgBox('LPHK Conda environment could not be installed!',mbError,MB_OK)
-    CancelWithoutPrompt := true;
-    WizardForm.Close;
-  end;
-end;
-
-procedure CancelButtonClick(CurPageID: Integer; var Cancel, Confirm: Boolean);
-begin
-  if CurPageID=wpInstalling then
-    Confirm := not CancelWithoutPrompt;
-end;
-
-procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
-var ResultCode : Integer;    
-begin
-  if CurUninstallStep = usUninstall then
-  begin
-    Exec(ExpandConstant('{app}\uninstall_env_windows.bat'), '', '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
-    if ResultCode <> 0 then begin
-      MsgBox('Could not uninstall Conda environment. You can manually remove it with "conda env remove -n LPHK".',mbError,MB_OK)
-    end;
-  end;
 end;
 
 [Run]

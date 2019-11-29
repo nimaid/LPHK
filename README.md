@@ -80,14 +80,15 @@ This is still a work-in-progress, so things will be changing often. [See below f
 ### Windows Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 *THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT AND USING `run.bat`.*
 
-* Download the latest `LPHK_setup_VERSION.exe` file from [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest)
-* Run LPHK_setup_VERSION.exe` and follow the on-screen setup instructions.
-  * It is recommend to use the default install location
-  * The setup wizard will install MiniConda3 if no conda is found
-  * It will also create various shortcuts
-* To run LPHK, use one of the shortcuts, either the `Start Menu` or `Desktop` one.
-* You can uninstall LPHK like any other program, with the Windows `Add or remove programs` utility.
-  * There will also be an uninstaller named `unins000.exe` in the program folder.
+* If you want the installed version (recomended)
+  * Download the latest `LPHK_setup_VERSION.exe` file from [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest)
+  * Run LPHK_setup_VERSION.exe` and follow the on-screen setup instructions.
+  * To run LPHK, use one of the shortcuts, either the `Start Menu` or `Desktop` one (if you selected that option).
+  * You can uninstall LPHK like any other program, with the Windows `Add or remove programs` utility.
+  * There will also be an uninstaller named `unins000.exe` in the program folder. You can find the program folder by clicking the menu option `Help > Program folder...`.
+* If you want to run LPHK portably (advanced)
+  * This method lets you use LPHK by simply downloading `LPHK_portable_win_VERSION.zip` and extracting it to a folder of your choice. You can then move the folder to a flash drive, between computers, etc.
+  * Run `LPHK.exe`
 
 ### Linux Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 *THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT.*
