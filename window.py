@@ -258,9 +258,10 @@ class Main_Window(tk.Frame):
     
     def click(self, event):
         gap = int(BUTTON_SIZE // 4)
-
-        column = int(event.x // (BUTTON_SIZE + gap))
-        row = int(event.y // (BUTTON_SIZE + gap))
+        
+        
+        column = min(8, int(event.x // (BUTTON_SIZE + gap)))
+        row = min(8, int(event.y // (BUTTON_SIZE + gap)))
 
         if self.grid_drawn:
             if(column, row) == (8, 0):
