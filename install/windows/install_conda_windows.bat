@@ -1,6 +1,8 @@
 @echo off
 
-REM DO NOT USE THIS SCRIPT. It is for the new Inno Setup installer.
+REM DO NOT USE THIS SCRIPT. It is for creating new releases.
+
+set ORIGDIR="%CD%"
 
 set MINICONDAPATH=%USERPROFILE%\Miniconda3
 set CONDAEXE=%TEMP%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%-condainstall.exe

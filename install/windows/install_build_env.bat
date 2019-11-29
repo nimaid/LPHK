@@ -1,6 +1,8 @@
 @echo off
 
-REM DO NOT USE THIS SCRIPT. It is for the new Inno Setup installer.
+REM DO NOT USE THIS SCRIPT. It is for creating new releases.
+
+set ORIGDIR="%CD%"
 
 set "LPHKENV="
 set "STARTPATH="
@@ -19,6 +21,7 @@ echo Installing LPHK build environment...
 set STARTPATH="%CD%"
 cd "%~dp0"
 call conda env create -f environment.yml
+cd %ORIGDIR%
 if errorlevel 1 goto INSTALLENVFAIL
 
 cd %STARTPATH%

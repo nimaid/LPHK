@@ -1,5 +1,9 @@
 @echo off
-set "ORIGDIR=%~dp0"
+
+REM DO NOT USE THIS SCRIPT. It is for creating new releases.
+
+set ORIGDIR="%CD%"
+
 cd %~dp0\..\..
 
 echo Building EXE...
@@ -8,12 +12,13 @@ if errorlevel 1 goto ERROR
 
 goto DONE
 
+
 :ERROR
 cd %ORIGDIR%
-echo Build failed!
+echo EXE build failed!
 exit /B 1
 
 :DONE
 cd %ORIGDIR%
-echo Build done!
+echo EXE build done!
 exit /B 0
