@@ -1,24 +1,34 @@
 import sys, os
 from datetime import datetime
 
+PROG_PATH = os.path.dirname(os.path.abspath(__file__))
+
 # Test if this is a PyInstaller EXE or a .py file
 if getattr(sys, 'frozen', False):
     is_exe = True
     PATH = sys._MEIPASS
 else:
     is_exe = False
-    PATH = os.path.dirname(os.path.abspath(__file__))
+    PATH = PROG_PATH
 
 # Setup dual logging/printing
 class Tee(object):
-    def __init__(self, *files):
-        self.files = files
-    def write(self, obj):
-        for f in self.files:
-            f.write(obj)
-f = open('last_session.log', 'w')
-backup = sys.stdout
-sys.stdout = Tee(sys.stdout, f)
+    def __init__(self, name, mode):
+        self.file = open(name, mode)
+        self.stdout = sys.stdout
+        sys.stdout = self
+    def __del__(self):
+        sys.stdout = self.stdout
+        self.file.close()
+    def write(self, data):
+        self.file.write(data)
+        self.file.flush()
+        self.stdout.write(data)
+    def flush(self):
+        self.file.flush()
+
+log_name = os.path.join(PROG_PATH, 'LPHK.log')
+logger = Tee(log_name, 'w')
 
 # Start printing output
 def datetime_str():
@@ -80,7 +90,7 @@ def shutdown():
 
 def main():
     init()
-    window.init(lp, launchpad, PATH)
+    window.init(lp, launchpad, PATH, PROG_PATH)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
 

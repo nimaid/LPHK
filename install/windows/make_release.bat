@@ -2,58 +2,90 @@
 
 REM DO NOT USE THIS SCRIPT. It is for creating new releases.
 
+set RELEASEDIRNAME=__release__
+
 set ORIGDIR="%CD%"
 
+set INSTALLWINDIR=%~dp0
+set INSTALLDIR=%INSTALLWINDIR%\..
+set LPHKDIR=%INSTALLDIR%\..
+
+set RELEASEDIR=%LPHKDIR%\%RELEASEDIRNAME%
+set SETUPDIR=%LPHKDIR%\__setup__
+set DISTDIR=%LPHKDIR%\dist
+set BUILDDIR=%LPHKDIR%\build
+
+set /p VERSION=<"%LPHKDIR%\VERSION"
+if [%VERSION%] == [] goto ERROR
+echo Making release version %VERSION% now...
+
+set PORTABLENAME=LPHK_portable_win_%VERSION%
+set PORTABLEDIR=%RELEASEDIR%\LPHK
+
+set EXENAME=LPHK.exe
+
+
 echo Cleaning up before starting...
-del /f /s /q "%~dp0\..\..\__release__" 1>nul 2>&1
-rmdir /s /q "%~dp0\..\..\__release__" 1>nul 2>&1
+del /f /s /q "%RELEASEDIR%" 1>nul 2>&1
+rmdir /s /q "%RELEASEDIR%" 1>nul 2>&1
 
-del /f /s /q "%~dp0\..\..\__setup__" 1>nul 2>&1
-rmdir /s /q "%~dp0\..\..\__setup__" 1>nul 2>&1
+del /f /s /q "%SETUPDIR%" 1>nul 2>&1
+rmdir /s /q "%SETUPDIR%" 1>nul 2>&1
 
-del /f /s /q "%~dp0\..\..\dist" 1>nul 2>&1
-rmdir /s /q "%~dp0\..\..\dist" 1>nul 2>&1
+del /f /s /q "%DISTDIR%" 1>nul 2>&1
+rmdir /s /q "%DISTDIR%" 1>nul 2>&1
 
-del /f /s /q "%~dp0\..\..\build" 1>nul 2>&1
-rmdir /s /q "%~dp0\..\..\build" 1>nul 2>&1
+del /f /s /q "%BUILDDIR%" 1>nul 2>&1
+rmdir /s /q "%BUILDDIR%" 1>nul 2>&1
 
-call "%~dp0\install_conda_windows.bat"
+call "%INSTALLWINDIR%\install_conda_windows.bat"
 if errorlevel 1 goto ERROR
 
-call "%~dp0\install_build_env.bat"
+call "%INSTALLWINDIR%\install_build_env.bat"
 if errorlevel 1 goto ERROR
 
-call "%~dp0\build_pyinstall.bat"
+call "%INSTALLWINDIR%\build_pyinstall.bat"
 if errorlevel 1 goto ERROR
 
-call "%~dp0\build_setup.bat"
+call "%INSTALLWINDIR%\build_setup.bat"
 if errorlevel 1 goto ERROR
 
 echo Moving setup to release...
-rename "%~dp0\..\..\__setup__" "__release__" 1>nul 2>&1
+rename "%SETUPDIR%" "%RELEASEDIRNAME%" 1>nul 2>&1
 if errorlevel 1 goto ERROR
 
-echo Moving needed portable files to dist...
-mkdir "%~dp0\..\..\dist\user_layouts" 1>nul 2>&1
-xcopy /s "%~dp0\..\..\user_layouts" "%~dp0\..\..\dist\user_layouts" 1>nul 2>&1
+echo Moving needed portable files to folder...
+mkdir "%PORTABLEDIR%" 1>nul 2>&1
+xcopy "%DISTDIR%\%EXENAME%" "%PORTABLEDIR%" 1>nul 2>&1
+if not exist "%PORTABLEDIR%\%EXENAME%" goto ERROR
 
-mkdir "%~dp0\..\..\dist\user_scripts" 1>nul 2>&1
-xcopy /s "%~dp0\..\..\user_scripts" "%~dp0\..\..\dist\user_scripts" 1>nul 2>&1
+mkdir "%PORTABLEDIR%\user_layouts" 1>nul 2>&1
+xcopy /s "%LPHKDIR%\user_layouts" "%PORTABLEDIR%\user_layouts" 1>nul 2>&1
+if not exist "%PORTABLEDIR%\user_layouts" goto ERROR
 
-mkdir "%~dp0\..\..\dist\user_sounds" 1>nul 2>&1
-xcopy /s "%~dp0\..\..\user_sounds" "%~dp0\..\..\dist\user_sounds" 1>nul 2>&1
+mkdir "%PORTABLEDIR%\user_scripts" 1>nul 2>&1
+xcopy /s "%LPHKDIR%\user_scripts" "%PORTABLEDIR%\user_scripts" 1>nul 2>&1
+if not exist "%PORTABLEDIR%\user_scripts" goto ERROR
+
+mkdir "%PORTABLEDIR%\user_sounds" 1>nul 2>&1
+xcopy /s "%LPHKDIR%\user_sounds" "%PORTABLEDIR%\user_sounds" 1>nul 2>&1
+if not exist "%PORTABLEDIR%\user_sounds" goto ERROR
+
 if errorlevel 1 goto ERROR
 
 echo Zipping portable version...
-powershell -Command Compress-Archive "%~dp0\..\..\dist" "%~dp0\..\..\__release__\NAME.zip" 1>nul 2>&1
+powershell -Command Compress-Archive "%PORTABLEDIR%" "%RELEASEDIR%\%PORTABLENAME%.zip"
 if errorlevel 1 goto ERROR
 
 echo Cleaning up...
-del /f /s /q "%~dp0\..\..\dist" 1>nul 2>&1
-rmdir /s /q "%~dp0\..\..\dist" 1>nul 2>&1
+del /f /s /q "%PORTABLEDIR%" 1>nul 2>&1
+rmdir /s /q "%PORTABLEDIR%" 1>nul 2>&1
 
-del /f /s /q "%~dp0\..\..\build" 1>nul 2>&1
-rmdir /s /q "%~dp0\..\..\build" 1>nul 2>&1
+del /f /s /q "%DISTDIR%" 1>nul 2>&1
+rmdir /s /q "%DISTDIR%" 1>nul 2>&1
+
+del /f /s /q "%BUILDDIR%" 1>nul 2>&1
+rmdir /s /q "%BUILDDIR%" 1>nul 2>&1
 if errorlevel 1 goto ERROR
 
 goto DONE

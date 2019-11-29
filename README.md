@@ -307,6 +307,8 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
 ## What still needs to be written? (in order of priority) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* Add splash screen to PyInstaller executable, for feedback while loading
+  * This feature of PyInstaller is in development at this very moment by [Chrisg2000 and others](https://github.com/pyinstaller/pyinstaller/issues/4354) Once it's done, I can do this!
 * Let program function as a layout editor without LP connection
   * Would probably be easier to write a "Dummy LP" class
 * Make an installer for Linux
