@@ -102,7 +102,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
-LPHK.lnk
+*.lnk
 user_layouts/*.*
 __setup__/*
 __release__/*
