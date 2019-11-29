@@ -14,6 +14,7 @@ STAT_ACTIVE_COLOR = "#080"
 STAT_INACTIVE_COLOR = "#444"
 SELECT_COLOR = "#f00"
 DEFAULT_COLOR = [0, 0, 255]
+MK1_DEFAULT_COLOR = [0, 255, 0]
 INDICATOR_BPM = 480
 BUTTON_FONT = ("helvetica", 11, "bold")
 
@@ -424,7 +425,10 @@ class Main_Window(tk.Frame):
             colors_to_set[x][y] = lp_colors.code_to_RGB(colors_to_set[x][y])
         
         if all(c < 4 for c in colors_to_set[x][y]):
-            colors_to_set[x][y] = DEFAULT_COLOR
+            if lp_mode == "Mk1":
+                colors_to_set[x][y] = MK1_DEFAULT_COLOR
+            else:
+                colors_to_set[x][y] = DEFAULT_COLOR
         
         ask_color_func = lambda: self.ask_color(w, color_button, x, y, colors_to_set[x][y])
         color_button = tk.Button(w, text="Select Color", command=ask_color_func)
@@ -490,10 +494,10 @@ class Main_Window(tk.Frame):
         for c in range(4):
             for r in range(4):
                 if not (c == 0 and r == 3):
-                    red = max(0, (c * 64) - 1)
-                    green = max(0, ((3 - r) * 64) - 1)
+                    red = (c * 64)
+                    green = ((3 - r) * 64)
                     
-                    make_color_button((red, green, 0), c, r)
+                    make_color_button((red, green, 0), c, r, size=75)
 
         w.wait_visibility()
         w.grab_set()
