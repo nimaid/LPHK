@@ -96,7 +96,7 @@ This is still a work-in-progress, so things will be changing often. [See below f
 * Download the source of the latest release at [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest)
   * Either the `VERSION.zip` or `VERSION.tar.gz` file will work, but the `VERSION.zip` file is probably easier to use
 * Extract the `LPHK-VERSION` folder
-* Run `LPHK-VERSION/install/linux_beta/install_linux.bash"` via a `bash` shell (NOT `sh`, `fish`, etc.)
+* Run `LPHK-VERSION/INSTALL/linux_beta/install_linux.bash"` via a `bash` shell (NOT `sh`, `fish`, etc.)
   * You can do this via terminal or, if it's set up, by double clicking it.
 * One of three things will happen:
   * If LPHK is already installed, it will prompt if you would like to uninstall it. Type either `y` or `n` and press `enter`.

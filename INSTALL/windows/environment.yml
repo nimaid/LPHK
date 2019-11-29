@@ -1,0 +1,15 @@
+name: LPHK-build
+channels:
+  - defaults
+dependencies:
+  - python=3.7*
+  - pip
+  - tk
+  - pip:
+    - keyboard
+    - launchpad-py
+    - pillow
+    - pygame
+    - pynput
+    - tkcolorpicker
+    - pyinstaller
