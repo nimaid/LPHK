@@ -41,6 +41,8 @@ SetupIconFile=..\..\resources\LPHK.ico
 UninstallDisplayIcon={app}\resources\LPHK.ico
 Compression=lzma
 SolidCompression=yes
+WizardImageFile=..\..\INSTALL\RESOURCES\LPHK.bmp
+WizardSmallImageFile=..\..\INSTALL\RESOURCES\LPHK.bmp
 WizardStyle=modern
 
 [Languages]
@@ -66,10 +68,11 @@ var UserDirPage: TInputDirWizardPage;
 procedure InitializeWizard();
 begin
   UserDirPage := CreateInputDirPage(wpSelectDir,
-    'Select user folder', 'Where should user files be stored?',
-    'Layouts, scripts, sounds, and logs will be stored in this folder.' + #13#10#13#10 + 'Click Next to accept the default, or browse to a new location.',
+    'Select User Folder', 'Where should the User Folder be installed?',
+    'Setup will install layouts, scripts, sounds, and logs into the following folder.' + #13#10#13#10#13#10 +
+    'To continue, click Next. If you would like to select a different folder, click Browse.',
     False, '');
-  UserDirPage.Add('User folder:');
+    UserDirPage.Add('');
   UserDirPage.Values[0] := ExpandConstant('{userdocs}\LPHK');
 end;
   

@@ -97,16 +97,16 @@ class Main_Window(tk.Frame):
         self.m_Launchpad.add_command(label="Connect to Launchpad", command=self.connect_lp)
         self.m_Launchpad.add_command(label="Disonnect from Launchpad", command=self.disconnect_lp)
         #self.m_Launchpad.add_command(label="Edit layot only", command=self.connect_dummy)
-        self.m_Launchpad.add_command(label="Redetect (restart)", command=self.redetect_lp)
+        self.m_Launchpad.add_command(label="Redetect (Restart)", command=self.redetect_lp)
         self.m.add_cascade(label="Launchpad", menu=self.m_Launchpad)
 
         self.disable_lp_disconnect()
 
         self.m_Layout = tk.Menu(self.m, tearoff=False)
-        self.m_Layout.add_command(label="New layout", command=self.unbind_lp)
-        self.m_Layout.add_command(label="Load layout", command=self.load_layout)
-        self.m_Layout.add_command(label="Save layout", command=self.save_layout)
-        self.m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
+        self.m_Layout.add_command(label="New Layout", command=self.unbind_lp)
+        self.m_Layout.add_command(label="Load Layout", command=self.load_layout)
+        self.m_Layout.add_command(label="Save Layout", command=self.save_layout)
+        self.m_Layout.add_command(label="Save Layout As...", command=self.save_layout_as)
         self.m.add_cascade(label="Layout", menu=self.m_Layout)
 
         self.disable_menu("Layout")
@@ -115,11 +115,11 @@ class Main_Window(tk.Frame):
         open_readme = lambda: webbrowser.open("https://github.com/nimaid/LPHK#lphk-launchpad-hotkey")
         self.m_Help.add_command(label="Open README...", command=open_readme)
         open_scripting = lambda: webbrowser.open("https://github.com/nimaid/LPHK#what-is-lphkscript-table-of-contents")
-        self.m_Help.add_command(label="Scripting help...", command=open_scripting)
+        self.m_Help.add_command(label="Scripting Help...", command=open_scripting)
         open_user_folder = lambda: files.open_file_folder(USER_PATH)
-        self.m_Help.add_command(label="User folder...", command=open_user_folder)
+        self.m_Help.add_command(label="User Folder...", command=open_user_folder)
         open_prog_folder = lambda: files.open_file_folder(PROG_PATH)
-        self.m_Help.add_command(label="Program folder...", command=open_prog_folder)
+        self.m_Help.add_command(label="Program Folder...", command=open_prog_folder)
         display_info = lambda: self.popup(self, "About LPHK", self.about_image, "A Novation Launchpad Macro Scripting System\nMade by Ella Jameson (nimaid)\n\nVersion: " + VERSION + "\nFile format version: " + files.FILE_VERSION, "Done")
         self.m_Help.add_command(label="About LPHK", command=display_info)
         self.m.add_cascade(label="Help", menu=self.m_Help)
@@ -213,7 +213,7 @@ class Main_Window(tk.Frame):
             else:
                 raise Exception()
         except:
-            self.popup(self, "Connect to Launchpad", self.error_image, "Fatal error while connecting to Launchpad!\nDisconnect and reconnect your USB cable, then use the\n'Redetect...' option from the 'Launchpad' menu.", "OK")
+            self.popup(self, "Connect to Launchpad", self.error_image, "Fatal error while connecting to Launchpad!\nDisconnect and reconnect your USB cable, then use the\n'Redetect (Restart)' option from the 'Launchpad' menu.", "OK")
 
     def disconnect_lp(self):
         global lp_connected
