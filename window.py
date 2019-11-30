@@ -509,8 +509,8 @@ class Main_Window(tk.Frame):
         for c in range(4):
             for r in range(4):
                 if not (c == 0 and r == 3):
-                    red = (c * 64)
-                    green = ((3 - r) * 64)
+                    red = int(c * (255 / 3))
+                    green = int((3 - r) * (255 / 3))
                     
                     make_color_button((red, green, 0), c, r, size=75)
 
