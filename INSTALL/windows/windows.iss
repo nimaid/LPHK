@@ -41,7 +41,7 @@ SetupIconFile=..\..\resources\LPHK.ico
 UninstallDisplayIcon={app}\resources\LPHK.ico
 Compression=lzma
 SolidCompression=yes
-WizardImageFile=..\..\INSTALL\RESOURCES\LPHK.bmp
+WizardImageFile=..\..\INSTALL\RESOURCES\LPHK-banner.bmp
 WizardSmallImageFile=..\..\INSTALL\RESOURCES\LPHK.bmp
 WizardStyle=modern
 
