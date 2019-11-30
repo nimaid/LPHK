@@ -3,7 +3,6 @@ from time import sleep
 import os, json, platform, subprocess
 
 PATH = None
-PROG_VERSION = None
 
 LAYOUT_PATH = "/user_layouts/"
 SCRIPT_PATH = "/user_scripts/"
@@ -24,10 +23,7 @@ layout_changed_since_load = False
 
 def init(path_in):
     global PATH
-    global PROG_VERSION
     PATH = path_in
-    with open(os.path.join(PATH, "VERSION"), "r") as f:
-        PROG_VERSION = f.read()
 
 def save_layout(layout, name):
     with open(name, "w") as f:

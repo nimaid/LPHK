@@ -22,6 +22,10 @@ if os.path.exists(USERPATH_FILE):
 else:
 	USER_PATH = PROG_PATH
 
+# Get program version
+with open(os.path.join(PATH, "VERSION"), "r") as f:
+    VERSION = f.read()
+
 # Setup dual logging/printing
 class Tee(object):
     def __init__(self, name, mode):
@@ -47,10 +51,9 @@ def datetime_str():
    return now.strftime("%d/%m/%Y %H:%M:%S")
 
 print("LPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
-print("!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!")
+print("Version:", VERSION)
+print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!")
 print("-------- BEGIN LOG", datetime_str(), "--------\n")
-
-EXIT_ON_WINDOW_CLOSE = True
 
 # Try to import launchpad.py
 try:
@@ -65,6 +68,7 @@ import lp_events, scripts, kb, files, sound, window
 
 lp = launchpad.Launchpad()
 
+EXIT_ON_WINDOW_CLOSE = True
 def init():
     global EXIT_ON_WINDOW_CLOSE
     if len(sys.argv) > 1:
@@ -101,7 +105,7 @@ def shutdown():
 
 def main():
     init()
-    window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH)
+    window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH, VERSION)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
 
