@@ -105,7 +105,7 @@ This is still a work-in-progress, so things will be changing often. [See below f
     * If Miniconda3 is installed in `~/miniconda3/`, it will prompt if you would like to uninstall that as well. Type either `y` or `n` and press `enter`.
   * If you do not have a conda distribution installed, it will prompt you if you want to install Miniconda3 and LPHK. Type `y` and press `enter`.
   * If a conda distribution is already installed, the installer will prompt you if you want to install LPHK. Type `y` and press `enter`.
-* To run LPHK, run `LPHK-VERSION/run.bash`.
+* To run LPHK, run `LPHK-VERSION/RUN.bash`.
   * `.desktop` shortcuts are coming soon!
 
 ## How do I use it? (Post-Install) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
