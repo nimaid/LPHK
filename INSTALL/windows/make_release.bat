@@ -49,7 +49,7 @@ del /f /s /q "%BUILDDIR%" 1>nul 2>&1
 rmdir /s /q "%BUILDDIR%" 1>nul 2>&1
 
 echo Making release version %VERSION% now...
-call cmd /c "%INSTALLWINDIR%\build_pyinstall.bat"
+call cmd /c "%INSTALLWINDIR%\build_pyinstall_portable.bat"
 if errorlevel 1 goto ERROR
 
 call cmd /c "%INSTALLWINDIR%\build_setup.bat"
