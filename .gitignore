@@ -106,4 +106,4 @@ venv.bak/
 user_layouts/*.*
 __setup__/*
 __release__/*
-INSTALLED
+USERPATH

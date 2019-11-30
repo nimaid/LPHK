@@ -51,9 +51,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\..\dist\LPHK.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\user_layouts\*"; DestDir: "{app}\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\user_scripts\*"; DestDir: "{app}\user_scripts"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\user_sounds\*"; DestDir: "{app}\user_sounds"; Flags: ignoreversion recursesubdirs createallsubdirs; AfterInstall: MyAfterInstall
+Source: "..\..\user_layouts\*"; DestDir: "{userdocs}\LPHK\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\user_scripts\*"; DestDir: "{userdocs}\LPHK\user_scripts"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\user_sounds\*"; DestDir: "{userdocs}\LPHK\user_sounds"; Flags: ignoreversion recursesubdirs createallsubdirs; AfterInstall: SetLphkUserPath
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -69,9 +69,9 @@ begin
   result := true;
 end;
 
-procedure MyAfterInstall();
+procedure SetLphkUserPath();
 begin
-  SaveStringToFile(ExpandConstant('{app}\INSTALLED'), '', True);
+  SaveStringToFile(ExpandConstant('{app}\USERPATH'), ExpandConstant('{userdocs}\LPHK'), False);
 end;
 
 [Run]

@@ -3,8 +3,6 @@ from datetime import datetime
 
 PROG_PATH = os.path.dirname(os.path.abspath(__file__))
 
-USER_MAINDIR = os.path.expanduser("~")
-
 LOG_TITLE = "LPHK.log"
 
 # Test if this is a PyInstaller EXE or a .py file
@@ -15,13 +13,13 @@ else:
     is_exe = False
     PATH = PROG_PATH
 
-# Test if this is an installed version of LPHK
-if os.path.exists(os.path.join(PROG_PATH, "INSTALLED")):
-	INSTALLED = True
-	USER_PATH = os.path.join(USER_MAINDIR, "LPHK")
+# Test if there is a user folder specified
+USERPATH_FILE = os.path.join(PROG_PATH, "USERPATH")
+if os.path.exists(USERPATH_FILE):
+	with open(USERPATH_FILE, "r") as f:
+		USER_PATH = f.read()
 	os.makedirs(USER_PATH, exist_ok=True)
 else:
-	INSTALLED = False
 	USER_PATH = PROG_PATH
 
 # Setup dual logging/printing
