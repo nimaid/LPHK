@@ -17,7 +17,6 @@ set BUILDDIR=%LPHKDIR%\build
 
 set /p VERSION=<"%LPHKDIR%\VERSION"
 if [%VERSION%] == [] goto ERROR
-echo Making release version %VERSION% now...
 
 set PORTABLENAME=LPHK_portable_win_%VERSION%
 set PORTABLEDIR=%RELEASEDIR%\LPHK
@@ -25,7 +24,20 @@ set PORTABLEDIR=%RELEASEDIR%\LPHK
 set EXENAME=LPHK.exe
 
 
-echo Cleaning up before starting...
+call cmd /c "%INSTALLWINDIR%\install_conda_windows.bat"
+if errorlevel 1 goto ERROR
+
+where conda >nul 2>nul
+if %ERRORLEVEL% EQU 0 goto CONDAFOUND
+powershell -Command "%INSTALLWINDIR%\RefreshEnv.cmd"
+if errorlevel 1 goto ERROR
+
+
+:CONDAFOUND
+call cmd /c "%INSTALLWINDIR%\install_build_env.bat"
+if errorlevel 1 goto ERROR
+
+echo Cleaning up before making release...
 del /f /s /q "%RELEASEDIR%" 1>nul 2>&1
 rmdir /s /q "%RELEASEDIR%" 1>nul 2>&1
 
@@ -38,16 +50,11 @@ rmdir /s /q "%DISTDIR%" 1>nul 2>&1
 del /f /s /q "%BUILDDIR%" 1>nul 2>&1
 rmdir /s /q "%BUILDDIR%" 1>nul 2>&1
 
-call "%INSTALLWINDIR%\install_conda_windows.bat"
+echo Making release version %VERSION% now...
+call cmd /c "%INSTALLWINDIR%\build_pyinstall.bat"
 if errorlevel 1 goto ERROR
 
-call "%INSTALLWINDIR%\install_build_env.bat"
-if errorlevel 1 goto ERROR
-
-call "%INSTALLWINDIR%\build_pyinstall.bat"
-if errorlevel 1 goto ERROR
-
-call "%INSTALLWINDIR%\build_setup.bat"
+call cmd /c "%INSTALLWINDIR%\build_setup.bat"
 if errorlevel 1 goto ERROR
 
 echo Moving setup to release...

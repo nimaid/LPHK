@@ -18,10 +18,10 @@ if %OS%==32BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-
 if %OS%==64BIT set MCLINK=https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
 
 echo Downloading Miniconda3 (This will take while, please wait)...
-powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDAEXE%')" 
+powershell -Command "(New-Object Net.WebClient).DownloadFile('%MCLINK%', '%CONDAEXE%')" >nul 2>nul
 if errorlevel 1 goto CONDAERROR
 
-echo Installing Miniconda3... (This will also take a while, please wait...)
+echo Installing Miniconda3 (This will also take a while, please wait)...
 start /wait /min "Installing Miniconda3..." "%CONDAEXE%" /InstallationType=JustMe /S /D="%MINICONDAPATH%"
 del "%CONDAEXE%"
 if not exist "%MINICONDAPATH%\" (goto CONDAERROR)

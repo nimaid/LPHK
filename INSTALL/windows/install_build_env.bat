@@ -29,7 +29,7 @@ echo LPHK build environment installed!
 goto END
 
 :CONDAMISSING
-echo "Conda is not installed!"
+echo Conda is not installed!
 goto ERROREND
 
 :INSTALLENVFAIL
