@@ -51,9 +51,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\..\dist\LPHK\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
-Source: "..\..\user_layouts\*"; DestDir: "{userdocs}\LPHK\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\user_scripts\*"; DestDir: "{userdocs}\LPHK\user_scripts"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\user_sounds\*"; DestDir: "{userdocs}\LPHK\user_sounds"; Flags: ignoreversion recursesubdirs createallsubdirs; AfterInstall: SetLphkUserPath
+Source: "..\..\user_layouts\*"; DestDir: "{code:GetUserDir}\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\user_scripts\*"; DestDir: "{code:GetUserDir}\user_scripts"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\user_sounds\*"; DestDir: "{code:GetUserDir}\user_sounds"; Flags: ignoreversion recursesubdirs createallsubdirs; AfterInstall: SetLphkUserPath
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -61,17 +61,26 @@ Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFile
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\resources\LPHK.ico"
 
 [Code]
-var CancelWithoutPrompt: boolean;
+var UserDirPage: TInputDirWizardPage;
 
-function InitializeSetup(): Boolean;
+procedure InitializeWizard();
 begin
-  CancelWithoutPrompt := false;
-  result := true;
+  UserDirPage := CreateInputDirPage(wpSelectDir,
+    'Select user folder', 'Where should user files be stored?',
+    'Layouts, scripts, sounds, and logs will be stored in this folder.' + #13#10#13#10 + 'Click Next to accept the default, or browse to a new location.',
+    False, '');
+  UserDirPage.Add('User folder:');
+  UserDirPage.Values[0] := ExpandConstant('{userdocs}\LPHK');
+end;
+  
+function GetUserDir(Param: String): String;
+begin
+  Result := UserDirPage.Values[0];
 end;
 
 procedure SetLphkUserPath();
 begin
-  SaveStringToFile(ExpandConstant('{app}\USERPATH'), ExpandConstant('{userdocs}\LPHK'), False);
+  SaveStringToFile(ExpandConstant('{app}\USERPATH'), ExpandConstant('{code:GetUserDir}'), False);
 end;
 
 [Run]
@@ -79,3 +88,4 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
+Type: files; Name: "{code:GetUserDir}\*.log"
