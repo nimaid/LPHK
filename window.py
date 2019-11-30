@@ -247,7 +247,7 @@ class Main_Window(tk.Frame):
     def load_layout(self):
         self.modified_layout_save_prompt()
         name = tk.filedialog.askopenfilename(parent=app,
-                                          initialdir=os.getcwd() + files.LAYOUT_PATH,
+                                          initialdir=USER_PATH + files.LAYOUT_PATH,
                                           title="Load layout",
                                           filetypes=load_layout_filetypes)
         if name:
@@ -256,7 +256,7 @@ class Main_Window(tk.Frame):
 
     def save_layout_as(self):
         name = tk.filedialog.asksaveasfilename(parent=app,
-                                            initialdir=os.getcwd() + files.LAYOUT_PATH,
+                                            initialdir=USER_PATH + files.LAYOUT_PATH,
                                             title="Save layout as...",
                                             filetypes=save_layout_filetypes)
         if name:
@@ -601,7 +601,7 @@ class Main_Window(tk.Frame):
 
     def import_script(self, textbox, window):
         name = tk.filedialog.askopenfilename(parent=window,
-                                             initialdir=os.getcwd() + files.SCRIPT_PATH,
+                                             initialdir=USER_PATH + files.SCRIPT_PATH,
                                              title="Import script",
                                              filetypes=load_script_filetypes)
         if name:
@@ -612,7 +612,7 @@ class Main_Window(tk.Frame):
 
     def export_script(self, textbox, window):
         name = tk.filedialog.asksaveasfilename(parent=window,
-                                               initialdir=os.getcwd() + files.SCRIPT_PATH,
+                                               initialdir=USER_PATH + files.SCRIPT_PATH,
                                                title="Export script",
                                                filetypes=save_script_filetypes)
         if name:
