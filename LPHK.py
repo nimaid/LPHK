@@ -80,8 +80,7 @@ def init():
         else:
             print("[LPHK] Invalid argument: " + sys.argv[1] + ". Ignoring...")
 
-    files.init(PATH)
-    sound.init(PATH)
+    sound.init(USER_PATH)
 
 def shutdown():
     if lp_events.timer != None:

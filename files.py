@@ -2,8 +2,6 @@ import lp_colors, scripts
 from time import sleep
 import os, json, platform, subprocess
 
-PATH = None
-
 LAYOUT_PATH = "/user_layouts/"
 SCRIPT_PATH = "/user_scripts/"
 
@@ -20,10 +18,6 @@ import window
 curr_layout = None
 in_error = False
 layout_changed_since_load = False
-
-def init(path_in):
-    global PATH
-    PATH = path_in
 
 def save_layout(layout, name):
     with open(name, "w") as f:

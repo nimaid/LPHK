@@ -27,9 +27,6 @@ set EXENAME=LPHK.exe
 call cmd /c "%INSTALLWINDIR%\install_conda_windows.bat"
 if errorlevel 1 goto ERROR
 
-REM cmd /c conda >nul 2>nul || powershell -Command "%INSTALLWINDIR%\RefreshEnv.cmd"
-if errorlevel 1 goto ERROR
-
 
 :CONDAFOUND
 call cmd /c "%INSTALLWINDIR%\install_build_env.bat"
