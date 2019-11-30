@@ -38,7 +38,7 @@ PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=..\..\__setup__
 OutputBaseFilename=LPHK_setup_{#MyAppVersion}
 SetupIconFile=..\..\resources\LPHK.ico
-UninstallDisplayIcon={app}\{#MyAppExeName}
+UninstallDisplayIcon={app}\resources\LPHK.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -50,15 +50,15 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\..\dist\LPHK.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\dist\LPHK\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 Source: "..\..\user_layouts\*"; DestDir: "{userdocs}\LPHK\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\user_scripts\*"; DestDir: "{userdocs}\LPHK\user_scripts"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\user_sounds\*"; DestDir: "{userdocs}\LPHK\user_sounds"; Flags: ignoreversion recursesubdirs createallsubdirs; AfterInstall: SetLphkUserPath
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\{#MyAppExeName}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\{#MyAppExeName}"
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\resources\LPHK.ico"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\resources\LPHK.ico"
 
 [Code]
 var CancelWithoutPrompt: boolean;
