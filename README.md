@@ -3,9 +3,9 @@ A Novation Launchpad macro scripting system.
 
 <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_4.png" alt="Update 3" width="1000px"/>
 
+## Table of Contents
 <a href="https://github.com/nimaid/LPHK"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" alt="logo" height="50px" hspace="0"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" alt="logo" height="50px" hspace="0"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_icon_square.png" alt="logo" height="50px" hspace="0"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" alt="logo" height="50px" hspace="0"/></a><a href="https://discord.gg/mDCzB8X"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" alt="logo" height="50px" hspace="0"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/discord.png" alt="logo" height="50px" hspace="0"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" alt="logo" height="50px" hspace="0"/></a><a href="https://www.patreon.com/user?u=16848673"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" alt="logo" height="50px" hspace="0"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/patreon.png" alt="logo" height="50px" hspace="0"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" alt="logo" height="50px" hspace="0"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" alt="logo" height="50px" hspace="0"/></a>
 
-## Table of Contents
 * [Links](https://github.com/nimaid/LPHK#links-table-of-contents)
 * [What does it do?](https://github.com/nimaid/LPHK#what-does-it-do-table-of-contents)
 * [Why would you do that?](https://github.com/nimaid/LPHK#why-would-you-do-that-table-of-contents)
