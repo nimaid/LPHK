@@ -3,6 +3,10 @@ from datetime import datetime
 
 PROG_PATH = os.path.dirname(os.path.abspath(__file__))
 
+USER_MAINDIR = os.path.expanduser("~")
+
+LOG_TITLE = "LPHK.log"
+
 # Test if this is a PyInstaller EXE or a .py file
 if getattr(sys, 'frozen', False):
     is_exe = True
@@ -10,6 +14,15 @@ if getattr(sys, 'frozen', False):
 else:
     is_exe = False
     PATH = PROG_PATH
+
+# Test if this is an installed version of LPHK
+if os.path.exists(os.path.join(PROG_PATH, "INSTALLED")):
+	INSTALLED = True
+	USER_PATH = os.path.join(USER_MAINDIR, "LPHK")
+	os.makedirs(USER_PATH, exist_ok=True)
+else:
+	INSTALLED = False
+	USER_PATH = PROG_PATH
 
 # Setup dual logging/printing
 class Tee(object):
@@ -27,8 +40,8 @@ class Tee(object):
     def flush(self):
         self.file.flush()
 
-log_name = os.path.join(PROG_PATH, 'LPHK.log')
-logger = Tee(log_name, 'w')
+log_path = os.path.join(USER_PATH, LOG_TITLE)
+logger = Tee(log_path, 'w')
 
 # Start printing output
 def datetime_str():
@@ -90,7 +103,7 @@ def shutdown():
 
 def main():
     init()
-    window.init(lp, launchpad, PATH, PROG_PATH)
+    window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
 

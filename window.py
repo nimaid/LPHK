@@ -26,6 +26,8 @@ DICER_NAME = "dicer"
 
 PATH = None
 PROG_PATH = None
+USER_PATH = None
+
 MAIN_ICON = None
 
 launchpad = None
@@ -46,16 +48,18 @@ lp_connected = False
 lp_mode = None
 colors_to_set = [[DEFAULT_COLOR for y in range(9)] for x in range(9)]
 
-def init(lp_object_in, launchpad_in, path_in, prog_path_in):
+def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in):
     global lp_object
     global launchpad
     global PATH
     global PROG_PATH
+    global USER_PATH
     global MAIN_ICON
     lp_object = lp_object_in
     launchpad = launchpad_in
     PATH = path_in
     PROG_PATH = prog_path_in
+    USER_PATH = user_path_in
     MAIN_ICON = os.path.join(PATH, "resources", "LPHK.ico")
 
     make()
@@ -108,8 +112,10 @@ class Main_Window(tk.Frame):
         self.m_Help.add_command(label="Open README...", command=open_readme)
         open_scripting = lambda: webbrowser.open("https://github.com/nimaid/LPHK#what-is-lphkscript-table-of-contents")
         self.m_Help.add_command(label="Scripting help...", command=open_scripting)
-        open_main_folder = lambda: files.open_file_folder(PROG_PATH)
-        self.m_Help.add_command(label="Program folder...", command=open_main_folder)
+        open_user_folder = lambda: files.open_file_folder(USER_PATH)
+        self.m_Help.add_command(label="User folder...", command=open_user_folder)
+        open_prog_folder = lambda: files.open_file_folder(PROG_PATH)
+        self.m_Help.add_command(label="Program folder...", command=open_prog_folder)
         display_info = lambda: self.popup(self, "About LPHK", self.about_image, "A Novation Launchpad Macro Scripting System\nMade by Ella Jameson (nimaid)\n\nVersion: " + files.PROG_VERSION + "\nFile format version: " + files.FILE_VERSION, "Done")
         self.m_Help.add_command(label="About LPHK", command=display_info)
         self.m.add_cascade(label="Help", menu=self.m_Help)

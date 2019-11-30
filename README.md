@@ -78,7 +78,7 @@ This is still a work-in-progress, so things will be changing often. [See below f
 *Note: Files used in the installation are named with a version number, and will change with each new release. The word `VERSION` is used in the below filenames and paths to denote where this version number will be. When going to [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest), it will redirect to the page with the latest versions of these files, so the correct value of `VERSION` should be plainly obvious.*
 
 ### Windows Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-*THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT AND USING `run.bat`.*
+*THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT IN `INSTALL\environment.yml`. THEN, RUN `LPHK.py` INSIDE THE `LPHK` CONDA ENVIRONMENT.*
 
 * If you want the installed version (recomended)
   * Download the latest `LPHK_setup_VERSION.exe` file from [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest)
@@ -91,7 +91,7 @@ This is still a work-in-progress, so things will be changing often. [See below f
   * Run `LPHK.exe`
 
 ### Linux Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-*THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT.*
+*THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT in `INSTALL/environment.yml`. THEN, RUN `LPHK.py` INSIDE THE `LPHK` CONDA ENVIRONMENT.*
 
 * Download the source of the latest release at [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest)
   * Either the `VERSION.zip` or `VERSION.tar.gz` file will work, but the `VERSION.zip` file is probably easier to use
