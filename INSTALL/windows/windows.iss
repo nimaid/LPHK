@@ -38,7 +38,7 @@ PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=..\..\__setup__
 OutputBaseFilename=LPHK_setup_{#MyAppVersion}
 SetupIconFile=..\..\resources\LPHK.ico
-UninstallDisplayIcon={app}\resources\LPHK.ico
+UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma
 SolidCompression=yes
 WizardImageFile=..\..\INSTALL\RESOURCES\LPHK-banner.bmp
@@ -59,8 +59,8 @@ Source: "..\..\user_sounds\*"; DestDir: "{code:GetUserDir}\user_sounds"; Flags: 
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\resources\LPHK.ico"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\resources\LPHK.ico"
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Code]
 var UserDirPage: TInputDirWizardPage;
