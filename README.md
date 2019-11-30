@@ -4,23 +4,7 @@ A Novation Launchpad macro scripting system.
 <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_4.png" width="1000px" alt="Update 4"/>
 
 ## Table of Contents
-<a href="https://github.com/nimaid/LPHK">
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Homepage"/>
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Homepage"/>
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_icon_square.png" height="50px" hspace="0" alt="LPHK Homepage"/>
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Homepage"/>
-</a>
-<a href="https://discord.gg/mDCzB8X">
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Discord Chat"/>
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/discord.png" height="50px" hspace="0" alt="LPHK Discord Chat"/>
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Discord Chat"/>
-</a>
-    <a href="https://www.patreon.com/user?u=16848673">
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Patreon"/>
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/patreon.png" height="50px" hspace="0" alt="LPHK Patreon"/>
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0 alt="LPHK Patreon"/>
-    <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0 alt="LPHK Patreon"/>
-</a>
+<a href="https://github.com/nimaid/LPHK"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Homepage"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Homepage"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_icon_square.png" height="50px" hspace="0" alt="LPHK Homepage"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Homepage"/></a><a href="https://discord.gg/mDCzB8X"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Discord Chat"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/discord.png" height="50px" hspace="0" alt="LPHK Discord Chat"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Discord Chat"/></a><a href="https://www.patreon.com/user?u=16848673"><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0" alt="LPHK Patreon"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/patreon.png" height="50px" hspace="0" alt="LPHK Patreon"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0 alt="LPHK Patreon"/><img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/spacer.png" height="50px" hspace="0 alt="LPHK Patreon"/></a>
 
 * [Links](https://github.com/nimaid/LPHK#links-table-of-contents)
 * [What does it do?](https://github.com/nimaid/LPHK#what-does-it-do-table-of-contents)
