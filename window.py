@@ -3,6 +3,7 @@ import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox, tkcolorpick
 from PIL import ImageTk, Image
 import os
 from functools import partial
+import webbrowser
 
 import scripts, files, lp_colors, lp_events
 
@@ -13,8 +14,23 @@ STAT_ACTIVE_COLOR = "#080"
 STAT_INACTIVE_COLOR = "#444"
 SELECT_COLOR = "#f00"
 DEFAULT_COLOR = [0, 0, 255]
+MK1_DEFAULT_COLOR = [0, 255, 0]
 INDICATOR_BPM = 480
 BUTTON_FONT = ("helvetica", 11, "bold")
+
+MK2_NAME = "Launchpad MK2"
+PRO_NAME = "Launchpad Pro"
+CTRL_XL_NAME = "control xl"
+LAUNCHKEY_NAME = "launchkey"
+DICER_NAME = "dicer"
+
+PATH = None
+PROG_PATH = None
+USER_PATH = None
+
+VERSION = None
+
+MAIN_ICON = None
 
 launchpad = None
 
@@ -24,18 +40,31 @@ root_destroyed = None
 restart = False
 lp_object = None
 
-layout_filetypes = [('LPHK layout files', files.LAYOUT_EXT)]
-script_filetypes = [('LPHK script files', files.SCRIPT_EXT)]
+load_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT, files.LEGACY_LAYOUT_EXT])]
+load_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT, files.LEGACY_SCRIPT_EXT])]
+
+save_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT])]
+save_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT])]
 
 lp_connected = False
 lp_mode = None
 colors_to_set = [[DEFAULT_COLOR for y in range(9)] for x in range(9)]
 
-def init(lp_object_in, launchpad_in):
+def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, version_in):
     global lp_object
     global launchpad
+    global PATH
+    global PROG_PATH
+    global USER_PATH
+    global VERSION
+    global MAIN_ICON
     lp_object = lp_object_in
     launchpad = launchpad_in
+    PATH = path_in
+    PROG_PATH = prog_path_in
+    USER_PATH = user_path_in
+    VERSION = version_in
+    MAIN_ICON = os.path.join(PATH, "resources", "LPHK.ico")
 
     make()
 
@@ -44,12 +73,13 @@ class Main_Window(tk.Frame):
         tk.Frame.__init__(self, master)
         self.master = master
         self.init_window()
-
-        self.info_image = ImageTk.PhotoImage(Image.open("resources/info.png"))
-        self.warning_image = ImageTk.PhotoImage(Image.open("resources/warning.png"))
-        self.error_image = ImageTk.PhotoImage(Image.open("resources/error.png"))
-        self.alert_image = ImageTk.PhotoImage(Image.open("resources/alert.png"))
-        self.scare_image = ImageTk.PhotoImage(Image.open("resources/scare.png"))
+        
+        self.about_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/LPHK.png"))
+        self.info_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/info.png"))
+        self.warning_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/warning.png"))
+        self.error_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/error.png"))
+        self.alert_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/alert.png"))
+        self.scare_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/scare.png"))
         self.grid_drawn = False
         self.grid_rects = [[None for y in range(9)] for x in range(9)]
         self.button_mode = "edit"
@@ -64,21 +94,35 @@ class Main_Window(tk.Frame):
         self.master.config(menu=self.m)
 
         self.m_Launchpad = tk.Menu(self.m, tearoff=False)
-        self.m_Launchpad.add_command(label="Connect to Launchpad...", command=self.connect_lp)
-        self.m_Launchpad.add_command(label="Disonnect from Launchpad...", command=self.disconnect_lp)
-        self.m_Launchpad.add_command(label="Redetect...", command=self.redetect_lp)
+        self.m_Launchpad.add_command(label="Connect to Launchpad", command=self.connect_lp)
+        self.m_Launchpad.add_command(label="Disonnect from Launchpad", command=self.disconnect_lp)
+        #self.m_Launchpad.add_command(label="Edit layot only", command=self.connect_dummy)
+        self.m_Launchpad.add_command(label="Redetect (Restart)", command=self.redetect_lp)
         self.m.add_cascade(label="Launchpad", menu=self.m_Launchpad)
 
         self.disable_lp_disconnect()
 
         self.m_Layout = tk.Menu(self.m, tearoff=False)
-        self.m_Layout.add_command(label="New layout...", command=self.unbind_lp)
-        self.m_Layout.add_command(label="Load layout...", command=self.load_layout)
-        self.m_Layout.add_command(label="Save layout...", command=self.save_layout)
-        self.m_Layout.add_command(label="Save layout as...", command=self.save_layout_as)
+        self.m_Layout.add_command(label="New Layout", command=self.unbind_lp)
+        self.m_Layout.add_command(label="Load Layout", command=self.load_layout)
+        self.m_Layout.add_command(label="Save Layout", command=self.save_layout)
+        self.m_Layout.add_command(label="Save Layout As...", command=self.save_layout_as)
         self.m.add_cascade(label="Layout", menu=self.m_Layout)
 
         self.disable_menu("Layout")
+        
+        self.m_Help = tk.Menu(self.m, tearoff=False)
+        open_readme = lambda: webbrowser.open("https://github.com/nimaid/LPHK#lphk-launchpad-hotkey")
+        self.m_Help.add_command(label="Open README...", command=open_readme)
+        open_scripting = lambda: webbrowser.open("https://github.com/nimaid/LPHK#what-is-lphkscript-table-of-contents")
+        self.m_Help.add_command(label="Scripting Help...", command=open_scripting)
+        open_user_folder = lambda: files.open_file_folder(USER_PATH)
+        self.m_Help.add_command(label="User Folder...", command=open_user_folder)
+        open_prog_folder = lambda: files.open_file_folder(PROG_PATH)
+        self.m_Help.add_command(label="Program Folder...", command=open_prog_folder)
+        display_info = lambda: self.popup(self, "About LPHK", self.about_image, "A Novation Launchpad Macro Scripting System\nMade by Ella Jameson (nimaid)\n\nVersion: " + VERSION + "\nFile format version: " + files.FILE_VERSION, "Done")
+        self.m_Help.add_command(label="About LPHK", command=display_info)
+        self.m.add_cascade(label="Help", menu=self.m_Help)
 
         c_gap = int(BUTTON_SIZE // 4)
 
@@ -90,7 +134,11 @@ class Main_Window(tk.Frame):
         self.stat = tk.Label(self, text="No Launchpad Connected", bg=STAT_INACTIVE_COLOR, fg="#fff")
         self.stat.grid(row=1, column=0, sticky=tk.EW)
         self.stat.config(font=("Courier", BUTTON_SIZE // 3, "bold"))
-        
+    
+    def raise_above_all(self):
+        self.master.attributes('-topmost', 1)
+        self.master.attributes('-topmost', 0)
+    
     def enable_menu(self, name):
         self.m.entryconfig(name, state="normal")
 
@@ -98,19 +146,31 @@ class Main_Window(tk.Frame):
         self.m.entryconfig(name, state="disabled")
 
     def enable_lp_disconnect(self):
-        self.m_Launchpad.entryconfig("Disonnect from Launchpad...", state="normal")
+        self.m_Launchpad.entryconfig("Disonnect from Launchpad", state="normal")
 
     def disable_lp_disconnect(self):
-        self.m_Launchpad.entryconfig("Disonnect from Launchpad...", state="disabled")
-
+        self.m_Launchpad.entryconfig("Disonnect from Launchpad", state="disabled")
+    
+    def connect_dummy(self):
+        #WIP
+        global lp_connected
+        global lp_mode
+        global lp_object
+        
+        lp_connected = True
+        lp_mode = "Dummy"
+        self.draw_canvas()
+        self.enable_menu("Layout")
+        self.enable_lp_disconnect()
+    
     def connect_lp(self):
         global lp_connected
         global lp_mode
         global lp_object
         try:
-            if lp_object.Check( 0, "mk2" ):
+            if lp_object.Check( 0, MK2_NAME ):
                 lp_object = launchpad.LaunchpadMk2()
-                if lp_object.Open( 0, "mk2" ):
+                if lp_object.Open( 0, MK2_NAME ):
                     lp_connected = True
                     lp_mode = "Mk2"
                     lp_object.ButtonFlush()
@@ -122,10 +182,23 @@ class Main_Window(tk.Frame):
 
                     self.stat["text"] = "Connected to Launchpad MkII"
                     self.stat["bg"] = STAT_ACTIVE_COLOR                
-            elif lp_object.Check( 0, "pro" ):
-                self.popup(self, "Connect to Launchpad Pro...", self.error_image, "There is currently no support for the Launchpad Pro.\nThis feature is planned for the future, see the GitHub page.", "OK")
-            elif lp_object.Check( 0, "control xl" ) or lp_object.Check( 0, "launchkey" ) or lp_object.Check( 0, "dicer" ):
-                self.popup(self, "Connect to Unsupported Device...", self.error_image, "The device you are attempting to use is not currently supported by LPHK, and there are no plans to add support for it.\nPlease voice your feature requests on the Discord or on GitHub.", "OK")
+            elif lp_object.Check( 0, PRO_NAME ):
+                lp_object = launchpad.LaunchpadPro()
+                if lp_object.Open( 0, PRO_NAME ):
+                    self.popup(self, "Connect to Launchpad Pro", self.error_image, "This is a BETA feature! The Pro is not fully supported yet, as the bottom and left rows are not mappable currently.\nI (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)\nYou must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the\nupper left corner, then release the 'Setup' key. Please only continue once this step is completed.", "I am in Live mode.")
+                    lp_connected = True
+                    lp_mode = "Pro"
+                    lp_object.ButtonFlush()
+                    lp_object.LedCtrlBpm(INDICATOR_BPM)
+                    lp_events.start(lp_object)
+                    self.draw_canvas()
+                    self.enable_menu("Layout")
+                    self.enable_lp_disconnect()
+                    
+                    self.stat["text"] = "Connected to Launchpad Pro (BETA)"
+                    self.stat["bg"] = STAT_ACTIVE_COLOR   
+            elif lp_object.Check( 0, CTRL_XL_NAME ) or lp_object.Check( 0, LAUNCHKEY_NAME ) or lp_object.Check( 0, DICER_NAME ):
+                self.popup(self, "Connect to Unsupported Device", self.error_image, "The device you are attempting to use is not currently supported by LPHK, and there are no plans to add support for it.\nPlease voice your feature requests on the Discord or on GitHub.", "OK")
             elif lp_object.Check():
                 if lp_object.Open():
                     lp_connected = True
@@ -140,7 +213,7 @@ class Main_Window(tk.Frame):
             else:
                 raise Exception()
         except:
-            self.popup(self, "Connect to Launchpad...", self.error_image, "Fatal error while connecting to Launchpad!\nDisconnect and reconnect your USB cable, then use the\n'Redetect...' option from the 'Launchpad' menu.", "OK")
+            self.popup(self, "Connect to Launchpad", self.error_image, "Fatal error while connecting to Launchpad!\nDisconnect and reconnect your USB cable, then use the\n'Redetect (Restart)' option from the 'Launchpad' menu.", "OK")
 
     def disconnect_lp(self):
         global lp_connected
@@ -175,35 +248,36 @@ class Main_Window(tk.Frame):
         self.modified_layout_save_prompt()
         name = tk.filedialog.askopenfilename(parent=app,
                                           initialdir=os.getcwd() + files.LAYOUT_PATH,
-                                          title="Load layout...",
-                                          filetypes=layout_filetypes)
+                                          title="Load layout",
+                                          filetypes=load_layout_filetypes)
         if name:
-            files.load_layout(name, False)
+            files.load_layout_to_lp(name)
             self.draw_canvas()
 
     def save_layout_as(self):
         name = tk.filedialog.asksaveasfilename(parent=app,
                                             initialdir=os.getcwd() + files.LAYOUT_PATH,
                                             title="Save layout as...",
-                                            filetypes=layout_filetypes)
+                                            filetypes=save_layout_filetypes)
         if name:
             if files.LAYOUT_EXT not in name:
                 name += files.LAYOUT_EXT
-            files.save_layout(name, False)
-            files.load_layout(name, False)
+            files.save_lp_to_layout(name)
+            files.load_layout_to_lp(name)
 
     def save_layout(self):
         if files.curr_layout == None:
             self.save_layout_as()
         else:
-            files.save_layout(files.curr_layout, False)
-            files.load_layout(files.curr_layout, False)
+            files.save_lp_to_layout(files.curr_layout)
+            files.load_layout_to_lp(files.curr_layout)
     
     def click(self, event):
         gap = int(BUTTON_SIZE // 4)
-
-        column = int(event.x // (BUTTON_SIZE + gap))
-        row = int(event.y // (BUTTON_SIZE + gap))
+        
+        
+        column = min(8, int(event.x // (BUTTON_SIZE + gap)))
+        row = min(8, int(event.y // (BUTTON_SIZE + gap)))
 
         if self.grid_drawn:
             if(column, row) == (8, 0):
@@ -324,8 +398,9 @@ class Main_Window(tk.Frame):
         global color_to_set
         
         w = tk.Toplevel(self)
-        w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")...")
+        w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
         w.resizable(False, False)
+        w.iconbitmap(MAIN_ICON)
         
         def validate_func():
             nonlocal x, y, t
@@ -354,9 +429,9 @@ class Main_Window(tk.Frame):
         t.bind("<Control-Key-a>", self.select_all)
 
         import_script_func = lambda: self.import_script(t, w)
-        e_m_Script.add_command(label="Import script...", command=import_script_func)
+        e_m_Script.add_command(label="Import script", command=import_script_func)
         export_script_func = lambda: self.export_script(t, w)
-        e_m_Script.add_command(label="Export script...", command=export_script_func)
+        e_m_Script.add_command(label="Export script", command=export_script_func)
         e_m.add_cascade(label="Script", menu=e_m_Script)
         
         if color_override == None:
@@ -368,7 +443,10 @@ class Main_Window(tk.Frame):
             colors_to_set[x][y] = lp_colors.code_to_RGB(colors_to_set[x][y])
         
         if all(c < 4 for c in colors_to_set[x][y]):
-            colors_to_set[x][y] = DEFAULT_COLOR
+            if lp_mode == "Mk1":
+                colors_to_set[x][y] = MK1_DEFAULT_COLOR
+            else:
+                colors_to_set[x][y] = DEFAULT_COLOR
         
         ask_color_func = lambda: self.ask_color(w, color_button, x, y, colors_to_set[x][y])
         color_button = tk.Button(w, text="Select Color", command=ask_color_func)
@@ -393,10 +471,70 @@ class Main_Window(tk.Frame):
         w.grab_set()
         t.focus_set()
         w.wait_window()
+
+    def classic_askcolor(self, color=(255, 0, 0), title="Color Chooser"):
+        w = tk.Toplevel(self)
+        w.winfo_toplevel().title(title)
+        w.resizable(False, False)
+        w.iconbitmap(MAIN_ICON)
         
+        w.protocol("WM_DELETE_WINDOW", w.destroy)
+        
+        color = ""
+        
+        def return_color(col):
+            nonlocal color
+            color = col
+            w.destroy()
+        
+        button_frame = tk.Frame(w)
+        button_frame.grid(padx=(10, 0), pady=(10, 0))
+        
+        def make_grid_button(column, row, color_hex, func=None, size=100):
+            nonlocal w
+            f = tk.Frame(button_frame, width=size, height=size)
+
+            b = tk.Button(f, command=func)
+            
+            f.rowconfigure(0, weight = 1)
+            f.columnconfigure(0, weight = 1)
+            f.grid_propagate(0)
+            
+            f.grid(column=column, row=row)
+            b.grid(padx=(0,10), pady=(0,10), sticky="nesw")
+            b.config(bg=color_hex)
+        
+        def make_color_button(button_color, column, row, size=100):
+            button_color_hex = "#%02x%02x%02x" % button_color
+            
+            b_func = lambda: return_color(button_color)
+            make_grid_button(column, row, button_color_hex, b_func, size)
+        
+        for c in range(4):
+            for r in range(4):
+                if not (c == 0 and r == 3):
+                    red = int(c * (255 / 3))
+                    green = int((3 - r) * (255 / 3))
+                    
+                    make_color_button((red, green, 0), c, r, size=75)
+
+        w.wait_visibility()
+        w.grab_set()
+        w.wait_window()
+        
+        if color:
+            hex = "#%02x%02x%02x" % color
+            return color, hex
+        else:
+            return None, None
+       
     def ask_color(self, window, button, x, y, default_color):
         global colors_to_set
-        color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")...")
+        
+        if lp_mode == "Mk1":
+            color = self.classic_askcolor(color=tuple(default_color), title="Select Color for Button (" + str(x) + ", " + str(y) + ")")
+        else:
+            color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")")
         if color[0] != None:
             color_to_set = [int(min(255, max(0, c))) for c in color[0]]
             if all(c < 4 for c in color_to_set):
@@ -464,10 +602,10 @@ class Main_Window(tk.Frame):
     def import_script(self, textbox, window):
         name = tk.filedialog.askopenfilename(parent=window,
                                              initialdir=os.getcwd() + files.SCRIPT_PATH,
-                                             title="Import script...",
-                                             filetypes=script_filetypes)
+                                             title="Import script",
+                                             filetypes=load_script_filetypes)
         if name:
-            text = files.import_script(name, False)
+            text = files.import_script(name)
             text = files.strip_lines(text)
             textbox.delete("1.0", tk.END)
             textbox.insert(tk.INSERT, text)
@@ -475,18 +613,19 @@ class Main_Window(tk.Frame):
     def export_script(self, textbox, window):
         name = tk.filedialog.asksaveasfilename(parent=window,
                                                initialdir=os.getcwd() + files.SCRIPT_PATH,
-                                               title="Export script...",
-                                               filetypes=script_filetypes)
+                                               title="Export script",
+                                               filetypes=save_script_filetypes)
         if name:
             if files.SCRIPT_EXT not in name:
                 name += files.SCRIPT_EXT
             text = textbox.get("1.0", tk.END)
             text = files.strip_lines(text)
-            files.export_script(name, text, False)
+            files.export_script(name, text)
 
     def popup(self, window, title, image, text, button_text, end_command=None):
         popup = tk.Toplevel(window)
         popup.resizable(False, False)
+        popup.iconbitmap(MAIN_ICON)
         popup.wm_title(title)
         popup.tkraise(window)
 
@@ -507,6 +646,7 @@ class Main_Window(tk.Frame):
     def popup_choice(self, window, title, image, text, choices):
         popup = tk.Toplevel(window)
         popup.resizable(False, False)
+        popup.iconbitmap(MAIN_ICON)
         popup.wm_title(title)
         popup.tkraise(window)
         
@@ -546,7 +686,9 @@ def make():
     root_destroyed = False
     root.protocol("WM_DELETE_WINDOW", close)
     root.resizable(False, False)
+    root.iconbitmap(MAIN_ICON)
     app = Main_Window(root)
+    app.raise_above_all()
     app.mainloop()
 
 def close():

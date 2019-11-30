@@ -1,0 +1,671 @@
+{
+  "buttons": [
+    [
+      {
+        "color": [
+          255,
+          255,
+          255
+        ],
+        "text": "@SIMPLE vol_up"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          149,
+          255,
+          0
+        ],
+        "text": "@SIMPLE esc"
+      },
+      {
+        "color": [
+          174,
+          0,
+          255
+        ],
+        "text": "@SIMPLE `"
+      },
+      {
+        "color": [
+          85,
+          0,
+          0
+        ],
+        "text": "@SIMPLE 1"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          116,
+          51,
+          255
+        ],
+        "text": "@SIMPLE shift"
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "@SIMPLE ctrl"
+      }
+    ],
+    [
+      {
+        "color": [
+          255,
+          255,
+          255
+        ],
+        "text": "@SIMPLE vol_down"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          255,
+          0,
+          0
+        ],
+        "text": "@SIMPLE f6"
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "@SIMPLE f9"
+      },
+      {
+        "color": [
+          85,
+          51,
+          0
+        ],
+        "text": "@SIMPLE 2"
+      },
+      {
+        "color": [
+          0,
+          187,
+          255
+        ],
+        "text": "@SIMPLE q"
+      },
+      {
+        "color": [
+          0,
+          0,
+          255
+        ],
+        "text": "@SIMPLE a"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          85,
+          85,
+          0
+        ],
+        "text": "@SIMPLE 3"
+      },
+      {
+        "color": [
+          0,
+          0,
+          255
+        ],
+        "text": "@SIMPLE w"
+      },
+      {
+        "color": [
+          0,
+          0,
+          255
+        ],
+        "text": "@SIMPLE s"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          85,
+          0
+        ],
+        "text": "@SIMPLE 4"
+      },
+      {
+        "color": [
+          0,
+          187,
+          255
+        ],
+        "text": "@SIMPLE e"
+      },
+      {
+        "color": [
+          0,
+          0,
+          255
+        ],
+        "text": "@SIMPLE d"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          85
+        ],
+        "text": "@SIMPLE 5"
+      },
+      {
+        "color": [
+          136,
+          255,
+          0
+        ],
+        "text": "@SIMPLE r"
+      },
+      {
+        "color": [
+          0,
+          187,
+          255
+        ],
+        "text": "@SIMPLE f"
+      },
+      {
+        "color": [
+          141,
+          70,
+          20
+        ],
+        "text": "@ASYNC\n- Wallclimbing Script\n\nPRESS w\n\nLABEL start\nTAP space\nTAP e\nDELAY 0.07\nIF_PRESSED_GOTO_LABEL start\n\nRELEASE w"
+      },
+      {
+        "color": [
+          255,
+          0,
+          255
+        ],
+        "text": "@ASYNC\n- Auto-ABH Script\n\nTAP space\nPRESS ctrl\n\nLABEL start\nTAP space\nDELAY 0.07\nIF_PRESSED_GOTO_LABEL start\n\nRELEASE ctrl"
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          51,
+          34,
+          85
+        ],
+        "text": "@SIMPLE 6"
+      },
+      {
+        "color": [
+          255,
+          166,
+          0
+        ],
+        "text": "@SIMPLE z"
+      },
+      {
+        "color": [
+          137,
+          210,
+          238
+        ],
+        "text": "@SIMPLE enter"
+      },
+      {
+        "color": [
+          255,
+          87,
+          255
+        ],
+        "text": "@SIMPLE space"
+      },
+      {
+        "color": [
+          255,
+          255,
+          0
+        ],
+        "text": "@ASYNC\n- Jump Script\n\nLABEL start\nTAP space\nDELAY 0.07\nIF_PRESSED_GOTO_LABEL start"
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ],
+    [
+      {
+        "color": [
+          128,
+          0,
+          255
+        ],
+        "text": "OPEN C:\\Users\\ellag\\Desktop\\Black Mesa.url"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "- Enables cl_showpos, and ABH ;)\n- Source Pause Tool must be installed\n\nTAP `\nDELAY 0.1\n\nSTRING plugin_load spt\nTAP enter\nDELAY 5\n\nSTRING y_spt_additional_jumpboost 1\nTAP enter\nDELAY 0.1\n\nSTRING cl_showpos 1\nTAP enter\nDELAY 0.1\n\nSTRING y_spt_pause 0\nTAP enter\nDELAY 0.1\n\nTAP `"
+      },
+      {
+        "color": [
+          255,
+          255,
+          0
+        ],
+        "text": "- Enables reticle\nTAP `\nDELAY 0.1\n\nSTRING hud_draw_fixed_reticle 1\nTAP enter\nDELAY 0.1\n\nSTRING hud_draw_active_reticle 1\nTAP enter\nDELAY 0.1\n\nTAP `"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ]
+  ],
+  "version": "0.1.1"
+}
