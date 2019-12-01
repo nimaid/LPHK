@@ -8,11 +8,14 @@ pressed = set()
 def sp(name):
     try:
         return keyboard.key_to_scan_codes(str(name))[0]
-    except:
+    except ValueError:
         try:
-            return media_keys[str(name)]
-        except:
+            return media_keysa[str(name)]
+        except KeyError:
             return None
+    except:
+        print("[KB] Error while processing key", name)
+        raise
 
 def press(key):
     pressed.add(key)
