@@ -38,49 +38,45 @@ else:
 VERSION = get_first_textfile_line(os.path.join(PATH, "VERSION"))
 
 # Setup dual logging/printing
-class TeeStdout(object):
-    def __init__(self, file_in):
-        self.file = file_in
-        self.stdout = sys.stdout
-        sys.stdout = self
+class Tee:
+    def __init__(self, file_path):
+        self.file_path = file_path
+        self.file = open(self.file_path, "w")
+        self.stdout_logger = self.TeeStdout(self.file)
+        self.stderr_logger = self.TeeStderr(self.file)
     def __del__(self):
-        sys.stdout = self.stdout
-    def write(self, data):
-        self.file.write(data)
-        self.file.flush()
-        self.stdout.write(data)
-    def flush(self):
-        self.file.flush()
-class TeeStderr(object):
-    def __init__(self, file_in):
-        self.file = file_in
-        self.stderr = sys.stderr
-        sys.stderr = self
-    def __del__(self):
-        sys.stderr = self.stderr
-    def write(self, data):
-        self.file.write(data)
-        self.file.flush()
-        self.stderr.write(data)
-    def flush(self):
-        self.file.flush()
-
-LOG_FILE = None
-def start_logging(log_path):
-    global LOG_FILE
-    LOG_FILE = open(log_path, "w")
-    stdout_logger = TeeStdout(LOG_FILE)
-    stderr_logger = TeeStderr(LOG_FILE)
-    return (stdout_logger, stderr_logger)
-def stop_logging(loggers):
-    global LOG_FILE
-    for logger in loggers:
-        logger.__del__()
-    LOG_FILE.close()
-    LOG_FILE = None
+        self.stdout_logger.__del__()
+        self.stderr_logger.__del__()
+        self.file.close()
+    class TeeStdout:
+        def __init__(self, file_in):
+            self.file = file_in
+            self.stdout = sys.stdout
+            sys.stdout = self
+        def __del__(self):
+            sys.stdout = self.stdout
+        def write(self, data):
+            self.file.write(data)
+            self.file.flush()
+            self.stdout.write(data)
+        def flush(self):
+            self.file.flush()
+    class TeeStderr:
+        def __init__(self, file_in):
+            self.file = file_in
+            self.stderr = sys.stderr
+            sys.stderr = self
+        def __del__(self):
+            sys.stderr = self.stderr
+        def write(self, data):
+            self.file.write(data)
+            self.file.flush()
+            self.stderr.write(data)
+        def flush(self):
+            self.file.flush()
 
 LOG_PATH = os.path.join(USER_PATH, LOG_TITLE)
-loggers = start_logging(LOG_PATH)
+LOG = Tee(LOG_PATH)
 
 # Start printing output
 def datetime_str():
@@ -96,7 +92,7 @@ print("Operating path:", PATH)
 print("User path:", USER_PATH)
 print("Program file path:", PROG_PATH)
 print("Program file:", PROG_FILE)
-print("Log location (this file):", LOG_PATH, end="\n\n")
+print("Log file (this file):", LOG_PATH, end="\n\n")
 
 # Try to import launchpad.py
 try:
@@ -139,7 +135,7 @@ def shutdown():
         lp_events.timer.cancel()
         lp.Close()
         window.lp_connected = False
-    stop_logging(loggers)
+    LOG.__del__()
     if window.restart:
         if IS_EXE:
             os.startfile(sys.argv[0])
