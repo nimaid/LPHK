@@ -10,12 +10,9 @@ def sp(name):
         return keyboard.key_to_scan_codes(str(name))[0]
     except ValueError:
         try:
-            return media_keysa[str(name)]
+            return media_keys[str(name)]
         except KeyError:
             return None
-    except:
-        print("[KB] Error while processing key", name)
-        raise
 
 def press(key):
     pressed.add(key)

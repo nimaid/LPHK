@@ -241,8 +241,9 @@ class Main_Window(tk.Frame):
         restart = True
         close()
 
-    def unbind_lp(self):
-        self.modified_layout_save_prompt()
+    def unbind_lp(self, prompt_save=True):
+        if prompt_save:
+            self.modified_layout_save_prompt()
         scripts.unbind_all()
         files.curr_layout = None
         self.draw_canvas()
@@ -414,7 +415,12 @@ class Main_Window(tk.Frame):
             nonlocal x, y, t
             
             text_string = t.get(1.0, tk.END)
-            script_validate = scripts.validate_script(text_string)
+            try:
+                script_validate = scripts.validate_script(text_string)
+            except:
+                #self.save_script(w, x, y, text_string) # This will fail and throw a popup error
+                self.popup(w, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK")
+                raise
             if script_validate != True and files.in_error:
                 self.save_script(w, x, y, text_string)
             else:
@@ -598,8 +604,11 @@ class Main_Window(tk.Frame):
             nonlocal x, y
             if open_editor:
                     self.script_entry_window(x, y, script_text, color)
-
-        script_validate = scripts.validate_script(script_text)
+        try:
+            script_validate = scripts.validate_script(script_text)
+        except:
+            self.popup(window, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK", end_command = open_editor_func)
+            raise
         if script_validate == True:
             if script_text != "":
                 script_text = files.strip_lines(script_text)

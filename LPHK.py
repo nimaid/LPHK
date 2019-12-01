@@ -38,23 +38,49 @@ else:
 VERSION = get_first_textfile_line(os.path.join(PATH, "VERSION"))
 
 # Setup dual logging/printing
-class Tee(object):
-    def __init__(self, name, mode):
-        self.file = open(name, mode)
+class TeeStdout(object):
+    def __init__(self, file_in):
+        self.file = file_in
         self.stdout = sys.stdout
         sys.stdout = self
     def __del__(self):
         sys.stdout = self.stdout
-        self.file.close()
     def write(self, data):
         self.file.write(data)
         self.file.flush()
         self.stdout.write(data)
     def flush(self):
         self.file.flush()
+class TeeStderr(object):
+    def __init__(self, file_in):
+        self.file = file_in
+        self.stderr = sys.stderr
+        sys.stderr = self
+    def __del__(self):
+        sys.stderr = self.stderr
+    def write(self, data):
+        self.file.write(data)
+        self.file.flush()
+        self.stderr.write(data)
+    def flush(self):
+        self.file.flush()
+
+LOG_FILE = None
+def start_logging(log_path):
+    global LOG_FILE
+    LOG_FILE = open(log_path, "w")
+    stdout_logger = TeeStdout(LOG_FILE)
+    stderr_logger = TeeStderr(LOG_FILE)
+    return (stdout_logger, stderr_logger)
+def stop_logging(loggers):
+    global LOG_FILE
+    for logger in loggers:
+        logger.__del__()
+    LOG_FILE.close()
+    LOG_FILE = None
 
 LOG_PATH = os.path.join(USER_PATH, LOG_TITLE)
-logger = Tee(LOG_PATH, 'w')
+loggers = start_logging(LOG_PATH)
 
 # Start printing output
 def datetime_str():
@@ -113,6 +139,7 @@ def shutdown():
         lp_events.timer.cancel()
         lp.Close()
         window.lp_connected = False
+    stop_logging(loggers)
     if window.restart:
         if IS_EXE:
             os.startfile(sys.argv[0])

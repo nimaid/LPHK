@@ -112,7 +112,13 @@ def load_layout_to_lp(name):
                     converted_to_rg = True
             
             if script_text != "":
-                script_validation = scripts.validate_script(script_text)
+                script_validation = None
+                try:
+                    script_validation = scripts.validate_script(script_text)
+                except:
+                    new_layout_func = lambda: window.app.unbind_lp(prompt_save = False)
+                    window.app.popup(window.app, "Script Validation Error", window.app.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK", end_command = new_layout_func)
+                    raise
                 if script_validation != True:
                     lp_colors.update_all()
                     window.app.draw_canvas()
