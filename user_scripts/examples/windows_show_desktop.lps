@@ -1,0 +1,6 @@
+@ASYNC
+- This shows the desktop by clicking the "Minimize All" button on the far right of the taskbar,
+M_STORE
+M_MOVE 99999999 99999999
+TAP mouse_left
+M_RECALL
