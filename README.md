@@ -8,9 +8,8 @@ A Novation Launchpad macro scripting system.
 
 * [Links](https://github.com/nimaid/LPHK#links-table-of-contents)
 * [What does it do?](https://github.com/nimaid/LPHK#what-does-it-do-table-of-contents)
-* [Why would you do that?](https://github.com/nimaid/LPHK#why-would-you-do-that-table-of-contents)
-* [Does it work yet?](https://github.com/nimaid/LPHK#does-it-work-yet-table-of-contents) (yes)
-* [How do I get it? (Installation)](https://github.com/nimaid/LPHK#how-do-i-get-it-installation-table-of-contents)
+* [Compatibility](https://github.com/nimaid/LPHK#compatability-table-of-contents)
+* [Installation](https://github.com/nimaid/LPHK#installation-table-of-contents)
   * [Windows Install/Run Instructions](https://github.com/nimaid/LPHK#windows-installrun-instructions-table-of-contents)
   * [Linux Install/Run Instructions](https://github.com/nimaid/LPHK#linux-installrun-instructions-table-of-contents)
 * [How do I use it? (Post-Install)](https://github.com/nimaid/LPHK#how-do-i-use-it-post-install-table-of-contents)
@@ -24,8 +23,8 @@ A Novation Launchpad macro scripting system.
     * [Mouse Movement](https://github.com/nimaid/LPHK#mouse-movement-table-of-contents)
   * [Key Names](https://github.com/nimaid/LPHK#key-names-table-of-contents)
 * [Known Issues / Troubleshooting](https://github.com/nimaid/LPHK#known-issues--troubleshooting-table-of-contents)
-* [What still needs to be written? (in order of priority)](https://github.com/nimaid/LPHK#what-still-needs-to-be-written-in-order-of-priority-table-of-contents)
-* [What have you done so far?](https://github.com/nimaid/LPHK#what-have-you-done-so-far-table-of-contents)
+* [TODO List](https://github.com/nimaid/LPHK#todo-list-table-of-contents)
+* [DONE List](https://github.com/nimaid/LPHK#done-list-table-of-contents)
 
 ## Links [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * [Video Tutorial, Updates, and Plans](https://www.youtube.com/watch?v=XdJutWBEAqI)
@@ -41,10 +40,7 @@ The goal of this project is to implement a macro scripting system for the Novati
 
 It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript), and has a GUI to enter scripts, set colors, and to save/load your setup.
 
-I have specifically chosen to do my best to develop this using as many cross platform libraries as possible, with a hard requirement that Linux and Windows be supported, and a strong preference for Mac as well. The GUI is driven by TK, which works on all of the above plus Unix. The interface with the launchpad and several script functions are built on pygame, which is compatable with basically everything ever. Pretty much everything else is standard Python 3.
-
-## Why would you do that? [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-Because it could be immensely useful for a wide variety of tasks, such as:
+**LPHK can be used for the following:**
 * Gaming, to bind:
   * Items
   * Volume
@@ -62,25 +58,48 @@ Because it could be immensely useful for a wide variety of tasks, such as:
   * Preview
   * Scrubbing
 * Programming, to bind:
+  * Repetitive re-formatting
   * Commenting code
-  * Autotyping function/loop templates
+  * Auto-typing function/loop templates
   * Compiling/executing
   * Breakpoints
   * Debugger
+* As an interface to other programs with hotkeys
 * ... and many more!
 
-## Does it work yet? [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-Yes! It does not have all the features I want just yet, and still has bugs, but it works! You can use the GUI to load/save layouts and edit button scripts/colors. It's not nearly as polished as I want yet, but it is functional!
+LPHK has the core features functional and ready to use! There are a lot of new features wanted, and there are massive bugs that need fixing, and it needs some more polish, but you can still do quite a lot with it as it is currently!
 
-This is still a work-in-progress, so things will be changing often. [See below for a todo list.](https://github.com/nimaid/LPHK#what-still-needs-to-be-written-in-order-of-priority-table-of-contents) I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help! You can see project updates and ask questions on the [official Discord server](https://discord.gg/mDCzB8X)! You can also donate on the [official Patreon page](https://www.patreon.com/user?u=16848673) to help speed up development, or just say thanks!
+LPHK is still a work-in-progress, so things will be changing often. [See below for a todo list.](https://github.com/nimaid/LPHK#what-still-needs-to-be-written-in-order-of-priority-table-of-contents) I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help! You can see project updates and ask questions on the [official Discord server](https://discord.gg/mDCzB8X)! You can also donate on the [official Patreon page](https://www.patreon.com/user?u=16848673) to help speed up development, or just say thanks!
 
-## How do I get it? (Installation) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## Compatibility [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+I have specifically chosen to do my best to develop this using as many cross platform libraries as possible, with a hard requirement that Linux and Windows be supported, and a strong preference for Mac as well. The GUI is driven by TK, which works on all of the above plus Unix. The interface with the launchpad and several script functions are built on pygame, which is compatible with basically everything ever. Pretty much everything else is standard Python 3.
+
+**Current compatibility:**
+* Windows
+  * Strong compatibility
+    * Everything works
+    * This is the platform it is developed on
+  * Includes pre-built binaries with nothing else required (PyInstaller)
+    * Graphical installer (Inno Setup)
+    * Portable version (Single `.exe`)
+* Linux
+  * Weak compatibility
+    * Many bugs, mostly with system permissions
+    * Most systems are unable to run it at all
+    * Please try to install and report your issues on the Discord or as a Github issue.
+      * Include `LPHK.log`
+  * Pre-built binaries building, but not released
+    * If anybody installs on Linux successfully and lets me know, I will start releasing binaries.
+* Mac
+  * Completely untested     
+
+## Installation [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 *Note: Files used in the installation are named with a version number, and will change with each new release. The word `VERSION` is used in the below filenames and paths to denote where this version number will be. When going to [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest), it will redirect to the page with the latest versions of these files, so the correct value of `VERSION` should be plainly obvious.*
 
 ### Windows Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 *THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT IN `INSTALL\environment.yml`. THEN, RUN `LPHK.py` INSIDE THE `LPHK` CONDA ENVIRONMENT.*
 
-* If you want the installed version (recomended)
+* If you want the installed version (recommended)
   * Download the latest `LPHK_setup_VERSION.exe` file from [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest)
   * Run LPHK_setup_VERSION.exe` and follow the on-screen setup instructions.
   * To run LPHK, use one of the shortcuts, either the `Start Menu` or `Desktop` one (if you selected that option).
@@ -307,7 +326,8 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
     * At this point IDK, maybe the USB on your Launchpad needs to be replaced.
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
-## What still needs to be written? (in order of priority) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## TODO List [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+In order of priority:
 * Add splash screen to PyInstaller executable, for feedback while loading
   * This feature of PyInstaller is in development at this very moment by [Chrisg2000 and others](https://github.com/pyinstaller/pyinstaller/issues/4354) Once it's done, I can do this!
 * Let program function as a layout editor without LP connection
@@ -405,7 +425,7 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * MIDI output command? (Low priority)
 * Load layout header?
 
-## What have you done so far? [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+## DONE List [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * ~~Support for Launchpad MkII~~
 * ~~Events system~~
 * ~~Colors system~~
