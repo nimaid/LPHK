@@ -327,9 +327,12 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * Make `PRESS`, `RELEASE`, `TAP`, and `@SIMPLE` accept multiple keys
   * Will accept multiple arguemnts seperated by spaces
   * Will be pressed in the order `arg1`, `arg2`... and unpress in the order ...`arg2`, `arg1`
+* Add percentage of screen width/height option to the `M_*` commands
 * Add `@LOAD_LAYOUT` header command to load a specified layout
   * Check if layout currently exists when binding to a button (incl during load layout)
     * If not, prompt user if they want to continue anyway
+  * Add option to override save changes prompt
+* Add `SCRIPT` command to run (argument 1) script in the `user_scripts` folder (like a function!)
 * Add startup config file
   * Default layout specification
   * Auto connect setting
