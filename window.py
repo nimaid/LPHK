@@ -67,7 +67,7 @@ def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, versio
     if sys.platform.startswith('win'):
         MAIN_ICON = os.path.join(PATH, "resources", "LPHK.ico")
     else:
-        MAIN_ICON = os.path.join(PATH, "resources", "LPHK.png")
+        MAIN_ICON = None
 
     make()
 
@@ -403,10 +403,8 @@ class Main_Window(tk.Frame):
         w = tk.Toplevel(self)
         w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
         w.resizable(False, False)
-        if os.path.split(MAIN_ICON)[-1].lower() == "png":
-            w.iconbitmap(tk.PhotoImage(file=MAIN_ICON))
-        else:
-            w.iconbitmap(MAIN_ICON)
+        if MAIN_ICON != None:
+            w.iconbitmap(MAIN_ICON)           
         
         def validate_func():
             nonlocal x, y, t
@@ -482,7 +480,8 @@ class Main_Window(tk.Frame):
         w = tk.Toplevel(self)
         w.winfo_toplevel().title(title)
         w.resizable(False, False)
-        w.iconbitmap(MAIN_ICON)
+        if MAIN_ICON != None:
+            w.iconbitmap(MAIN_ICON)
         
         w.protocol("WM_DELETE_WINDOW", w.destroy)
         
@@ -631,7 +630,8 @@ class Main_Window(tk.Frame):
     def popup(self, window, title, image, text, button_text, end_command=None):
         popup = tk.Toplevel(window)
         popup.resizable(False, False)
-        popup.iconbitmap(MAIN_ICON)
+        if MAIN_ICON != None:
+            popup.iconbitmap(MAIN_ICON)
         popup.wm_title(title)
         popup.tkraise(window)
 
@@ -652,7 +652,8 @@ class Main_Window(tk.Frame):
     def popup_choice(self, window, title, image, text, choices):
         popup = tk.Toplevel(window)
         popup.resizable(False, False)
-        popup.iconbitmap(MAIN_ICON)
+        if MAIN_ICON != None:
+            popup.iconbitmap(MAIN_ICON)
         popup.wm_title(title)
         popup.tkraise(window)
         
@@ -692,7 +693,8 @@ def make():
     root_destroyed = False
     root.protocol("WM_DELETE_WINDOW", close)
     root.resizable(False, False)
-    root.iconbitmap(MAIN_ICON)
+    if MAIN_ICON != None:
+        root.iconbitmap(MAIN_ICON)
     app = Main_Window(root)
     app.raise_above_all()
     app.mainloop()
