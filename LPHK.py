@@ -17,21 +17,25 @@ else:
     PROG_PATH = os.path.dirname(PROG_FILE)
     PATH = PROG_PATH
 
-# Test if there is a user folder specifiedUSER_PATH
-USER_PATH = None
-USERPATH_FILE = os.path.join(PROG_PATH, "USERPATH")
+# Test if there is a user folder specified
+def get_first_textfile_line(file_path):
+    file_lines = None
+    with open(file_path, "r") as f:
+        file_lines = f.readlines()
+    first_line = file_lines[0]
+    return first_line.strip()
+
+USERPATH_FILE = os.path.join(PATH, "USERPATH")
 if os.path.exists(USERPATH_FILE):
     IS_PORTABLE = False
-    with open(USERPATH_FILE, "r") as f:
-        USER_PATH = f.read().strip().replace("\n", "")
+    USER_PATH = get_first_textfile_line(USERPATH_FILE)
     os.makedirs(USER_PATH, exist_ok=True)
 else:
     IS_PORTABLE = True
     USER_PATH = PROG_PATH
 
 # Get program version
-with open(os.path.join(PATH, "VERSION"), "r") as f:
-    VERSION = f.read().strip().replace("\n", "")
+VERSION = get_first_textfile_line(os.path.join(PATH, "VERSION"))
 
 # Setup dual logging/printing
 class Tee(object):
@@ -49,23 +53,24 @@ class Tee(object):
     def flush(self):
         self.file.flush()
 
-log_path = os.path.join(USER_PATH, LOG_TITLE)
-logger = Tee(log_path, 'w')
+LOG_PATH = os.path.join(USER_PATH, LOG_TITLE)
+logger = Tee(LOG_PATH, 'w')
 
 # Start printing output
 def datetime_str():
    now = datetime.now()
    return now.strftime("%d/%m/%Y %H:%M:%S")
 
-print("-------- BEGIN LOG", datetime_str(), "--------")
+print("---------------- BEGIN LOG", datetime_str(), "----------------")
 print("LPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
 print("Version:", VERSION)
 print("Is compiled executable:", IS_EXE)
 print("Is portable:", IS_PORTABLE)
 print("Operating path:", PATH)
 print("User path:", USER_PATH)
-print("Program main file:", PROG_FILE)
-print("Program main file path:", PROG_PATH, end="\n\n")
+print("Program file path:", PROG_PATH)
+print("Program file:", PROG_FILE)
+print("Log location (this file):", LOG_PATH, end="\n\n")
 
 # Try to import launchpad.py
 try:
@@ -75,6 +80,7 @@ except ImportError:
         import launchpad
     except ImportError:
         sys.exit("[LPHK] Error loading launchpad.py")
+print("")
 
 import lp_events, scripts, kb, files, sound, window
 
