@@ -1,26 +1,31 @@
-import sys, os
+import sys, os, subprocess
 from datetime import datetime
 
-PROG_PATH = os.path.dirname(os.path.abspath(__file__))
+PROG_FILE = os.path.realpath(__file__)
+PROG_PATH = os.path.dirname(PROG_FILE)
 
 LOG_TITLE = "LPHK.log"
 
 # Test if this is a PyInstaller EXE or a .py file
 if getattr(sys, 'frozen', False):
-    is_exe = True
+    IS_EXE = True
     PATH = sys._MEIPASS
 else:
-    is_exe = False
+    IS_EXE = False
     PATH = PROG_PATH
 
-# Test if there is a user folder specified
+# Test if there is a user folder specifiedUSER_PATH
+USER_PATH = None
 USERPATH_FILE = os.path.join(PROG_PATH, "USERPATH")
 if os.path.exists(USERPATH_FILE):
-	with open(USERPATH_FILE, "r") as f:
-		USER_PATH = f.read()
-	os.makedirs(USER_PATH, exist_ok=True)
+    IS_PORTABLE = False
+    print("fuk")
+    with open(USERPATH_FILE, "r") as f:
+        USER_PATH = f.read()
+    os.makedirs(USER_PATH, exist_ok=True)
 else:
-	USER_PATH = PROG_PATH
+    IS_PORTABLE = True
+    USER_PATH = PROG_PATH
 
 # Get program version
 with open(os.path.join(PATH, "VERSION"), "r") as f:
@@ -50,8 +55,12 @@ def datetime_str():
    now = datetime.now()
    return now.strftime("%d/%m/%Y %H:%M:%S")
 
-print("LPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
+print("\nLPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
 print("Version:", VERSION)
+print("Is compiled executable:", IS_EXE)
+print("Is portable:", IS_PORTABLE)
+print("Program path:", PATH)
+print("User path:", USER_PATH)
 print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!")
 print("-------- BEGIN LOG", datetime_str(), "--------\n")
 
@@ -96,7 +105,7 @@ def shutdown():
         lp.Close()
         window.lp_connected = False
     if window.restart:
-        if is_exe:
+        if IS_EXE:
             os.startfile(sys.argv[0])
         else:
             os.execv(sys.executable, ["\"" + sys.executable + "\""] + sys.argv)
