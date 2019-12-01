@@ -317,6 +317,7 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
   * ~~Should use a `conda` environment created from an `environment.yml` file~~
   * Should copy LPHK files into an appropriate directory
   * Should give options to add various shortcuts
+* Add temporary command `__M_PRINT_POPUP__` that gives a pop-up with the current cursor position
 * Add auto-update feature using `git`
   * ~~There will be a VERSION file in the main directory with the version string~~
     * This can be polled at `https://raw.githubusercontent.com/nimaid/LPHK/master/VERSION`
