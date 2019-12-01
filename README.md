@@ -8,7 +8,7 @@ A Novation Launchpad macro scripting system.
 
 * [Links](https://github.com/nimaid/LPHK#links-table-of-contents)
 * [What does it do?](https://github.com/nimaid/LPHK#what-does-it-do-table-of-contents)
-* [Compatibility](https://github.com/nimaid/LPHK#compatability-table-of-contents)
+* [Compatibility](https://github.com/nimaid/LPHK#compatibility-table-of-contents)
 * [Installation](https://github.com/nimaid/LPHK#installation-table-of-contents)
   * [Windows Install/Run Instructions](https://github.com/nimaid/LPHK#windows-installrun-instructions-table-of-contents)
   * [Linux Install/Run Instructions](https://github.com/nimaid/LPHK#linux-installrun-instructions-table-of-contents)
@@ -67,7 +67,7 @@ It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](
 * As an interface to other programs with hotkeys
 * ... and many more!
 
-LPHK has the core features functional and ready to use! There are a lot of new features wanted, and there are massive bugs that need fixing, and it needs some more polish, but you can still do quite a lot with it as it is currently!
+LPHK has all of its core features functional and ready to use! There are a lot of new features wanted, and there are massive bugs that need fixing, and it needs some more polish, but you can still do quite a lot with it as it is currently!
 
 LPHK is still a work-in-progress, so things will be changing often. [See below for a todo list.](https://github.com/nimaid/LPHK#what-still-needs-to-be-written-in-order-of-priority-table-of-contents) I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help! You can see project updates and ask questions on the [official Discord server](https://discord.gg/mDCzB8X)! You can also donate on the [official Patreon page](https://www.patreon.com/user?u=16848673) to help speed up development, or just say thanks!
 
@@ -97,7 +97,7 @@ I have specifically chosen to do my best to develop this using as many cross pla
 *Note: Files used in the installation are named with a version number, and will change with each new release. The word `VERSION` is used in the below filenames and paths to denote where this version number will be. When going to [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest), it will redirect to the page with the latest versions of these files, so the correct value of `VERSION` should be plainly obvious.*
 
 ### Windows Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-*THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IF THIS FAILS, PLEASE SHARE IT ON THE DISCORD (OR AS A GITHUB ISSUE), AND IN THE MEANTIME TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT IN `INSTALL\environment.yml`. THEN, RUN `LPHK.py` INSIDE THE `LPHK` CONDA ENVIRONMENT.*
+*Is these pre-built binaries do not work for you, please share the issue in the Discord or as a GitHub issue. In the meantime, advanced users can use `INSTALL\environment.yml` to install the LPHK conda environment, and then run `python LPHK.py` after activating it.*
 
 * If you want the installed version (recommended)
   * Download the latest `LPHK_setup_VERSION.exe` file from [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest)
@@ -111,6 +111,8 @@ I have specifically chosen to do my best to develop this using as many cross pla
   * Run `LPHK.exe`
 
 ### Linux Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+*The following instructions are for a beta version installer that aims to be fairly easyto use. Eventually, once Linux stability improves, there will be pre-built binaries released. Until then, if this installer fails, please share the issue in the Discord or as a GitHub issue. In the meantime, advanced users can use `INSTALL\environment.yml` to install the LPHK conda environment, and then run `python LPHK.py` after activating it.*
+
 *THE FOLLOWING INSTRUCTIONS ARE FOR THE BETA INSTALLER, WHICH AIMS TO BE PAINLESS TO USE. IT IS GOING TO SOON BE REPLACED BY BINARY RELEASES. IF THIS INSTALLER FAILS, TRY MANUALLY INSTALLING CONDA AND THE CONDA ENVIRONMENT IN `INSTALL/environment.yml`. THEN, RUN `LPHK.py` INSIDE THE `LPHK` CONDA ENVIRONMENT.*
 
 * Download the source of the latest release at [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest)
