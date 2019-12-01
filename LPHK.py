@@ -1,17 +1,20 @@
 import sys, os, subprocess
 from datetime import datetime
 
-PROG_FILE = os.path.realpath(__file__)
-PROG_PATH = os.path.dirname(PROG_FILE)
+print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!\n")
 
 LOG_TITLE = "LPHK.log"
 
 # Test if this is a PyInstaller EXE or a .py file
 if getattr(sys, 'frozen', False):
     IS_EXE = True
+    PROG_FILE = sys.executable
+    PROG_PATH = os.path.dirname(PROG_FILE) 
     PATH = sys._MEIPASS
 else:
     IS_EXE = False
+    PROG_FILE = os.path.realpath(__file__)
+    PROG_PATH = os.path.dirname(PROG_FILE)
     PATH = PROG_PATH
 
 # Test if there is a user folder specifiedUSER_PATH
@@ -19,9 +22,8 @@ USER_PATH = None
 USERPATH_FILE = os.path.join(PROG_PATH, "USERPATH")
 if os.path.exists(USERPATH_FILE):
     IS_PORTABLE = False
-    print("fuk")
     with open(USERPATH_FILE, "r") as f:
-        USER_PATH = f.read()
+        USER_PATH = f.read().strip().replace("\n", "")
     os.makedirs(USER_PATH, exist_ok=True)
 else:
     IS_PORTABLE = True
@@ -29,7 +31,7 @@ else:
 
 # Get program version
 with open(os.path.join(PATH, "VERSION"), "r") as f:
-    VERSION = f.read()
+    VERSION = f.read().strip().replace("\n", "")
 
 # Setup dual logging/printing
 class Tee(object):
@@ -55,14 +57,15 @@ def datetime_str():
    now = datetime.now()
    return now.strftime("%d/%m/%Y %H:%M:%S")
 
-print("\nLPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
+print("-------- BEGIN LOG", datetime_str(), "--------")
+print("LPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
 print("Version:", VERSION)
 print("Is compiled executable:", IS_EXE)
 print("Is portable:", IS_PORTABLE)
-print("Program path:", PATH)
+print("Operating path:", PATH)
 print("User path:", USER_PATH)
-print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!")
-print("-------- BEGIN LOG", datetime_str(), "--------\n")
+print("Program main file:", PROG_FILE)
+print("Program main file path:", PROG_PATH, end="\n\n")
 
 # Try to import launchpad.py
 try:
