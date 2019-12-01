@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox, tkcolorpicker
 from PIL import ImageTk, Image
-import os
+import os, sys
 from functools import partial
 import webbrowser
 
@@ -64,7 +64,10 @@ def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, versio
     PROG_PATH = prog_path_in
     USER_PATH = user_path_in
     VERSION = version_in
-    MAIN_ICON = os.path.join(PATH, "resources", "LPHK.ico")
+    if sys.platform.startswith('win'):
+        MAIN_ICON = os.path.join(PATH, "resources", "LPHK.ico")
+    else:
+        MAIN_ICON = os.path.join(PATH, "resources", "LPHK.png")
 
     make()
 
@@ -74,7 +77,7 @@ class Main_Window(tk.Frame):
         self.master = master
         self.init_window()
         
-        self.about_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/LPHK.png"))
+        self.about_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/LPHK-banner.png"))
         self.info_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/info.png"))
         self.warning_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/warning.png"))
         self.error_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/error.png"))
@@ -400,7 +403,10 @@ class Main_Window(tk.Frame):
         w = tk.Toplevel(self)
         w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
         w.resizable(False, False)
-        w.iconbitmap(MAIN_ICON)
+        if os.path.split(MAIN_ICON)[-1].lower() == "png":
+            w.iconbitmap(tk.PhotoImage(file=MAIN_ICON))
+        else:
+            w.iconbitmap(MAIN_ICON)
         
         def validate_func():
             nonlocal x, y, t
