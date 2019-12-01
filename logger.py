@@ -30,9 +30,9 @@ class _Logger:
         def __del__(self):
             sys.stdout = self.stdout
         def write(self, data):
+            self.stdout.write(data)
             self.file.write(data)
             self.file.flush()
-            self.stdout.write(data)
         def flush(self):
             self.file.flush()
     class _LoggerStderr:
@@ -43,9 +43,9 @@ class _Logger:
         def __del__(self):
             sys.stderr = self.stderr
         def write(self, data):
+            self.stderr.write(data)
             self.file.write(data)
             self.file.flush()
-            self.stderr.write(data)
         def flush(self):
             self.file.flush()
 
