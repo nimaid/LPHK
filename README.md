@@ -109,7 +109,7 @@ I have specifically chosen to do my best to develop this using as many cross pla
   * Run LPHK_setup_VERSION.exe` and follow the on-screen setup instructions.
   * To run LPHK, use one of the shortcuts, either the `Start Menu` or `Desktop` one (if you selected that option).
   * You can uninstall LPHK like any other program, with the Windows `Add or remove programs` utility.
-  * There will also be an uninstaller named `unins000.exe` in the program folder. You can open the program folder by clicking the menu option `Help > Program folder...`.
+    * There will also be an uninstaller named `unins000.exe` in the program folder. You can open the program folder by clicking the menu option `Help > Program folder...`.
   * LPHK also creates a folder in `My Documents` named `LPHK`. This is where layouts, scripts, sounds, and the log is stored. You can open this folder by clicking the menu option `Help > User folder...`.
 * If you want to run LPHK portably (advanced)
   * This method lets you use LPHK by simply downloading `LPHK_portable_win_VERSION.zip` and extracting it to a folder of your choice. You can then move the folder to a flash drive, between computers, etc.
