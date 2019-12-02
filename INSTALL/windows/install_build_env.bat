@@ -20,7 +20,7 @@ if defined LPHKENV goto ALREADYINSTALLED
 echo Installing LPHK build environment...
 set STARTPATH="%CD%"
 cd "%~dp0"
-call conda env create -f environment.yml
+call conda env create -f ../environment-build.yml
 cd %ORIGDIR%
 if errorlevel 1 goto INSTALLENVFAIL
 

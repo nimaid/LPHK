@@ -7,7 +7,14 @@ set ORIGDIR="%CD%"
 cd %~dp0\..\..
 
 echo Building installed EXE...
-call conda run -n LPHK-build pyinstaller --add-data VERSION;. --add-data resources\;resources\ --onedir --windowed --icon=resources\LPHK.ico LPHK.py
+call conda run -n LPHK-build pyinstaller ^
+    --noconfirm ^
+    --add-data VERSION;. ^
+    --add-data resources\;resources\ ^
+    --onedir ^
+    --windowed ^
+    --icon=resources\LPHK.ico ^
+    LPHK.py
 if errorlevel 1 goto ERROR
 
 goto DONE
