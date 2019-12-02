@@ -357,7 +357,7 @@ In order of priority:
 * Add `SCRIPT` command to run (argument 1) script in the `user_scripts` folder (like a function!)
 * Add startup config file
   * Default layout specification
-  * Auto connect setting
+  * Auto connect overide
   * Force launchpad model setting
   * Option to minimize to system tray
 * Add settings menu to configure the startup config
