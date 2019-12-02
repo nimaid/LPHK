@@ -40,6 +40,7 @@ root_destroyed = None
 restart = False
 lp_object = None
 
+
 load_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT, files.LEGACY_LAYOUT_EXT])]
 load_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT, files.LEGACY_SCRIPT_EXT])]
 
@@ -97,13 +98,8 @@ class Main_Window(tk.Frame):
         self.master.config(menu=self.m)
 
         self.m_Launchpad = tk.Menu(self.m, tearoff=False)
-        self.m_Launchpad.add_command(label="Connect to Launchpad", command=self.connect_lp)
-        self.m_Launchpad.add_command(label="Disonnect from Launchpad", command=self.disconnect_lp)
-        #self.m_Launchpad.add_command(label="Edit layot only", command=self.connect_dummy)
         self.m_Launchpad.add_command(label="Redetect (Restart)", command=self.redetect_lp)
         self.m.add_cascade(label="Launchpad", menu=self.m_Launchpad)
-
-        self.disable_lp_disconnect()
 
         self.m_Layout = tk.Menu(self.m, tearoff=False)
         self.m_Layout.add_command(label="New Layout", command=self.unbind_lp)
@@ -147,12 +143,6 @@ class Main_Window(tk.Frame):
 
     def disable_menu(self, name):
         self.m.entryconfig(name, state="disabled")
-
-    def enable_lp_disconnect(self):
-        self.m_Launchpad.entryconfig("Disonnect from Launchpad", state="normal")
-
-    def disable_lp_disconnect(self):
-        self.m_Launchpad.entryconfig("Disonnect from Launchpad", state="disabled")
     
     def connect_dummy(self):
         #WIP
@@ -164,7 +154,6 @@ class Main_Window(tk.Frame):
         lp_mode = "Dummy"
         self.draw_canvas()
         self.enable_menu("Layout")
-        self.enable_lp_disconnect()
     
     def connect_lp(self):
         global lp_connected
@@ -181,7 +170,6 @@ class Main_Window(tk.Frame):
                     lp_events.start(lp_object)
                     self.draw_canvas()
                     self.enable_menu("Layout")
-                    self.enable_lp_disconnect()
 
                     self.stat["text"] = "Connected to Launchpad MkII"
                     self.stat["bg"] = STAT_ACTIVE_COLOR                
@@ -196,7 +184,6 @@ class Main_Window(tk.Frame):
                     lp_events.start(lp_object)
                     self.draw_canvas()
                     self.enable_menu("Layout")
-                    self.enable_lp_disconnect()
                     
                     self.stat["text"] = "Connected to Launchpad Pro (BETA)"
                     self.stat["bg"] = STAT_ACTIVE_COLOR   
@@ -210,13 +197,12 @@ class Main_Window(tk.Frame):
                     lp_events.start(lp_object)
                     self.draw_canvas()
                     self.enable_menu("Layout")
-                    self.enable_lp_disconnect()
                     self.stat["text"] = "Connected to Launchpad Classic/Mini/S"
                     self.stat["bg"] = STAT_ACTIVE_COLOR 
             else:
                 raise Exception()
         except:
-            self.popup(self, "Connect to Launchpad", self.error_image, "Fatal error while connecting to Launchpad!\nDisconnect and reconnect your USB cable, then use the\n'Redetect (Restart)' option from the 'Launchpad' menu.", "OK")
+            self.popup_choice(self, "No Launchpad Detected...", self.error_image, "Could not detect any connected Launchpads!\nDisconnect and reconnect your USB cable,\nthen click 'Redetect Now'.", [["Ignore", None], ["Redetect Now", self.redetect_lp]])
 
     def disconnect_lp(self):
         global lp_connected
@@ -231,7 +217,6 @@ class Main_Window(tk.Frame):
         self.clear_canvas()
 
         self.disable_menu("Layout")
-        self.disable_lp_disconnect()
 
         self.stat["text"] = "No Launchpad Connected"
         self.stat["bg"] = STAT_INACTIVE_COLOR
@@ -692,7 +677,7 @@ class Main_Window(tk.Frame):
         picture_label.grid(column=0, row=0, rowspan=2, padx=10, pady=10)
         tk.Label(popup, text=text, justify=tk.CENTER).grid(column=1, row=0, columnspan=len(choices), padx=10, pady=10)
         for idx, choice in enumerate(choices):
-            run_end_func = partial(run_end, choices[idx][1])
+            run_end_func = partial(run_end, choice[1])
             tk.Button(popup, text=choice[0], command=run_end_func).grid(column=1 + idx, row=1, padx=10, pady=10)
         popup.wait_visibility()
         popup.grab_set()
@@ -714,6 +699,7 @@ def make():
     global root
     global app
     global root_destroyed
+    global redetect_before_start
     root = tk.Tk()
     root_destroyed = False
     root.protocol("WM_DELETE_WINDOW", close)
@@ -725,6 +711,7 @@ def make():
             root.iconbitmap(MAIN_ICON)
     app = Main_Window(root)
     app.raise_above_all()
+    app.after(100, app.connect_lp)
     app.mainloop()
 
 def close():
