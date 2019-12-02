@@ -168,7 +168,7 @@ When you press a script button, if there is a script running, it adds the script
 Headers are commands that start with `@` and go on the first line of a script. They are used to put the scripting engine into different "modes", allowing you to do some interesting things.
 
 #### The `@ASYNC` Header [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-There is one exception to the scheduling system. If the script has the `@ASYNC` header, it will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. If this is used, it must be on the very first line.
+There is one exception to the scheduling system. If the script has the `@ASYNC` header, it will run in the background and will not interact with the other scripts. It can still be prematurely killed by tapping the button. If this is used, it must come before any other commands. Only comments and blank lines can come before it.
 
 #### The `@SIMPLE` Header [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 This is a quick way to bind a controller button to a simple keypress of (argument 1). This has the equivalent code to:
@@ -178,10 +178,10 @@ PRESS (argument 1)
 WAIT_UNPRESSED
 RELEASE (argument 1)
 ```
-If this is used, all other lines in the file must either be whitespace or comments. In addition, it must be on the very first line.
+If this is used, all other lines in the file must either be blank lines or comments.
 
 ### Comments [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. If a header is used, a comment cannot come before the header, as those must be on the first line, always.
+Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. Useful to add notes for yourself or others!
 
 ### Commands List [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines separating commands.

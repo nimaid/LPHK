@@ -45,6 +45,16 @@ def safe_sleep(time, x, y, is_async, endfunc=None):
         endfunc()
     return True
 
+def is_ignorable_line(line):
+    line = line.strip()
+    if line != "":
+        if line[0] == "-":
+            return True
+        else:
+            return False
+    else:
+        return True
+
 def schedule_script(script_in, x, y):
     global threads
     global to_run
@@ -103,9 +113,21 @@ def run_script(script_str, x, y):
 
     lp_colors.updateXY(x, y)
     coords = "(" + str(x) + ", " + str(y) + ")"
+    
+    print("[scripts] " + coords + " Now running script...")
 
     script_lines = script_str.split("\n")
-
+    
+    script_lines = [i.strip() for i in script_lines]
+    
+    if len(script_lines) > 0:
+        while(is_ignorable_line(script_lines[0])):
+            line = script_lines.pop(0)
+            if line != "":
+                print("[scripts] " + coords + "    Comment: " + line[1:])
+            if len(script_lines) <= 0:
+                break
+    
     is_async = False
     if script_lines[0].split(" ")[0] in ASYNC_HEADERS:
         is_async = True
@@ -115,12 +137,9 @@ def run_script(script_str, x, y):
     if script_lines[0].split(" ")[0] == "@ASYNC":
         temp = script_lines.pop(0)
     
-    print("[scripts] " + coords + " Now running script...")
-    
     #parse labels
     labels = dict()
     for idx,line in enumerate(script_lines):
-        line = line.strip()
         split_line = line.split(" ")
         if split_line[0] == "LABEL":
             labels[split_line[1]] = idx
@@ -137,10 +156,10 @@ def run_script(script_str, x, y):
         if check_kill(x, y, is_async):
             return idx + 1
             
-        line = script_lines[idx].strip()
+        line = script_lines[idx]
         if line == "":
-            print("[scripts] " + coords + "    Empty line")
-        elif line[0] == "-":
+            return idx + 1
+        if line[0] == "-":
             print("[scripts] " + coords + "    Comment: " + line[1:])
         else:
             split_line = line.split(" ")
@@ -538,7 +557,15 @@ def validate_script(script_str):
         return True
     script_lines = script_str.split('\n')
     
-    first_line = script_lines[0].strip()
+    script_lines = [i.strip() for i in script_lines]
+    
+    if len(script_lines) > 0:
+        while(is_ignorable_line(script_lines[0])):
+            line = script_lines.pop(0)
+            if len(script_lines) <= 0:
+                return True
+    
+    first_line = script_lines[0]
     first_line_split = first_line.split(" ")
 
     if first_line_split[0] == "@ASYNC":
@@ -553,14 +580,12 @@ def validate_script(script_str):
         if kb.sp(first_line_split[1]) == None:
             return ("No key named '" + first_line_split[1] + "'.", first_line)
         for line in script_lines[1:]:
-            line = line.strip()
             if line != "" and line[0] != "-":
                 return ("When @SIMPLE is used, scripts can only contain comments.", line)
     
     #parse labels
     labels = []
     for line in script_lines:
-        line = line.strip()
         split_line = line.split(" ")
         if split_line[0] == "LABEL":
             if len(split_line) != 2:
@@ -571,7 +596,6 @@ def validate_script(script_str):
                 labels.append(split_line[1])
     
     for idx, line in enumerate(script_lines):
-        line = line.strip()
         if line != "":
             if line[0] != "-":
                 split_line = line.split(' ')
