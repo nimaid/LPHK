@@ -10,56 +10,59 @@
 
 import sys
 
-log = None
+_log = None
 
 class _Logger:
     def __init__(self, file_path):
-        self.file_path = file_path
-        self.file = open(self.file_path, "w")
-        self.stdout_logger = self._LoggerStdout(self.file)
-        self.stderr_logger = self._LoggerStderr(self.file)
+        self.path = file_path
+        self._file = open(self.path, "w")
+        self._stdout_logger = self._LoggerStdout(self._file)
+        self._stderr_logger = self._LoggerStderr(self._file)
+    
     def __del__(self):
-        self.stdout_logger.__del__()
-        self.stderr_logger.__del__()
-        self.file.close()
+        self._stdout_logger.__del__()
+        self._stderr_logger.__del__()
+        self._file.close()
+    
     class _LoggerStdout:
         def __init__(self, file_in):
-            self.file = file_in
-            self.stdout = sys.stdout
+            self._file = file_in
+            self._stdout = sys.stdout
             sys.stdout = self
         def __del__(self):
-            sys.stdout = self.stdout
+            sys.stdout = self._stdout
         def write(self, data):
-            self.stdout.write(data)
-            self.file.write(data)
-            self.file.flush()
+            self._stdout.write(data)
+            self._file.write(data)
+            self._file.flush()
         def flush(self):
-            self.file.flush()
+            self._file.flush()
+    
     class _LoggerStderr:
         def __init__(self, file_in):
-            self.file = file_in
-            self.stderr = sys.stderr
+            self._file = file_in
+            self._stderr = sys.stderr
             sys.stderr = self
         def __del__(self):
-            sys.stderr = self.stderr
+            sys.stderr = self._stderr
         def write(self, data):
-            self.stderr.write(data)
-            self.file.write(data)
-            self.file.flush()
+            self._stderr.write(data)
+            self._file.write(data)
+            self._file.flush()
         def flush(self):
-            self.file.flush()
+            self._file.flush()
 
 def start(file_path):
-    global log
-    if log != None:
-        raise Exception("A log is already running: " + log.file_path)
+    global _log
+    if _log != None:
+        raise FileExistsError("A log is already running: " + _log.path)
     else:
-        log = _Logger(file_path)
+        _log = _Logger(file_path)
 
 def stop():
-    global log
-    if log == None:
-        raise Exception("No log is currently running.")
+    global _log
+    if _log == None:
+        raise FileNotFoundError("No log is currently running.")
     else:
-        log.__del__()
-        log = None
+        _log.__del__()
+        _log = None
