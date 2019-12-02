@@ -50,6 +50,10 @@ It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](
   * Repetitive tasks (grinding)
   * Reference Website launcher
   * Window switcher
+* Streaming, to bind:
+  * Sound effects
+  * Streaming software hotkeys
+  * Quickly open a folder with assets
 * Editing, to bind:
   * Cuts/insertions
   * Modes
@@ -57,6 +61,7 @@ It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](
   * Render
   * Preview
   * Scrubbing
+  * Automate repetitive tasks
 * Programming, to bind:
   * Repetitive re-formatting
   * Commenting code
