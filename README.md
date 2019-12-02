@@ -113,6 +113,7 @@ I have specifically chosen to do my best to develop this using as many cross pla
   * LPHK also creates a folder in `My Documents` named `LPHK`. This is where layouts, scripts, sounds, and the log is stored. You can open this folder by clicking the menu option `Help > User folder...`.
 * If you want to run LPHK portably (advanced)
   * This method lets you use LPHK by simply downloading `LPHK_portable_win_VERSION.zip` and extracting it to a folder of your choice. You can then move the folder to a flash drive, between computers, etc.
+  * It takes **much** longer to start up this way
   * Run `LPHK.exe`
 
 ### Linux Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
