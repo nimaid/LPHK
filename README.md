@@ -159,6 +159,9 @@ I have specifically chosen to do my best to develop this using as many cross pla
 ## What is LPHKscript? [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 LPHKscript is a simple macro scripting language tailor made for LPHK. Syntax is closer to a shell/batch script than, say, JavaScript.
 
+### Comments [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. Useful to add notes for yourself or others!
+
 ### Scheduling [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Only one script runs at a time, and there is a scheduling system for them. If a script is scheduled, it's button will pulse red. If the script is running, the button will flash red quickly. This is true for the 8x8 grid, however, the function keys cannot flash or pulse, as a hardware limitation. These keys will be bright orange for scheduled and bright red for running.
 
@@ -179,9 +182,6 @@ WAIT_UNPRESSED
 RELEASE (argument 1)
 ```
 If this is used, all other lines in the file must either be blank lines or comments.
-
-### Comments [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-Any line that starts with a dash `-` will be considered a comment, and will be ignored by the syntax validator/script parser. Useful to add notes for yourself or others!
 
 ### Commands List [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines separating commands.
