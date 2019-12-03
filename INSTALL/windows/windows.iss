@@ -51,6 +51,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+
 [Files]
 Source: "..\..\dist\LPHK\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 Source: "..\..\user_layouts\*"; DestDir: "{code:GetUserDir}\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
