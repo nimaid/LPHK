@@ -412,7 +412,6 @@ In order of priority:
     * Make a way for modules to use standard commands, and to use other modules
     * Take a drink and merge the branches
 * Allow named arguments for certain commands
-* Simply strip comments and empty lines before sending to logic, that way, first line can be a comment and second a header.
 * Let `SOUND` use spaces in it's path if it has double quotes around it
 * Add a `Choose default MIDI device` option to the `Sound` menu. (For multiple launchpads plugged in)
 * Add a third argument to `SOUND` for overriding the default sound device
@@ -430,8 +429,7 @@ In order of priority:
 * Add `CMD` command to run OS commands
   * Make multi-level scary warning dialog boxes when binding to a button (incl during load layout)
   * Give option (and strongly recommend its use) for users to run command once and verify it does what they want before binding to button (incl during load layout)
-* MIDI output command? (Low priority)
-* Load layout header?
+* MIDI output command? (low priority due to [LPMM](https://github.com/nimaid/LPMM), an older project of mine that I no longer have time for due to LPHK)
 
 ## DONE List [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * ~~Support for Launchpad MkII~~
@@ -492,3 +490,4 @@ In order of priority:
 * ~~Make a special color picker for Classic/Mini/S that only has the 16 possible colors~~
 * ~~Re-write `files.py` to use a JSON format for layouts.~~
 * ~~Make an installer for Windows~~
+* ~~Simply strip comments and empty lines before the first real command. That way, first line can be a comment and second a header, etc.~~
