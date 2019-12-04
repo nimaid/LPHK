@@ -63,6 +63,9 @@ Source: "..\..\user_sounds\*"; DestDir: "{code:GetUserDir}\user_sounds"; Flags: 
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
+[Messages]
+WelcomeLabel2=This will install [name/ver] on your computer.%n%nIt is recommended that you close all other applications before continuing.%n%nPlease be advised this program is still in beta. Kindly report any issues on the Discord server or GitHub.
+
 [Code]
 var UserDirPage: TInputDirWizardPage;
 
