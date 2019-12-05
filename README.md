@@ -338,6 +338,13 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 In order of priority:
 * Add splash screen to PyInstaller executable, for feedback while loading
   * This feature of PyInstaller is in development at this very moment by [Chrisg2000 and others](https://github.com/pyinstaller/pyinstaller/issues/4354) Once it's done, I can do this!
+* Add more sound commands
+  * Use different sound library that supports playing an arbitrary number of sounds, and controlling each sound individually while it plays
+  * Add optional label argument to `SOUND`
+  * Add `SOUND_VOLUME` to set the sound volume by label
+  * Add `SOUND_STOP` to stop playing sound by label and delete the sound label
+  * Add `SOUND_ALL_*` commands to stop/change the volume of all sounds
+* Let `SOUND` use spaces in it's path if it has double quotes around it
 * Let program function as a layout editor without LP connection
   * Would probably be easier to write a "Dummy LP" class
 * Make an installer for Linux
@@ -383,12 +390,6 @@ In order of priority:
         * `solid` is coninuously on
     * Add more selectors to script entry window
 * Add a `Sound` menu with `Choose default output device...` option
-* Add more sound commands
-  * Use different sound library that supports playing an arbitrary number of sounds, and controlling each sound individually while it plays
-  * Add optional label argument to `SOUND`
-  * Add `SOUND_VOLUME` to set the sound volume by label
-  * Add `SOUND_STOP` to stop playing sound by label and delete the sound label
-  * Add `SOUND_ALL_*` commands to stop/change the volume of all sounds
 * [Refactor code to make LPHKscript functions in auto-implementing modules, for ease of delevopment](https://github.com/nimaid/LPHK/issues/3)
   * A new testing branch will be created while the functional code is re-worked. To avoid merging issues, pull requests may have acceptance delayed until the refactor is complete.
   * There are a few complex refactoring tasks required for this, I will be crossing them off here on the testing branch:
@@ -412,7 +413,6 @@ In order of priority:
     * Make a way for modules to use standard commands, and to use other modules
     * Take a drink and merge the branches
 * Allow named arguments for certain commands
-* Let `SOUND` use spaces in it's path if it has double quotes around it
 * Add a `Choose default MIDI device` option to the `Sound` menu. (For multiple launchpads plugged in)
 * Add a third argument to `SOUND` for overriding the default sound device
 * Add variables and mathematical evaluation (mostly done!)
