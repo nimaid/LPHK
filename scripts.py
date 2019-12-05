@@ -120,6 +120,7 @@ def run_script(script_str, x, y):
     
     script_lines = [i.strip() for i in script_lines]
     
+    #remove comments
     if len(script_lines) > 0:
         while(is_ignorable_line(script_lines[0])):
             line = script_lines.pop(0)
@@ -128,337 +129,339 @@ def run_script(script_str, x, y):
             if len(script_lines) <= 0:
                 break
     
-    is_async = False
-    if script_lines[0].split(" ")[0] in ASYNC_HEADERS:
-        is_async = True
-    else:
-        running = True
-    
-    if script_lines[0].split(" ")[0] == "@ASYNC":
-        temp = script_lines.pop(0)
-    
-    #parse labels
-    labels = dict()
-    for idx,line in enumerate(script_lines):
-        split_line = line.split(" ")
-        if split_line[0] == "LABEL":
-            labels[split_line[1]] = idx
-    
-    #prepare repeat counter {idx:repeats_left}
-    repeats = dict()
-    repeats_original = dict()
-    
-    m_pos = ()
-    
-    def main_logic(idx):
-        nonlocal m_pos
-        
-        if check_kill(x, y, is_async):
-            return idx + 1
-            
-        line = script_lines[idx]
-        if line == "":
-            return idx + 1
-        if line[0] == "-":
-            print("[scripts] " + coords + "    Comment: " + line[1:])
+    if len(script_lines) > 0:
+        is_async = False
+        if script_lines[0].split(" ")[0] in ASYNC_HEADERS:
+            is_async = True
         else:
+            running = True
+        
+        if script_lines[0].split(" ")[0] == "@ASYNC":
+            temp = script_lines.pop(0)
+        
+        #parse labels
+        labels = dict()
+        for idx,line in enumerate(script_lines):
             split_line = line.split(" ")
-            if split_line[0] == "STRING":
-                type_string = " ".join(split_line[1:])
-                print("[scripts] " + coords + "    Type out string " + type_string)
-                kb.keyboard.write(type_string)
-            elif split_line[0] == "DELAY":
-                print("[scripts] " + coords + "    Delay for " + split_line[1] + " seconds")
-                delay = float(split_line[1])
-                if not safe_sleep(delay, x, y, is_async):
-                    return -1
-            elif split_line[0] == "TAP":
-                key = kb.sp(split_line[1])
-                releasefunc = lambda: kb.release(key)
-                if len(split_line) <= 2:
-                    print("[scripts] " + coords + "    Tap key " + split_line[1])
-                    kb.tap(key)
-                elif len(split_line) <= 3:
-                    print("[scripts] " + coords + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
-                    taps = int(split_line[2])
-                    for tap in range(taps):
+            if split_line[0] == "LABEL":
+                labels[split_line[1]] = idx
+        
+        #prepare repeat counter {idx:repeats_left}
+        repeats = dict()
+        repeats_original = dict()
+        
+        m_pos = ()
+        
+        def main_logic(idx):
+            nonlocal m_pos
+            
+            if check_kill(x, y, is_async):
+                return idx + 1
+                
+            line = script_lines[idx]
+            if line == "":
+                return idx + 1
+            if line[0] == "-":
+                print("[scripts] " + coords + "    Comment: " + line[1:])
+            else:
+                split_line = line.split(" ")
+                if split_line[0] == "STRING":
+                    type_string = " ".join(split_line[1:])
+                    print("[scripts] " + coords + "    Type out string " + type_string)
+                    kb.keyboard.write(type_string)
+                elif split_line[0] == "DELAY":
+                    print("[scripts] " + coords + "    Delay for " + split_line[1] + " seconds")
+                    delay = float(split_line[1])
+                    if not safe_sleep(delay, x, y, is_async):
+                        return -1
+                elif split_line[0] == "TAP":
+                    key = kb.sp(split_line[1])
+                    releasefunc = lambda: kb.release(key)
+                    if len(split_line) <= 2:
+                        print("[scripts] " + coords + "    Tap key " + split_line[1])
+                        kb.tap(key)
+                    elif len(split_line) <= 3:
+                        print("[scripts] " + coords + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
+                        taps = int(split_line[2])
+                        for tap in range(taps):
+                            if check_kill(x, y, is_async, releasefunc):
+                                return idx + 1
+                            kb.tap(key)
+                    else:
+                        print("[scripts] " + coords + "    Tap key " + split_line[1] + " " + split_line[2] + " times for " + str(split_line[3]) + " seconds each")
+                        taps = int(split_line[2])
+                        delay = float(split_line[3])
+                        for tap in range(taps):
+                            if check_kill(x, y, is_async, releasefunc):
+                                return -1
+                            kb.press(key)
+                            if not safe_sleep(delay, x, y, is_async, releasefunc):
+                                return -1
+                elif split_line[0] == "PRESS":
+                    print("[scripts] " + coords + "    Press key " + split_line[1])
+                    key = kb.sp(split_line[1])
+                    kb.press(key)
+                elif split_line[0] == "RELEASE":
+                    print("[scripts] " + coords + "    Release key " + split_line[1])
+                    key = kb.sp(split_line[1])
+                    kb.release(key)
+                elif split_line[0] == "WEB":
+                    link = split_line[1]
+                    if "http" not in link:
+                        link = "http://" + link
+                    print("[scripts] " + coords + "    Open website " + link + " in default browser")
+                    webbrowser.open(link)
+                elif split_line[0] == "WEB_NEW":
+                    link = split_line[1]
+                    if "http" not in link:
+                        link = "http://" + link
+                    print("[scripts] " + coords + "    Open website " + link + " in default browser, try to make a new window")
+                    webbrowser.open_new(link)
+                elif split_line[0] == "SOUND":
+                    if len(split_line) > 2:
+                        print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]))
+                        sound.play(split_line[1], float(split_line[2]))
+                    else:
+                        print("[scripts] " + coords + "    Play sound file " + split_line[1])
+                        sound.play(split_line[1])
+                elif split_line[0] == "WAIT_UNPRESSED":
+                    print("[scripts] " + coords + "    Wait for script key to be unpressed")
+                    while lp_events.pressed[x][y]:
+                        sleep(DELAY_EXIT_CHECK)
+                        if check_kill(x, y, is_async):
+                            return idx + 1             
+                elif split_line[0] == "M_STORE":
+                    print("[scripts] " + coords + "    Store mouse position")
+                    m_pos = ms.getXY()
+                elif split_line[0] == "M_RECALL":
+                    if m_pos == tuple():
+                        print("[scripts] " + coords + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
+                    else:
+                        print("[scripts] " + coords + "    Recall mouse position " + str(m_pos))
+                        ms.setXY(m_pos[0], m_pos[1])
+                elif split_line[0] == "M_RECALL_LINE":
+                    x1, y1 = m_pos
+
+                    delay = None
+                    if len(split_line) > 1:
+                        delay = float(split_line[1]) / 1000.0
+
+                    skip = 1
+                    if len(split_line) > 2:
+                        skip = int(split_line[2])
+
+                    if (delay == None) or (delay <= 0):
+                        print("[scripts] " + coords + "    Recall mouse position " + str(m_pos) + " in a line by " + str(skip) + " pixels per step")
+                    else:
+                        print("[scripts] " + coords + "    Recall mouse position " + str(m_pos) + " in a line by " + str(skip) + " pixels per step and wait " + split_line[1] + " milliseconds between each step")
+
+                    x_C, y_C = ms.getXY()
+                    points = ms.line_coords(x_C, y_C, x1, y1)
+                    for x_M, y_M in points[::skip]:
+                        if check_kill(x, y, is_async):
+                            return -1
+                        ms.setXY(x_M, y_M)
+                        if (delay != None) and (delay > 0):
+                            if not safe_sleep(delay, x, y, is_async):
+                                return -1
+                elif split_line[0] == "M_MOVE":
+                    if len(split_line) >= 3:
+                        print("[scripts] " + coords + "    Relative mouse movement (" + split_line[1] + ", " + str(split_line[2]) + ")")
+                        ms.moveXY(float(split_line[1]), float(split_line[2]))
+                    else:
+                        print("[scripts] " + coords + "    Both X and Y are required for mouse movement, skipping...")
+                elif split_line[0] == "M_SET":
+                    if len(split_line) >= 3:
+                        print("[scripts] " + coords + "    Set mouse position to (" + split_line[1] + ", " + str(split_line[2]) + ")")
+                        ms.setXY(float(split_line[1]), float(split_line[2]))
+                    else:
+                        print("[scripts] " + coords + "    Both X and Y are required for mouse positioning, skipping...")
+                elif split_line[0] == "M_SCROLL":
+                    if len(split_line) > 2:
+                        print("[scripts] " + coords + "    Scroll (" + split_line[1] + ", " + split_line[2] + ")")
+                        ms.scroll(float(split_line[2]), float(split_line[1]))
+                    else:
+                        print("[scripts] " + coords + "    Scroll " + split_line[1])
+                        ms.scroll(0, float(split_line[1]))
+                elif split_line[0] == "M_LINE":
+                    x1 = int(split_line[1])
+                    y1 = int(split_line[2])
+                    x2 = int(split_line[3])
+                    y2 = int(split_line[4])
+
+                    delay = None
+                    if len(split_line) > 5:
+                        delay = float(split_line[5]) / 1000.0
+
+                    skip = 1
+                    if len(split_line) > 6:
+                        skip = int(split_line[6])
+
+                    if (delay == None) or (delay <= 0):
+                        print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ") by " + str(skip) + " pixels per step")
+                    else:
+                        print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ") by " + str(skip) + " pixels per step and wait " + split_line[5] + " milliseconds between each step")
+
+                    points = ms.line_coords(x1, y1, x2, y2)
+                    for x_M, y_M in points[::skip]:
+                        if check_kill(x, y, is_async):
+                            return -1
+                        ms.setXY(x_M, y_M)
+                        if (delay != None) and (delay > 0):
+                            if not safe_sleep(delay, x, y, is_async):
+                                return -1
+                elif split_line[0] == "M_LINE_MOVE":
+                    x1 = int(split_line[1])
+                    y1 = int(split_line[2])
+
+                    delay = None
+                    if len(split_line) > 3:
+                        delay = float(split_line[3]) / 1000.0
+
+                    skip = 1
+                    if len(split_line) > 4:
+                        skip = int(split_line[4])
+
+                    if (delay == None) or (delay <= 0):
+                        print("[scripts] " + coords + "    Mouse line move relative (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step")
+                    else:
+                        print("[scripts] " + coords + "    Mouse line move relative (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step and wait " + split_line[3] + " milliseconds between each step")
+
+                    x_C, y_C = ms.getXY()
+                    x_N, y_N = x_C + x1, y_C + y1
+                    points = ms.line_coords(x_C, y_C, x_N, y_N)
+                    for x_M, y_M in points[::skip]:
+                        if check_kill(x, y, is_async):
+                            return -1
+                        ms.setXY(x_M, y_M)
+                        if (delay != None) and (delay > 0):
+                            if not safe_sleep(delay, x, y, is_async):
+                                return -1
+                elif split_line[0] == "M_LINE_SET":
+                    x1 = int(split_line[1])
+                    y1 = int(split_line[2])
+
+                    delay = None
+                    if len(split_line) > 3:
+                        delay = float(split_line[3]) / 1000.0
+
+                    skip = 1
+                    if len(split_line) > 4:
+                        skip = int(split_line[4])
+
+                    if (delay == None) or (delay <= 0):
+                        print("[scripts] " + coords + "    Mouse line set (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step")
+                    else:
+                        print("[scripts] " + coords + "    Mouse line set (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step and wait " + split_line[3] + " milliseconds between each step")
+
+                    x_C, y_C = ms.getXY()
+                    points = ms.line_coords(x_C, y_C, x1, y1)
+                    for x_M, y_M in points[::skip]:
+                        if check_kill(x, y, is_async):
+                            return -1
+                        ms.setXY(x_M, y_M)
+                        if (delay != None) and (delay > 0):
+                            if not safe_sleep(delay, x, y, is_async):
+                                return -1
+                elif split_line[0] == "LABEL":
+                   print("[scripts] " + coords + "    Label: " + split_line[1])
+                   return idx + 1
+                elif split_line[0] == "IF_PRESSED_GOTO_LABEL":
+                    print("[scripts] " + coords + "    If key is pressed goto LABEL " + split_line[1])
+                    if lp_events.pressed[x][y]:
+                        return labels[split_line[1]]
+                elif split_line[0] == "IF_UNPRESSED_GOTO_LABEL":
+                    print("[scripts] " + coords + "    If key is not pressed goto LABEL " + split_line[1])
+                    if not lp_events.pressed[x][y]:
+                        return labels[split_line[1]]
+                elif split_line[0] == "GOTO_LABEL":
+                    print("[scripts] " + coords + "    Goto LABEL " + split_line[1])
+                    return labels[split_line[1]]
+                elif split_line[0] == "REPEAT_LABEL":
+                    print("[scripts] " + coords + "    Repeat LABEL " + split_line[1] + " " + split_line[2] + " times max")
+                    if idx in repeats:
+                        if repeats[idx] > 0:
+                            print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
+                            repeats[idx] -= 1
+                            return labels[split_line[1]]
+                        else:
+                            print("[scripts] " + coords + "        No repeats left, not repeating.")
+                    else:
+                        repeats[idx] = int(split_line[2])
+                        repeats_original[idx] = int(split_line[2])
+                        print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
+                        repeats[idx] -= 1
+                        return labels[split_line[1]]
+                elif split_line[0] == "IF_PRESSED_REPEAT_LABEL":
+                    print("[scripts] " + coords + "    If key is pressed repeat LABEL " + split_line[1] + " " + split_line[2] + " times max")
+                    if lp_events.pressed[x][y]:
+                        if idx in repeats:
+                            if repeats[idx] > 0:
+                                print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
+                                repeats[idx] -= 1
+                                return labels[split_line[1]]
+                            else:
+                                print("[scripts] " + coords + "        No repeats left, not repeating.")
+                        else:
+                            repeats[idx] = int(split_line[2])
+                            print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
+                            repeats[idx] -= 1
+                            return labels[split_line[1]]
+                elif split_line[0] == "IF_UNPRESSED_REPEAT_LABEL":
+                    print("[scripts] " + coords + "    If key is not pressed repeat LABEL " + split_line[1] + " " + split_line[2] + " times max")
+                    if not lp_events.pressed[x][y]:
+                        if idx in repeats:
+                            if repeats[idx] > 0:
+                                print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
+                                repeats[idx] -= 1
+                                return labels[split_line[1]]
+                            else:
+                                print("[scripts] " + coords + "        No repeats left, not repeating.")
+                        else:
+                            repeats[idx] = int(split_line[2])
+                            print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
+                            repeats[idx] -= 1
+                            return labels[split_line[1]]
+                elif split_line[0] == "@SIMPLE":
+                    print("[scripts] " + coords + "    Simple keybind: " + split_line[1])
+                    #PRESS
+                    key = kb.sp(split_line[1])
+                    releasefunc = kb.release(key)
+                    kb.press(key)
+                    #WAIT_UNPRESSED
+                    while lp_events.pressed[x][y]:
+                        sleep(DELAY_EXIT_CHECK)
                         if check_kill(x, y, is_async, releasefunc):
                             return idx + 1
-                        kb.tap(key)
+                    #RELEASE
+                    kb.release(key)
+                elif split_line[0] == "OPEN":
+                    path_name = " ".join(split_line[1:])
+                    print("[scripts] " + coords + "    Open file or folder " + path_name)
+                    files.open_file_folder(path_name)
+                elif split_line[0] == "RELEASE_ALL":
+                    print("[scripts] " + coords + "    Release all keys")
+                    kb.release_all()
+                elif split_line[0] == "RESET_REPEATS":
+                    print("[scripts] " + coords + "    Reset all repeats")
+                    for i in repeats:
+                        repeats[i] = repeats_original[i]
                 else:
-                    print("[scripts] " + coords + "    Tap key " + split_line[1] + " " + split_line[2] + " times for " + str(split_line[3]) + " seconds each")
-                    taps = int(split_line[2])
-                    delay = float(split_line[3])
-                    for tap in range(taps):
-                        if check_kill(x, y, is_async, releasefunc):
-                            return -1
-                        kb.press(key)
-                        if not safe_sleep(delay, x, y, is_async, releasefunc):
-                            return -1
-            elif split_line[0] == "PRESS":
-                print("[scripts] " + coords + "    Press key " + split_line[1])
-                key = kb.sp(split_line[1])
-                kb.press(key)
-            elif split_line[0] == "RELEASE":
-                print("[scripts] " + coords + "    Release key " + split_line[1])
-                key = kb.sp(split_line[1])
-                kb.release(key)
-            elif split_line[0] == "WEB":
-                link = split_line[1]
-                if "http" not in link:
-                    link = "http://" + link
-                print("[scripts] " + coords + "    Open website " + link + " in default browser")
-                webbrowser.open(link)
-            elif split_line[0] == "WEB_NEW":
-                link = split_line[1]
-                if "http" not in link:
-                    link = "http://" + link
-                print("[scripts] " + coords + "    Open website " + link + " in default browser, try to make a new window")
-                webbrowser.open_new(link)
-            elif split_line[0] == "SOUND":
-                if len(split_line) > 2:
-                    print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]))
-                    sound.play(split_line[1], float(split_line[2]))
-                else:
-                    print("[scripts] " + coords + "    Play sound file " + split_line[1])
-                    sound.play(split_line[1])
-            elif split_line[0] == "WAIT_UNPRESSED":
-                print("[scripts] " + coords + "    Wait for script key to be unpressed")
-                while lp_events.pressed[x][y]:
-                    sleep(DELAY_EXIT_CHECK)
-                    if check_kill(x, y, is_async):
-                        return idx + 1             
-            elif split_line[0] == "M_STORE":
-                print("[scripts] " + coords + "    Store mouse position")
-                m_pos = ms.getXY()
-            elif split_line[0] == "M_RECALL":
-                if m_pos == tuple():
-                    print("[scripts] " + coords + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
-                else:
-                    print("[scripts] " + coords + "    Recall mouse position " + str(m_pos))
-                    ms.setXY(m_pos[0], m_pos[1])
-            elif split_line[0] == "M_RECALL_LINE":
-                x1, y1 = m_pos
-
-                delay = None
-                if len(split_line) > 1:
-                    delay = float(split_line[1]) / 1000.0
-
-                skip = 1
-                if len(split_line) > 2:
-                    skip = int(split_line[2])
-
-                if (delay == None) or (delay <= 0):
-                    print("[scripts] " + coords + "    Recall mouse position " + str(m_pos) + " in a line by " + str(skip) + " pixels per step")
-                else:
-                    print("[scripts] " + coords + "    Recall mouse position " + str(m_pos) + " in a line by " + str(skip) + " pixels per step and wait " + split_line[1] + " milliseconds between each step")
-
-                x_C, y_C = ms.getXY()
-                points = ms.line_coords(x_C, y_C, x1, y1)
-                for x_M, y_M in points[::skip]:
-                    if check_kill(x, y, is_async):
-                        return -1
-                    ms.setXY(x_M, y_M)
-                    if (delay != None) and (delay > 0):
-                        if not safe_sleep(delay, x, y, is_async):
-                            return -1
-            elif split_line[0] == "M_MOVE":
-                if len(split_line) >= 3:
-                    print("[scripts] " + coords + "    Relative mouse movement (" + split_line[1] + ", " + str(split_line[2]) + ")")
-                    ms.moveXY(float(split_line[1]), float(split_line[2]))
-                else:
-                    print("[scripts] " + coords + "    Both X and Y are required for mouse movement, skipping...")
-            elif split_line[0] == "M_SET":
-                if len(split_line) >= 3:
-                    print("[scripts] " + coords + "    Set mouse position to (" + split_line[1] + ", " + str(split_line[2]) + ")")
-                    ms.setXY(float(split_line[1]), float(split_line[2]))
-                else:
-                    print("[scripts] " + coords + "    Both X and Y are required for mouse positioning, skipping...")
-            elif split_line[0] == "M_SCROLL":
-                if len(split_line) > 2:
-                    print("[scripts] " + coords + "    Scroll (" + split_line[1] + ", " + split_line[2] + ")")
-                    ms.scroll(float(split_line[2]), float(split_line[1]))
-                else:
-                    print("[scripts] " + coords + "    Scroll " + split_line[1])
-                    ms.scroll(0, float(split_line[1]))
-            elif split_line[0] == "M_LINE":
-                x1 = int(split_line[1])
-                y1 = int(split_line[2])
-                x2 = int(split_line[3])
-                y2 = int(split_line[4])
-
-                delay = None
-                if len(split_line) > 5:
-                    delay = float(split_line[5]) / 1000.0
-
-                skip = 1
-                if len(split_line) > 6:
-                    skip = int(split_line[6])
-
-                if (delay == None) or (delay <= 0):
-                    print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ") by " + str(skip) + " pixels per step")
-                else:
-                    print("[scripts] " + coords + "    Mouse line from (" + split_line[1] + ", " + split_line[2] + ") to (" + split_line[3] + ", " + split_line[4] + ") by " + str(skip) + " pixels per step and wait " + split_line[5] + " milliseconds between each step")
-
-                points = ms.line_coords(x1, y1, x2, y2)
-                for x_M, y_M in points[::skip]:
-                    if check_kill(x, y, is_async):
-                        return -1
-                    ms.setXY(x_M, y_M)
-                    if (delay != None) and (delay > 0):
-                        if not safe_sleep(delay, x, y, is_async):
-                            return -1
-            elif split_line[0] == "M_LINE_MOVE":
-                x1 = int(split_line[1])
-                y1 = int(split_line[2])
-
-                delay = None
-                if len(split_line) > 3:
-                    delay = float(split_line[3]) / 1000.0
-
-                skip = 1
-                if len(split_line) > 4:
-                    skip = int(split_line[4])
-
-                if (delay == None) or (delay <= 0):
-                    print("[scripts] " + coords + "    Mouse line move relative (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step")
-                else:
-                    print("[scripts] " + coords + "    Mouse line move relative (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step and wait " + split_line[3] + " milliseconds between each step")
-
-                x_C, y_C = ms.getXY()
-                x_N, y_N = x_C + x1, y_C + y1
-                points = ms.line_coords(x_C, y_C, x_N, y_N)
-                for x_M, y_M in points[::skip]:
-                    if check_kill(x, y, is_async):
-                        return -1
-                    ms.setXY(x_M, y_M)
-                    if (delay != None) and (delay > 0):
-                        if not safe_sleep(delay, x, y, is_async):
-                            return -1
-            elif split_line[0] == "M_LINE_SET":
-                x1 = int(split_line[1])
-                y1 = int(split_line[2])
-
-                delay = None
-                if len(split_line) > 3:
-                    delay = float(split_line[3]) / 1000.0
-
-                skip = 1
-                if len(split_line) > 4:
-                    skip = int(split_line[4])
-
-                if (delay == None) or (delay <= 0):
-                    print("[scripts] " + coords + "    Mouse line set (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step")
-                else:
-                    print("[scripts] " + coords + "    Mouse line set (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step and wait " + split_line[3] + " milliseconds between each step")
-
-                x_C, y_C = ms.getXY()
-                points = ms.line_coords(x_C, y_C, x1, y1)
-                for x_M, y_M in points[::skip]:
-                    if check_kill(x, y, is_async):
-                        return -1
-                    ms.setXY(x_M, y_M)
-                    if (delay != None) and (delay > 0):
-                        if not safe_sleep(delay, x, y, is_async):
-                            return -1
-            elif split_line[0] == "LABEL":
-               print("[scripts] " + coords + "    Label: " + split_line[1])
-               return idx + 1
-            elif split_line[0] == "IF_PRESSED_GOTO_LABEL":
-                print("[scripts] " + coords + "    If key is pressed goto LABEL " + split_line[1])
-                if lp_events.pressed[x][y]:
-                    return labels[split_line[1]]
-            elif split_line[0] == "IF_UNPRESSED_GOTO_LABEL":
-                print("[scripts] " + coords + "    If key is not pressed goto LABEL " + split_line[1])
-                if not lp_events.pressed[x][y]:
-                    return labels[split_line[1]]
-            elif split_line[0] == "GOTO_LABEL":
-                print("[scripts] " + coords + "    Goto LABEL " + split_line[1])
-                return labels[split_line[1]]
-            elif split_line[0] == "REPEAT_LABEL":
-                print("[scripts] " + coords + "    Repeat LABEL " + split_line[1] + " " + split_line[2] + " times max")
-                if idx in repeats:
-                    if repeats[idx] > 0:
-                        print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
-                        repeats[idx] -= 1
-                        return labels[split_line[1]]
-                    else:
-                        print("[scripts] " + coords + "        No repeats left, not repeating.")
-                else:
-                    repeats[idx] = int(split_line[2])
-                    repeats_original[idx] = int(split_line[2])
-                    print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
-                    repeats[idx] -= 1
-                    return labels[split_line[1]]
-            elif split_line[0] == "IF_PRESSED_REPEAT_LABEL":
-                print("[scripts] " + coords + "    If key is pressed repeat LABEL " + split_line[1] + " " + split_line[2] + " times max")
-                if lp_events.pressed[x][y]:
-                    if idx in repeats:
-                        if repeats[idx] > 0:
-                            print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
-                            repeats[idx] -= 1
-                            return labels[split_line[1]]
-                        else:
-                            print("[scripts] " + coords + "        No repeats left, not repeating.")
-                    else:
-                        repeats[idx] = int(split_line[2])
-                        print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
-                        repeats[idx] -= 1
-                        return labels[split_line[1]]
-            elif split_line[0] == "IF_UNPRESSED_REPEAT_LABEL":
-                print("[scripts] " + coords + "    If key is not pressed repeat LABEL " + split_line[1] + " " + split_line[2] + " times max")
-                if not lp_events.pressed[x][y]:
-                    if idx in repeats:
-                        if repeats[idx] > 0:
-                            print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
-                            repeats[idx] -= 1
-                            return labels[split_line[1]]
-                        else:
-                            print("[scripts] " + coords + "        No repeats left, not repeating.")
-                    else:
-                        repeats[idx] = int(split_line[2])
-                        print("[scripts] " + coords + "        " + str(repeats[idx]) + " repeats left.")
-                        repeats[idx] -= 1
-                        return labels[split_line[1]]
-            elif split_line[0] == "@SIMPLE":
-                print("[scripts] " + coords + "    Simple keybind: " + split_line[1])
-                #PRESS
-                key = kb.sp(split_line[1])
-                releasefunc = kb.release(key)
-                kb.press(key)
-                #WAIT_UNPRESSED
-                while lp_events.pressed[x][y]:
-                    sleep(DELAY_EXIT_CHECK)
-                    if check_kill(x, y, is_async, releasefunc):
-                        return idx + 1
-                #RELEASE
-                kb.release(key)
-            elif split_line[0] == "OPEN":
-                path_name = " ".join(split_line[1:])
-                print("[scripts] " + coords + "    Open file or folder " + path_name)
-                files.open_file_folder(path_name)
-            elif split_line[0] == "RELEASE_ALL":
-                print("[scripts] " + coords + "    Release all keys")
-                kb.release_all()
-            elif split_line[0] == "RESET_REPEATS":
-                print("[scripts] " + coords + "    Reset all repeats")
-                for i in repeats:
-                    repeats[i] = repeats_original[i]
-            else:
-                print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
-        return idx + 1
-    run = True
-    idx = 0
-    while run:
-        idx = main_logic(idx)
-        if (idx < 0) or (idx >= len(script_lines)):
-            run = False
+                    print("[scripts] " + coords + "    Invalid command: " + split_line[0] + ", skipping...")
+            return idx + 1
+        run = True
+        idx = 0
+        while run:
+            idx = main_logic(idx)
+            if (idx < 0) or (idx >= len(script_lines)):
+                run = False
+                
+        if not is_async:
+            running = False
+        threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
     
     print("[scripts] (" + str(x) + ", " + str(y) + ") Script done running.")
-
-    if not is_async:
-        running = False
-    threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
+    
 
 def bind(x, y, script_down, color):
     global to_run
