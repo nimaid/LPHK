@@ -362,6 +362,7 @@ In order of priority:
   * Should give options to add various shortcuts
 * Add temporary command `__M_PRINT_POPUP__` that gives a pop-up with the current cursor position
 * Option to minimize to system tray
+  * Tkinter does not provide a way to do this. There may be Windows-specific extentions I can use, but maybe not.
 * Add auto-update feature using `git`
   * ~~There will be a VERSION file in the main directory with the version string~~
     * This can be polled at `https://raw.githubusercontent.com/nimaid/LPHK/master/VERSION`
