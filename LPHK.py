@@ -5,7 +5,19 @@ print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!\n")
 
 LOG_TITLE = "LPHK.log"
 
-# Test if this is a PyInstaller EXE or a .py file
+# Get platform information
+PLATFORMS = [   {"search_string": "win", "name_string": "windows"},
+                {"search_string": "linux", "name_string": "linux"},
+                {"search_string": "darwin", "name_string": "macintosh"} ]
+PLATFORM = None
+for plat in PLATFORMS:
+    if sys.platform.startswith(plat["search_string"]):
+        PLATFORM = plat["name_string"]
+        break
+if PLATFORM == None:
+    PLATFORM = "other"
+
+# Test if this is a PyInstaller executable or a .py file
 if getattr(sys, 'frozen', False):
     IS_EXE = True
     PROG_FILE = sys.executable
@@ -51,6 +63,7 @@ def datetime_str():
 print("---------------- BEGIN LOG", datetime_str(), "----------------")
 print("LPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
 print("Version:", VERSION)
+print("Platform:", PLATFORM.capitalize())
 print("Is compiled executable:", IS_EXE)
 print("Is portable:", IS_PORTABLE)
 print("Operating path:", PATH)
@@ -110,7 +123,7 @@ def shutdown():
 
 def main():
     init()
-    window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH, VERSION)
+    window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH, VERSION, PLATFORM)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
 

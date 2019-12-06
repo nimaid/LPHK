@@ -338,6 +338,14 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 In order of priority:
 * Add splash screen to PyInstaller executable, for feedback while loading
   * This feature of PyInstaller is in development at this very moment by [Chrisg2000 and others](https://github.com/pyinstaller/pyinstaller/issues/4354) Once it's done, I can do this!
+* Add `@LOAD_LAYOUT` header command to load a specified layout
+  * Check if layout currently exists when binding to a button (incl during load layout)
+    * If not, prompt user if they want to continue anyway
+  * Add option to override save changes prompt
+* Add startup config file
+  * Default layout specification
+  * Auto connect overide
+  * Force launchpad model setting
 * Add more sound commands
   * Use different sound library that supports playing an arbitrary number of sounds, and controlling each sound individually while it plays
   * Add optional label argument to `SOUND`
@@ -353,6 +361,7 @@ In order of priority:
   * Should copy LPHK files into an appropriate directory
   * Should give options to add various shortcuts
 * Add temporary command `__M_PRINT_POPUP__` that gives a pop-up with the current cursor position
+* Option to minimize to system tray
 * Add auto-update feature using `git`
   * ~~There will be a VERSION file in the main directory with the version string~~
     * This can be polled at `https://raw.githubusercontent.com/nimaid/LPHK/master/VERSION`
@@ -363,16 +372,7 @@ In order of priority:
   * Will accept multiple arguemnts seperated by spaces
   * Will be pressed in the order `arg1`, `arg2`... and unpress in the order ...`arg2`, `arg1`
 * Add percentage of screen width/height option to the `M_*` commands
-* Add `@LOAD_LAYOUT` header command to load a specified layout
-  * Check if layout currently exists when binding to a button (incl during load layout)
-    * If not, prompt user if they want to continue anyway
-  * Add option to override save changes prompt
 * Add `SCRIPT` command to run (argument 1) script in the `user_scripts` folder (like a function!)
-* Add startup config file
-  * Default layout specification
-  * Auto connect overide
-  * Force launchpad model setting
-  * Option to minimize to system tray
 * Add settings menu to configure the startup config
 * Add more color customization
     * Make new fields in the `.lpl` layout format

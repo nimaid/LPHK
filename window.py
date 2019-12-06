@@ -30,6 +30,8 @@ USER_PATH = None
 
 VERSION = None
 
+PLATFORM = None
+
 MAIN_ICON = None
 
 launchpad = None
@@ -51,13 +53,14 @@ lp_connected = False
 lp_mode = None
 colors_to_set = [[DEFAULT_COLOR for y in range(9)] for x in range(9)]
 
-def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, version_in):
+def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, version_in, platform_in):
     global lp_object
     global launchpad
     global PATH
     global PROG_PATH
     global USER_PATH
     global VERSION
+    global PLATFORM
     global MAIN_ICON
     lp_object = lp_object_in
     launchpad = launchpad_in
@@ -65,7 +68,9 @@ def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, versio
     PROG_PATH = prog_path_in
     USER_PATH = user_path_in
     VERSION = version_in
-    if sys.platform.startswith('win'):
+    PLATFORM = platform_in
+    
+    if PLATFORM == "windows":
         MAIN_ICON = os.path.join(PATH, "resources", "LPHK.ico")
     else:
         MAIN_ICON = os.path.join(PATH, "resources", "LPHK.gif")
@@ -91,6 +96,8 @@ class Main_Window(tk.Frame):
         self.outline_box = None
 
     def init_window(self):
+        global root
+        
         self.master.title("LPHK - Novation Launchpad Macro Scripting System")
         self.pack(fill="both", expand=1)
 
@@ -121,6 +128,7 @@ class Main_Window(tk.Frame):
         self.m_Help.add_command(label="Program Folder...", command=open_prog_folder)
         display_info = lambda: self.popup(self, "About LPHK", self.about_image, "A Novation Launchpad Macro Scripting System\nMade by Ella Jameson (nimaid)\n\nVersion: " + VERSION + "\nFile format version: " + files.FILE_VERSION, "Done")
         self.m_Help.add_command(label="About LPHK", command=display_info)
+        self.m_Help.add_command(label="don't click this", command=root.iconify)
         self.m.add_cascade(label="Help", menu=self.m_Help)
 
         c_gap = int(BUTTON_SIZE // 4)
