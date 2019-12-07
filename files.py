@@ -31,10 +31,11 @@ def init(user_path_in):
     LAYOUT_PATH = os.path.join(USER_PATH, LAYOUT_DIR)
     SCRIPT_PATH = os.path.join(USER_PATH, SCRIPT_DIR)
 
-def save_layout(layout, name):
+def save_layout(layout, name, printing=True):
     with open(name, "w") as f:
         json.dump(layout, f, indent=2, sort_keys=True)
-    print("[files] Saved layout as " + name)
+    if printing:
+        print("[files] Saved layout as " + name)
 
 def load_layout_json(name, printing=True):
     with open(name, "r") as f:

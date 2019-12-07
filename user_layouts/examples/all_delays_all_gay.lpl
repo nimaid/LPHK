@@ -3,11 +3,11 @@
     [
       {
         "color": [
+          0,
           255,
-          255,
-          255
+          0
         ],
-        "text": "DELAY 1"
+        "text": "@LOAD_LAYOUT examples/all_delays_all_day.lpl"
       },
       {
         "color": [

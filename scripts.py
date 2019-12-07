@@ -447,6 +447,8 @@ def run_script(script_str, x, y):
                     except files.json.decoder.JSONDecodeError:
                         print("[scripts] " + coords + "        ERROR: Layout is malformated.")
                         return -1
+                    if files.layout_changed_since_load:
+                        files.save_lp_to_layout(files.curr_layout)
                     files.load_layout_to_lp(layout_path, popups=False, save_converted=False, preload=layout)
                 elif split_line[0] == "OPEN":
                     path_name = " ".join(split_line[1:])
@@ -604,7 +606,8 @@ def validate_script(script_str):
         for line in script_lines[1:]:
             if line != "" and line[0] != "-":
                 return ("When @LOAD_LAYOUT is used, scripts can only contain comments.", line)
-                
+        if len(first_line_split) < 2:
+            return ("No layout filename provided.", first_line)
         layout_path = os.path.join(files.LAYOUT_PATH, " ".join(first_line_split[1:]))
         if not os.path.isfile(layout_path):
             return ("'" + layout_path + "' does not exist!", first_line)
