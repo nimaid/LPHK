@@ -2,8 +2,8 @@ import lp_colors, scripts
 from time import sleep
 import os, json, platform, subprocess
 
-LAYOUT_PATH = "/user_layouts/"
-SCRIPT_PATH = "/user_scripts/"
+LAYOUT_DIR = "user_layouts"
+SCRIPT_DIR = "user_scripts"
 
 FILE_VERSION = "0.1.1"
 
@@ -13,24 +13,37 @@ SCRIPT_EXT = ".lps"
 LEGACY_LAYOUT_EXT = ".LPHKlayout"
 LEGACY_SCRIPT_EXT = ".LPHKscript"
 
+USER_PATH = None
+LAYOUT_PATH = None
+SCRIPT_PATH = None
+
 import window
 
 curr_layout = None
 in_error = False
 layout_changed_since_load = False
 
+def init(user_path_in):
+    global USER_PATH
+    global LAYOUT_PATH
+    global SCRIPT_PATH
+    USER_PATH = user_path_in
+    LAYOUT_PATH = os.path.join(USER_PATH, LAYOUT_DIR)
+    SCRIPT_PATH = os.path.join(USER_PATH, SCRIPT_DIR)
+
 def save_layout(layout, name):
     with open(name, "w") as f:
         json.dump(layout, f, indent=2, sort_keys=True)
     print("[files] Saved layout as " + name)
 
-def load_layout(name):
+def load_layout_json(name, printing=True):
     with open(name, "r") as f:
         layout = json.load(f)
-    print("[files] Loaded layout " + name)
+    if printing:
+        print("[files] Loaded layout " + name)
     return layout
   
-def load_legacy_layout(name):
+def load_layout_legacy(name, printing=True):
     layout = dict()
     layout["version"] = "LEGACY"
     
@@ -53,9 +66,39 @@ def load_legacy_layout(name):
                 script_text = info[1].replace(":LPHK_NEWLINE_REP:", "\n")
                 
                 layout["buttons"][-1].append({"color": color, "text": script_text})
-    print("[files] Loaded legacy layout " + name)
+    if printing:
+        print("[files] Loaded legacy layout " + name)
     return layout
-  
+
+def load_layout(name, popups=True, save_converted=True, printing=True):
+    basename_list = os.path.basename(name).split(os.path.extsep)
+    ext = basename_list[-1]
+    title = os.path.extsep.join(basename_list[:-1])
+    
+    if "." + ext == LEGACY_LAYOUT_EXT:
+        # TODO: Error checking on resultant JSON
+        layout = load_layout_legacy(name, printing=printing)
+        
+       
+        if save_converted:
+            name = os.path.dirname(name) + os.path.sep + title + LAYOUT_EXT
+            if popups:
+                window.app.popup(window.app, "Legacy layout loaded...", window.app.info_image, "The layout is in the legacy .LPHKlayout format. It will be\nconverted to the new .lpl format, and will be saved as such.", "OK")
+            else:
+                if printing:
+                    print("[files] The layout is in the legacy .LPHKlayout format. It will be converted to the new .lpl format, and will be saved as such.")
+                save_layout(layout, name)
+    else:
+        # TODO: Error checking on loaded JSON
+        try:
+            layout = load_layout_json(name, printing=printing)
+        except json.decoder.JSONDecodeError:
+            if popups:
+                window.app.popup(window.app, "Error loading file!", window.app.info_image, "The layout is not in valid JSON format (the new .lpl extention).\n\nIf this was renamed from a .LPHKlayout file, please change\nthe extention back to .LPHKlayout and try loading again.", "OK")
+            raise
+    
+    return layout
+
 def save_lp_to_layout(name):
     layout = dict()
     layout["version"] = FILE_VERSION
@@ -71,7 +114,7 @@ def save_lp_to_layout(name):
     
     save_layout(layout=layout, name=name)
 
-def load_layout_to_lp(name):
+def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
     global curr_layout
     global in_error
     global layout_changed_since_load
@@ -81,24 +124,11 @@ def load_layout_to_lp(name):
     scripts.unbind_all()
     window.app.draw_canvas()
     
-    basename_list = os.path.basename(name).split(os.path.extsep)
-    ext = basename_list[-1]
-    title = os.path.extsep.join(basename_list[:-1])
-    
-    if "." + ext == LEGACY_LAYOUT_EXT:
-        # TODO: Error checking on resultant JSON
-        layout = load_legacy_layout(name)
-        
-        name = os.path.dirname(name) + os.path.sep + title + LAYOUT_EXT
-        window.app.popup(window.app, "Legacy layout loaded...", window.app.info_image, "The layout is in the legacy .LPHKlayout format. It will be\nconverted to the new .lpl format, and will be saved as such.", "OK")
-        save_layout(layout, name)
+    if preload == None:
+        print("FUK")
+        layout = load_layout(name, popups=popups, save_converted=save_converted)
     else:
-        # TODO: Error checking on loaded JSON
-        try:
-            layout = load_layout(name)
-        except json.decoder.JSONDecodeError:
-            window.app.popup(window.app, "Error loading file!", window.app.info_image, "The layout is not in valid JSON format (the new .lpl extention).\n\nIf this was renamed from a .LPHKlayout file, please change\nthe extention back to .LPHKlayout and try loading again.", "OK")
-            return
+        layout = preload
         
     for x in range(9):
         for y in range(9):
@@ -117,7 +147,10 @@ def load_layout_to_lp(name):
                     script_validation = scripts.validate_script(script_text)
                 except:
                     new_layout_func = lambda: window.app.unbind_lp(prompt_save = False)
-                    window.app.popup(window.app, "Script Validation Error", window.app.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK", end_command = new_layout_func)
+                    if popups:
+                        window.app.popup(window.app, "Script Validation Error", window.app.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK", end_command = new_layout_func)
+                    else:
+                        print("[files] Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.")
                     raise
                 if script_validation != True:
                     lp_colors.update_all()
@@ -134,7 +167,10 @@ def load_layout_to_lp(name):
         
     curr_layout = name
     if converted_to_rg:
-        window.app.popup(window.app, "Layout converted to Classic/Mini/S...", window.app.info_image, "The colors in this layout have been converted to be\ncompatable with the Launchpad Classic/Mini/S.\n\nChanges have not yet been saved to the file.", "OK")
+        if popups:
+            window.app.popup(window.app, "Layout converted to Classic/Mini/S...", window.app.info_image, "The colors in this layout have been converted to be\ncompatable with the Launchpad Classic/Mini/S.\n\nChanges have not yet been saved to the file.", "OK")
+        else:
+            print("[files] The colors in this layout have been converted to be compatable with the Launchpad Classic/Mini/S. Changes have not yet been saved to the file.")
         layout_changed_since_load = True
     else:
         layout_changed_since_load = False

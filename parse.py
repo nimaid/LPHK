@@ -1,3 +1,4 @@
+# CURRENTLY UNUSED
 import parser, types
 
 variables = dict()

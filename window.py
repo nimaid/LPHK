@@ -128,7 +128,6 @@ class Main_Window(tk.Frame):
         self.m_Help.add_command(label="Program Folder...", command=open_prog_folder)
         display_info = lambda: self.popup(self, "About LPHK", self.about_image, "A Novation Launchpad Macro Scripting System\nMade by Ella Jameson (nimaid)\n\nVersion: " + VERSION + "\nFile format version: " + files.FILE_VERSION, "Done")
         self.m_Help.add_command(label="About LPHK", command=display_info)
-        self.m_Help.add_command(label="don't click this", command=root.iconify)
         self.m.add_cascade(label="Help", menu=self.m_Help)
 
         c_gap = int(BUTTON_SIZE // 4)
@@ -244,16 +243,15 @@ class Main_Window(tk.Frame):
     def load_layout(self):
         self.modified_layout_save_prompt()
         name = tk.filedialog.askopenfilename(parent=app,
-                                          initialdir=USER_PATH + files.LAYOUT_PATH,
+                                          initialdir=files.LAYOUT_PATH,
                                           title="Load layout",
                                           filetypes=load_layout_filetypes)
         if name:
             files.load_layout_to_lp(name)
-            self.draw_canvas()
 
     def save_layout_as(self):
         name = tk.filedialog.asksaveasfilename(parent=app,
-                                            initialdir=USER_PATH + files.LAYOUT_PATH,
+                                            initialdir=files.LAYOUT_PATH,
                                             title="Save layout as...",
                                             filetypes=save_layout_filetypes)
         if name:
@@ -616,7 +614,7 @@ class Main_Window(tk.Frame):
 
     def import_script(self, textbox, window):
         name = tk.filedialog.askopenfilename(parent=window,
-                                             initialdir=USER_PATH + files.SCRIPT_PATH,
+                                             initialdir=files.SCRIPT_PATH,
                                              title="Import script",
                                              filetypes=load_script_filetypes)
         if name:
@@ -627,7 +625,7 @@ class Main_Window(tk.Frame):
 
     def export_script(self, textbox, window):
         name = tk.filedialog.asksaveasfilename(parent=window,
-                                               initialdir=USER_PATH + files.SCRIPT_PATH,
+                                               initialdir=files.SCRIPT_PATH,
                                                title="Export script",
                                                filetypes=save_script_filetypes)
         if name:

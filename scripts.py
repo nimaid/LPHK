@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
+VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "@LOAD_LAYOUT", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
 ASYNC_HEADERS = ["@ASYNC", "@SIMPLE"]
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -435,6 +435,19 @@ def run_script(script_str, x, y):
                             return idx + 1
                     #RELEASE
                     kb.release(key)
+                elif split_line[0] == "@LOAD_LAYOUT":
+                    layout_name = " ".join(split_line[1:])
+                    print("[scripts] " + coords + "    Load layout " + layout_name)
+                    layout_path = os.path.join(files.LAYOUT_PATH, layout_name)
+                    if not os.path.isfile(layout_path):
+                        print("[scripts] " + coords + "        ERROR: Layout file does not exist.")
+                        return -1
+                    try:
+                        layout = files.load_layout(layout_path, popups=False, save_converted=False)
+                    except files.json.decoder.JSONDecodeError:
+                        print("[scripts] " + coords + "        ERROR: Layout is malformated.")
+                        return -1
+                    files.load_layout_to_lp(layout_path, popups=False, save_converted=False, preload=layout)
                 elif split_line[0] == "OPEN":
                     path_name = " ".join(split_line[1:])
                     print("[scripts] " + coords + "    Open file or folder " + path_name)
@@ -575,6 +588,7 @@ def validate_script(script_str):
         if len(first_line_split) > 1:
             return ("@ASYNC takes no arguments.", script_lines[0])
         temp = script_lines.pop(0)
+    
     if first_line_split[0] == "@SIMPLE":
         if len(first_line_split) < 2:
             return ("@SIMPLE requires a key to bind.", first_line)
@@ -585,6 +599,20 @@ def validate_script(script_str):
         for line in script_lines[1:]:
             if line != "" and line[0] != "-":
                 return ("When @SIMPLE is used, scripts can only contain comments.", line)
+    
+    if first_line_split[0] == "@LOAD_LAYOUT":
+        for line in script_lines[1:]:
+            if line != "" and line[0] != "-":
+                return ("When @LOAD_LAYOUT is used, scripts can only contain comments.", line)
+                
+        layout_path = os.path.join(files.LAYOUT_PATH, " ".join(first_line_split[1:]))
+        if not os.path.isfile(layout_path):
+            return ("'" + layout_path + "' does not exist!", first_line)
+        
+        try:
+            layout = files.load_layout(layout_path, popups=False, save_converted=False, printing=False)
+        except:
+            return ("Layout '" + layout_path + "' is malformatted.", first_line)
     
     #parse labels
     labels = []

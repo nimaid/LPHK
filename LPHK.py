@@ -97,7 +97,8 @@ def init():
 
         else:
             print("[LPHK] Invalid argument: " + sys.argv[1] + ". Ignoring...")
-
+    
+    files.init(USER_PATH)
     sound.init(USER_PATH)
 
 def shutdown():

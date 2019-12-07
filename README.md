@@ -346,6 +346,7 @@ In order of priority:
   * Default layout specification
   * Auto connect overide
   * Force launchpad model setting
+* Temporary fix for LP classic, make use colors from function rows (orange, red)
 * Add more sound commands
   * Use different sound library that supports playing an arbitrary number of sounds, and controlling each sound individually while it plays
   * Add optional label argument to `SOUND`
