@@ -64,17 +64,17 @@ mkdir "%PORTABLEDIR%" 1>nul 2>&1
 xcopy "%DISTDIR%\%EXENAME%" "%PORTABLEDIR%" 1>nul 2>&1
 if not exist "%PORTABLEDIR%\%EXENAME%" goto ERROR
 
-mkdir "%PORTABLEDIR%\user_layouts" 1>nul 2>&1
-xcopy /s "%LPHKDIR%\user_layouts" "%PORTABLEDIR%\user_layouts" 1>nul 2>&1
-if not exist "%PORTABLEDIR%\user_layouts" goto ERROR
+mkdir "%PORTABLEDIR%\user_layouts\examples" 1>nul 2>&1
+xcopy /s "%LPHKDIR%\user_layouts\examples" "%PORTABLEDIR%\user_layouts\examples" 1>nul 2>&1
+if not exist "%PORTABLEDIR%\user_layouts\examples" goto ERROR
 
-mkdir "%PORTABLEDIR%\user_scripts" 1>nul 2>&1
-xcopy /s "%LPHKDIR%\user_scripts" "%PORTABLEDIR%\user_scripts" 1>nul 2>&1
-if not exist "%PORTABLEDIR%\user_scripts" goto ERROR
+mkdir "%PORTABLEDIR%\user_scripts\examples" 1>nul 2>&1
+xcopy /s "%LPHKDIR%\user_scripts\examples" "%PORTABLEDIR%\user_scripts\examples" 1>nul 2>&1
+if not exist "%PORTABLEDIR%\user_scripts\examples" goto ERROR
 
-mkdir "%PORTABLEDIR%\user_sounds" 1>nul 2>&1
-xcopy /s "%LPHKDIR%\user_sounds" "%PORTABLEDIR%\user_sounds" 1>nul 2>&1
-if not exist "%PORTABLEDIR%\user_sounds" goto ERROR
+mkdir "%PORTABLEDIR%\user_sounds\examples" 1>nul 2>&1
+xcopy /s "%LPHKDIR%\user_sounds\examples" "%PORTABLEDIR%\user_sounds\examples" 1>nul 2>&1
+if not exist "%PORTABLEDIR%\user_sounds\examples" goto ERROR
 
 if errorlevel 1 goto ERROR
 

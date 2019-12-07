@@ -54,9 +54,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\..\dist\LPHK\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
-Source: "..\..\user_layouts\*"; DestDir: "{code:GetUserDir}\user_layouts"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\user_scripts\*"; DestDir: "{code:GetUserDir}\user_scripts"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "..\..\user_sounds\*"; DestDir: "{code:GetUserDir}\user_sounds"; Flags: ignoreversion recursesubdirs createallsubdirs; AfterInstall: SetLphkUserPath
+Source: "..\..\user_layouts\examples\*"; DestDir: "{code:GetUserDir}\user_layouts\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\user_scripts\examples\*"; DestDir: "{code:GetUserDir}\user_scripts\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\user_sounds\examples\*"; DestDir: "{code:GetUserDir}\user_sounds\examples"; Flags: ignoreversion recursesubdirs createallsubdirs; AfterInstall: SetLphkUserPath
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
