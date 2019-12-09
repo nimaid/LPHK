@@ -338,7 +338,12 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 In order of priority:
 * Add splash screen to PyInstaller executable, for feedback while loading
   * This feature of PyInstaller is in development at this very moment by [Chrisg2000 and others](https://github.com/pyinstaller/pyinstaller/issues/4354) Once it's done, I can do this!
+* Re-factor to use PyAutoGui
+  * Will allow global hotkeys for BG programs (for OBS/AutoHotKey/etc)
+  * May fix root issues on Linux
+  * Will make everything just easier and cleaner, it's a library for automation in Python
 * Add `@LOAD_LAYOUT` header command to load a specified layout
+  * ~~Basic functionality~~ (BETA, undocumented)
   * Check if layout currently exists when binding to a button (incl during load layout)
     * If not, prompt user if they want to continue anyway
   * Add option to override save changes prompt
