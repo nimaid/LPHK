@@ -336,6 +336,8 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 
 ## TODO List [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 In order of priority:
+* Set unbound buttons to `null` in `.lpl` files
+  * Thank you MatijaK from the Discord for reminding me about this!
 * Add splash screen to PyInstaller executable, for feedback while loading
   * This feature of PyInstaller is in development at this very moment by [Chrisg2000 and others](https://github.com/pyinstaller/pyinstaller/issues/4354) Once it's done, I can do this!
 * Re-factor to use PyAutoGui
