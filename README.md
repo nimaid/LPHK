@@ -339,7 +339,8 @@ In order of priority:
 * Add splash screen to PyInstaller executable, for feedback while loading
   * This feature of PyInstaller is in development at this very moment by [Chrisg2000 and others](https://github.com/pyinstaller/pyinstaller/issues/4354) Once it's done, I can do this!
 * Re-factor to use PyAutoGui
-  * Will allow global hotkeys for BG programs (for OBS/AutoHotKey/etc)
+  * Adds support for more keys
+    * For example, `5` and `num5` are different, where `keyboard` says they are the same
   * May fix root issues on Linux
   * Will make everything just easier and cleaner, it's a library for automation in Python
 * Add `@LOAD_LAYOUT` header command to load a specified layout
@@ -347,11 +348,15 @@ In order of priority:
   * Check if layout currently exists when binding to a button (incl during load layout)
     * If not, prompt user if they want to continue anyway
   * Add option to override save changes prompt
+* Temporary fix for LP classic, make use colors from function rows (orange, red)
+* Add script status icons (bound, playing, queued)
+  * ~~Create icons~~
+  * Draw icons
+  * With this, allow buttons to be bound with the light off
 * Add startup config file
   * Default layout specification
   * Auto connect overide
   * Force launchpad model setting
-* Temporary fix for LP classic, make use colors from function rows (orange, red)
 * Add more sound commands
   * Use different sound library that supports playing an arbitrary number of sounds, and controlling each sound individually while it plays
   * Add optional label argument to `SOUND`
@@ -424,7 +429,6 @@ In order of priority:
 * Add a third argument to `SOUND` for overriding the default sound device
 * Add variables and mathematical evaluation (mostly done!)
 * Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) 
-* Add script status icons (bound, playing, queued)
 * Add syntax highlighting
 * Add GUI scaling
 * Full support for Launchpad Pro
