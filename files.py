@@ -126,7 +126,6 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
     window.app.draw_canvas()
     
     if preload == None:
-        print("FUK")
         layout = load_layout(name, popups=popups, save_converted=save_converted)
     else:
         layout = preload
