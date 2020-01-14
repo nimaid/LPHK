@@ -19,12 +19,18 @@ print("\nTrying to connect to launchpad...")
 
 lp = launchpad.Launchpad()
 
-if lp.Check( 0, MK2_NAME ) or lp.Check( 0, MK3MINI_NAME ):
+if lp.Check( 0, MK2_NAME ):
     lp = launchpad.LaunchpadMk2()
     if lp.Open( 0, MK2_NAME ):
-        print('Connected to MkII/Mini Mk3! Yay!')
+        print('Connected to MkII! Yay!')
     else:
-        print('MkII/Mini Mk3 detected, but connection failed!')
+        print('MkII detected, but connection failed!')
+if lp.Check( 0, MK3MINI_NAME ):
+    lp = launchpad.LaunchpadMk2()
+    if lp.Open( 0, MK3MINI_NAME ):
+        print('Connected to Mini Mk3! Yay!')
+    else:
+        print('Mini Mk3 detected, but connection failed!')
 elif lp.Check( 0, PRO_NAME ):
     lp = launchpad.LaunchpadPro()
     if lp.Open( 0, PRO_NAME ):
