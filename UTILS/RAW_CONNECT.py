@@ -6,29 +6,39 @@ except ImportError:
     except ImportError:
         sys.exit("[LPHK] Error loading launchpad.py")
 
+from getch import pause
+
+MK2_NAME = "Launchpad MK2"
+MK3MINI_NAME = "LPMiniMK3"
+PRO_NAME = "Launchpad Pro"
+CTRL_XL_NAME = "control xl"
+LAUNCHKEY_NAME = "launchkey"
+DICER_NAME = "dicer"
+
+print("\nTrying to connect to launchpad...")
+
 lp = launchpad.Launchpad()
 
-
-if lp.Check( 0, "Launchpad MK2" ):
+if lp.Check( 0, MK2_NAME ) or lp.Check( 0, MK3MINI_NAME ):
     lp = launchpad.LaunchpadMk2()
-    if lp.Open( 0, "Launchpad MK2" ):
-        print('Connected to MkII! Yay!')
+    if lp.Open( 0, MK2_NAME ):
+        print('Connected to MkII/Mini Mk3! Yay!')
     else:
-        raise Exception('MkII detected, but connection failed!')
-elif lp.Check( 0, "Launchpad Pro" ):
+        print('MkII/Mini Mk3 detected, but connection failed!')
+elif lp.Check( 0, PRO_NAME ):
     lp = launchpad.LaunchpadPro()
-    if lp.Open( 0, "Launchpad Pro" ):
+    if lp.Open( 0, PRO_NAME ):
         print('Connected to Pro! Yay!')
     else:
-        raise Exception('Pro detected, but connection failed!')
-elif lp.Check( 0, "control xl" ) or lp.Check( 0, "launchkey" ) or lp.Check( 0, "dicer" ):
-    raise Exception('Unsupported device detected!')
+        print('Pro detected, but connection failed!')
+elif lp.Check( 0, CTRL_XL_NAME ) or lp.Check( 0, LAUNCHKEY_NAME ) or lp.Check( 0, DICER_NAME ):
+    print('Unsupported device detected!')
 elif lp.Check():
     if lp.Open():
         print('Connected to Classic/Mini/S! Yay!')
     else:
-        raise Exception('Classic/Mini/S detected, but connection failed!')
+        print('Classic/Mini/S detected, but connection failed!')
 else:
-    raise Exception('Launchpad appears to be unplugged!')
+    print('Launchpad appears to be unplugged!')
 
-input("Press Enter to exit...")
+pause("\nPress any key to exit...")
