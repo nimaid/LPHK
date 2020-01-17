@@ -1,6 +1,6 @@
-SP_PRESS ctrl
-SP_PRESS shift
+PRESS ctrl
+PRESS shift
 TAP j
-SP_RELEASE shift
-SP_RELEASE ctrl
+RELEASE shift
+RELEASE ctrl
 
