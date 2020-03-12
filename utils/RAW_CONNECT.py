@@ -1,12 +1,6 @@
-import sys
-
-try:
-    import launchpad_py as launchpad
-except ImportError:
-    try:
-        import launchpad
-    except ImportError:
-        sys.exit("[LPHK] Error loading launchpad.py")
+# Shush pycharm
+# noinspection PyUnresolvedReferences
+import launchpad_connector as lpcon
 
 from getch import pause
 
@@ -19,34 +13,19 @@ DICER_NAME = "dicer"
 
 print("\nTrying to connect to launchpad...")
 
-lp = launchpad.Launchpad()
+launchpad = lpcon.get_launchpad()
 
-if lp.Check( 0, MK2_NAME ):
-    lp = launchpad.LaunchpadMk2()
-    if lp.Open( 0, MK2_NAME ):
-        print('Connected to MkII! Yay!')
-    else:
-        print('MkII detected, but connection failed!')
-if lp.Check( 0, MK3MINI_NAME ):
-    lp = launchpad.LaunchpadMk2()
-    if lp.Open( 0, MK3MINI_NAME ):
-        print('Connected to Mini Mk3! Yay!')
-    else:
-        print('Mini Mk3 detected, but connection failed!')
-elif lp.Check( 0, PRO_NAME ):
-    lp = launchpad.LaunchpadPro()
-    if lp.Open( 0, PRO_NAME ):
-        print('Connected to Pro! Yay!')
-    else:
-        print('Pro detected, but connection failed!')
-elif lp.Check( 0, CTRL_XL_NAME ) or lp.Check( 0, LAUNCHKEY_NAME ) or lp.Check( 0, DICER_NAME ):
+if launchpad is -1:
     print('Unsupported device detected!')
-elif lp.Check():
-    if lp.Open():
-        print('Connected to Classic/Mini/S! Yay!')
-    else:
-        print('Classic/Mini/S detected, but connection failed!')
-else:
+elif launchpad is None:
     print('Launchpad appears to be unplugged!')
+else:
+    name = lpcon.get_display_name(launchpad)
+    if lpcon.connect(launchpad):
+        print(f'Connected to {name}! Yay!')
+    else:
+        print(f'{name} detected, but connection failed!')
+
 
 pause("\nPress any key to exit...")
+lpcon.disconnect(launchpad)

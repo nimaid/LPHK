@@ -6,6 +6,7 @@ from functools import partial
 import webbrowser
 
 import scripts, files, lp_colors, lp_events
+from utils import launchpad_connector as lpcon
 
 BUTTON_SIZE = 40
 HS_SIZE = 200
@@ -54,6 +55,7 @@ lp_connected = False
 lp_mode = None
 colors_to_set = [[DEFAULT_COLOR for y in range(9)] for x in range(9)]
 
+
 def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, version_in, platform_in):
     global lp_object
     global launchpad
@@ -77,6 +79,7 @@ def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, versio
         MAIN_ICON = os.path.join(PATH, "resources", "LPHK.gif")
 
     make()
+
 
 class Main_Window(tk.Frame):
     def __init__(self, master=None):
@@ -162,68 +165,54 @@ class Main_Window(tk.Frame):
         lp_mode = "Dummy"
         self.draw_canvas()
         self.enable_menu("Layout")
-    
+
     def connect_lp(self):
         global lp_connected
         global lp_mode
         global lp_object
-        try:
-            if lp_object.Check( 0, MK2_NAME ):
-                lp_object = launchpad.LaunchpadMk2()
-                if lp_object.Open( 0, MK2_NAME ):
-                    lp_connected = True
-                    lp_mode = "Mk2"
-                    lp_object.ButtonFlush()
-                    lp_object.LedCtrlBpm(INDICATOR_BPM)
-                    lp_events.start(lp_object)
-                    self.draw_canvas()
-                    self.enable_menu("Layout")
 
-                    self.stat["text"] = "Connected to Launchpad MkII"
-                    self.stat["bg"] = STAT_ACTIVE_COLOR 
-            elif lp_object.Check( 0, MK3MINI_NAME ):
-                lp_object = launchpad.LaunchpadMk2()
-                if lp_object.Open( 0, MK3MINI_NAME ):
-                    lp_connected = True
-                    lp_mode = "Mk2"
-                    lp_object.ButtonFlush()
-                    lp_object.LedCtrlBpm(INDICATOR_BPM)
-                    lp_events.start(lp_object)
-                    self.draw_canvas()
-                    self.enable_menu("Layout")
+        lp = lpcon.get_launchpad()
 
-                    self.stat["text"] = "Connected to Launchpad Mini Mk3"
-                    self.stat["bg"] = STAT_ACTIVE_COLOR 
-            elif lp_object.Check( 0, PRO_NAME ):
-                lp_object = launchpad.LaunchpadPro()
-                if lp_object.Open( 0, PRO_NAME ):
-                    self.popup(self, "Connect to Launchpad Pro", self.error_image, "This is a BETA feature! The Pro is not fully supported yet, as the bottom and left rows are not mappable currently.\nI (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)\nYou must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the\nupper left corner, then release the 'Setup' key. Please only continue once this step is completed.", "I am in Live mode.")
-                    lp_connected = True
-                    lp_mode = "Pro"
-                    lp_object.ButtonFlush()
-                    lp_object.LedCtrlBpm(INDICATOR_BPM)
-                    lp_events.start(lp_object)
-                    self.draw_canvas()
-                    self.enable_menu("Layout")
-                    
-                    self.stat["text"] = "Connected to Launchpad Pro (BETA)"
-                    self.stat["bg"] = STAT_ACTIVE_COLOR   
-            elif lp_object.Check( 0, CTRL_XL_NAME ) or lp_object.Check( 0, LAUNCHKEY_NAME ) or lp_object.Check( 0, DICER_NAME ):
-                self.popup(self, "Connect to Unsupported Device", self.error_image, "The device you are attempting to use is not currently supported by LPHK, and there are no plans to add support for it.\nPlease voice your feature requests on the Discord or on GitHub.", "OK")
-            elif lp_object.Check():
-                if lp_object.Open():
-                    lp_connected = True
-                    lp_mode = "Mk1"
-                    lp_object.ButtonFlush()
-                    lp_events.start(lp_object)
-                    self.draw_canvas()
-                    self.enable_menu("Layout")
-                    self.stat["text"] = "Connected to Launchpad Classic/Mini/S"
-                    self.stat["bg"] = STAT_ACTIVE_COLOR 
-            else:
-                raise Exception()
-        except:
-            self.popup_choice(self, "No Launchpad Detected...", self.error_image, "Could not detect any connected Launchpads!\nDisconnect and reconnect your USB cable,\nthen click 'Redetect Now'.", [["Ignore", None], ["Redetect Now", self.redetect_lp]])
+        if lp is -1:
+            self.popup(self, "Connect to Unsupported Device", self.error_image,
+                       """The device you are attempting to use is not currently supported by LPHK,
+                       and there are no plans to add support for it.
+                       Please voice your feature requests on the Discord or on GitHub.""",
+                       "OK")
+
+        if lp is None:
+            self.popup_choice(self, "No Launchpad Detected...", self.error_image,
+                              """Could not detect any connected Launchpads!
+                              Disconnect and reconnect your USB cable,
+                              then click 'Redetect Now'.""",
+                              [["Ignore", None], ["Redetect Now", self.redetect_lp]]
+                              )
+            return
+
+        if lpcon.connect(lp):
+            lp_connected = True
+            lp_object = lp
+            lp_mode = lpcon.get_mode(lp)
+
+            if lp_mode is "Pro":
+                self.popup(self, "Connect to Launchpad Pro", self.error_image,
+                           """This is a BETA feature! The Pro is not fully supported yet,as the bottom and left rows are not mappable currently.
+                           I (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)
+                           You must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the
+                           upper left corner, then release the 'Setup' key. Please only continue once this step is completed.""",
+                           "I am in Live mode.")
+
+            lp_object.ButtonFlush()
+
+            # special case?
+            if lp_mode is not "Mk1":
+                lp_object.LedCtrlBpm(INDICATOR_BPM)
+
+            lp_events.start(lp_object)
+            self.draw_canvas()
+            self.enable_menu("Layout")
+            self.stat["text"] = f"Connected to {lpcon.get_display_name(lp)}"
+            self.stat["bg"] = STAT_ACTIVE_COLOR
 
     def disconnect_lp(self):
         global lp_connected

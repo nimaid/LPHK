@@ -55,10 +55,12 @@ LOG_PATH = os.path.join(USER_PATH, LOG_TITLE)
 import logger
 logger.start(LOG_PATH)
 
+
 # Start printing output
 def datetime_str():
-   now = datetime.now()
-   return now.strftime("%d/%m/%Y %H:%M:%S")
+    now = datetime.now()
+    return now.strftime("%d/%m/%Y %H:%M:%S")
+
 
 print("---------------- BEGIN LOG", datetime_str(), "----------------")
 print("LPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
@@ -87,6 +89,8 @@ import lp_events, scripts, kb, files, sound, window
 lp = launchpad.Launchpad()
 
 EXIT_ON_WINDOW_CLOSE = True
+
+
 def init():
     global EXIT_ON_WINDOW_CLOSE
     if len(sys.argv) > 1:
