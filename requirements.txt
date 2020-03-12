@@ -1,0 +1,17 @@
+keyboard==0.13.4
+launchpad-py==0.8.1
+MouseInfo==0.1.2
+Pillow==7.0.0
+PyAutoGUI==0.9.48
+pygame==1.9.6
+PyGetWindow==0.0.8
+PyMsgBox==1.0.7
+pynput==1.6.8
+pyperclip==1.7.0
+PyRect==0.1.4
+PyScreeze==0.1.26
+python-xlib==0.26
+python3-xlib==0.15
+PyTweening==1.0.3
+six==1.14.0
+tkcolorpicker==2.1.3

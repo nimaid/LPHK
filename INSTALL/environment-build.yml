@@ -6,6 +6,7 @@ dependencies:
   - pip
   - tk
   - pip:
+    - pyautogui
     - keyboard
     - launchpad-py
     - pillow
