@@ -2,7 +2,7 @@
 A Novation Launchpad macro scripting system.
 
 Pyautogui checklist (for the time being) https://pypi.org/project/PyAutoGUI/
-- [ ] install
+- [x] install
 - [ ] implement
 - [ ] Add notice about the required libs on windows and mac
 

@@ -122,10 +122,12 @@ def shutdown():
             os.execv(sys.executable, ["\"" + sys.executable + "\""] + sys.argv)
     sys.exit("[LPHK] Shutting down...")
 
+
 def main():
     init()
     window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH, VERSION, PLATFORM)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
+
 
 main()

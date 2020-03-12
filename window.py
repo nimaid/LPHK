@@ -153,7 +153,7 @@ class Main_Window(tk.Frame):
         self.m.entryconfig(name, state="disabled")
     
     def connect_dummy(self):
-        #WIP
+        # WIP
         global lp_connected
         global lp_mode
         global lp_object

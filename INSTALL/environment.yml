@@ -13,3 +13,4 @@ dependencies:
     - pygame
     - pynput
     - tkcolorpicker
+    - py-getch
