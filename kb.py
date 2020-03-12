@@ -1,32 +1,33 @@
 import ms
 from pynput import keyboard
-from pynput.keyboard import KeyCode, Controller
-
-media_keys = {
-    "vol_up": 57392,
-    "vol_down": 57390,
-    "mute": 57376,
-    "play_pause": 57378,
-    "prev_track": 57360,
-    "next_track": 57369,
-    "mouse_left": "mouse_left",
-    "mouse_middle": "mouse_middle",
-    "mouse_right": "mouse_right"
-}
+from pynput.keyboard import KeyCode, Controller as KeyboardController
 
 pressed = set()
-controller = Controller()
+keyboard_controller = KeyboardController()
+
+media_key_map = {
+    "vol_up": "media_volume_up",
+    "vol_down": "media_volume_down",
+    "mute": "media_volume_mute",
+    "play_pause": "media_play_pause",
+    "prev_track": "media_previous",
+    "next_track": "media_next",
+    "mouse_left": "left",
+    "mouse_middle": "middle",
+    "mouse_right": "right"
+}
 
 
 def sp(name):
+    # This is safe because we know the names in the pynput lib
+    if name in media_key_map:
+        name = media_key_map[name]
+
     try:
-        # return keyboard.key_to_scan_codes(str(name))[0]
-        # return KeyCode.from_char(name)
         return keyboard.Key[name]
     except KeyError as e:
         print(str(e))
         try:
-            # return keyboard.KeyCode[name]
             return KeyCode.from_char(name)
         except KeyError as e2:
             print(str(e2))
@@ -34,14 +35,12 @@ def sp(name):
 
 
 def press(key):
-    print(key)
-
     pressed.add(key)
     if type(key) == str:
         if "mouse_" in key:
             ms.press(key[6:])
             return
-    controller.press(key)
+    keyboard_controller.press(key)
 
 
 def release(key):
@@ -50,7 +49,7 @@ def release(key):
         if "mouse_" in key:
             ms.release(key[6:])
             return
-    controller.release(key)
+    keyboard_controller.release(key)
 
 
 def release_all():
@@ -68,4 +67,4 @@ def tap(key):
 
 
 def write(string):
-    controller.type(string)
+    keyboard_controller.type(string)

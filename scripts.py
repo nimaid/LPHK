@@ -232,13 +232,13 @@ def run_script(script_str, x, y):
                             return idx + 1             
                 elif split_line[0] == "M_STORE":
                     print("[scripts] " + coords + "    Store mouse position")
-                    m_pos = ms.getXY()
+                    m_pos = ms.get_pos()
                 elif split_line[0] == "M_RECALL":
                     if m_pos == tuple():
                         print("[scripts] " + coords + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
                     else:
                         print("[scripts] " + coords + "    Recall mouse position " + str(m_pos))
-                        ms.setXY(m_pos[0], m_pos[1])
+                        ms.set_pos(m_pos[0], m_pos[1])
                 elif split_line[0] == "M_RECALL_LINE":
                     x1, y1 = m_pos
 
@@ -255,25 +255,25 @@ def run_script(script_str, x, y):
                     else:
                         print("[scripts] " + coords + "    Recall mouse position " + str(m_pos) + " in a line by " + str(skip) + " pixels per step and wait " + split_line[1] + " milliseconds between each step")
 
-                    x_C, y_C = ms.getXY()
+                    x_C, y_C = ms.get_pos()
                     points = ms.line_coords(x_C, y_C, x1, y1)
                     for x_M, y_M in points[::skip]:
                         if check_kill(x, y, is_async):
                             return -1
-                        ms.setXY(x_M, y_M)
+                        ms.set_pos(x_M, y_M)
                         if (delay != None) and (delay > 0):
                             if not safe_sleep(delay, x, y, is_async):
                                 return -1
                 elif split_line[0] == "M_MOVE":
                     if len(split_line) >= 3:
                         print("[scripts] " + coords + "    Relative mouse movement (" + split_line[1] + ", " + str(split_line[2]) + ")")
-                        ms.moveXY(float(split_line[1]), float(split_line[2]))
+                        ms.move_to_pos(float(split_line[1]), float(split_line[2]))
                     else:
                         print("[scripts] " + coords + "    Both X and Y are required for mouse movement, skipping...")
                 elif split_line[0] == "M_SET":
                     if len(split_line) >= 3:
                         print("[scripts] " + coords + "    Set mouse position to (" + split_line[1] + ", " + str(split_line[2]) + ")")
-                        ms.setXY(float(split_line[1]), float(split_line[2]))
+                        ms.set_pos(float(split_line[1]), float(split_line[2]))
                     else:
                         print("[scripts] " + coords + "    Both X and Y are required for mouse positioning, skipping...")
                 elif split_line[0] == "M_SCROLL":
@@ -306,7 +306,7 @@ def run_script(script_str, x, y):
                     for x_M, y_M in points[::skip]:
                         if check_kill(x, y, is_async):
                             return -1
-                        ms.setXY(x_M, y_M)
+                        ms.set_pos(x_M, y_M)
                         if (delay != None) and (delay > 0):
                             if not safe_sleep(delay, x, y, is_async):
                                 return -1
@@ -327,13 +327,13 @@ def run_script(script_str, x, y):
                     else:
                         print("[scripts] " + coords + "    Mouse line move relative (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step and wait " + split_line[3] + " milliseconds between each step")
 
-                    x_C, y_C = ms.getXY()
+                    x_C, y_C = ms.get_pos()
                     x_N, y_N = x_C + x1, y_C + y1
                     points = ms.line_coords(x_C, y_C, x_N, y_N)
                     for x_M, y_M in points[::skip]:
                         if check_kill(x, y, is_async):
                             return -1
-                        ms.setXY(x_M, y_M)
+                        ms.set_pos(x_M, y_M)
                         if (delay != None) and (delay > 0):
                             if not safe_sleep(delay, x, y, is_async):
                                 return -1
@@ -354,12 +354,12 @@ def run_script(script_str, x, y):
                     else:
                         print("[scripts] " + coords + "    Mouse line set (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step and wait " + split_line[3] + " milliseconds between each step")
 
-                    x_C, y_C = ms.getXY()
+                    x_C, y_C = ms.get_pos()
                     points = ms.line_coords(x_C, y_C, x1, y1)
                     for x_M, y_M in points[::skip]:
                         if check_kill(x, y, is_async):
                             return -1
-                        ms.setXY(x_M, y_M)
+                        ms.set_pos(x_M, y_M)
                         if (delay != None) and (delay > 0):
                             if not safe_sleep(delay, x, y, is_async):
                                 return -1
@@ -426,7 +426,7 @@ def run_script(script_str, x, y):
                     print("[scripts] " + coords + "    Simple keybind: " + split_line[1])
                     #PRESS
                     key = kb.sp(split_line[1])
-                    releasefunc = kb.release(key)
+                    releasefunc = lambda: kb.release(key)
                     kb.press(key)
                     #WAIT_UNPRESSED
                     while lp_events.pressed[x][y]:
