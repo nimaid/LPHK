@@ -398,7 +398,6 @@ class Main_Window(tk.Frame):
         w = tk.Toplevel(self)
         w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
         w.resizable(False, False)
-        w.bind('<Escape>', close)
 
         if MAIN_ICON != None:
             if os.path.splitext(MAIN_ICON)[1].lower() == ".gif":
