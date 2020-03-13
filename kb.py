@@ -1,8 +1,6 @@
 import ms
 from pynput import keyboard
 from pynput.keyboard import KeyCode, Controller as KeyboardController
-import pyautogui
-from pyautogui import KEY_NAMES as pyautogui_keys
 
 pressed = set()
 keyboard_controller = KeyboardController()
@@ -14,25 +12,6 @@ media_key_map = {
     "play_pause": "media_play_pause",
     "prev_track": "media_previous",
     "next_track": "media_next",
-    "mouse_left": "left",
-    "mouse_middle": "middle",
-    "mouse_right": "right"
-}
-media_key_map_pyautogui = {
-    "alt": "alt",
-    "alt_gr": "altright",
-    "shift_r": "shiftright",
-    "scroll_lock": "scrolllock",
-    "print_screen": "printscreen",
-    "page_up": "pgup",
-    "page_down": "pgdn",
-    "num_lock": "numlock",
-    "vol_up": "volumeup",
-    "vol_down": "volumedown",
-    "mute": "volumemute",
-    "play_pause": "playpause",
-    "prev_track": "prevtrack",
-    "next_track": "nexttrack",
     "mouse_left": "left",
     "mouse_middle": "middle",
     "mouse_right": "right"
@@ -57,16 +36,6 @@ def _sp_pynput(name):
         except KeyError as e2:
             print(e2)
             return None
-
-
-def _sp_pyautogui(name):
-    if name in media_key_map_pyautogui:
-        name = media_key_map_pyautogui[name]
-
-    if name in pyautogui_keys:
-        return name
-
-    return None
 
 
 def press(key):

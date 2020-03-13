@@ -219,7 +219,7 @@ class Main_Window(tk.Frame):
         try:
             scripts.unbind_all()
             lp_events.timer.cancel()
-            lp_object.Close()
+            lpcon.disconnect(lp_object)
         except:
             self.redetect_lp()
         lp_connected = False
@@ -398,6 +398,8 @@ class Main_Window(tk.Frame):
         w = tk.Toplevel(self)
         w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
         w.resizable(False, False)
+        w.bind('<Escape>', close)
+
         if MAIN_ICON != None:
             if os.path.splitext(MAIN_ICON)[1].lower() == ".gif":
                 dummy = None
@@ -723,9 +725,14 @@ def make():
     app.after(100, app.connect_lp)
     app.mainloop()
 
+
 def close():
-    global root_destroyed
+    global root_destroyed, lp_object, lp_connected
     app.modified_layout_save_prompt()
+
+    if lp_object is not None and lp_connected:
+        lpcon.disconnect(lp_object)
+
     if not root_destroyed:
         root.destroy()
         root_destroyed = True

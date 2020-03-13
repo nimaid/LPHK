@@ -564,7 +564,7 @@ def unbind_all():
     to_run = []
     for x in range(9):
         for y in range(9):
-            if threads[x][y] != None:
+            if threads[x][y] is not None:
                 if threads[x][y].isAlive():
                     threads[x][y].kill.set()
     files.curr_layout = None

@@ -85,6 +85,7 @@ except ImportError:
 print("")
 
 import lp_events, scripts, kb, files, sound, window
+from utils import launchpad_connector
 
 lp = launchpad.Launchpad()
 
@@ -116,7 +117,7 @@ def shutdown():
     if window.lp_connected:
         scripts.unbind_all()
         lp_events.timer.cancel()
-        lp.Close()
+        launchpad_connector.disconnect(lp)
         window.lp_connected = False
     logger.stop()
     if window.restart:

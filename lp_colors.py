@@ -145,6 +145,6 @@ def raw_clear():
     for x in range(9):
         for y in range(9):
             if window.lp_mode == "Mk1":
-                 lp_object.LedCtrlXY(x, y, 0, 0)
+                lp_object.LedCtrlXY(x, y, 0, 0)
             else:
                 lp_object.LedCtrlXYByCode(x, y, 0)
