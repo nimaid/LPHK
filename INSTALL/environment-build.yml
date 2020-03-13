@@ -13,3 +13,4 @@ dependencies:
     - tkcolorpicker
     - pyinstaller
     - py-getch
+    - pyautogui
