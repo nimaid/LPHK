@@ -1,12 +1,6 @@
 # LPHK (LaunchPad HotKey)
 A Novation Launchpad macro scripting system.
 
-Pyautogui checklist (for the time being, will be removed soon) https://pypi.org/project/PyAutoGUI/
-- [x] install
-- [ ] implement
-- [x] Abstract lp connection system
-- [ ] Add notice about the required libs on windows and mac
-
 <img src="https://raw.githubusercontent.com/nimaid/LPHK/master/README_FILES/LPHK_update_4.png" alt="Update 4"/>
 
 ## Table of Contents
