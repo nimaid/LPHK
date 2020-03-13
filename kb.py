@@ -29,12 +29,10 @@ def _sp_pynput(name):
 
     try:
         return keyboard.Key[name]
-    except KeyError as e:
-        print(e)
+    except KeyError:
         try:
             return KeyCode.from_char(name)
-        except KeyError as e2:
-            print(e2)
+        except KeyError:
             return None
 
 
@@ -45,7 +43,6 @@ def press(key):
             ms.press(key[6:])
             return
     keyboard_controller.press(key)
-    # pyautogui.keyDown(key)
 
 
 def release(key):
@@ -55,7 +52,6 @@ def release(key):
             ms.release(key[6:])
             return
     keyboard_controller.release(key)
-    # pyautogui.keyUp(key)
 
 
 def release_all():
@@ -70,9 +66,7 @@ def tap(key):
             return
     press(key)
     release(key)
-    pyautogui.press(key)
 
 
 def write(string):
     keyboard_controller.type(string)
-    # pyautogui.write(string)

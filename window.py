@@ -19,13 +19,6 @@ MK1_DEFAULT_COLOR = [0, 255, 0]
 INDICATOR_BPM = 480
 BUTTON_FONT = ("helvetica", 11, "bold")
 
-MK2_NAME = "Launchpad MK2"
-MK3MINI_NAME = "LPMiniMK3"
-PRO_NAME = "Launchpad Pro"
-CTRL_XL_NAME = "control xl"
-LAUNCHKEY_NAME = "launchkey"
-DICER_NAME = "dicer"
-
 PATH = None
 PROG_PATH = None
 USER_PATH = None
@@ -726,11 +719,8 @@ def make():
 
 
 def close():
-    global root_destroyed, lp_object, lp_connected
+    global root_destroyed, launchpad
     app.modified_layout_save_prompt()
-
-    if lp_object is not None and lp_connected:
-        lpcon.disconnect(lp_object)
 
     if not root_destroyed:
         root.destroy()
