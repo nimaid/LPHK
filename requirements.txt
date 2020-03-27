@@ -2,6 +2,7 @@ launchpad-py==0.8.1
 MouseInfo==0.1.2
 Pillow==7.0.0
 py-getch==1.0.1
+PyAutoGUI==0.9.48
 pygame==1.9.6
 PyGetWindow==0.0.8
 PyMsgBox==1.0.7

@@ -12,3 +12,4 @@ dependencies:
     - pynput
     - tkcolorpicker
     - py-getch
+    - pyautogui
