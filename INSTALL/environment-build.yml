@@ -6,9 +6,7 @@ dependencies:
   - pip
   - tk
   - pip:
-    #    - launchpad-py
-    # custom version for MK3 support
-    - "--editable=git+git://github.com/FMMT666/launchpad.py.git@3e3fc3b2589d9ced80bc6c9b218dd90c8a2dd485"
+    - git+git://github.com/FMMT666/launchpad.py.git@3e3fc3b2589d9ced80bc6c9b218dd90c8a2dd485"
     - pillow
     - pygame
     - pynput
