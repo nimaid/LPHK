@@ -11,6 +11,6 @@ dependencies:
     - pygame
     - pynput
     - tkcolorpicker
-    - pyinstaller
+    - https://github.com/pyinstaller/pyinstaller/archive/develop.zip
     - py-getch
     - pyautogui
