@@ -1,7 +1,8 @@
 import launchpad_py as launchpad
 
 MK2_NAME = "Launchpad MK2"
-MK3MINI_NAME = "LPMiniMK3"
+# MK3MINI_NAME = "LPMiniMK3"
+MK3MINI_NAME = "mk3"
 PRO_NAME = "Launchpad Pro"
 CTRL_XL_NAME = "control xl"
 LAUNCHKEY_NAME = "launchkey"
@@ -10,11 +11,13 @@ DICER_NAME = "dicer"
 PAD_MODES = {
     launchpad.Launchpad: "Mk1",
     launchpad.LaunchpadMk2: "Mk2",
+    launchpad.launchpad.LaunchpadMk3: "Mk3",
     launchpad.LaunchpadPro: "Pro",
 }
 PAD_TEXT = {
     launchpad.Launchpad: "Classic/Mini/S",
     launchpad.LaunchpadMk2: "MkII",
+    launchpad.launchpad.LaunchpadMk3: "Mk3",
     launchpad.LaunchpadPro: "Pro (BETA)",
 }
 
@@ -22,8 +25,11 @@ PAD_TEXT = {
 def get_launchpad():
     lp = launchpad.Launchpad()
 
-    if lp.Check(0, MK2_NAME) or lp.Check(0, MK3MINI_NAME):
+    if lp.Check(0, MK2_NAME):
         return launchpad.LaunchpadMk2()
+    # the MK3 has two midi devices, we need the second one
+    if lp.Check(1, MK3MINI_NAME):
+        return launchpad.launchpad.LaunchpadMk3()
     if lp.Check(0, PRO_NAME):
         return launchpad.LaunchpadPro()
 
@@ -56,6 +62,11 @@ def get_display_name(pad):
 
 
 def connect(pad):
+    name = get_display_name(pad)
+
+    if name is "Mk3":
+        pad.Open(1)
+
     return pad.Open()
 
 
