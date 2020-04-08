@@ -19,19 +19,6 @@ media_key_map = {
     "mouse_right": "right"
 }
 
-vk_codes = {
-    "num0": 96,
-    "num1": 97,
-    "num2": 98,
-    "num3": 99,
-    "num4": 100,
-    "num5": 101,
-    "num6": 102,
-    "num7": 103,
-    "num8": 104,
-    "num9": 105
-}
-
 media_key_map_pyautogui = {
     "alt": "alt",
     "alt_gr": "altright",
@@ -54,7 +41,7 @@ media_key_map_pyautogui = {
 
 
 def sp(name):
-    return _sp_pynput(name)
+    return _sp_pyautogui(name)
 
 
 def _sp_pyautogui(name):
@@ -68,9 +55,6 @@ def _sp_pyautogui(name):
 
 
 def _sp_pynput(name):
-    if name in vk_codes:
-        return KeyCode.from_vk(vk_codes[name])
-
     # This is safe because we know the names in the pynput lib
     if name in media_key_map:
         name = media_key_map[name]
@@ -90,8 +74,8 @@ def press(key):
         if "mouse_" in key:
             ms.press(key[6:])
             return
-    keyboard_controller.press(key)
-    # pyautogui.keyDown(key)
+    # keyboard_controller.press(key)
+    pyautogui.keyDown(key)
 
 
 def release(key):
@@ -100,8 +84,8 @@ def release(key):
         if "mouse_" in key:
             ms.release(key[6:])
             return
-    keyboard_controller.release(key)
-    # pyautogui.keyUp(key)
+    # keyboard_controller.release(key)
+    pyautogui.keyUp(key)
 
 
 def release_all():
@@ -114,11 +98,11 @@ def tap(key):
         if "mouse_" in key:
             ms.click(key[6:])
             return
-    press(key)
-    release(key)
-    # pyautogui.press(key)
+    # press(key)
+    # release(key)
+    pyautogui.press(key)
 
 
 def write(string):
-    keyboard_controller.type(string)
-    # pyautogui.write(string)
+    # keyboard_controller.type(string)
+    pyautogui.write(string)
