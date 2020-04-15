@@ -737,6 +737,7 @@ def make():
 def close():
     global root_destroyed
     app.modified_layout_save_prompt()
+    app.disconnect_lp()
     if not root_destroyed:
         root.destroy()
         root_destroyed = True
