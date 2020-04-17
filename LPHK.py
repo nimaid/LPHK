@@ -87,19 +87,45 @@ import lp_events, scripts, kb, files, sound, window
 lp = launchpad.Launchpad()
 
 EXIT_ON_WINDOW_CLOSE = True
+LOAD_ON_STARTUP = None
+
 def init():
     global EXIT_ON_WINDOW_CLOSE
+    global LOAD_ON_STARTUP
     if len(sys.argv) > 1:
         if ("--debug" in sys.argv) or ("-d" in sys.argv):
             EXIT_ON_WINDOW_CLOSE = False
             print("[LPHK] Debugging mode active! Will not shut down on window close.")
             print("[LPHK] Run shutdown() to manually close the program correctly.")
+        if "--open" in sys.argv:
+            try:
+                LOAD_ON_STARTUP = sys.argv[sys.argv.index("--open") + 1]
+                if not os.path.exists(LOAD_ON_STARTUP):
+                    LOAD_ON_STARTUP = None
+                    print("[LPHK] File not found!")
+            except:
+                print("[LPHK] File is missing (--open)")
+        if "-o" in sys.argv:
+            try:
+                LOAD_ON_STARTUP = sys.argv[sys.argv.index("-o") + 1]
+                if not os.path.exists(LOAD_ON_STARTUP):
+                    LOAD_ON_STARTUP = None
+                    print("[LPHK] File not found!")
+            except:
+                print("[LPHK] File is missing (-o)")
 
         else:
             print("[LPHK] Invalid argument: " + sys.argv[1] + ". Ignoring...")
     
     files.init(USER_PATH)
     sound.init(USER_PATH)
+
+    # If user not used -o or --open option
+    if LOAD_ON_STARTUP == None:
+        # Check default file exists
+        LOAD_ON_STARTUP = os.path.join(files.LAYOUT_PATH + "\\default.lpl")
+        if not os.path.exists(LOAD_ON_STARTUP):
+            LOAD_ON_STARTUP = None
 
 def shutdown():
     if lp_events.timer != None:
@@ -124,7 +150,7 @@ def shutdown():
 
 def main():
     init()
-    window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH, VERSION, PLATFORM)
+    window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH, VERSION, PLATFORM, LOAD_ON_STARTUP)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
 

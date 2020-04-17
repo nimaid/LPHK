@@ -28,7 +28,7 @@ DICER_NAME = "dicer"
 PATH = None
 PROG_PATH = None
 USER_PATH = None
-
+LOAD_ON_STARTUP = None
 VERSION = None
 
 PLATFORM = None
@@ -54,7 +54,7 @@ lp_connected = False
 lp_mode = None
 colors_to_set = [[DEFAULT_COLOR for y in range(9)] for x in range(9)]
 
-def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, version_in, platform_in):
+def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, version_in, platform_in, load_on_startup):
     global lp_object
     global launchpad
     global PATH
@@ -63,6 +63,7 @@ def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, versio
     global VERSION
     global PLATFORM
     global MAIN_ICON
+    global LOAD_ON_STARTUP
     lp_object = lp_object_in
     launchpad = launchpad_in
     PATH = path_in
@@ -70,6 +71,7 @@ def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, versio
     USER_PATH = user_path_in
     VERSION = version_in
     PLATFORM = platform_in
+    LOAD_ON_STARTUP = load_on_startup
     
     if PLATFORM == "windows":
         MAIN_ICON = os.path.join(PATH, "resources", "LPHK.ico")
@@ -224,6 +226,8 @@ class Main_Window(tk.Frame):
                 raise Exception()
         except:
             self.popup_choice(self, "No Launchpad Detected...", self.error_image, "Could not detect any connected Launchpads!\nDisconnect and reconnect your USB cable,\nthen click 'Redetect Now'.", [["Ignore", None], ["Redetect Now", self.redetect_lp]])
+        if LOAD_ON_STARTUP != None:
+            files.load_layout_to_lp(LOAD_ON_STARTUP)
 
     def disconnect_lp(self):
         global lp_connected
