@@ -84,27 +84,29 @@ def release_key(hexKeyCode):
 # List of all codes for keys:
 # # msdn.microsoft.com/en-us/library/dd375731
 key_map = {
-    "0": 0x30,
-    "1": 0x31,
-    "2": 0x32,
-    "3": 0x33,
-    "4": 0x34,
-    "5": 0x35,
-    "6": 0x36,
-    "7": 0x37,
-    "8": 0x38,
-    "9": 0x39,
+    "alt": 0x12,
+    "alt_gr": 0x12,  # TODO: find a way to send two keys
 
-    "num0": 0x60,
-    "num1": 0x61,
-    "num2": 0x62,
-    "num3": 0x63,
-    "num4": 0x64,
-    "num5": 0x65,
-    "num6": 0x66,
-    "num7": 0x67,
-    "num8": 0x68,
-    "num9": 0x69,
+    "apps": 0x5D,
+
+    "backspace": 0x08,
+    "caps_lock": 0x14,
+
+    # cmd and win keys are the same
+    "cmd": 0x5B,
+    "win": 0x5B,
+    "win_r": 0x5C,
+
+    "ctrl": 0x11,
+    "ctrl_l": 0xA2,
+    "ctrl_r": 0xA3,
+
+    "delete": 0x2E,
+
+    "down": 0x28,
+    "end": 0x23,
+    "enter": 0x0D,
+    "esc": 0x1B,
 
     "f1": 0x70,
     "f2": 0x71,
@@ -130,6 +132,56 @@ key_map = {
     "f22": 0x85,
     "f23": 0x86,
     "f24": 0x87,
+
+    "home": 0x24,
+    "insert": 0x2D,
+    "left": 0x25,
+
+    "menu": 0xA4,  # left menu key
+    "menu_r": 0xA5,
+
+    "mute": 0xAD,
+    "next_track": 0xB0,
+    "num_lock": 0x90,
+    "page_down": 0x22,
+    "page_up": 0x21,
+    "pause": 0x13,
+    "play_pause": 0xB3,
+    "prev_track": 0xB1,
+    "print_screen": 0x2C,
+    "right": 0x27,
+    "scroll_lock": 0x91,
+
+    "shift": 0x10,
+    "shift_l": 0xA0,
+    "shift_r": 0xA1,
+
+    "space": 0x20,
+    "tab": 0x09,
+    "vol_down": 0xAE,
+    "vol_up": 0xAF,
+
+    "0": 0x30,
+    "1": 0x31,
+    "2": 0x32,
+    "3": 0x33,
+    "4": 0x34,
+    "5": 0x35,
+    "6": 0x36,
+    "7": 0x37,
+    "8": 0x38,
+    "9": 0x39,
+
+    "num0": 0x60,
+    "num1": 0x61,
+    "num2": 0x62,
+    "num3": 0x63,
+    "num4": 0x64,
+    "num5": 0x65,
+    "num6": 0x66,
+    "num7": 0x67,
+    "num8": 0x68,
+    "num9": 0x69,
 
     "a": 0x41,
     "b": 0x42,
@@ -157,13 +209,6 @@ key_map = {
     "x": 0x58,
     "y": 0x59,
     "z": 0x5A,
-
-    "space": 0x20,
-
-    "cmd": 0x5B,
-    "win": 0x5B,
-    "win_r": 0x5C,
-    "apps": 0x5D,
 }
 
 

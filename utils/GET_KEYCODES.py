@@ -7,6 +7,9 @@ def press_callback(key):
     # print("Name: '" + event.name + "', Scan Code: '" + str(keyboard.key_to_scan_codes(event.name)[0]) + "'")
     print('{0} pressed'.format(key))
 
+    if hasattr(key, 'vk'):
+        print('vk code {0} pressed'.format(key.vk))
+
 
 def release_callback(key):
     print('{0} released'.format(key))
