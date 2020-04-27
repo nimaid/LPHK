@@ -12,7 +12,17 @@ media_key_map = {
     "next_track": "media_next",
     "mouse_left": "left",
     "mouse_middle": "middle",
-    "mouse_right": "right"
+    "mouse_right": "right",
+    "num0": 0x60,
+    "num1": 0x61,
+    "num2": 0x62,
+    "num3": 0x63,
+    "num4": 0x64,
+    "num5": 0x65,
+    "num6": 0x66,
+    "num7": 0x67,
+    "num8": 0x68,
+    "num9": 0x69,
 }
 
 media_key_map_pyautogui = {
