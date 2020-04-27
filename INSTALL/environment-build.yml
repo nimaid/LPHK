@@ -6,7 +6,7 @@ dependencies:
   - pip
   - tk
   - pip:
-    - git+git://github.com/FMMT666/launchpad.py.git@3e3fc3b2589d9ced80bc6c9b218dd90c8a2dd485
+    - git+git://github.com/FMMT666/launchpad.py.git@master
     - pillow
     - pygame
     - pynput
