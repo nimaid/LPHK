@@ -1,7 +1,10 @@
 from pynput import keyboard
-from pynput.keyboard import KeyCode, Controller as KeyboardController
+from pynput.keyboard import KeyCode
+# from pynput.keyboard import Controller as KeyboardController
+import pyautogui
+from pyautogui import KEY_NAMES as pyautogui_keys
 
-keyboard_controller = KeyboardController()
+# keyboard_controller = KeyboardController()
 
 media_key_map = {
     "vol_up": "media_volume_up",
@@ -47,6 +50,20 @@ media_key_map_pyautogui = {
 
 
 def sp(name):
+    return _sp_pyautogui(name)
+
+
+def _sp_pyautogui(name):
+    if name in media_key_map_pyautogui:
+        name = media_key_map_pyautogui[name]
+
+    if name in pyautogui_keys:
+        return name
+
+    return None
+
+
+def _sp_pynput(name):
     # This is safe because we know the names in the pynput lib
     if name in media_key_map:
         name = media_key_map[name]
@@ -61,12 +78,15 @@ def sp(name):
 
 
 def press(key):
-    keyboard_controller.press(key)
+    # keyboard_controller.press(key)
+    pyautogui.keyDown(key)
 
 
 def release(key):
-    keyboard_controller.release(key)
+    # keyboard_controller.release(key)
+    pyautogui.keyUp(key)
 
 
 def write(string):
-    keyboard_controller.type(string)
+    # keyboard_controller.type(string)
+    pyautogui.write(string)
