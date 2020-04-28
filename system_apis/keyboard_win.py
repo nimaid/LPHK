@@ -159,6 +159,7 @@ key_map = {
 
     "space": 0x20,
     "tab": 0x09,
+    "up": 0x26,
     "vol_down": 0xAE,
     "vol_up": 0xAF,
 
@@ -210,6 +211,11 @@ key_map = {
     "x": 0x58,
     "y": 0x59,
     "z": 0x5A,
+
+    "+": 0xBB,
+    "-": 0xBD,
+    ".": 0xBE,
+    ",": 0xBC,
 }
 
 
