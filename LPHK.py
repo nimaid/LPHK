@@ -55,10 +55,12 @@ LOG_PATH = os.path.join(USER_PATH, LOG_TITLE)
 import logger
 logger.start(LOG_PATH)
 
+
 # Start printing output
 def datetime_str():
-   now = datetime.now()
-   return now.strftime("%d/%m/%Y %H:%M:%S")
+    now = datetime.now()
+    return now.strftime("%d/%m/%Y %H:%M:%S")
+
 
 print("---------------- BEGIN LOG", datetime_str(), "----------------")
 print("LPHK - LaunchPad HotKey - A Novation Launchpad Macro Scripting System")
@@ -83,10 +85,13 @@ except ImportError:
 print("")
 
 import lp_events, scripts, kb, files, sound, window
+from utils import launchpad_connector
 
 lp = launchpad.Launchpad()
 
 EXIT_ON_WINDOW_CLOSE = True
+
+
 def init():
     global EXIT_ON_WINDOW_CLOSE
     if len(sys.argv) > 1:
@@ -112,7 +117,7 @@ def shutdown():
     if window.lp_connected:
         scripts.unbind_all()
         lp_events.timer.cancel()
-        lp.Close()
+        launchpad_connector.disconnect(lp)
         window.lp_connected = False
     logger.stop()
     if window.restart:
@@ -122,10 +127,12 @@ def shutdown():
             os.execv(sys.executable, ["\"" + sys.executable + "\""] + sys.argv)
     sys.exit("[LPHK] Shutting down...")
 
+
 def main():
     init()
     window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH, VERSION, PLATFORM)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
+
 
 main()

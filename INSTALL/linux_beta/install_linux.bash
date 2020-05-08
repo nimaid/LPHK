@@ -86,7 +86,7 @@ function uninstall_LPHK () {
 
 
 # If conda isn't found, prompt to install it as well
-conda > /dev/null 2>1 && CONDAGOOD=1 || CONDAGOOD=0
+conda > /dev/null 2>&1 && CONDAGOOD=1 || CONDAGOOD=0
 if [ $CONDAGOOD = 0 ]; then
 	echo "No conda found. Install Miniconda3 and LPHK?"
 	prompt_yn
@@ -103,7 +103,7 @@ if [ $CONDAGOOD = 0 ]; then
 fi
 
 # If LPHK is already installed, offer to uninstall
-LPHKENVDIR=$(cat ~/.conda/environments.txt | grep LPHK) > /dev/null 2>1
+LPHKENVDIR=$(cat ~/.conda/environments.txt | grep LPHK) > /dev/null 2>&1
 if [ ! -z $LPHKENVDIR ]; then
 	echo "LPHK already installed! Uninstall LPHK?"
 	prompt_yn
@@ -147,7 +147,7 @@ else
 		echo "Installing LPHK..."
 		install_LPHK
         # Get the new location after install
-        LPHKENVDIR=$(cat ~/.conda/environments.txt | grep LPHK) > /dev/null 2>1
+        LPHKENVDIR=$(cat ~/.conda/environments.txt | grep LPHK) > /dev/null 2>&1
 		echo "LPHK environment set up. Run '[your lphk directory]/run.bash'"
 	else
 		echo "Not installing LPHK, exiting..."

@@ -100,6 +100,7 @@ I have specifically chosen to do my best to develop this using as many cross pla
 
 ## Installation [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 *Note: Files used in the installation are named with a version number, and will change with each new release. The word `VERSION` is used in the below filenames and paths to denote where this version number will be. When going to [https://github.com/nimaid/LPHK/releases/latest](https://github.com/nimaid/LPHK/releases/latest), it will redirect to the page with the latest versions of these files, so the correct value of `VERSION` should be plainly obvious.*
+*Note: Because pyautogui is used you may need to install some extra libraries to your machine, more info on this page: [https://pyautogui.readthedocs.io/en/latest/install.html](https://pyautogui.readthedocs.io/en/latest/install.html)*
 
 ### Windows Install/Run Instructions [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 *Is these pre-built binaries do not work for you, please share the issue in the Discord or as a GitHub issue. In the meantime, advanced users can use `INSTALL\environment.yml` to install the LPHK conda environment, and then run `python LPHK.py` after activating it.*
