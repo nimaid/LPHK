@@ -219,7 +219,7 @@ def run_script(script_str, x, y):
                     webbrowser.open_new(link)
                 elif split_line[0] == "CODE":
                     args = " ".join(split_line[1:])
-                    print("[scripts] " + coords + "    Opening " + args)
+                    print("[scripts] " + coords + "    Running code: " + args)
                     print(args)
                     subprocess.run(args)   
                 elif split_line[0] == "SOUND":
