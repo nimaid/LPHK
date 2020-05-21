@@ -220,7 +220,10 @@ def run_script(script_str, x, y):
                 elif split_line[0] == "CODE":
                     args = " ".join(split_line[1:])
                     print("[scripts] " + coords + "    Running code: " + args)
-                    subprocess.run(args)   
+                    try:
+                        subprocess.run(args)
+                    except Exception as e:
+                        print("[scripts] " + coords + "    Error with running code: " + str(e))
                 elif split_line[0] == "SOUND":
                     if len(split_line) > 2:
                         print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]))
