@@ -2,7 +2,7 @@ import launchpad_py as launchpad
 
 MK2_NAME = "Launchpad MK2"
 # MK3MINI_NAME = "LPMiniMK3"
-MK3MINI_NAME = "mk3"
+MK3MINI_NAME = "minimk3"
 PRO_NAME = "Launchpad Pro"
 LPX_NAME = "lpx"
 CTRL_XL_NAME = "control xl"
