@@ -6,9 +6,10 @@ dependencies:
   - pip
   - tk
   - pip:
-    - keyboard
-    - launchpad-py
+    - git+git://github.com/FMMT666/launchpad.py.git@master
     - pillow
     - pygame
     - pynput
     - tkcolorpicker
+    - py-getch
+    - pyautogui

@@ -1,18 +1,17 @@
-import keyboard
 import ms
+import sys
 
-media_keys = {"vol_up" : 57392, "vol_down" : 57390, "mute" : 57376, "play_pause" : 57378, "prev_track" : 57360, "next_track" : 57369, "mouse_left" : "mouse_left","mouse_middle" : "mouse_middle", "mouse_right" : "mouse_right"}
+if sys.platform == 'win32':
+    import system_apis.keyboard_win as keyboard_api
+else:
+    import system_apis.keyboard_unix as keyboard_api
 
 pressed = set()
 
+
 def sp(name):
-    try:
-        return keyboard.key_to_scan_codes(str(name))[0]
-    except ValueError:
-        try:
-            return media_keys[str(name)]
-        except KeyError:
-            return None
+    return keyboard_api.sp(name)
+
 
 def press(key):
     pressed.add(key)
@@ -20,7 +19,8 @@ def press(key):
         if "mouse_" in key:
             ms.press(key[6:])
             return
-    keyboard.press(key)
+    keyboard_api.press(key)
+
 
 def release(key):
     pressed.discard(key)
@@ -28,11 +28,13 @@ def release(key):
         if "mouse_" in key:
             ms.release(key[6:])
             return
-    keyboard.release(key)
+    keyboard_api.release(key)
+
 
 def release_all():
     for key in pressed.copy():
         release(key)
+
 
 def tap(key):
     if type(key) == str:
@@ -42,3 +44,6 @@ def tap(key):
     press(key)
     release(key)
 
+
+def write(string):
+    keyboard_api.write(string)

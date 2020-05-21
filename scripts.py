@@ -1,4 +1,4 @@
-import threading, webbrowser, os
+import threading, webbrowser, os, subprocess
 from time import sleep
 from functools import partial
 import lp_events, lp_colors, kb, sound, ms
@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "@LOAD_LAYOUT", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
+VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "@LOAD_LAYOUT", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "CODE", "SOUND", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
 ASYNC_HEADERS = ["@ASYNC", "@SIMPLE"]
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -168,7 +168,7 @@ def run_script(script_str, x, y):
                 if split_line[0] == "STRING":
                     type_string = " ".join(split_line[1:])
                     print("[scripts] " + coords + "    Type out string " + type_string)
-                    kb.keyboard.write(type_string)
+                    kb.write(type_string)
                 elif split_line[0] == "DELAY":
                     print("[scripts] " + coords + "    Delay for " + split_line[1] + " seconds")
                     delay = float(split_line[1])
@@ -217,6 +217,10 @@ def run_script(script_str, x, y):
                         link = "http://" + link
                     print("[scripts] " + coords + "    Open website " + link + " in default browser, try to make a new window")
                     webbrowser.open_new(link)
+                elif split_line[0] == "CODE":
+                    args = " ".join(split_line[1:])
+                    print("[scripts] " + coords + "    Running code: " + args)
+                    subprocess.run(args)   
                 elif split_line[0] == "SOUND":
                     if len(split_line) > 2:
                         print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]))
@@ -232,13 +236,13 @@ def run_script(script_str, x, y):
                             return idx + 1             
                 elif split_line[0] == "M_STORE":
                     print("[scripts] " + coords + "    Store mouse position")
-                    m_pos = ms.getXY()
+                    m_pos = ms.get_pos()
                 elif split_line[0] == "M_RECALL":
                     if m_pos == tuple():
                         print("[scripts] " + coords + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
                     else:
                         print("[scripts] " + coords + "    Recall mouse position " + str(m_pos))
-                        ms.setXY(m_pos[0], m_pos[1])
+                        ms.set_pos(m_pos[0], m_pos[1])
                 elif split_line[0] == "M_RECALL_LINE":
                     x1, y1 = m_pos
 
@@ -255,25 +259,25 @@ def run_script(script_str, x, y):
                     else:
                         print("[scripts] " + coords + "    Recall mouse position " + str(m_pos) + " in a line by " + str(skip) + " pixels per step and wait " + split_line[1] + " milliseconds between each step")
 
-                    x_C, y_C = ms.getXY()
+                    x_C, y_C = ms.get_pos()
                     points = ms.line_coords(x_C, y_C, x1, y1)
                     for x_M, y_M in points[::skip]:
                         if check_kill(x, y, is_async):
                             return -1
-                        ms.setXY(x_M, y_M)
+                        ms.set_pos(x_M, y_M)
                         if (delay != None) and (delay > 0):
                             if not safe_sleep(delay, x, y, is_async):
                                 return -1
                 elif split_line[0] == "M_MOVE":
                     if len(split_line) >= 3:
                         print("[scripts] " + coords + "    Relative mouse movement (" + split_line[1] + ", " + str(split_line[2]) + ")")
-                        ms.moveXY(float(split_line[1]), float(split_line[2]))
+                        ms.move_to_pos(float(split_line[1]), float(split_line[2]))
                     else:
                         print("[scripts] " + coords + "    Both X and Y are required for mouse movement, skipping...")
                 elif split_line[0] == "M_SET":
                     if len(split_line) >= 3:
                         print("[scripts] " + coords + "    Set mouse position to (" + split_line[1] + ", " + str(split_line[2]) + ")")
-                        ms.setXY(float(split_line[1]), float(split_line[2]))
+                        ms.set_pos(float(split_line[1]), float(split_line[2]))
                     else:
                         print("[scripts] " + coords + "    Both X and Y are required for mouse positioning, skipping...")
                 elif split_line[0] == "M_SCROLL":
@@ -306,7 +310,7 @@ def run_script(script_str, x, y):
                     for x_M, y_M in points[::skip]:
                         if check_kill(x, y, is_async):
                             return -1
-                        ms.setXY(x_M, y_M)
+                        ms.set_pos(x_M, y_M)
                         if (delay != None) and (delay > 0):
                             if not safe_sleep(delay, x, y, is_async):
                                 return -1
@@ -327,13 +331,13 @@ def run_script(script_str, x, y):
                     else:
                         print("[scripts] " + coords + "    Mouse line move relative (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step and wait " + split_line[3] + " milliseconds between each step")
 
-                    x_C, y_C = ms.getXY()
+                    x_C, y_C = ms.get_pos()
                     x_N, y_N = x_C + x1, y_C + y1
                     points = ms.line_coords(x_C, y_C, x_N, y_N)
                     for x_M, y_M in points[::skip]:
                         if check_kill(x, y, is_async):
                             return -1
-                        ms.setXY(x_M, y_M)
+                        ms.set_pos(x_M, y_M)
                         if (delay != None) and (delay > 0):
                             if not safe_sleep(delay, x, y, is_async):
                                 return -1
@@ -354,12 +358,12 @@ def run_script(script_str, x, y):
                     else:
                         print("[scripts] " + coords + "    Mouse line set (" + split_line[1] + ", " + split_line[2] + ") by " + str(skip) + " pixels per step and wait " + split_line[3] + " milliseconds between each step")
 
-                    x_C, y_C = ms.getXY()
+                    x_C, y_C = ms.get_pos()
                     points = ms.line_coords(x_C, y_C, x1, y1)
                     for x_M, y_M in points[::skip]:
                         if check_kill(x, y, is_async):
                             return -1
-                        ms.setXY(x_M, y_M)
+                        ms.set_pos(x_M, y_M)
                         if (delay != None) and (delay > 0):
                             if not safe_sleep(delay, x, y, is_async):
                                 return -1
@@ -426,7 +430,7 @@ def run_script(script_str, x, y):
                     print("[scripts] " + coords + "    Simple keybind: " + split_line[1])
                     #PRESS
                     key = kb.sp(split_line[1])
-                    releasefunc = kb.release(key)
+                    releasefunc = lambda: kb.release(key)
                     kb.press(key)
                     #WAIT_UNPRESSED
                     while lp_events.pressed[x][y]:
@@ -564,7 +568,7 @@ def unbind_all():
     to_run = []
     for x in range(9):
         for y in range(9):
-            if threads[x][y] != None:
+            if threads[x][y] is not None:
                 if threads[x][y].isAlive():
                     threads[x][y].kill.set()
     files.curr_layout = None
@@ -638,7 +642,7 @@ def validate_script(script_str):
                         return ("Headers must only be used on the first line of a script.", line)
                 if split_line[0] not in VALID_COMMANDS:
                     return ("Command '" + split_line[0] + "' not valid.", line)
-                if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "SOUND", "M_MOVE", "M_SET", "M_SCROLL", "OPEN"]:
+                if split_line[0] in ["STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "CODE", "SOUND", "M_MOVE", "M_SET", "M_SCROLL", "OPEN"]:
                     if len(split_line) < 2:
                         return ("Too few arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["WAIT_UNPRESSED", "RELEASE_ALL", "RESET_REPEATS"]:
