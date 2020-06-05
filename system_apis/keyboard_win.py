@@ -83,7 +83,7 @@ def release_key(hexKeyCode):
 
 
 # List of all codes for keys:
-# # msdn.microsoft.com/en-us/library/dd375731
+# https://msdn.microsoft.com/en-us/library/dd375731
 key_map = {
     "alt": 0x12,
     "alt_gr": 0x12,  # TODO: find a way to send two keys
@@ -212,10 +212,18 @@ key_map = {
     "y": 0x59,
     "z": 0x5A,
 
-    "+": 0xBB,
+    "+": 0x6B,
     "-": 0xBD,
+    "=": 0xBB,
     ".": 0xBE,
     ",": 0xBC,
+    "*": 0x6A,
+    "]": 0xDD,
+    "[": 0xDB,
+    ";": 0xBA,
+    "'": 0xDE,
+    "\\": 0xDC,
+    "`": 0xC0,
 }
 
 
