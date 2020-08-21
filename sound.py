@@ -38,3 +38,18 @@ def play(filename, volume=100.0):
         sound.play()
     except:
         print("[sound] Could not play sound " + final_name)
+        
+
+def stop():
+    try:
+        m.stop()
+    except:
+        print("Could not stop sounds")
+
+
+def fadeout(delay):
+    try:
+        m.fadeout(delay)
+    except:
+        print("Could not fade out sound")
+        
