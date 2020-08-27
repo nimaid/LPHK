@@ -15,6 +15,7 @@ STAT_ACTIVE_COLOR = "#080"
 STAT_INACTIVE_COLOR = "#444"
 SELECT_COLOR = "#f00"
 DEFAULT_COLOR = [0, 0, 255]
+DEFAULT_ACTIVE_COLOR = [255, 0, 0]
 MK1_DEFAULT_COLOR = [0, 255, 0]
 INDICATOR_BPM = 480
 BUTTON_FONT = ("helvetica", 11, "bold")
@@ -47,6 +48,7 @@ save_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT])]
 lp_connected = False
 lp_mode = None
 colors_to_set = [[DEFAULT_COLOR for y in range(9)] for x in range(9)]
+active_colors_to_set = [[DEFAULT_ACTIVE_COLOR for y in range(9)] for x in range(9)]
 
 
 def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, version_in, platform_in):
@@ -154,7 +156,7 @@ class Main_Window(tk.Frame):
         global lp_mode
         global lp_object
         
-        lp_connected = True
+        lp_connected = False
         lp_mode = "Dummy"
         self.draw_canvas()
         self.enable_menu("Layout")
@@ -180,6 +182,7 @@ class Main_Window(tk.Frame):
                               then click 'Redetect Now'.""",
                               [["Ignore", None], ["Redetect Now", self.redetect_lp]]
                               )
+            self.connect_dummy()
             return
 
         if lpcon.connect(lp):
@@ -209,20 +212,22 @@ class Main_Window(tk.Frame):
 
     def disconnect_lp(self):
         global lp_connected
-        try:
-            scripts.unbind_all()
-            lp_events.timer.cancel()
-            lpcon.disconnect(lp_object)
-        except:
-            self.redetect_lp()
-        lp_connected = False
 
-        self.clear_canvas()
+        if lp_connected:
+            try:
+                scripts.unbind_all()
+                lp_events.timer.cancel()
+                lpcon.disconnect(lp_object)
+            except:
+                self.redetect_lp()
+            lp_connected = False
 
-        self.disable_menu("Layout")
+            self.clear_canvas()
 
-        self.stat["text"] = "No Launchpad Connected"
-        self.stat["bg"] = STAT_INACTIVE_COLOR
+            self.disable_menu("Layout")
+
+            self.stat["text"] = "No Launchpad Connected"
+            self.stat["bg"] = STAT_INACTIVE_COLOR
 
     def redetect_lp(self):
         global restart
@@ -239,17 +244,17 @@ class Main_Window(tk.Frame):
     def load_layout(self):
         self.modified_layout_save_prompt()
         name = tk.filedialog.askopenfilename(parent=app,
-                                          initialdir=files.LAYOUT_PATH,
-                                          title="Load layout",
-                                          filetypes=load_layout_filetypes)
+                                             initialdir=files.LAYOUT_PATH,
+                                             title="Load layout",
+                                             filetypes=load_layout_filetypes)
         if name:
             files.load_layout_to_lp(name)
 
     def save_layout_as(self):
         name = tk.filedialog.asksaveasfilename(parent=app,
-                                            initialdir=files.LAYOUT_PATH,
-                                            title="Save layout as...",
-                                            filetypes=save_layout_filetypes)
+                                               initialdir=files.LAYOUT_PATH,
+                                               title="Save layout as...",
+                                               filetypes=save_layout_filetypes)
         if name:
             if files.LAYOUT_EXT not in name:
                 name += files.LAYOUT_EXT
@@ -257,7 +262,7 @@ class Main_Window(tk.Frame):
             files.load_layout_to_lp(name)
 
     def save_layout(self):
-        if files.curr_layout == None:
+        if files.curr_layout is None:
             self.save_layout_as()
         else:
             files.save_lp_to_layout(files.curr_layout)
@@ -265,14 +270,13 @@ class Main_Window(tk.Frame):
     
     def click(self, event):
         gap = int(BUTTON_SIZE // 4)
-        
-        
+
         column = min(8, int(event.x // (BUTTON_SIZE + gap)))
         row = min(8, int(event.y // (BUTTON_SIZE + gap)))
 
         if self.grid_drawn:
             if(column, row) == (8, 0):
-            #mode change
+                # mode change
                 self.last_clicked = None
                 if self.button_mode == "edit":
                     self.button_mode = "move"
@@ -290,7 +294,7 @@ class Main_Window(tk.Frame):
                     self.script_entry_window(column, row)
                     self.last_clicked = None
                 else:
-                    if self.last_clicked == None:
+                    if self.last_clicked is None:
                         self.last_clicked = (column, row)
                     else:
                         move_func = partial(scripts.move, self.last_clicked[0], self.last_clicked[1], column, row)
@@ -327,8 +331,8 @@ class Main_Window(tk.Frame):
             return self.c.create_oval(x_start + shrink, y_start + shrink, x_end - shrink, y_end - shrink, fill=color, outline="")
 
     def draw_canvas(self):
-        if self.last_clicked != None:
-            if self.outline_box == None:
+        if self.last_clicked is not None:
+            if self.outline_box is None:
                 gap = int(BUTTON_SIZE // 4)
 
                 x_start = round((BUTTON_SIZE * self.last_clicked[0]) + (gap * self.last_clicked[0]))
@@ -342,7 +346,7 @@ class Main_Window(tk.Frame):
                     self.outline_box = self.c.create_rectangle(x_start, y_start, x_end, y_end, fill=SELECT_COLOR, outline="")
                 self.c.tag_lower(self.outline_box)
         else:
-            if self.outline_box != None:
+            if self.outline_box is not None:
                 self.c.delete(self.outline_box)
                 self.outline_box = None
         
@@ -395,7 +399,7 @@ class Main_Window(tk.Frame):
         if MAIN_ICON != None:
             if os.path.splitext(MAIN_ICON)[1].lower() == ".gif":
                 dummy = None
-                #w.call('wm', 'iconphoto', w._w, tk.PhotoImage(file=MAIN_ICON))
+                # w.call('wm', 'iconphoto', w._w, tk.PhotoImage(file=MAIN_ICON))
             else:
                 w.iconbitmap(MAIN_ICON)           
         
@@ -406,7 +410,7 @@ class Main_Window(tk.Frame):
             try:
                 script_validate = scripts.validate_script(text_string)
             except:
-                #self.save_script(w, x, y, text_string) # This will fail and throw a popup error
+                # self.save_script(w, x, y, text_string) # This will fail and throw a popup error
                 self.popup(w, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK")
                 raise
             if script_validate != True and files.in_error:
@@ -423,7 +427,7 @@ class Main_Window(tk.Frame):
         t = tk.scrolledtext.ScrolledText(w)
         t.grid(column=0, row=0, rowspan=3, padx=10, pady=10)
         
-        if text_override == None:
+        if text_override is None:
             t.insert(tk.INSERT, scripts.text[x][y])
         else:
             t.insert(tk.INSERT, text_override)
@@ -436,8 +440,8 @@ class Main_Window(tk.Frame):
         e_m_Script.add_command(label="Export script", command=export_script_func)
         e_m.add_cascade(label="Script", menu=e_m_Script)
         
-        if color_override == None:
-            colors_to_set[x][y] =  lp_colors.getXY(x, y)
+        if color_override is None:
+            colors_to_set[x][y] = lp_colors.getXY(x, y)
         else:
             colors_to_set[x][y] = color_override
         
@@ -445,6 +449,7 @@ class Main_Window(tk.Frame):
             colors_to_set[x][y] = lp_colors.code_to_RGB(colors_to_set[x][y])
         
         if all(c < 4 for c in colors_to_set[x][y]):
+            active_colors_to_set[x][y] = DEFAULT_ACTIVE_COLOR
             if lp_mode == "Mk1":
                 colors_to_set[x][y] = MK1_DEFAULT_COLOR
             else:
@@ -452,20 +457,29 @@ class Main_Window(tk.Frame):
         
         ask_color_func = lambda: self.ask_color(w, color_button, x, y, colors_to_set[x][y])
         color_button = tk.Button(w, text="Select Color", command=ask_color_func)
-        color_button.grid(column=1, row=0, padx=(0, 10), pady=(10, 50), sticky="nesw")
+        color_button.grid(column=1, row=0, padx=(0, 5), pady=(5, 25), sticky="nesw")
         color_button.config(font=BUTTON_FONT)
         start_color_str = lp_colors.list_RGB_to_string(colors_to_set[x][y])
         self.button_color_with_text_update(color_button, start_color_str)
 
+        active_color_button = tk.Button(
+            w,
+            text="Select Active Color",
+            command=lambda: self.ask_color(w, active_color_button, x, y, active_colors_to_set[x][y]))
+        active_color_button.grid(column=1, row=1, padx=(0, 5), pady=(5, 25), sticky="nesw")
+        active_color_button.config(font=BUTTON_FONT)
+        active_color_str = lp_colors.list_RGB_to_string(active_colors_to_set[x][y])
+        self.button_color_with_text_update(active_color_button, active_color_str)
+
         save_script_func = lambda: self.save_script(w, x, y, t.get(1.0, tk.END))
         save_button = tk.Button(w, text="Bind Button (" + str(x) + ", " + str(y) + ")", command=save_script_func)
-        save_button.grid(column=1, row=1, padx=(0,10), sticky="nesw")
+        save_button.grid(column=1, row=2, padx=(0, 10), sticky="nesw")
         save_button.config(font=BUTTON_FONT)
         save_button.config(bg="#c3d9C3")
 
         unbind_func = lambda: self.unbind_destroy(x, y, w)
         unbind_button = tk.Button(w, text="Unbind Button (" + str(x) + ", " + str(y) + ")", command=unbind_func)
-        unbind_button.grid(column=1, row=2, padx=(0,10), pady=10, sticky="nesw")
+        unbind_button.grid(column=1, row=3, padx=(0, 10), pady=10, sticky="nesw")
         unbind_button.config(font=BUTTON_FONT)
         unbind_button.config(bg="#d9c3c3")
 
@@ -478,10 +492,10 @@ class Main_Window(tk.Frame):
         w = tk.Toplevel(self)
         w.winfo_toplevel().title(title)
         w.resizable(False, False)
-        if MAIN_ICON != None:
+        if MAIN_ICON is not None:
             if os.path.splitext(MAIN_ICON)[1].lower() == ".gif":
                 dummy = None
-                #w.call('wm', 'iconphoto', popup._w, tk.PhotoImage(file=MAIN_ICON))
+                # w.call('wm', 'iconphoto', popup._w, tk.PhotoImage(file=MAIN_ICON))
             else:
                 w.iconbitmap(MAIN_ICON)
         
@@ -534,7 +548,8 @@ class Main_Window(tk.Frame):
             return color, hex
         else:
             return None, None
-       
+
+    # TODO: figure out a way to make sure that we return the color instead of setting it in here
     def ask_color(self, window, button, x, y, default_color):
         global colors_to_set
         
@@ -542,14 +557,15 @@ class Main_Window(tk.Frame):
             color = self.classic_askcolor(color=tuple(default_color), title="Select Color for Button (" + str(x) + ", " + str(y) + ")")
         else:
             color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")")
-        if color[0] != None:
+        if color[0] is not None:
             color_to_set = [int(min(255, max(0, c))) for c in color[0]]
             if all(c < 4 for c in color_to_set):
                 rerun = lambda: self.ask_color(window, button, x, y, default_color)
                 self.popup(window, "Invalid Color", self.warning_image, "That color is too dark to see.", "OK", rerun)
             else:
-                colors_to_set[x][y] = color_to_set
+                # colors_to_set[x][y] = color_to_set
                 self.button_color_with_text_update(button, color[1])
+                return color_to_set
 
     def button_color_with_text_update(self, button, color):
         button.configure(bg=color, activebackground=color)
@@ -635,7 +651,7 @@ class Main_Window(tk.Frame):
     def popup(self, window, title, image, text, button_text, end_command=None):
         popup = tk.Toplevel(window)
         popup.resizable(False, False)
-        if MAIN_ICON != None:
+        if MAIN_ICON is not None:
             if os.path.splitext(MAIN_ICON)[1].lower() == ".gif":
                 dummy = None
                 #popup.call('wm', 'iconphoto', popup._w, tk.PhotoImage(file=MAIN_ICON))
@@ -646,7 +662,7 @@ class Main_Window(tk.Frame):
 
         def run_end():
             popup.destroy()
-            if end_command != None:
+            if end_command is not None:
                 end_command()
 
         picture_label = tk.Label(popup, image=image)
@@ -661,10 +677,10 @@ class Main_Window(tk.Frame):
     def popup_choice(self, window, title, image, text, choices):
         popup = tk.Toplevel(window)
         popup.resizable(False, False)
-        if MAIN_ICON != None:
+        if MAIN_ICON is not None:
             if os.path.splitext(MAIN_ICON)[1].lower() == ".gif":
                 dummy = None
-                #popup.call('wm', 'iconphoto', popup._w, tk.PhotoImage(file=MAIN_ICON))
+                # popup.call('wm', 'iconphoto', popup._w, tk.PhotoImage(file=MAIN_ICON))
             else:
                 popup.iconbitmap(MAIN_ICON)
         popup.wm_title(title)
@@ -672,7 +688,7 @@ class Main_Window(tk.Frame):
         
         def run_end(func):
             popup.destroy()
-            if func != None:
+            if func is not None:
                 func()
 
         picture_label = tk.Label(popup, image=image)
@@ -698,6 +714,7 @@ class Main_Window(tk.Frame):
             if not layout_empty:
                 self.popup_choice(self, "Save Changes?", self.warning_image, "You have made changes to this layout.\nWould you like to save this layout before exiting?", [["Save", self.save_layout], ["Save As...", self.save_layout_as], ["Discard", None]])
 
+
 def make():
     global root
     global app
@@ -707,7 +724,7 @@ def make():
     root_destroyed = False
     root.protocol("WM_DELETE_WINDOW", close)
     root.resizable(False, False)
-    if MAIN_ICON != None:
+    if MAIN_ICON is not None:
         if os.path.splitext(MAIN_ICON)[1].lower() == ".gif":
             root.call('wm', 'iconphoto', root._w, tk.PhotoImage(file=MAIN_ICON))
         else:
