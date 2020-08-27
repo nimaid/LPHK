@@ -1,5 +1,6 @@
 import command_base, scripts
 
+lib = "cmds_paus" # name of this library (for logging)
 
 # ##################################################
 # ### CLASS Pause_Delay                          ###
@@ -11,16 +12,16 @@ class Pause_Delay(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("DELAY")
+        super().__init__("DELAY")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
         if pass_no == 1:
@@ -41,14 +42,14 @@ class Pause_Delay(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
-        print("[cmds_paus] " + coords[0] + "    Delay for " + split_line[1] + " seconds")
+        print("[" + lib + "] " + coords[0] + "    Delay for " + split_line[1] + " seconds")
 
         delay = float(split_line[1])
 
@@ -58,6 +59,7 @@ class Pause_Delay(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Pause_Delay())
+scripts.add_command(Pause_Delay())  # register the command
+
 
 

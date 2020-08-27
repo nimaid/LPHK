@@ -1,5 +1,6 @@
 import command_base, ms, scripts
 
+lib = "cmds_mous" # name of this library (for logging)
 
 # ##################################################
 # ### CLASS Mouse_Move                           ###
@@ -11,21 +12,21 @@ class Mouse_Move(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("M_MOVE")
+        super().__init__("M_MOVE")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
         # no longer allow just 2 tokens
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 3:
                 return ("Too few arguments for command '" + split_line[0] + "'.", line)
 
@@ -35,27 +36,27 @@ class Mouse_Move(command_base.Command_Basic):
             try:
                 temp = int(split_line[1])
             except:
-                return ("'M_MOVE' X value '" + split_line[1] + "' not valid.", line)
+                return ("'" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("'M_MOVE' Y value '" + split_line[2] + "' not valid.", line)
+                return ("'" + self.name + "' Y value '" + split_line[2] + "' not valid.", line)
 
         return True
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         # removed error for != 3 tokens
 
-        print("[cmds_mous] " + coords[0] + "    Relative mouse movement (" + split_line[1] + ", " + \
+        print("[" + lib + "] " + coords[0] + "    Relative mouse movement (" + split_line[1] + ", " + \
             str(split_line[2]) + ")")
 
         ms.move_to_pos(float(split_line[1]), float(split_line[2]))
@@ -63,7 +64,7 @@ class Mouse_Move(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Mouse_Move())
+scripts.add_command(Mouse_Move())  # register the command
 
 
 # ##################################################
@@ -76,21 +77,21 @@ class Mouse_Set(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("M_SET")
+        super().__init__("M_SET")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
         # no longer allow just 2 tokens
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 3:
                 return ("Too few arguments for command '" + split_line[0] + "'.", line)
 
@@ -100,27 +101,27 @@ class Mouse_Set(command_base.Command_Basic):
             try:
                 temp = int(split_line[1])
             except:
-                return ("'M_SET' X value '" + split_line[1] + "' not valid.", line)
+                return ("'" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("'M_SET' Y value '" + split_line[2] + "' not valid.", line)
+                return ("'" + self.name + "' Y value '" + split_line[2] + "' not valid.", line)
 
         return True
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         # removed error for != 3 tokens
 
-        print("[cmds_mous] " + coords[0] + "    Set mouse position to (" + split_line[1] + ", " + \
+        print("[" + lib + "] " + coords[0] + "    Set mouse position to (" + split_line[1] + ", " + \
             str(split_line[2]) + ")")
 
         ms.set_pos(float(split_line[1]), float(split_line[2]))
@@ -128,7 +129,7 @@ class Mouse_Set(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Mouse_Set())
+scripts.add_command(Mouse_Set())  # register the command
 
 
 # ##################################################
@@ -141,19 +142,19 @@ class Mouse_Scroll(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("M_SCROLL")
+        super().__init__("M_SCROLL")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
                 return ("Too few arguments for command '" + split_line[0] + "'.", line)
 
@@ -163,7 +164,7 @@ class Mouse_Scroll(command_base.Command_Basic):
             try:
                 temp = int(split_line[1])
             except:
-                return ("'M_SET' X value '" + split_line[1] + "' not valid.", line)
+                return ("'" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = float(split_line[1])
@@ -180,24 +181,24 @@ class Mouse_Scroll(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         if len(split_line) > 2:
-            print("[cmds_mous] " + coords + "    Scroll (" + split_line[1] + ", " + split_line[2] + ")")
+            print("[" + lib + "] " + coords + "    Scroll (" + split_line[1] + ", " + split_line[2] + ")")
             ms.scroll(float(split_line[2]), float(split_line[1]))
         else:
-            print("[cmds_mous] " + coords + "    Scroll " + split_line[1])
+            print("[" + lib + "] " + coords + "    Scroll " + split_line[1])
             ms.scroll(0, float(split_line[1]))
 
         return idx+1
 
 
-scripts.add_command(Mouse_Scroll())
+scripts.add_command(Mouse_Scroll())  # register the command
 
 
 # ##################################################
@@ -210,19 +211,19 @@ class Mouse_Line(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("M_LINE")
+        super().__init__("M_LINE")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 5:
                 return ("Too few arguments for command '" + split_line[0] + "'.", line)
 
@@ -232,46 +233,46 @@ class Mouse_Line(command_base.Command_Basic):
             try:
                 temp = int(split_line[1])
             except:
-                return ("'M_LINE' X1 value '" + split_line[1] + "' not valid.", line)
+                return ("'" + self.name + "' X1 value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("'M_LINE' Y1 value '" + split_line[2] + "' not valid.", line)
+                return ("'" + self.name + "' Y1 value '" + split_line[2] + "' not valid.", line)
 
             try:
                 temp = int(split_line[3])
             except:
-                return ("'M_LINE' X2 value '" + split_line[3] + "' not valid.", line)
+                return ("'" + self.name + "' X2 value '" + split_line[3] + "' not valid.", line)
 
             try:
                 temp = int(split_line[4])
             except:
-                return ("'M_LINE' Y2 value '" + split_line[4] + "' not valid.", line)
+                return ("'" + self.name + "' Y2 value '" + split_line[4] + "' not valid.", line)
 
             if len(split_line) >= 6:
                 try:
                     temp = float(split_line[5])
                 except:
-                    return ("'M_LINE' wait value '" + split_line[5] + "' not valid.", line)
+                    return ("'" + self.name + "' wait value '" + split_line[5] + "' not valid.", line)
 
             if len(split_line) >= 7:
                 try:
                     temp = int(split_line[6])
                     if temp == 0:
-                        return ("'M_LINE' skip value cannot be zero.", line)
+                        return ("'" + self.name + "' skip value cannot be zero.", line)
                 except:
-                    return ("'M_LINE' skip value '" + split_line[6] + "' not valid.", line)
+                    return ("'" + self.name + "' skip value '" + split_line[6] + "' not valid.", line)
 
         return True
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         x1 = int(split_line[1])
@@ -288,11 +289,11 @@ class Mouse_Line(command_base.Command_Basic):
             skip = int(split_line[6])
 
         if (delay == None) or (delay <= 0):
-            print("[cmds_mous] " + coords[0] + "    Mouse line from (" + \
+            print("[" + lib + "] " + coords[0] + "    Mouse line from (" + \
                 split_line[1] + ", " + split_line[2] + ") to (" + \
                 split_line[3] + ", " + split_line[4] + ") by " + str(skip) + " pixels per step")
         else:
-            print("[cmds_mous] " + coords + "    Mouse line from (" + \
+            print("[" + lib + "] " + coords + "    Mouse line from (" + \
                 split_line[1] + ", " + split_line[2] + ") to (" + \
                 split_line[3] + ", " + split_line[4] + ") by " + \
                 str(skip) + " pixels per step and wait " + split_line[5] + " milliseconds between each step")
@@ -312,11 +313,11 @@ class Mouse_Line(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Mouse_Line())
+scripts.add_command(Mouse_Line())  # register the command
 
 
 # ##################################################
-# ### CLASS Mouse_Line_Move                           ###
+# ### CLASS Mouse_Line_Move                      ###
 # ##################################################
 
 # class that defines the M_LINE_MOVE command 
@@ -325,19 +326,19 @@ class Mouse_Line_Move(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("M_LINE_MOVE")
+        super().__init__("M_LINE_MOVE")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 3:
                 return ("'" + split_line[0] + "' requires at least X and Y arguments.", line)
 
@@ -369,11 +370,11 @@ class Mouse_Line_Move(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         x1 = int(split_line[1])
@@ -388,11 +389,11 @@ class Mouse_Line_Move(command_base.Command_Basic):
             skip = int(split_line[4])
 
         if (delay == None) or (delay <= 0):
-            print("[cmds_mous] " + coords + "    Mouse line move relative (" + \
+            print("[" + lib + "] " + coords + "    Mouse line move relative (" + \
                 split_line[1] + ", " + split_line[2] + ") by " + str(skip) + \
                 " pixels per step")
         else:
-            print("[cmds_mous] " + coords + "    Mouse line move relative (" + \
+            print("[" + lib + "] " + coords + "    Mouse line move relative (" + \
                 split_line[1] + ", " + split_line[2] + ") by " + str(skip) + \
                 " pixels per step and wait " + split_line[3] + " milliseconds between each step")
 
@@ -413,7 +414,7 @@ class Mouse_Line_Move(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Mouse_Line_Move())
+scripts.add_command(Mouse_Line_Move())  # register the command
 
 
 # ##################################################
@@ -426,19 +427,19 @@ class Mouse_Line_Set(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("M_LINE_SET")
+        super().__init__("M_LINE_SET")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 3:
                 return ("'" + split_line[0] + "' requires at least X and Y arguments.", line)
 
@@ -470,11 +471,11 @@ class Mouse_Line_Set(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         x1 = int(split_line[1])
@@ -489,11 +490,11 @@ class Mouse_Line_Set(command_base.Command_Basic):
             skip = int(split_line[4])
 
         if (delay == None) or (delay <= 0):
-            print("[cmds_mous] " + coords[0] + "    Mouse line set (" + \
+            print("[" + lib + "] " + coords[0] + "    Mouse line set (" + \
                 split_line[1] + ", " + split_line[2] + ") by " + str(skip) + \
                 " pixels per step")
         else:
-            print("[cmds_mous] " + coords[0] + "    Mouse line set (" + \
+            print("[" + lib + "] " + coords[0] + "    Mouse line set (" + \
             split_line[1] + ", " + split_line[2] + ") by " + str(skip) + \
             " pixels per step and wait " + split_line[3] + " milliseconds between each step")
 
@@ -511,7 +512,7 @@ class Mouse_Line_Set(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Mouse_Line_Set())
+scripts.add_command(Mouse_Line_Set())  # register the command
 
 
 # ##################################################
@@ -524,19 +525,19 @@ class Mouse_Recall_Line(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("M_RECALL_LINE")
+        super().__init__("M_RECALL_LINE")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) > 1:
                 try:
                     temp = float(split_line[1])
@@ -555,11 +556,11 @@ class Mouse_Recall_Line(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         x1, y1 = symbols['m_pos']
@@ -573,10 +574,10 @@ class Mouse_Recall_Line(command_base.Command_Basic):
             skip = int(split_line[2])
 
         if (delay == None) or (delay <= 0):
-            print("[cmds_mous] " + coords + "    Recall mouse position " + str(symbols["m_pos"]) + \
+            print("[" + lib + "] " + coords + "    Recall mouse position " + str(symbols["m_pos"]) + \
                 " in a line by " + str(skip) + " pixels per step")
         else:
-            print("[cmds_mous] " + coords + "    Recall mouse position " + str(symbols["m_pos"]) + \
+            print("[" + lib + "] " + coords + "    Recall mouse position " + str(symbols["m_pos"]) + \
                 " in a line by " + str(skip) + " pixels per step and wait " + \
                 split_line[1] + " milliseconds between each step")
 
@@ -596,7 +597,7 @@ class Mouse_Recall_Line(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Mouse_Recall_Line())
+scripts.add_command(Mouse_Recall_Line())  # register the command
 
 
 # ##################################################
@@ -609,19 +610,19 @@ class Mouse_Store(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("M_STORE")
+        super().__init__("M_STORE")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) > 1:
                 return ("'" + split_line[0] + "' takes no arguments.", line)
 
@@ -629,21 +630,21 @@ class Mouse_Store(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
-        print("[cmds_mous] " + coords[0] + "    Store mouse position")
+        print("[" + lib + "] " + coords[0] + "    Store mouse position")
 
-        symbols["m_pos"] = ms.get_pos()
+        symbols["m_pos"] = ms.get_pos()  # Another example of modifying the symbol table during execution.
 
         return idx+1
 
 
-scripts.add_command(Mouse_Store())
+scripts.add_command(Mouse_Store())  # register the command
 
 
 # ##################################################
@@ -656,7 +657,7 @@ class Mouse_Recall(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("M_RECALL")
+        super().__init__("M_RECALL")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
@@ -668,7 +669,7 @@ class Mouse_Recall(command_base.Command_Basic):
         pass_no
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) > 1:
                 return ("'" + split_line[0] + "' takes no arguments.", line)
 
@@ -676,22 +677,22 @@ class Mouse_Recall(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         if symbols['m_pos'] == tuple():
-            print("[cmds_mous] " + coords[0] + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
+            print("[" + lib + "] " + coords[0] + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
         else:
-            print("[cmds_mous] " + coords[0] + "    Recall mouse position " + str(symbols['m_pos']))
+            print("[" + lib + "] " + coords[0] + "    Recall mouse position " + str(symbols['m_pos']))
             ms.set_pos(symbols['m_pos'][0], symbols['m_pos'][1])
 
         return idx+1
 
 
-scripts.add_command(Mouse_Recall())
+scripts.add_command(Mouse_Recall())  # register the command
 
 

@@ -1,5 +1,6 @@
 import command_base, kb, lp_events, scripts
 
+lib = "cmds_ctrl" # name of this library (for logging)
 
 # ##################################################
 # ### CLASS Keys_Wait_Pressed                    ###
@@ -11,19 +12,19 @@ class Keys_Wait_Pressed(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("WAIT_PRESSED")
+        super().__init__("WAIT_PRESSED")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) > 1:
                 return ("Too many arguments for command '" + split_line[0] + "'.", line)
 
@@ -31,15 +32,14 @@ class Keys_Wait_Pressed(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async,
-        pass_no
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
-        print("[cmds_keys] " + coords + "    Wait for script key to be unpressed")
+        print("[" + lib + "] " + coords + "    Wait for script key to be unpressed")
 
         while lp_events.pressed[coords[1]][coords[2]]:
             sleep(DELAY_EXIT_CHECK)
@@ -49,7 +49,7 @@ class Keys_Wait_Pressed(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Keys_Wait_Pressed())
+scripts.add_command(Keys_Wait_Pressed())  # register the command
 
 
 # ##################################################
@@ -62,19 +62,19 @@ class Keys_Tap(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("TAP")
+        super().__init__("TAP")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
                 return ("Too few arguments for command '" + split_line[0] + "'.", line)
 
@@ -88,11 +88,11 @@ class Keys_Tap(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         key = kb.sp(split_line[1])
@@ -100,10 +100,10 @@ class Keys_Tap(command_base.Command_Basic):
         releasefunc = lambda: kb.release(key)
 
         if len(split_line) <= 2:
-            print("[cmds_keys] " + coords[0] + "    Tap key " + split_line[1])
+            print("[" + lib + "] " + coords[0] + "    Tap key " + split_line[1])
             kb.tap(key)
         elif len(split_line) <= 3:
-            print("[cmds_keys] " + coords[0] + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
+            print("[" + lib + "] " + coords[0] + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
             taps = int(split_line[2])
 
             for tap in range(taps):
@@ -111,7 +111,7 @@ class Keys_Tap(command_base.Command_Basic):
                     return idx + 1
                 kb.tap(key)
         else:
-            print("[cmds_keys] " + coords[0] + "    Tap key " + split_line[1] + " " + split_line[2] + \
+            print("[" + lib + "] " + coords[0] + "    Tap key " + split_line[1] + " " + split_line[2] + \
                 " times for " + str(split_line[3]) + " seconds each")
 
             taps = int(split_line[2])
@@ -128,7 +128,7 @@ class Keys_Tap(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Keys_Tap())
+scripts.add_command(Keys_Tap())  # register the command
 
 
 # ##################################################
@@ -141,19 +141,19 @@ class Keys_Press(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("PRESS")
+        super().__init__("PRESS")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
                 return ("Too few arguments for command '" + split_line[0] + "'.", line)
 
@@ -167,14 +167,14 @@ class Keys_Press(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
-        print("[cmds_keys] " + coords[0] + "    Press key " + split_line[1])
+        print("[" + lib + "] " + coords[0] + "    Press key " + split_line[1])
 
         key = kb.sp(split_line[1])
         kb.press(key)
@@ -182,7 +182,7 @@ class Keys_Press(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Keys_Press())
+scripts.add_command(Keys_Press())  # register the command
 
 
 # ##################################################
@@ -195,19 +195,19 @@ class Keys_Release(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("RELEASE")
+        super().__init__("RELEASE")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
                 return ("Too few arguments for command '" + split_line[0] + "'.", line)
 
@@ -221,14 +221,14 @@ class Keys_Release(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
-        print("[cmds_keys] " + coords[0] + "    Release key " + split_line[1])
+        print("[" + lib + "] " + coords[0] + "    Release key " + split_line[1])
 
         key = kb.sp(split_line[1])
         kb.release(key)
@@ -236,7 +236,7 @@ class Keys_Release(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Keys_Release())
+scripts.add_command(Keys_Release())  # register the command
 
 
 # ##################################################
@@ -249,19 +249,19 @@ class Keys_Release_All(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("RELEASE_ALL")
+        super().__init__("RELEASE_ALL")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) > 1:
                 return ("Too many arguments for command '" + split_line[0] + "'.", line)
 
@@ -269,21 +269,21 @@ class Keys_Release_All(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
-        print("[cmds_keys] " + coords[0] + "    Release all keys")
+        print("[" + lib + "] " + coords[0] + "    Release all keys")
 
         kb.release_all()
 
         return idx+1
 
 
-scripts.add_command(Keys_Release_All())
+scripts.add_command(Keys_Release_All())  # register the command
 
 
 # ##################################################
@@ -296,19 +296,19 @@ class Keys_String(command_base.Command_Basic):
         self, 
         ):
 
-        super().__init__("STRING")
+        super().__init__("STRING")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        if pass_no == 1:
+        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
                 return ("Too few arguments for command '" + split_line[0] + "'.", line)
 
@@ -316,20 +316,20 @@ class Keys_String(command_base.Command_Basic):
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         type_string = " ".join(split_line[1:])
 
-        print("[cmds_keys] " + coords[0] + "    Type out string " + type_string)
+        print("[" + lib + "] " + coords[0] + "    Type out string " + type_string)
 
         kb.write(type_string)
 
         return idx+1
 
 
-scripts.add_command(Keys_String())
+scripts.add_command(Keys_String())  # register the command

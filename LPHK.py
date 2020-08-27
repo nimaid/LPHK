@@ -87,6 +87,7 @@ print("")
 import lp_events, scripts, kb, files, sound, window
 from utils import launchpad_connector
 
+# just import the control modules to automatically integrate them
 import commands_header, commands_control, commands_keys, commands_mouse, commands_pause, commands_external
 
 lp = launchpad.Launchpad()
@@ -133,7 +134,6 @@ def shutdown():
 def main():
     init()
     window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH, VERSION, PLATFORM)
-    print("here")
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
 

@@ -10,42 +10,42 @@ class Header_Async(command_base.Command_Header):
         self, 
         ):
 
-        super().__init__("@ASYNC", True)
-
+        super().__init__("@ASYNC",      # the name of the header as you have to enter it in the code
+            True)                       # You also define if the header causes the script to be asynchronous
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
         
         if pass_no == 1:
-            if idx > 0:
-                return ("@ASYNC must appear on the first line.", lines[0])
+            if idx > 0:        # headers normally have to check the line number
+                return (self.name + " must appear on the first line.", lines[0])
 
             if len(split_line) > 1:
-                return ("@ASYNC takes no arguments.", lines[0])
+                return (self.name + " takes no arguments.", lines[0])
 
         return True
 
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         return idx+1
 
 
-scripts.add_command(Header_Async())
+scripts.add_command(Header_Async())  # register the header
 
 
 # ##################################################
@@ -57,46 +57,46 @@ class Header_Simple(command_base.Command_Header):
         self, 
         ):
 
-        super().__init__("@SIMPLE", False)
-
+        super().__init__("@SIMPLE",      # the name of the header as you have to enter it in the code
+            False)                       # You also define if the header causes the script to be asynchronous
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
         if pass_no == 1:
-            if idx > 0:
-                return ("@ASYNC must appear on the first line.", lines[0])
+            if idx > 0:        # headers normally have to check the line number
+                return (self.name + " must appear on the first line.", lines[0])
 
             if len(split_line) < 2:
-                return ("@SIMPLE requires a key to bind.", line)
+                return (self.name + " requires a key to bind.", line)
 
             if len(split_line) > 2:
-                return ("@SIMPLE only take one argument", line)
+                return (self.name + " only take one argument", line)
 
             if kb.sp(split_line[1]) == None:
                 return ("No key named '" + split_line[1] + "'.", line)
 
             for lin in lines[1:]:
                 if lin != "" and lin[0] != "-":
-                    return ("When @SIMPLE is used, scripts can only contain comments.", lin)
+                    return ("When " + self.name + " is used, scripts can only contain comments.", lin)
 
         return True
 
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         print("[cmds_head] " + coords + "    Simple keybind: " + split_line[1])
@@ -118,7 +118,7 @@ class Header_Simple(command_base.Command_Header):
         return idx+1
 
 
-scripts.add_command(Header_Simple())
+scripts.add_command(Header_Simple())  # register the header
 
 
 # ##################################################
@@ -130,33 +130,37 @@ class Header_Load_Layout(command_base.Command_Header):
         self, 
         ):
 
-        super().__init__("@LOAD_LAYOUT", False)
+        super().__init__("@LOAD_LAYOUT",      # the name of the header as you have to enter it in the code
+            False)                            # You also define if the header causes the script to be asynchronous
 
 
     def Validate(
         self,
-        idx: int,
-        line,
-        lines,
-        split_line,
-        symbols,
-        pass_no
+        idx: int,              # The current line number
+        line,                  # The current line
+        lines,                 # The current script
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
         if pass_no == 1:
+            if idx > 0:        # headers normally have to check the line number
+                return (self.name + " must appear on the first line.", lines[0])
+
             if len(split_line) < 2:
-                return ("@LOAD_LAYOPUT requires a filename as a parameter.", line)
+                return (self.name + " requires a filename as a parameter.", line)
 
         return True
 
 
     def Run(
         self,
-        idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
+        coords,                # Tuple of printable coords as well as the individual x and y values
+        is_async               # True if the script is running asynchronously
         ):
 
         layout_name = " ".join(split_line[1:])
@@ -182,6 +186,6 @@ class Header_Load_Layout(command_base.Command_Header):
         return idx+1
 
 
-scripts.add_command(Header_Load_Layout())
+scripts.add_command(Header_Load_Layout())  # register the header
 
 

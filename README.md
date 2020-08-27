@@ -202,21 +202,28 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * If the button the script is bound to is pressed, goto label (argument 1).
 * `IF_PRESSED_REPEAT_LABEL`
   * If the button the script is bound to is pressed, goto label (argument 1) a maximum of (argument 2) times.
+* `IF_PRESSED_REPEAT`
+  * Works the same as the IF_PRESSED_REPEAT_LABEL command, except the number of times the loop is executed is defined by argument 2.  In addition, the loop counter is reset automatically allowing loops to be nested.
 * `IF_UNPRESSED_GOTO_LABEL`
   * If the button the script is bound to is not pressed, goto label (argument 1).
 * `IF_UNPRESSED_REPEAT_LABEL`
   * If the button the script is bound to is not pressed, goto label (argument 1) a maximum of (argument 2) times.
+* `IF_UNPRESSED_REPEAT`
+  * Works the same as the IF_UNPRESSED_REPEAT_LABEL command, except the number of times the loop is executed is defined by argument 2.  In addition, the loop counter is reset automatically allowing loops to be nested.
 * `LABEL`
   * Sets a label named (argument 1) for use with the `*GOTO_LABEL` commands.
 * `OPEN`
   * Opens the file or folder (argument 1).
 * `REPEAT_LABEL`
   * Goto label (argument 1) a maximum of (argument 2) times.
+* `REPEAT`
+  * Works the same as the REPEAT_LABEL command, except the number of times the loop is executed is defined by argument 2.  In addition, the loop counter is reset automatically allowing loops to be nested.
 * `RESET_REPEATS`
   * Reset the counter on all repeats. (no arguments)
 * `SOUND`
   * Play a sound named (argument 1) inside the `user_sounds/` folder.
-    * Supports `.wav`, `.flac`, and `.ogg` only.
+    * Supports `.wa  * Works the same as the IF_UNPRESSED_REPEAT_LABEL command, except the number of times the loop is executed is defined by argument 2.  In addition, the loop counter is reset automatically allowing loops to be nested.
+v`, `.flac`, and `.ogg` only.
   * If (argument 2) supplied, set volume to (argument 2).
     * Range is 0 to 100
 * `SOUND_STOP`
