@@ -28,7 +28,7 @@ class Header_Async(command_base.Command_Header):
                 return (self.name + " must appear on the first line.", lines[0])
 
             if len(split_line) > 1:
-                return (self.name + " takes no arguments.", lines[0])
+                return (self.name + " takes no arguments.", line)
 
         return True
 

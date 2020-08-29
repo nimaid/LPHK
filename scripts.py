@@ -49,7 +49,7 @@ def new_symbol_table():
         "repeats": dict(),
         "original": dict(), 
         "labels": dict(),
-        "m_pos": dict() }
+        "m_pos": tuple() }
 
     return symbols
 

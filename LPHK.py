@@ -88,7 +88,7 @@ import lp_events, scripts, kb, files, sound, window
 from utils import launchpad_connector
 
 # just import the control modules to automatically integrate them
-import commands_header, commands_control, commands_keys, commands_mouse, commands_pause, commands_external
+import command_list
 
 lp = launchpad.Launchpad()
 
