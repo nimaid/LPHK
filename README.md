@@ -222,8 +222,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * Reset the counter on all repeats. (no arguments)
 * `SOUND`
   * Play a sound named (argument 1) inside the `user_sounds/` folder.
-    * Supports `.wa  * Works the same as the IF_UNPRESSED_REPEAT_LABEL command, except the number of times the loop is executed is defined by argument 2.  In addition, the loop counter is reset automatically allowing loops to be nested.
-v`, `.flac`, and `.ogg` only.
+    * Supports `.wav`, `.flac`, and `.ogg` only.
   * If (argument 2) supplied, set volume to (argument 2).
     * Range is 0 to 100
 * `SOUND_STOP`
