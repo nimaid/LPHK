@@ -6,4 +6,5 @@ import \
   commands_keys, \
   commands_mouse, \
   commands_pause, \
-  commands_external
+  commands_external, \
+  commands_rpncalc
