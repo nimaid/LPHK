@@ -1,4 +1,4 @@
-import command_base, lp_events, scripts
+import command_base, lp_events, scripts, variables, sys
 
 lib = "cmds_rpnc" # name of this library (for logging)
 
@@ -14,44 +14,226 @@ lib = "cmds_rpnc" # name of this library (for logging)
 # is easily extended.
 class RpnCalc_Rpn_Eval(command_base.Command_Basic):
 
-    def add(self, stack):
-        a = stack.pop()
-        b = stack.pop()
-        stack.append(b+a)
+    def add(self, 
+        g_syms,                   # the global symbol table (stack, global vars, etc.)
+        l_syms,                   # the local symbol table (local vars)
+        cmd,                      # the current command
+        cmds):                    # the rest of the commands on the command line
+        
+        ret = 1                   # always initialise ret to 1, because the default is to 
+                                  # step token by token along the expression
+                                  
+        a = variables.pop(g_syms) # add requires 2 params, pop them off the stack...
+        b = variables.pop(g_syms) # ...that should be in the global symbol table
 
-    def subtract(self, stack):
-        a = stack.pop()
-        b = stack.pop()
-        stack.append(b-a)
+        try:
+            c = b+a               # RPN functions are defined as b (operator) a
+        except:
+            raise Exception("Error in addition: " + str(b) + " + " + str(a))  # error message in case of problem
+            
+        variables.push(g_syms, c) # the result is pushed back on the stack
+        
+        return ret                # and we return the number of tokens to skip (normally 1)
+        
 
-    def multiply(self, stack):
-        a = stack.pop()
-        b = stack.pop()
-        stack.append(b*a)
+    def subtract(self, g_syms, l_syms, cmd, cmds):
+        ret = 1
+        a = variables.pop(g_syms)
+        b = variables.pop(g_syms)
 
-    def divide(self, stack):
-        a = stack.pop()
-        b = stack.pop()
-        stack.append(b/a)
+        try:
+            c = b-a
+        except:
+            raise Exception("Error in subtraction: " + str(b) + " - " + str(a))
+            
+        variables.push(g_syms, c)
+        
+        return ret
 
-    def view(self, stack):
-        print('Top of stack = ', stack[-1])
 
-    def views(self, stack):
-        print('Stack = ', stack)
+    def multiply(self, g_syms, l_syms, cmd, cmds):
+        ret = 1
+        a = variables.pop(g_syms)
+        b = variables.pop(g_syms)
 
-    def pi(self, stack):
-        stack.append(3.1415926535)
+        try:
+            c = b*a
+        except:
+            raise Exception("Error in multiplication: " + str(b) + " * " + str(a))
+            
+        variables.push(g_syms, c)
+        
+        return ret
 
-    def sqr(self, stack):
-        a = stack.pop()
-        stack.append(a*a)
 
-    def dup(self, stack):
-        stack.append(stack[-1])
+    def divide(self, g_syms, l_syms, cmd, cmds):
+        ret = 1
+        a = variables.pop(g_syms)
+        b = variables.pop(g_syms)
 
-    def clst(self, stack):
-        stack.clear()
+        try:
+            c = b/a
+        except:
+            raise Exception("Error in division: " + str(b) + " / " + str(a))  # Errors are highly possible here
+            
+        variables.push(g_syms, c)
+        
+        return ret
+ 
+
+    def view(self, g_syms, l_syms, cmd, cmds):
+        # view the top of the stack (typically where results are)
+        ret = 1
+        print('Top of stack = ', variables.top(g_syms))
+        
+        return ret
+
+
+    def view_s(self, g_syms, l_syms, cmd, cmds):
+        # View the entire stack.  Probably a debugging tool.
+        ret = 1
+        print('Stack = ', g_syms['stack'])
+        
+        return ret
+
+
+    def view_l(self, g_syms, l_syms, cmd, cmds):
+        # View the local variables.  Probably a debugging tool.
+        ret = 1
+        print('Local = ', l_syms['vars'])
+        
+        return ret
+
+
+    def view_g(self, g_syms, l_syms, cmd, cmds):
+        # View the global variables.  Probably a debugging tool.
+        ret = 1
+        print('Global = ', g_syms['vars'])
+        
+        return ret
+
+
+    def one_on_x(self, g_syms, l_syms, cmd, cmds):
+        ret = 1
+        a = variables.pop(g_syms)
+
+        try:
+            variables.push(g_syms, 1/a)
+        except:
+            raise Exception("Error in 1/x: " + str(a))  # Errors are highly possible here
+            
+        return ret
+ 
+
+    def sqr(self, g_syms, l_syms, cmd, cmds):
+        # calculates the square
+        ret = 1
+        a = variables.pop(g_syms)
+
+        try:
+            c = a*a
+        except:
+            raise Exception("Error in squaring: " + str(a))
+            
+        variables.push(g_syms, c)
+        
+        return ret
+
+
+    def dup(self, g_syms, l_syms, cmd, cmds):
+        # duplicates the value on the top of the stack
+        ret = 1
+        variables.push(g_syms, variables.top(g_syms))
+        
+        return ret
+
+
+    def clst(self, g_syms, l_syms, cmd, cmds):
+        # clears the stack
+        ret = 1
+        g_syms['stack'].clear()
+        
+        return ret
+
+
+    def swap_x_y(self, g_syms, l_syms, cmd, cmds):
+        # exchanges top two values on the stack
+        ret = 1
+
+        a = variables.pop(g_syms)
+        b = variables.pop(g_syms)
+
+        variables.push(g_syms, a)
+        variables.push(g_syms, b)
+
+        return ret
+
+
+    def sto(self, g_syms, l_syms, cmd, cmds):
+        # stores the value in local var if it exists, otherwise global var.  If neither, creates local
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)   
+        a = variables.top(g_syms)
+
+        if variables.is_defined(a, l_syms):
+            variables.put(v, a, l_syms)
+        elif variables.is_defined(a, g_syms):
+            variables.put(v, a, g_syms)
+        else:
+            variables.put(v, a, l_syms)
+        
+        return ret
+        
+        
+    def sto_g(self, g_syms, l_syms, cmd, cmds):
+        # stores the value on the top of the stack into the global variable named by the next token
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)   
+        a = variables.top(g_syms)
+        variables.put(v, a, g_syms)
+        
+        return ret
+        
+        
+    def sto_l(self, g_syms, l_syms, cmd, cmds):
+        # stores the value on the top of the stack into the local variable named by the next token
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)   
+        a = variables.top(g_syms)
+        variables.put(v, a, l_syms)
+        
+        return ret
+
+
+    def rcl(self, g_syms, l_syms, cmd, cmds):
+        # recalls a variable.  Try local first, then global
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)   
+        a = variables.get(v, l_syms, g_syms)
+        variables.push(g_syms, a)
+        
+        return ret
+
+
+    def rcl_l(self, g_syms, l_syms, cmd, cmds):
+        # recalls a local variable (not overly useful, but avoids ambiguity)
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)   
+        a = variables.get(v, l_syms, None)
+        variables.push(g_syms, a)
+        
+        return ret
+        
+
+    def rcl_g(self, g_syms, l_syms, cmd, cmds):
+        # recalls a global variable (useful if you define an identical local var)
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)   
+        a = variables.get(v, g_syms, None)
+        variables.push(g_syms, a)
+        
+        return ret
+        
 
     def __init__(
         self, 
@@ -62,14 +244,23 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         self.operators = dict()
         self.operators["+"] = self.add
         self.operators["-"] = self.subtract
-        self.operators["*"] = self.multiply
+        self.operators["*"] = self.multiply        
         self.operators["/"] = self.divide
         self.operators["VIEW"] = self.view
-        self.operators["VIEWS"] = self.views
-        self.operators["PI"] = self.pi
+        self.operators["VIEW_S"] = self.view_s
+        self.operators["VIEW_L"] = self.view_l
+        self.operators["VIEW_G"] = self.view_g
+        self.operators["1/X"] = self.one_on_x
         self.operators["SQR"] = self.sqr
         self.operators["DUP"] = self.dup
         self.operators["CLST"] = self.clst
+        self.operators["X<>Y"] = self.swap_x_y
+        self.operators[">"] = self.sto
+        self.operators[">L"] = self.sto_l
+        self.operators[">G"] = self.sto_g
+        self.operators["<"] = self.rcl
+        self.operators["<L"] = self.rcl_l
+        self.operators["<G"] = self.rcl_g
 
     def Validate(
         self,
@@ -101,24 +292,39 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
 
         print("[" + lib + "] " + coords[0] + "    " + self.name + ": ", split_line[1:]) # coords[0] is the text "(x, y)"
 
-        stack = [] # this is local, but it could be stored globally in the symbol table!
+        stack = []           # this is local, but it could be stored globally in the symbol table!
+        global_vars = dict() # this is local, but it could be stored globally in the symbol table!
+        local_vars = dict()  # this is local, and should remain that way
 
-        for i in split_line[1:]:
+        g_syms = dict()      # this would be the global symbol table
+        g_syms['vars'] = global_vars
+        g_syms['stack'] = stack
+        
+        l_syms = dict()      # this would be the local symbol table
+        l_syms['vars'] = local_vars
+
+        i = 1                       # using a loop counter rath erthan an itterator because it's hard to pass iters as params
+        while i < len(split_line):  # for each item of the line of tokens
+            cmd = split_line[i]     # get the current one
+            
             try:
-                n = float(i)
-                ok = True
+                n = float(cmd)      # numbers get... 
             except ValueError:
-                ok = False
-
-            if ok:
-                stack.append(n)
+                pass
+            else:
+                g_syms['stack'].append(n) # ...put on the stack
+                i += 1              # move along to the next token
                 continue
 
-            opr = i.upper()
-            if opr in self.operators:
-                self.operators[opr](stack)
-            else:
-               print("invalid operator '", i, "'")
+            opr = cmd.upper()       # Convert to uppercase for searching
+            if opr in self.operators: # if it's valid
+                try:
+                    i = i + self.operators[opr](g_syms, l_syms, opr, split_line[i:]) # run it
+                except:
+                    print("Error in evaluation: '" + str(sys.exc_info()[1]) + "' at operator #" + str(i) + " '" + cmd + "'")
+                    break
+            else:                   # if invalid, report it
+               print("invalid operator #" + str(i) + " '" + cmd + "'")
                break
         
         return idx+1           # Normal default exit to the next line

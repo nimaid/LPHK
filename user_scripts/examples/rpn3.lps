@@ -1,0 +1,4 @@
+RPN_EVAL 1 > x view_s < x view_s view_l view_g
+RPN_EVAL 2 >G y view_s < y <G y <L y view_s view_l view_g
+RPN_EVAL 1 X<>Y view_s
+RPN_EVAL view_g

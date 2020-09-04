@@ -1,1 +1,1 @@
-RPN_EVAL 3 2 1 view views + * view views pi sqr view / views dup 1 - views
+RPN_EVAL 3 2 1 view view_s + * view view_s 3.141 sqr view / view_s dup 1 - view_s 1/x x<>y view_s

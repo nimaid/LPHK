@@ -287,6 +287,38 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 * `M_STORE`
   * Stores the current mouse position for use with the `M_RECALL*` commands.
 
+#### Variables and calculator [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `RPN_EVAL`
+  * An RPN (stack-based) calculator that implements local and global variables (global variables are not global yet).
+  * Any number of commands may follow from 1 to infinity?
+  * Commands are NOT case sensitive
+  * Any numeric value is pushed onto the stack
+  * Common functions pop their parameters off the stack and push the result.  Note that any function requiring more values that there are on the stack will be returned zero for all additional parameters.
+    * + - replaces the top two values on the stack with their sum
+	* - - replaces the top two values on the stack with their difference
+	* * - replaces the top two values on the stack with their product
+	* / - replaces the top two values on the stack with their quotient
+  * Some operations only change the top value on the stack.
+    * 1/x - replaces the top value on the stack with it's inverse
+    * sqr - replaces the value on the top of the stack with its square
+  * Some operations manipulate the stack
+    * dup - duplicates the value on the top of the stack
+    * x<>y - swaps the position of the top two items on the stack
+	* clst - clears the stack
+  * Some operations handle variables (these are all followed by a variable name).  Note that refering to a variable that does not exist will return zero, but not greate that variable.  Whilst it is possible to name a variable using a string of numbers representing a number (e.g. '32') these will likely not be accessible from other commands -- AVOID THEM
+    * >L {x} - Takes the value on the top of the stack and stores it in local variable {x}
+	* >G {x} - Takes the value on the top of the stack and stores it in the globalk variable {x}
+	* > {x} - Stores the value in the local variable {x} if it exists, otherwise the global variable {x} if it exists, otherwise creates a new local variable {x}
+	* <L {x} - Pushes the value in the local variable {x} onto the stack.
+	* <G {x} - Pushes the value of the global variable {x} onto the stack.
+	* < {x} - Pushes the value of the local variable {x} if it exists, otherwise the global variable {x}
+  * Some operations display resuls or other status information
+    * view - displays the value on the top of the stack
+    * view_s - displays the entire stack
+    * view_l - displays all local variables
+    * view_g - displays all global variables
+  * Currently both the stack and the global variables are local to the RPN_EVAL command.  Once these are moved to scripts.py, the globals and the stack will be maintained between lines of a script, allowing other commands to access variables and potentiually parameters to be passed back and forth between scripts.. 	
+
 ### Key Names [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitespace keys and the following key names are allowed:
 * `alt`
