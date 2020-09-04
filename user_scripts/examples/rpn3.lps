@@ -1,4 +1,23 @@
-RPN_EVAL 1 > x view_s < x view_s view_l view_g
+RPN_EVAL view_s view_l view_g
+RPN_EVAL 0 x=0? view
+RPN_EVAL x!=0? view
+RPN_EVAL 1 x=y? view
+RPN_EVAL x!=y? view
+RPN_EVAL ? x view
+RPN_EVAL !? x view
+RPN_EVAL 1 > x 1 + >G Z < x view_s view_l view_g
+RPN_EVAL >L x ? x view
+RPN_EVAL >L x !? x view
+RPN_EVAL >L x ?L x view
+RPN_EVAL >L x !?L x view
+RPN_EVAL >L x ?G x view
+RPN_EVAL >L x !?G x view
+RPN_EVAL ? z view
+RPN_EVAL !? z view
+RPN_EVAL ?L z view
+RPN_EVAL !?L z view
+RPN_EVAL ?G z view
+RPN_EVAL !?G z view
 RPN_EVAL 2 >G y view_s < y <G y <L y view_s view_l view_g
 RPN_EVAL 1 X<>Y view_s
 RPN_EVAL view_g

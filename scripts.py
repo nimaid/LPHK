@@ -49,7 +49,9 @@ def new_symbol_table():
         "repeats": dict(),
         "original": dict(), 
         "labels": dict(),
-        "m_pos": tuple() }
+        "m_pos": tuple(),
+        "vars": dict(),      # global (to the script) variables
+        "stack": [] }        # script stack (for RPN_EVAL)        
 
     return symbols
 

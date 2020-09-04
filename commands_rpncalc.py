@@ -84,7 +84,7 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
     def view(self, g_syms, l_syms, cmd, cmds):
         # view the top of the stack (typically where results are)
         ret = 1
-        print('Top of stack = ', variables.top(g_syms))
+        print('Top of stack = ', variables.top(g_syms, 1))
         
         return ret
 
@@ -143,7 +143,15 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
     def dup(self, g_syms, l_syms, cmd, cmds):
         # duplicates the value on the top of the stack
         ret = 1
-        variables.push(g_syms, variables.top(g_syms))
+        variables.push(g_syms, variables.top(g_syms, 1))
+        
+        return ret
+
+
+    def pop(self, g_syms, l_syms, cmd, cmds):
+        # removes top item from the stack
+        ret = 1
+        variables.pop(g_syms)
         
         return ret
 
@@ -173,11 +181,11 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         # stores the value in local var if it exists, otherwise global var.  If neither, creates local
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)   
-        a = variables.top(g_syms)
+        a = variables.top(g_syms, 1)
 
-        if variables.is_defined(a, l_syms):
+        if variables.is_defined(v, l_syms):
             variables.put(v, a, l_syms)
-        elif variables.is_defined(a, g_syms):
+        elif variables.is_defined(v, g_syms):
             variables.put(v, a, g_syms)
         else:
             variables.put(v, a, l_syms)
@@ -189,7 +197,7 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         # stores the value on the top of the stack into the global variable named by the next token
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)   
-        a = variables.top(g_syms)
+        a = variables.top(g_syms, 1)
         variables.put(v, a, g_syms)
         
         return ret
@@ -199,7 +207,7 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         # stores the value on the top of the stack into the local variable named by the next token
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)   
-        a = variables.top(g_syms)
+        a = variables.top(g_syms, 1)
         variables.put(v, a, l_syms)
         
         return ret
@@ -234,6 +242,115 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         
         return ret
         
+    def x_eq_zero(self, g_syms, l_syms, cmd, cmds):
+        if variables.top(g_syms, 1) == 0:
+            return 1
+        else:
+            return len(cmds)+1
+
+
+    def x_ne_zero(self, g_syms, l_syms, cmd, cmds):
+        if variables.top(g_syms, 1) != 0:
+            return 1
+        else:
+            return len(cmds)+1
+
+
+    def x_eq_y(self, g_syms, l_syms, cmd, cmds):
+        if variables.top(g_syms, 1) == variables.top(g_syms, 2):
+            return 1
+        else:
+            return len(cmds)+1
+
+
+    def x_ne_y(self, g_syms, l_syms, cmd, cmds):
+        if variables.top(g_syms, 1) != variables.top(g_syms, 2):
+            return 1
+        else:
+            return len(cmds)+1
+
+
+    def x_gt_y(self, g_syms, l_syms, cmd, cmds):
+        if variables.top(g_syms, 1) > variables.top(g_syms, 2):
+            return 1
+        else:
+            return len(cmds)+1
+
+
+    def x_ge_y(self, g_syms, l_syms, cmd, cmds):
+        if variables.top(g_syms, 1) >= variables.top(g_syms, 2):
+            return 1
+        else:
+            return len(cmds)+1
+
+
+    def x_lt_y(self, g_syms, l_syms, cmd, cmds):
+        if variables.top(g_syms, 1) < variables.top(g_syms, 2):
+            return 1
+        else:
+            return len(cmds)+1
+
+
+    def x_le_y(self, g_syms, l_syms, cmd, cmds):
+        if variables.top(g_syms, 1) <= variables.top(g_syms, 2):
+            return 1
+        else:
+            return len(cmds)+1
+
+
+    def is_def(self, g_syms, l_syms, cmd, cmds):
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)
+        if variables.is_defined(v, g_syms) or variables.is_defined(v, l_syms):
+            return ret
+        else:
+            return len(cmds)+1
+
+
+    def is_not_def(self, g_syms, l_syms, cmd, cmds):
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)
+        if not (variables.is_defined(v, g_syms) or variables.is_defined(v, l_syms)):
+            return ret
+        else:
+            return len(cmds)+1
+
+
+    def is_local_def(self, g_syms, l_syms, cmd, cmds):
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)
+        if variables.is_defined(v, l_syms):
+            return ret
+        else:
+            return len(cmds)+1
+
+
+    def is_local_not_def(self, g_syms, l_syms, cmd, cmds):
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)
+        if not variables.is_defined(v, l_syms):
+            return ret
+        else:
+            return len(cmds)+1
+
+
+    def is_global_def(self, g_syms, l_syms, cmd, cmds):
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)
+        if variables.is_defined(v, g_syms):
+            return ret
+        else:
+            return len(cmds)+1
+
+
+    def is_global_not_def(self, g_syms, l_syms, cmd, cmds):
+        ret = 1
+        ret, v = variables.next_cmd(ret, cmds)
+        if not variables.is_defined(v, g_syms):
+            return ret
+        else:
+            return len(cmds)+1
+
 
     def __init__(
         self, 
@@ -242,25 +359,40 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         super().__init__("RPN_EVAL")  # the name of the command as you have to enter it in the code
 
         self.operators = dict()
-        self.operators["+"] = self.add
-        self.operators["-"] = self.subtract
-        self.operators["*"] = self.multiply        
-        self.operators["/"] = self.divide
-        self.operators["VIEW"] = self.view
-        self.operators["VIEW_S"] = self.view_s
-        self.operators["VIEW_L"] = self.view_l
-        self.operators["VIEW_G"] = self.view_g
-        self.operators["1/X"] = self.one_on_x
-        self.operators["SQR"] = self.sqr
-        self.operators["DUP"] = self.dup
-        self.operators["CLST"] = self.clst
-        self.operators["X<>Y"] = self.swap_x_y
-        self.operators[">"] = self.sto
-        self.operators[">L"] = self.sto_l
-        self.operators[">G"] = self.sto_g
-        self.operators["<"] = self.rcl
-        self.operators["<L"] = self.rcl_l
-        self.operators["<G"] = self.rcl_g
+        self.operators["+"] = self.add                 # +
+        self.operators["-"] = self.subtract            # -
+        self.operators["*"] = self.multiply            # *
+        self.operators["/"] = self.divide              # /
+        self.operators["VIEW"] = self.view             # View X
+        self.operators["VIEW_S"] = self.view_s         # View stack
+        self.operators["VIEW_L"] = self.view_l         # View local vars
+        self.operators["VIEW_G"] = self.view_g         # View global vars
+        self.operators["1/X"] = self.one_on_x          # 1/x
+        self.operators["SQR"] = self.sqr               # **
+        self.operators["DUP"] = self.dup               # Duplicate top of stack
+        self.operators["POP"] = self.pop               # remove item from top of stack
+        self.operators["CLST"] = self.clst             # clear stack
+        self.operators["X<>Y"] = self.swap_x_y         # swap x and y
+        self.operators[">"] = self.sto                 # store
+        self.operators[">L"] = self.sto_l              # store local
+        self.operators[">G"] = self.sto_g              # store global
+        self.operators["<"] = self.rcl                 # recall
+        self.operators["<L"] = self.rcl_l              # recall local
+        self.operators["<G"] = self.rcl_g              # recall global
+        self.operators["X=0?"] = self.x_eq_zero        # is x zero?
+        self.operators["X!=0?"] = self.x_ne_zero       # is x not zero?
+        self.operators["X=Y?"] = self.x_eq_y           # is x = y?
+        self.operators["X!=Y?"] = self.x_ne_y          # is x != y?
+        self.operators["X>Y?"] = self.x_gt_y           # is x > y?
+        self.operators["X>=Y?"] = self.x_ge_y          # is x >= y?
+        self.operators["X<Y?"] = self.x_lt_y           # is x < y?
+        self.operators["X<=Y?"] = self.x_le_y          # is x <= y?
+        self.operators["?"] = self.is_def              # is var defined
+        self.operators["!?"] = self.is_not_def         # is var not defined
+        self.operators["?L"] = self.is_local_def       # is local var defined
+        self.operators["!?L"] = self.is_local_not_def  # is local var not defined
+        self.operators["?G"] = self.is_global_def      # is global var defined
+        self.operators["!?G"] = self.is_global_not_def # is global var not defined
 
     def Validate(
         self,
@@ -292,16 +424,8 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
 
         print("[" + lib + "] " + coords[0] + "    " + self.name + ": ", split_line[1:]) # coords[0] is the text "(x, y)"
 
-        stack = []           # this is local, but it could be stored globally in the symbol table!
-        global_vars = dict() # this is local, but it could be stored globally in the symbol table!
-        local_vars = dict()  # this is local, and should remain that way
-
-        g_syms = dict()      # this would be the global symbol table
-        g_syms['vars'] = global_vars
-        g_syms['stack'] = stack
-        
-        l_syms = dict()      # this would be the local symbol table
-        l_syms['vars'] = local_vars
+        l_syms = {           # this would be the local symbol table
+            "vars": dict()}  # containing just the local variables
 
         i = 1                       # using a loop counter rath erthan an itterator because it's hard to pass iters as params
         while i < len(split_line):  # for each item of the line of tokens
@@ -312,14 +436,14 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
             except ValueError:
                 pass
             else:
-                g_syms['stack'].append(n) # ...put on the stack
+                symbols['stack'].append(n) # ...put on the stack
                 i += 1              # move along to the next token
                 continue
 
             opr = cmd.upper()       # Convert to uppercase for searching
             if opr in self.operators: # if it's valid
                 try:
-                    i = i + self.operators[opr](g_syms, l_syms, opr, split_line[i:]) # run it
+                    i = i + self.operators[opr](symbols, l_syms, opr, split_line[i:]) # run it
                 except:
                     print("Error in evaluation: '" + str(sys.exc_info()[1]) + "' at operator #" + str(i) + " '" + cmd + "'")
                     break
