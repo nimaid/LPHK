@@ -86,10 +86,11 @@ def luminance(r, g, b):
 
 def updateXY(x, y):
     if window.lp_connected:
+        btn = scripts.buttons[x][y]
         if (x, y) != (8, 0):
             is_running = False
-            if scripts.threads[x][y] != None:
-                if scripts.threads[x][y].isAlive():
+            if btn.thread != None:
+                if btn.thread.isAlive():
                     is_running = True
 
             is_func_key = ((y == 0) or (x == 8))

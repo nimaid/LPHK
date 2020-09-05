@@ -115,8 +115,8 @@ def shutdown():
     scripts.to_run = []
     for x in range(9):
         for y in range(9):
-            if scripts.threads[x][y] != None:
-                scripts.threads[x][y].kill.set()
+            if scripts.buttons[x][y].thread != None:
+                scripts.buttons[x][y].thread.kill.set()
     if window.lp_connected:
         scripts.unbind_all()
         lp_events.timer.cancel()

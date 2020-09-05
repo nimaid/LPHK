@@ -1,1 +1,2 @@
+- This demonstrates a few other commands
 RPN_EVAL 3 2 1 view view_s + * view view_s 3.141 sqr view / view_s dup 1 - view_s 1/x x<>y view_s

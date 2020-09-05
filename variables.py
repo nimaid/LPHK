@@ -28,28 +28,28 @@ def top(syms, i):
         #raise Exception("Stack empty")
 
 
-def is_defined(name, sym):
+def is_defined(name, vbls):
     # is the variable defined in the symbol library
-    return sym and name.lower() in sym['vars']
+    return vbls and name.lower() in vbls
 
 
 # This returns 0 if the variable is not defined.  An alternative is to return an error
-def get(name, syms_1, syms_2):
+def get(name, l_vbls, g_vbls):
     # get a variable.  look in one symbol table, then the next.
     # this allows an order to be defined to get local vars then global
     name = name.lower()
     
-    if is_defined(name, syms_1):    # First look in the local symbol table (if defined)
-        return syms_1['vars'][name]
-    if is_defined(name, syms_2):    # then the global one
-        return syms_2['vars'][name]
+    if is_defined(name, l_vbls):    # First look in the local symbol table (if defined)
+        return l_vbls[name]
+    if is_defined(name, g_vbls):    # then the global one
+        return g_vbls[name]
     return 0 
     # raise Exception("Variable not found")
 
 
-def put(name, val, syms):
+def put(name, val, vbls):
     # store a value in a named variable in a specific variable list
-    syms['vars'][name.lower()] = val
+    vbls[name.lower()] = val
 
 
 # if you try to grab an argument where no more exists, an error will result

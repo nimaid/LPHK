@@ -306,6 +306,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * pop - removes the top item from the stack
     * x<>y - swaps the position of the top two items on the stack
     * clst - clears the stack
+	* stack - pushes the length of the stack onto the stack
   * Some operations handle variables (these are all followed by a variable name).  Note that refering to a variable that does not exist will return zero, but not greate that variable.  Whilst it is possible to name a variable using a string of numbers representing a number (e.g. '32') these will likely not be accessible from other commands -- AVOID THEM
     * >L {x} - Takes the value on the top of the stack and stores it in local variable {x}
     * >G {x} - Takes the value on the top of the stack and stores it in the globalk variable {x}
@@ -313,6 +314,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * <L {x} - Pushes the value in the local variable {x} onto the stack.
     * <G {x} - Pushes the value of the global variable {x} onto the stack.
     * < {x} - Pushes the value of the local variable {x} if it exists, otherwise the global variable {x}
+	* cl_l - clears all local variables
   * Some operations display resuls or other status information
     * view - displays the value on the top of the stack
     * view_s - displays the entire stack
@@ -333,9 +335,10 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * !?L {x} - Does a local variable {x} not exist
     * ?G {x} - Does a global variable {x} exist
     * !?G {x} - Does a global variable {x} not exist
-  * The stack is local to the current execution of the script.
-  * The global variables are local to the current execution of the script. (this isn't optimal)
-  * Local variables are local to the RPN_EVAL command. (this isn't optimal either)
+  * The stack is local to the current script, however it is maintained between executions!
+  * The global variables global to all scripts.  There is currently no synchronisation of access to the global variables.  This may cause problems, but that will be adressed in the next version (I hope)
+  * Local variables are local to the current script (and are maintained across executions)
+  * The stack and local variables will be lost if the script is edited.
 
 ### Key Names [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitespace keys and the following key names are allowed:

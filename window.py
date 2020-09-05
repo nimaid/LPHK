@@ -404,7 +404,8 @@ class Main_Window(tk.Frame):
             
             text_string = t.get(1.0, tk.END)
             try:
-                script_validate = scripts.validate_script(text_string)
+                btn = scripts.Button(x, y, text_string)
+                script_validate = btn.validate_script()
             except:
                 #self.save_script(w, x, y, text_string) # This will fail and throw a popup error
                 self.popup(w, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK")
@@ -424,7 +425,7 @@ class Main_Window(tk.Frame):
         t.grid(column=0, row=0, rowspan=3, padx=10, pady=10)
         
         if text_override == None:
-            t.insert(tk.INSERT, scripts.text[x][y])
+            t.insert(tk.INSERT, scripts.buttons[x][y].script_str)
         else:
             t.insert(tk.INSERT, text_override)
         t.bind("<<Paste>>", self.custom_paste)
@@ -593,7 +594,8 @@ class Main_Window(tk.Frame):
             if open_editor:
                     self.script_entry_window(x, y, script_text, color)
         try:
-            script_validate = scripts.validate_script(script_text)
+            btn = scripts.Button(x, y, script_text)
+            script_validate = btn.validate_script()
         except:
             self.popup(window, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK", end_command = open_editor_func)
             raise
@@ -689,9 +691,9 @@ class Main_Window(tk.Frame):
     def modified_layout_save_prompt(self):
         if files.layout_changed_since_load == True:
             layout_empty = True
-            for x_texts in scripts.text:
-                for text in x_texts:
-                    if text != "":
+            for x_btns in scripts.buttons:
+                for btn in x_btns:
+                    if btn.script_str != "":
                         layout_empty = False
                         break
             
