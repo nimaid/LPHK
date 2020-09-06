@@ -29,7 +29,7 @@ class External_Web(command_base.Command_Basic):
                 return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 2:
-                return ("TLine:" + str(idx+1) + " - oo many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
         return True
 

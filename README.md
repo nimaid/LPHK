@@ -253,6 +253,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
   
 #### Mouse Movement [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+All Mouse movement commands can now use variables in place of constants.  Variables are taken from the local variables first, then global.  Undefined variables return 0.  Variable names must start with an alphabetic character and are not case sensitive.
 * `M_LINE`
   * Move the mouse in a line from absolute point (argument 1),(argument 2) to absolute point (argument 3),(argument 4).
   * If (argument 5) supplied, delay (argument 5) milliseconds between each step.
@@ -292,6 +293,8 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * An RPN (stack-based) calculator that implements local and global variables.
   * Any number of commands may follow from 1 to infinity?
   * Commands and variables are NOT case sensitive
+  * Variables must begin with an alphabetic character and cannot contain spaces.
+  * Variables can be used in the Mouse commands in place of constants
   * Any numeric value is pushed onto the stack
   * Common functions pop their parameters off the stack and push the result.  Note that any function requiring more values that there are on the stack will be returned zero for all additional parameters.
     * + - replaces the top two values on the stack with their sum

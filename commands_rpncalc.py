@@ -581,6 +581,13 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
                 if n == None:
                     opr = cmd.upper()   # Convert to uppercase for searching
                     if opr in self.operators: # if it's valid
+                        for p in range(self.operators[opr][1]):
+                            if i + p + 1 >= c_len:
+                                return ("Line:" + str(idx+1) + " - Insufficient tokens for parameter#" + str(p+1) + " of operator #" + str(i) + " '" + cmd + "' in " + self.name, line)
+                            else:
+                                param = split_line[i+p+1]
+                                if not variables.valid_var_name(param):
+                                    return ("Line:" + str(idx+1) + " - parameter#" + str(p+1) + " '" + param + "' of operator #" + str(i) + " '" + cmd + " must start with alpha character in " + self.name, line)
                         i = i + 1 + self.operators[opr][1]  # pull of additional parameters if required
                         if i > c_len:
                             return ("Line:" + str(idx+1) + " - Insufficient parameters after operator #" + str(i) + " '" + cmd + "' in " + self.name, line)                         

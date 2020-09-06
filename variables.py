@@ -63,3 +63,49 @@ def next_cmd(ret, cmds):
         raise Exception("Can't get next element.")
     else:
         return ret+1, v # and we return an updated pointer and the removed element
+
+
+# variable names should start with an alpha character
+def valid_var_name(v):
+    return len(v) > 0 and ord(v[0].upper()) in range(ord('A'), ord('Z')+1)
+    
+    
+# check the number of variables allowed
+def check_num(split_line, lens, idx, line, name):
+    n = len(split_line)-1
+    if n in lens:              
+        return True                  # it's OK
+    
+    msg = "Line:" + str(idx+1) + " - Incorrect number of parameters (" + str(n) + ") supplied. "
+    if len(lens) == 0:
+        msg += "No valid number of parameters"
+    elif len(lens) == 1:
+        msg += str(lens[0])
+    else:
+        msg += ", ".join([str(el) for el in lens[0:-1]]) + ", " + str(lens[-1])    
+       
+    msg += " required for command '" + name + "'."     
+    
+    return (msg, line)
+
+
+# check a parameter
+def check_param(split_line, p, desc, idx, name, line, var_ok):
+    try:
+        temp = int(split_line[p])
+    except:
+        if not (var_ok and valid_var_name(split_line[p])):   # a variable is OK here
+            return ("Line:" + str(idx+1) + " - '" + name + "' " + desc + " '" + split_line[p] + "' not valid.", line)
+
+    return True 
+
+
+# get the value of a parameter
+def get_value(n, symbols):
+    v = split_line[n]
+    if valid_var_name(v):
+        g_vars = symbols['g_vars']
+        with g_vars[0]:                                # lock the globals while we do this
+            v = variables.get(v, symbols['l_vars'], g_vars[1])
+            
+    return v

@@ -1,4 +1,4 @@
-import command_base, ms, scripts
+import command_base, ms, scripts, variables
 
 lib = "cmds_mous" # name of this library (for logging)
 
@@ -24,24 +24,18 @@ class Mouse_Move(command_base.Command_Basic):
         pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
 
-        # no longer allow just 2 tokens
-
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
-            if len(split_line) < 3:
-                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
+            ret = variables.check_num(split_line, [2], idx, line, self.name)
+            if ret != True:
+                return ret
 
-            if len(split_line) > 3:
-                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
+            ret = variables.check_param(split_line, 1, "X value", idx, self.name, line, True)
+            if ret != True:
+                return ret
 
-            try:
-                temp = int(split_line[1])
-            except:
-                return ("Line:" + str(idx+1) + " - '" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
-
-            try:
-                temp = int(split_line[2])
-            except:
-                return ("Line:" + str(idx+1) + " - '" + self.name + "' Y value '" + split_line[2] + "' not valid.", line)
+            ret = variables.check_param(split_line, 2, "Y value", idx, self.name, line, True)
+            if ret != True:
+                return ret
 
         return True
 
@@ -54,12 +48,13 @@ class Mouse_Move(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        # removed error for != 3 tokens
+        v1 = variables.get_value(1, symbols)
+        v2 = variables.get_value(2, symbols)
+                        
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Relative mouse movement (" + str(v1) + ", " + \
+            str(v2) + ")")
 
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Relative mouse movement (" + split_line[1] + ", " + \
-            str(split_line[2]) + ")")
-
-        ms.move_to_pos(float(split_line[1]), float(split_line[2]))
+        ms.move_to_pos(float(v1), float(v2))
 
         return idx+1
 
@@ -101,12 +96,14 @@ class Mouse_Set(command_base.Command_Basic):
             try:
                 temp = int(split_line[1])
             except:
-                return ("Line:" + str(idx+1) + " - '" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
+                if not variables.valid_var_name(split_line[1]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("Line:" + str(idx+1) + " - '" + self.name + "' Y value '" + split_line[2] + "' not valid.", line)
+                if not variables.valid_var_name(split_line[2]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + self.name + "' Y value '" + split_line[2] + "' not valid.", line)
 
         return True
 
@@ -119,12 +116,20 @@ class Mouse_Set(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        # removed error for != 3 tokens
+        v1 = split_line[1]
+        if variables.valid_var_name(v1):
+            with symbols['g_vars'][0]:                                # lock the globals while we do this
+                v1 = variables.get(v1, symbols['l_vars'], symbols['g_vars'][1])
+            
+        v2 = split_line[2]
+        if variables.valid_var_name(v2):
+            with symbols['g_vars'][0]:                                # lock the globals while we do this
+                v1 = variables.get(v2, symbols['l_vars'], symbols['g_vars'][1])
+             
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Set mouse position to (" + str(v1) + ", " + \
+            str(v2) + ")")
 
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Set mouse position to (" + split_line[1] + ", " + \
-            str(split_line[2]) + ")")
-
-        ms.set_pos(float(split_line[1]), float(split_line[2]))
+        ms.set_pos(float(v1), float(v2))
 
         return idx+1
 
@@ -164,18 +169,15 @@ class Mouse_Scroll(command_base.Command_Basic):
             try:
                 temp = int(split_line[1])
             except:
-                return ("Line:" + str(idx+1) + " - '" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
-
-            try:
-                temp = float(split_line[1])
-            except:
-                return ("Line:" + str(idx+1) + " - Invalid scroll amount '" + split_line[1] + "'.", line)
+                if not variables.valid_var_name(split_line[1]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
 
             if len(split_line) > 2:
                 try:
                     temp = float(split_line[2])
                 except:
-                    return ("Line:" + str(idx+1) + " - Invalid scroll amount '" + split_line[2] + "'.", line)
+                    if not variables.valid_var_name(split_line[2]):   # a variable is OK here
+                        return ("Line:" + str(idx+1) + " - Invalid scroll amount '" + split_line[2] + "'.", line)
 
         return True
 
@@ -233,28 +235,33 @@ class Mouse_Line(command_base.Command_Basic):
             try:
                 temp = int(split_line[1])
             except:
-                return ("Line:" + str(idx+1) + " - '" + self.name + "' X1 value '" + split_line[1] + "' not valid.", line)
+                if not variables.valid_var_name(split_line[1]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + self.name + "' X1 value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("Line:" + str(idx+1) + " - '" + self.name + "' Y1 value '" + split_line[2] + "' not valid.", line)
+                if not variables.valid_var_name(split_line[2]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + self.name + "' Y1 value '" + split_line[2] + "' not valid.", line)
 
             try:
                 temp = int(split_line[3])
             except:
-                return ("Line:" + str(idx+1) + " - '" + self.name + "' X2 value '" + split_line[3] + "' not valid.", line)
+                if not variables.valid_var_name(split_line[3]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + self.name + "' X2 value '" + split_line[3] + "' not valid.", line)
 
             try:
                 temp = int(split_line[4])
             except:
-                return ("Line:" + str(idx+1) + " - '" + self.name + "' Y2 value '" + split_line[4] + "' not valid.", line)
+                if not variables.valid_var_name(split_line[4]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + self.name + "' Y2 value '" + split_line[4] + "' not valid.", line)
 
             if len(split_line) >= 6:
                 try:
                     temp = float(split_line[5])
                 except:
-                    return ("Line:" + str(idx+1) + " - '" + self.name + "' wait value '" + split_line[5] + "' not valid.", line)
+                    if not variables.valid_var_name(split_line[5]):   # a variable is OK here
+                        return ("Line:" + str(idx+1) + " - '" + self.name + "' wait value '" + split_line[5] + "' not valid.", line)
 
             if len(split_line) >= 7:
                 try:
@@ -262,7 +269,8 @@ class Mouse_Line(command_base.Command_Basic):
                     if temp == 0:
                         return ("Line:" + str(idx+1) + " - '" + self.name + "' skip value cannot be zero.", line)
                 except:
-                    return ("Line:" + str(idx+1) + " - '" + self.name + "' skip value '" + split_line[6] + "' not valid.", line)
+                    if not variables.valid_var_name(split_line[6]):   # a variable is OK here
+                        return ("Line:" + str(idx+1) + " - '" + self.name + "' skip value '" + split_line[6] + "' not valid.", line)
 
         return True
 
@@ -345,18 +353,21 @@ class Mouse_Line_Move(command_base.Command_Basic):
             try:
                 temp = int(split_line[1])
             except:
-                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' X value '" + split_line[1] + "' not valid.", line)
+                if not variables.valid_var_name(split_line[1]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' Y value '" + split_line[2] + "' not valid.", line)
+                if not variables.valid_var_name(split_line[2]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' Y value '" + split_line[2] + "' not valid.", line)
 
             if len(split_line) >= 4:
                 try:
                     temp = float(split_line[3])
                 except:
-                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' wait value '" + split_line[3] + "' not valid.", line)
+                    if not variables.valid_var_name(split_line[3]):   # a variable is OK here
+                        return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' wait value '" + split_line[3] + "' not valid.", line)
 
             if len(split_line) >= 5:
                 try:
@@ -364,7 +375,8 @@ class Mouse_Line_Move(command_base.Command_Basic):
                     if temp == 0:
                         return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value cannot be zero.", line)
                 except:
-                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value '" + split_line[4] + "' not valid.", line)
+                    if not variables.valid_var_name(split_line[4]):   # a variable is OK here
+                        return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value '" + split_line[4] + "' not valid.", line)
 
         return True
 
@@ -446,18 +458,21 @@ class Mouse_Line_Set(command_base.Command_Basic):
             try:
                 temp = int(split_line[1])
             except:
-                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' X value '" + split_line[1] + "' not valid.", line)
+                if not variables.valid_var_name(split_line[1]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' Y value '" + split_line[2] + "' not valid.", line)
+                if not variables.valid_var_name(split_line[2]):   # a variable is OK here
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' Y value '" + split_line[2] + "' not valid.", line)
 
             if len(split_line) >= 4:
                 try:
                      temp = float(split_line[3])
                 except:
-                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' wait value '" + split_line[3] + "' not valid.", line)
+                    if not variables.valid_var_name(split_line[3]):   # a variable is OK here
+                        return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' wait value '" + split_line[3] + "' not valid.", line)
 
             if len(split_line) >= 5:
                 try:
@@ -465,7 +480,8 @@ class Mouse_Line_Set(command_base.Command_Basic):
                     if temp == 0:
                         return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value cannot be zero.", line)
                 except:
-                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value '" + split_line[4] + "' not valid.", line)
+                    if not variables.valid_var_name(split_line[4]):   # a variable is OK here
+                        return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value '" + split_line[4] + "' not valid.", line)
 
         return True
 
@@ -542,7 +558,8 @@ class Mouse_Recall_Line(command_base.Command_Basic):
                 try:
                     temp = float(split_line[1])
                 except:
-                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' wait value '" + split_line[1] + "' not valid.", line)
+                    if not variables.valid_var_name(split_line[1]):   # a variable is OK here
+                        return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' wait value '" + split_line[1] + "' not valid.", line)
 
             if len(split_line) > 2:
                 try:
@@ -550,7 +567,8 @@ class Mouse_Recall_Line(command_base.Command_Basic):
                     if temp == 0:
                         return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value cannot be zero.", line)
                 except:
-                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value '" + split_line[2] + "' not valid.", line)
+                    if not variables.valid_var_name(split_line[2]):   # a variable is OK here
+                        return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value '" + split_line[2] + "' not valid.", line)
 
         return True
 
