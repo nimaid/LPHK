@@ -26,7 +26,7 @@ class Keys_Wait_Pressed(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) > 1:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
         return True
 
@@ -39,7 +39,7 @@ class Keys_Wait_Pressed(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords + "    Wait for script key to be unpressed")
+        print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Wait for script key to be unpressed")
 
         while lp_events.pressed[coords[1]][coords[2]]:
             sleep(DELAY_EXIT_CHECK)
@@ -76,13 +76,13 @@ class Keys_Tap(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 4:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
             if kb.sp(split_line[1]) == None:
-                return ("No key named '" + split_line[1] + "'.", line)
+                return ("Line:" + str(idx+1) + " - No key named '" + split_line[1] + "'.", line)
 
         return True
 
@@ -100,10 +100,10 @@ class Keys_Tap(command_base.Command_Basic):
         releasefunc = lambda: kb.release(key)
 
         if len(split_line) <= 2:
-            print("[" + lib + "] " + coords[0] + "    Tap key " + split_line[1])
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Tap key " + split_line[1])
             kb.tap(key)
         elif len(split_line) <= 3:
-            print("[" + lib + "] " + coords[0] + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
             taps = int(split_line[2])
 
             for tap in range(taps):
@@ -111,7 +111,7 @@ class Keys_Tap(command_base.Command_Basic):
                     return idx + 1
                 kb.tap(key)
         else:
-            print("[" + lib + "] " + coords[0] + "    Tap key " + split_line[1] + " " + split_line[2] + \
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Tap key " + split_line[1] + " " + split_line[2] + \
                 " times for " + str(split_line[3]) + " seconds each")
 
             taps = int(split_line[2])
@@ -155,13 +155,13 @@ class Keys_Press(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 2:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
             if kb.sp(split_line[1]) == None:
-                return ("No key named '" + split_line[1] + "'.", line)
+                return ("Line:" + str(idx+1) + " - No key named '" + split_line[1] + "'.", line)
 
         return True
 
@@ -174,7 +174,7 @@ class Keys_Press(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "    Press key " + split_line[1])
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Press key " + split_line[1])
 
         key = kb.sp(split_line[1])
         kb.press(key)
@@ -209,13 +209,13 @@ class Keys_Release(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 2:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
             if kb.sp(split_line[1]) == None:
-                return ("No key named '" + split_line[1] + "'.", line)
+                return ("Line:" + str(idx+1) + " - No key named '" + split_line[1] + "'.", line)
 
         return True
 
@@ -228,7 +228,7 @@ class Keys_Release(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "    Release key " + split_line[1])
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Release key " + split_line[1])
 
         key = kb.sp(split_line[1])
         kb.release(key)
@@ -263,7 +263,7 @@ class Keys_Release_All(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) > 1:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
         return True
 
@@ -276,7 +276,7 @@ class Keys_Release_All(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "    Release all keys")
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Release all keys")
 
         kb.release_all()
 
@@ -310,7 +310,7 @@ class Keys_String(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
         return True
 
@@ -325,7 +325,7 @@ class Keys_String(command_base.Command_Basic):
 
         type_string = " ".join(split_line[1:])
 
-        print("[" + lib + "] " + coords[0] + "    Type out string " + type_string)
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Type out string " + type_string)
 
         kb.write(type_string)
 

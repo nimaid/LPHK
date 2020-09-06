@@ -124,7 +124,7 @@ class Button():
                             err = res                # note the error
                         errors += 1                  # and 1 more error
                 else:
-                    msg = "Invalid command '" + split_line[0] + "' on line " + str(idx) + "."
+                    msg = "Invalid command '" + split_line[0] + "' on line " + str(idx+1) + "."
                     if err == True:
                         err = (msg, line)            # note the error
                     print (msg)
@@ -250,7 +250,7 @@ class Button():
         cmd = "RESET_REPEATS"             # before we run, we want to rest loop counters
         if cmd in VALID_COMMANDS:
             command = VALID_COMMANDS[cmd]  
-            command.Run(0, [cmd], self.symbols, (self.coords, self.x, self.y), self.is_async)        
+            command.Run(-1, [cmd], self.symbols, (self.coords, self.x, self.y), self.is_async)        
         
         if len(self.script_lines) > 0:
             self.running = True

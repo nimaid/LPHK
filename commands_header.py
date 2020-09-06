@@ -25,10 +25,10 @@ class Header_Async(command_base.Command_Header):
         
         if pass_no == 1:
             if idx > 0:        # headers normally have to check the line number
-                return (self.name + " must appear on the first line.", lines[0])
+                return ("Line:" + str(idx+1) + " - " + self.name + " must appear on the first line.", lines[0])
 
             if len(split_line) > 1:
-                return (self.name + " takes no arguments.", line)
+                return ("Line:" + str(idx+1) + " - " + self.name + " takes no arguments.", line)
 
         return True
 
@@ -72,20 +72,20 @@ class Header_Simple(command_base.Command_Header):
 
         if pass_no == 1:
             if idx > 0:        # headers normally have to check the line number
-                return (self.name + " must appear on the first line.", lines[0])
+                return ("Line:" + str(idx+1) + " - " + self.name + " must appear on the first line.", lines[0])
 
             if len(split_line) < 2:
-                return (self.name + " requires a key to bind.", line)
+                return ("Line:" + str(idx+1) + " - " + self.name + " requires a key to bind.", line)
 
             if len(split_line) > 2:
-                return (self.name + " only take one argument", line)
+                return ("Line:" + str(idx+1) + " - " + self.name + " only take one argument", line)
 
             if kb.sp(split_line[1]) == None:
-                return ("No key named '" + split_line[1] + "'.", line)
+                return ("Line:" + str(idx+1) + " - No key named '" + split_line[1] + "'.", line)
 
             for lin in lines[1:]:
                 if lin != "" and lin[0] != "-":
-                    return ("When " + self.name + " is used, scripts can only contain comments.", lin)
+                    return ("Line:" + str(idx+1) + " - When " + self.name + " is used, scripts can only contain comments.", lin)
 
         return True
 
@@ -99,7 +99,7 @@ class Header_Simple(command_base.Command_Header):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[cmds_head] " + coords + "    Simple keybind: " + split_line[1])
+        print("[cmds_head] " + coords + "  Line:" + str(idx+1) + "    Simple keybind: " + split_line[1])
 
         #PRESS
         key = kb.sp(split_line[1])
@@ -146,10 +146,10 @@ class Header_Load_Layout(command_base.Command_Header):
 
         if pass_no == 1:
             if idx > 0:        # headers normally have to check the line number
-                return (self.name + " must appear on the first line.", lines[0])
+                return ("Line:" + str(idx+1) + " - " + self.name + " must appear on the first line.", lines[0])
 
             if len(split_line) < 2:
-                return (self.name + " requires a filename as a parameter.", line)
+                return ("Line:" + str(idx+1) + " - " + self.name + " requires a filename as a parameter.", line)
 
         return True
 
@@ -165,17 +165,17 @@ class Header_Load_Layout(command_base.Command_Header):
 
         layout_name = " ".join(split_line[1:])
 
-        print("[cmds_head] " + coords + "    Load layout " + layout_name)
+        print("[cmds_head] " + coords + "  Line:" + str(idx+1) + "    Load layout " + layout_name)
 
         layout_path = os.path.join(files.LAYOUT_PATH, layout_name)
         if not os.path.isfile(layout_path):
-            print("[cmds_head] " + coords + "        ERROR: Layout file does not exist.")
+            print("[cmds_head] " + coords + "  Line:" + str(idx+1) + "        ERROR: Layout file does not exist.")
             return -1
 
         try:
             layout = files.load_layout(layout_path, popups=False, save_converted=False)
         except files.json.decoder.JSONDecodeError:
-            print("[cmds_head] " + coords + "        ERROR: Layout is malformated.")
+            print("[cmds_head] " + coords + "  Line:" + str(idx+1) + "        ERROR: Layout is malformated.")
             return -1
 
         if files.layout_changed_since_load:

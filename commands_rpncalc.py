@@ -563,7 +563,7 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
             c_len = len(split_line)     # Number of tokens
             # check number of split_line
             if c_len < 2:
-                return ("Wrong number of parameters (at least 1 required) in " + self.name, line)
+                return ("Line:" + str(idx+1) + " - Wrong number of parameters (at least 1 required) in " + self.name, line)
 
             i = 1                       # using a loop counter rather than an itterator because that makes the code similar to execution
           
@@ -583,9 +583,9 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
                     if opr in self.operators: # if it's valid
                         i = i + 1 + self.operators[opr][1]  # pull of additional parameters if required
                         if i > c_len:
-                            return ("Insufficient parameters after operator #" + str(i) + " '" + cmd + "' in " + self.name, line)                         
+                            return ("Line:" + str(idx+1) + " - Insufficient parameters after operator #" + str(i) + " '" + cmd + "' in " + self.name, line)                         
                     else:               # if invalid, report it
-                        return ("Invalid operator #" + str(i) + " '" + cmd + "' in " + self.name, line)                         
+                        return ("Line:" + str(idx+1) + " - Invalid operator #" + str(i) + " '" + cmd + "' in " + self.name, line)                         
             
         return True 
 
@@ -599,7 +599,7 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "    " + self.name + ": ", split_line[1:]) # coords[0] is the text "(x, y)"
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    " + self.name + ": ", split_line[1:]) # coords[0] is the text "(x, y)"
 
         i = 1                       # using a loop counter rather than an itterator because it's hard to pass iters as params
       
@@ -624,10 +624,10 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
                     try:
                         i = i + self.operators[opr][0](symbols, opr, split_line[i:]) # run it
                     except:
-                        print("Error in evaluation: '" + str(sys.exc_info()[1]) + "' at operator #" + str(i) + " '" + cmd + "'")
+                        print("Error in evaluation: '" + str(sys.exc_info()[1]) + "' at operator #" + str(i) + " on Line:" + str(idx+1) + " '" + cmd + "'")
                         break
                 else:                   # if invalid, report it
-                   print("invalid operator #" + str(i) + " '" + cmd + "'")
+                   print("Line:" + str(idx+1) + " - invalid operator #" + str(i) + " '" + cmd + "'")
                    break
         
         return idx+1                # Normal default exit to the next line

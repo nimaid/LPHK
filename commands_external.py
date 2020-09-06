@@ -26,10 +26,10 @@ class External_Web(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 2:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("TLine:" + str(idx+1) + " - oo many arguments for command '" + split_line[0] + "'.", line)
 
         return True
 
@@ -46,7 +46,7 @@ class External_Web(command_base.Command_Basic):
         if "http" not in link:
             link = "http://" + link
 
-        print("[" + lib + "] " + coords[0] + "    Open website " + link + " in default browser")
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Open website " + link + " in default browser")
 
         webbrowser.open(link)
 
@@ -80,10 +80,10 @@ class External_Web_New(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 2:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
         return True
 
@@ -100,7 +100,7 @@ class External_Web_New(command_base.Command_Basic):
         if "http" not in link:
             link = "http://" + link
 
-        print("[" + lib + "] " + coords[0] + "    Open website " + link + " in default browser, try to make a new window")
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Open website " + link + " in default browser, try to make a new window")
 
         webbrowser.open_new(link)
 
@@ -134,12 +134,12 @@ class External_Open(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             path_name = " ".join(split_line[1:])
 
             if (not os.path.isfile(path_name)) and (not os.path.isdir(path_name)):
-                return (split_line[0] + " folder or file location '" + path_name + \
+                return ("Line:" + str(idx+1) + " - " + split_line[0] + " folder or file location '" + path_name + \
                     "' does not exist.", line)
 
         return True
@@ -155,7 +155,7 @@ class External_Open(command_base.Command_Basic):
 
         path_name = " ".join(split_line[1:])
 
-        print("[" + lib + "] " + coords[0] + "    Open file or folder " + path_name)
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Open file or folder " + path_name)
 
         files.open_file_folder(path_name)
 
@@ -189,10 +189,10 @@ class External_Sound(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 3:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
         return True
 
@@ -206,11 +206,11 @@ class External_Sound(command_base.Command_Basic):
         ):
 
         if len(split_line) > 2:
-            print("[" + lib + "] " + coords[0] + "    Play sound file " + split_line[1] + \
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Play sound file " + split_line[1] + \
                 " at volume " + str(split_line[2]))
             sound.play(split_line[1], float(split_line[2]))
         else:
-            print("[" + lib + "] " + coords[0] + "    Play sound file " + split_line[1])
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Play sound file " + split_line[1])
             sound.play(split_line[1])
 
         return idx+1
@@ -243,7 +243,7 @@ class External_Sound_Stop(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) > 2:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
         return True
 
@@ -259,10 +259,10 @@ class External_Sound_Stop(command_base.Command_Basic):
         if len(split_line) > 1:
             delay = split_line[1]
             print("[scripts] " + coords +
-                  "    Stopping sounds with " + delay + " milliseconds fadeout time")
+                  "  Line:" + str(idx+1) + "    Stopping sounds with " + delay + " milliseconds fadeout time")
             sound.fadeout(int(delay))
         else:
-            print("[scripts] " + coords + "    Stopping sounds")
+            print("[scripts] " + coords + "  Line:" + str(idx+1) + "    Stopping sounds")
             sound.stop()
 
         return idx+1
@@ -295,7 +295,7 @@ class External_Code(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
         return True
 
@@ -309,12 +309,12 @@ class External_Code(command_base.Command_Basic):
         ):
 
         args = " ".join(split_line[1:])
-        print("[" + lib + "] " + coords[0] + "    Running code: " + args)
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Running code: " + args)
 
         try:
             subprocess.run(args)
         except Exception as e:
-            print("[" + lib + "] " + coords[0] + "    Error with running code: " + str(e))
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))
 
         return idx+1
 

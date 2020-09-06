@@ -27,15 +27,15 @@ class Pause_Delay(command_base.Command_Basic):
         if pass_no == 1:
             # check number of split_line
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 2:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
             try:
                 temp = float(split_line[1])
             except:
-                return ("Delay time '" + split_line[1] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - Delay time '" + split_line[1] + "' not valid.", line)
 
         return True
 
@@ -49,7 +49,7 @@ class Pause_Delay(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "    Delay for " + split_line[1] + " seconds")
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Delay for " + split_line[1] + " seconds")
 
         delay = float(split_line[1])
 

@@ -28,20 +28,20 @@ class Mouse_Move(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 3:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 3:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
             try:
                 temp = int(split_line[1])
             except:
-                return ("'" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("'" + self.name + "' Y value '" + split_line[2] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + self.name + "' Y value '" + split_line[2] + "' not valid.", line)
 
         return True
 
@@ -56,7 +56,7 @@ class Mouse_Move(command_base.Command_Basic):
 
         # removed error for != 3 tokens
 
-        print("[" + lib + "] " + coords[0] + "    Relative mouse movement (" + split_line[1] + ", " + \
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Relative mouse movement (" + split_line[1] + ", " + \
             str(split_line[2]) + ")")
 
         ms.move_to_pos(float(split_line[1]), float(split_line[2]))
@@ -93,20 +93,20 @@ class Mouse_Set(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 3:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 3:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
             try:
                 temp = int(split_line[1])
             except:
-                return ("'" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("'" + self.name + "' Y value '" + split_line[2] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + self.name + "' Y value '" + split_line[2] + "' not valid.", line)
 
         return True
 
@@ -121,7 +121,7 @@ class Mouse_Set(command_base.Command_Basic):
 
         # removed error for != 3 tokens
 
-        print("[" + lib + "] " + coords[0] + "    Set mouse position to (" + split_line[1] + ", " + \
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Set mouse position to (" + split_line[1] + ", " + \
             str(split_line[2]) + ")")
 
         ms.set_pos(float(split_line[1]), float(split_line[2]))
@@ -156,26 +156,26 @@ class Mouse_Scroll(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 3:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
             try:
                 temp = int(split_line[1])
             except:
-                return ("'" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + self.name + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = float(split_line[1])
             except:
-                return ("Invalid scroll amount '" + split_line[1] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Invalid scroll amount '" + split_line[1] + "'.", line)
 
             if len(split_line) > 2:
                 try:
                     temp = float(split_line[2])
                 except:
-                    return ("Invalid scroll amount '" + split_line[2] + "'.", line)
+                    return ("Line:" + str(idx+1) + " - Invalid scroll amount '" + split_line[2] + "'.", line)
 
         return True
 
@@ -189,10 +189,10 @@ class Mouse_Scroll(command_base.Command_Basic):
         ):
 
         if len(split_line) > 2:
-            print("[" + lib + "] " + coords + "    Scroll (" + split_line[1] + ", " + split_line[2] + ")")
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll (" + split_line[1] + ", " + split_line[2] + ")")
             ms.scroll(float(split_line[2]), float(split_line[1]))
         else:
-            print("[" + lib + "] " + coords + "    Scroll " + split_line[1])
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll " + split_line[1])
             ms.scroll(0, float(split_line[1]))
 
         return idx+1
@@ -225,44 +225,44 @@ class Mouse_Line(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 5:
-                return ("Too few arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", line)
 
             if len(split_line) > 7:
-                return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
             try:
                 temp = int(split_line[1])
             except:
-                return ("'" + self.name + "' X1 value '" + split_line[1] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + self.name + "' X1 value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("'" + self.name + "' Y1 value '" + split_line[2] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + self.name + "' Y1 value '" + split_line[2] + "' not valid.", line)
 
             try:
                 temp = int(split_line[3])
             except:
-                return ("'" + self.name + "' X2 value '" + split_line[3] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + self.name + "' X2 value '" + split_line[3] + "' not valid.", line)
 
             try:
                 temp = int(split_line[4])
             except:
-                return ("'" + self.name + "' Y2 value '" + split_line[4] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + self.name + "' Y2 value '" + split_line[4] + "' not valid.", line)
 
             if len(split_line) >= 6:
                 try:
                     temp = float(split_line[5])
                 except:
-                    return ("'" + self.name + "' wait value '" + split_line[5] + "' not valid.", line)
+                    return ("Line:" + str(idx+1) + " - '" + self.name + "' wait value '" + split_line[5] + "' not valid.", line)
 
             if len(split_line) >= 7:
                 try:
                     temp = int(split_line[6])
                     if temp == 0:
-                        return ("'" + self.name + "' skip value cannot be zero.", line)
+                        return ("Line:" + str(idx+1) + " - '" + self.name + "' skip value cannot be zero.", line)
                 except:
-                    return ("'" + self.name + "' skip value '" + split_line[6] + "' not valid.", line)
+                    return ("Line:" + str(idx+1) + " - '" + self.name + "' skip value '" + split_line[6] + "' not valid.", line)
 
         return True
 
@@ -289,11 +289,11 @@ class Mouse_Line(command_base.Command_Basic):
             skip = int(split_line[6])
 
         if (delay == None) or (delay <= 0):
-            print("[" + lib + "] " + coords[0] + "    Mouse line from (" + \
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Mouse line from (" + \
                 split_line[1] + ", " + split_line[2] + ") to (" + \
                 split_line[3] + ", " + split_line[4] + ") by " + str(skip) + " pixels per step")
         else:
-            print("[" + lib + "] " + coords + "    Mouse line from (" + \
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Mouse line from (" + \
                 split_line[1] + ", " + split_line[2] + ") to (" + \
                 split_line[3] + ", " + split_line[4] + ") by " + \
                 str(skip) + " pixels per step and wait " + split_line[5] + " milliseconds between each step")
@@ -340,31 +340,31 @@ class Mouse_Line_Move(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 3:
-                return ("'" + split_line[0] + "' requires at least X and Y arguments.", line)
+                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' requires at least X and Y arguments.", line)
 
             try:
                 temp = int(split_line[1])
             except:
-                return ("'" + split_line[0] + "' X value '" + split_line[1] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("'" + split_line[0] + "' Y value '" + split_line[2] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' Y value '" + split_line[2] + "' not valid.", line)
 
             if len(split_line) >= 4:
                 try:
                     temp = float(split_line[3])
                 except:
-                    return ("'" + split_line[0] + "' wait value '" + split_line[3] + "' not valid.", line)
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' wait value '" + split_line[3] + "' not valid.", line)
 
             if len(split_line) >= 5:
                 try:
                     temp = int(split_line[4])
                     if temp == 0:
-                        return ("'" + split_line[0] + "' skip value cannot be zero.", line)
+                        return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value cannot be zero.", line)
                 except:
-                    return ("'" + split_line[0] + "' skip value '" + split_line[4] + "' not valid.", line)
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value '" + split_line[4] + "' not valid.", line)
 
         return True
 
@@ -389,11 +389,11 @@ class Mouse_Line_Move(command_base.Command_Basic):
             skip = int(split_line[4])
 
         if (delay == None) or (delay <= 0):
-            print("[" + lib + "] " + coords + "    Mouse line move relative (" + \
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Mouse line move relative (" + \
                 split_line[1] + ", " + split_line[2] + ") by " + str(skip) + \
                 " pixels per step")
         else:
-            print("[" + lib + "] " + coords + "    Mouse line move relative (" + \
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Mouse line move relative (" + \
                 split_line[1] + ", " + split_line[2] + ") by " + str(skip) + \
                 " pixels per step and wait " + split_line[3] + " milliseconds between each step")
 
@@ -441,31 +441,31 @@ class Mouse_Line_Set(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 3:
-                return ("'" + split_line[0] + "' requires at least X and Y arguments.", line)
+                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' requires at least X and Y arguments.", line)
 
             try:
                 temp = int(split_line[1])
             except:
-                return ("'" + split_line[0] + "' X value '" + split_line[1] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' X value '" + split_line[1] + "' not valid.", line)
 
             try:
                 temp = int(split_line[2])
             except:
-                return ("'" + split_line[0] + "' Y value '" + split_line[2] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' Y value '" + split_line[2] + "' not valid.", line)
 
             if len(split_line) >= 4:
                 try:
                      temp = float(split_line[3])
                 except:
-                    return ("'" + split_line[0] + "' wait value '" + split_line[3] + "' not valid.", line)
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' wait value '" + split_line[3] + "' not valid.", line)
 
             if len(split_line) >= 5:
                 try:
                     temp = int(split_line[4])
                     if temp == 0:
-                        return ("'" + split_line[0] + "' skip value cannot be zero.", line)
+                        return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value cannot be zero.", line)
                 except:
-                    return ("'" + split_line[0] + "' skip value '" + split_line[4] + "' not valid.", line)
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value '" + split_line[4] + "' not valid.", line)
 
         return True
 
@@ -490,11 +490,11 @@ class Mouse_Line_Set(command_base.Command_Basic):
             skip = int(split_line[4])
 
         if (delay == None) or (delay <= 0):
-            print("[" + lib + "] " + coords[0] + "    Mouse line set (" + \
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Mouse line set (" + \
                 split_line[1] + ", " + split_line[2] + ") by " + str(skip) + \
                 " pixels per step")
         else:
-            print("[" + lib + "] " + coords[0] + "    Mouse line set (" + \
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Mouse line set (" + \
             split_line[1] + ", " + split_line[2] + ") by " + str(skip) + \
             " pixels per step and wait " + split_line[3] + " milliseconds between each step")
 
@@ -542,15 +542,15 @@ class Mouse_Recall_Line(command_base.Command_Basic):
                 try:
                     temp = float(split_line[1])
                 except:
-                    return ("'" + split_line[0] + "' wait value '" + split_line[1] + "' not valid.", line)
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' wait value '" + split_line[1] + "' not valid.", line)
 
             if len(split_line) > 2:
                 try:
                     temp = int(split_line[2])
                     if temp == 0:
-                        return ("'" + split_line[0] + "' skip value cannot be zero.", line)
+                        return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value cannot be zero.", line)
                 except:
-                    return ("'" + split_line[0] + "' skip value '" + split_line[2] + "' not valid.", line)
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' skip value '" + split_line[2] + "' not valid.", line)
 
         return True
 
@@ -574,10 +574,10 @@ class Mouse_Recall_Line(command_base.Command_Basic):
             skip = int(split_line[2])
 
         if (delay == None) or (delay <= 0):
-            print("[" + lib + "] " + coords + "    Recall mouse position " + str(symbols["m_pos"]) + \
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Recall mouse position " + str(symbols["m_pos"]) + \
                 " in a line by " + str(skip) + " pixels per step")
         else:
-            print("[" + lib + "] " + coords + "    Recall mouse position " + str(symbols["m_pos"]) + \
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Recall mouse position " + str(symbols["m_pos"]) + \
                 " in a line by " + str(skip) + " pixels per step and wait " + \
                 split_line[1] + " milliseconds between each step")
 
@@ -624,7 +624,7 @@ class Mouse_Store(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) > 1:
-                return ("'" + split_line[0] + "' takes no arguments.", line)
+                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' takes no arguments.", line)
 
         return True
 
@@ -637,7 +637,7 @@ class Mouse_Store(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "    Store mouse position")
+        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Store mouse position")
 
         symbols["m_pos"] = ms.get_pos()  # Another example of modifying the symbol table during execution.
 
@@ -671,7 +671,7 @@ class Mouse_Recall(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) > 1:
-                return ("'" + split_line[0] + "' takes no arguments.", line)
+                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' takes no arguments.", line)
 
         return True
 
@@ -685,9 +685,9 @@ class Mouse_Recall(command_base.Command_Basic):
         ):
 
         if symbols['m_pos'] == tuple():
-            print("[" + lib + "] " + coords[0] + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
         else:
-            print("[" + lib + "] " + coords[0] + "    Recall mouse position " + str(symbols['m_pos']))
+            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Recall mouse position " + str(symbols['m_pos']))
             ms.set_pos(symbols['m_pos'][0], symbols['m_pos'][1])
 
         return idx+1
