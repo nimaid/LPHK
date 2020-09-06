@@ -405,7 +405,7 @@ class Main_Window(tk.Frame):
             text_string = t.get(1.0, tk.END)
             try:
                 btn = scripts.Button(x, y, text_string)
-                script_validate = btn.validate_script()
+                script_validate = btn.parse_script()
             except:
                 #self.save_script(w, x, y, text_string) # This will fail and throw a popup error
                 self.popup(w, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK")
@@ -592,10 +592,11 @@ class Main_Window(tk.Frame):
         def open_editor_func():
             nonlocal x, y
             if open_editor:
-                    self.script_entry_window(x, y, script_text, color)
+                self.script_entry_window(x, y, script_text, color)
+                
         try:
             btn = scripts.Button(x, y, script_text)
-            script_validate = btn.validate_script()
+            script_validate = btn.parse_script()
         except:
             self.popup(window, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK", end_command = open_editor_func)
             raise

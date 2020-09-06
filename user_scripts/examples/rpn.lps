@@ -1,2 +1,7 @@
-- simple math.  add 1 and 1, then multiply by 2 and divide by a half.  Then show the value
+- Simple math.
+
+- Add 1 and 1.
+- Then multiply by 2 and divide by a half.
+- Finally, show the value
 RPN_EVAL clst 1 1 + view 2 * 0.5 / view
+

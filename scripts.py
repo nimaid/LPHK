@@ -98,6 +98,16 @@ class Button():
         #  Do what is required to parse the script.  Parsing does not output any information unless it is an error 
 
     def parse_script(self):
+        if self.validated:                           # we don't want to repeat validation over and over
+            return True
+            
+        if self.script_lines == None:                # A little setup if the script lines are not created
+            self.script_lines = self.script_str.split('\n')  # Create the lines
+            self.script_lines = [i.strip() for i in self.script_lines] # Strip extra blanks
+        
+            self.symbols = new_symbol_table()        # Create a shiny new symbol table
+            self.is_async = False                    # default is NOT async
+
         err = True
         errors = 0                                   # no errors found
 
@@ -230,7 +240,7 @@ class Button():
     def run_script(self):
         lp_colors.updateXY(self.x, self.y)
         
-        if not self.validate_script():
+        if self.validate_script() != True:
            return
            
         print("[scripts] " + self.coords + " Now running script...")
@@ -288,12 +298,6 @@ class Button():
         if self.validated or self.script_str == "":      # If valid or there is no script...
             self.validated = True
             return True                                  # ...validation succeeds!
-
-        self.script_lines = self.script_str.split('\n')  # Create the lines
-        self.script_lines = [i.strip() for i in self.script_lines] # Strip extra blanks
-    
-        self.symbols = new_symbol_table()                # Create a shiny new symbol table
-        self.is_async = False                            # default is NOT async
 
         if self.parse_script():                          # If parsing is OK
             self.validated = True                        # Script is valid
