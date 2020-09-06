@@ -289,7 +289,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 
 #### Variables and calculator [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * `RPN_EVAL`
-  * An RPN (stack-based) calculator that implements local and global variables (global variables are not global yet).
+  * An RPN (stack-based) calculator that implements local and global variables.
   * Any number of commands may follow from 1 to infinity?
   * Commands and variables are NOT case sensitive
   * Any numeric value is pushed onto the stack
@@ -298,9 +298,15 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * - - replaces the top two values on the stack with their difference
     * * - replaces the top two values on the stack with their product
     * / - replaces the top two values on the stack with their quotient
+	* // - performs integer division
+	* mod - calculates the modulus (remainder)
+	* y^x - raises the second value on the stack to the power of the first value on the stack
   * Some operations only change the top value on the stack.
     * 1/x - replaces the top value on the stack with it's inverse
     * sqr - replaces the value on the top of the stack with its square
+	* int - replaces the value on trhe top of the stack with the integer part
+	* frac - replaces the value on trhe top of the stack with the fractional part
+	* chs - changes the sign of the value on the top of the stack (does not affect lastx)
   * Some operations manipulate the stack
     * dup - duplicates the value on the top of the stack
     * pop - removes the top item from the stack
@@ -336,7 +342,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * ?G {x} - Does a global variable {x} exist
     * !?G {x} - Does a global variable {x} not exist
   * The stack is local to the current script, however it is maintained between executions!
-  * The global variables global to all scripts.  There is currently no synchronisation of access to the global variables.  This may cause problems, but that will be adressed in the next version (I hope)
+  * The global variables are global to all scripts. 
   * Local variables are local to the current script (and are maintained across executions)
   * The stack and local variables will be lost if the script is edited.
 

@@ -1,24 +1,185 @@
-- this tests some of the conditional statements
-RPN_EVAL view_s view_l view_g
-RPN_EVAL 0 x=0? view
-RPN_EVAL x!=0? view
-RPN_EVAL 1 x=y? view
-RPN_EVAL x!=y? view
-RPN_EVAL ? x view
-RPN_EVAL !? x view
-RPN_EVAL 1 > x 1 + >G Z < x view_s view_l view_g
-RPN_EVAL >L x ? x view
-RPN_EVAL >L x !? x view
-RPN_EVAL >L x ?L x view
-RPN_EVAL >L x !?L x view
-RPN_EVAL >L x ?G x view
-RPN_EVAL >L x !?G x view
-RPN_EVAL ? z view
-RPN_EVAL !? z view
-RPN_EVAL ?L z view
-RPN_EVAL !?L z view
-RPN_EVAL ?G z view
-RPN_EVAL !?G z view
-RPN_EVAL 2 >G y view_s < y <G y <L y view_s view_l view_g
-RPN_EVAL 1 X<>Y view_s
-RPN_EVAL view_g
+- this tests a heap of RPN_EVAL  if you get a divide by 0 error, the command has failed, x display or silence is sucess
+- stack displays only used for initial tests
+
+- divide by 0 (exception - div by 0 error is expected)
+RPN_EVAL 1 0 /
+
+- check x=y? (also checks zeros being pulled off the stack)
+RPN_EVAL clst x=y? 1
+RPN_EVAL stack x!=y? view_s 1 0 /
+RPN_EVAL clst 0 x=y? 2
+RPN_EVAL stack x!=y? view_s 1 0 /
+RPN_EVAL clst 0 0 x=y? 3
+RPN_EVAL stack x!=y? view_s 1 0 /
+RPN_EVAL clst 1 1 x=y? 3
+RPN_EVAL stack x!=y? view_s 1 0 /
+RPN_EVAL clst 1 x=y? view_s 1 0 /
+RPN_EVAL clst 1 2 x=y? view_s 1 0 /
+RPN_EVAL clst 2 1 x=y? view_s 1 0 /
+
+- check x=y?
+RPN_EVAL clst 1 1 x!=y? view_s 1 0 /
+RPN_EVAL clst 1 4 x!=y? 3
+RPN_EVAL stack x!=y? view_s 1 0 /
+RPN_EVAL clst 2 1 x!=y? 3
+RPN_EVAL stack x!=y? view_s 1 0 /
+
+- check clst
+RPN_EVAL 1 2 3 4 clst x!=y? view_s 1 0 /
+
+- check stack
+RPN_EVAL clst stack 0 x!=y? view_s 1 0 /
+RPN_EVAL clst 1 2 3 4 stack x!=y? view_s 1 0 /
+
+- check +
+RPN_EVAL clst 0 0 + 0 x!=y? view_s 1 0 /
+RPN_EVAL clst -1 1 + 0 x!=y? view_s 1 0 / 
+RPN_EVAL clst 1 1 + 2 x!=y? view_s 1 0 /
+RPN_EVAL clst 1.75 -3 + -1.25 x!=y? view_s 1 0 /
+
+- check -
+RPN_EVAL clst 0 0 - 0 x!=y? view_s 1 0 /
+RPN_EVAL clst -1 1 - -2 x!=y? view_s 1 0 / 
+RPN_EVAL clst 3 1 - 2 x!=y? view_s 1 0 /
+RPN_EVAL clst 1.75 3 - -1.25 x!=y? view_s 1 0 /
+
+- check *
+RPN_EVAL clst 99 0 * 0 x!=y? view_s 1 0 /
+RPN_EVAL clst -1 1 * -1 x!=y? view_s 1 0 / 
+RPN_EVAL clst 5 0.5 * 2.5 x!=y? view_s 1 0 /
+
+- check / (not checking for divide by zero)
+RPN_EVAL clst 99 0 * 0 x!=y? view_s 1 0 /
+RPN_EVAL clst -1 1 * -1 x!=y? view_s 1 0 / 
+RPN_EVAL clst 5 0.5 * 2.5 x!=y? view_s 1 0 /
+
+- check //
+RPN_EVAL clst 10 1 // 10 x!=y? view_s 1 0 /
+RPN_EVAL clst 10.25 3 // 3 x!=y? view_s 1 0 / 
+RPN_EVAL clst -10 3 // -4 x!=y? view_s 1 0 /
+RPN_EVAL clst 10 -3 // -4 x!=y? view_s 1 0 /
+
+- check mod
+RPN_EVAL clst 10 1 mod 0 x!=y? view_s 1 0 /
+RPN_EVAL clst 10.25 3 mod 1.25 x!=y? view_s 1 0 / 
+RPN_EVAL clst -10 3 mod 2 x!=y? view_s 1 0 /
+RPN_EVAL clst 10 -3 mod -2 x!=y? view_s 1 0 /
+
+- check 1/x
+RPN_EVAL clst 1 1/x 1 x!=y? view_s 1 0 /
+RPN_EVAL clst 10 1/x 0.1 x!=y? view_s 1 0 / 
+RPN_EVAL clst -5 1/x -0.2 x!=y? view_s 1 0 /
+
+- check int
+RPN_EVAL clst 1 int 1 x!=y? view_s 1 0 /
+RPN_EVAL clst -1 int -1 x!=y? view_s 1 0 /
+RPN_EVAL clst 1.5 int 1 x!=y? view_s 1 0 / 
+RPN_EVAL clst -1.5 int -1 x!=y? view_s 1 0 /
+
+- check frac
+RPN_EVAL clst 1 frac 0 x!=y? view_s 1 0 /
+RPN_EVAL clst -1 frac 0 x!=y? view_s 1 0 /
+RPN_EVAL clst 1.5 frac 0.5 x!=y? view_s 1 0 / 
+RPN_EVAL clst -1.5 frac -0.5 x!=y? view_s 1 0 /
+
+- check chs
+RPN_EVAL clst 1 chs -1 x!=y? view_s 1 0 /
+RPN_EVAL clst -1 chs 1 x!=y? view_s 1 0 /
+RPN_EVAL clst 0 chs 0 x!=y? view_s 1 0 / 
+ 
+- check sqr
+RPN_EVAL clst 0 sqr 0 x!=y? view_s 1 0 /
+RPN_EVAL clst 1 sqr 1 x!=y? view_s 1 0 /
+RPN_EVAL clst -1 sqr 1 x!=y? view_s 1 0 /
+RPN_EVAL clst 2.25 sqr 2.25 2.25 * x!=y? view_s 1 0 / 
+ 
+- check y^x
+RPN_EVAL clst 0 0 y^x 1 x!=y? view_s 1 0 /
+RPN_EVAL clst 1 1 y^x 1 x!=y? view_s 1 0 /
+RPN_EVAL clst 1 -1 y^x 1 x!=y? view_s 1 0 /
+RPN_EVAL clst 2 3 y^x 8 x!=y? view_s 1 0 /
+RPN_EVAL clst 2 -3 y^x 0.125 x!=y? view_s 1 0 /
+RPN_EVAL clst -2 3 y^x -8 x!=y? view_s 1 0 /
+
+- check dup
+RPN_EVAL clst 1 dup x!=y? view_s 1 0 /
+
+- check pop
+RPN_EVAL clst pop x!=y? view_s 1 0 /
+RPN_EVAL clst 2 1 1 pop x=y? view_s 1 0 /
+
+- check lastx
+RPN_EVAL clst 1 2 + lastx 2 x!=y? view_s 1 0 /
+RPN_EVAL clst 1 3 - lastx 3 x!=y? view_s 1 0 /
+RPN_EVAL clst 2 4 * lastx 4 x!=y? view_s 1 0 /
+RPN_EVAL clst 3 6 / lastx 6 x!=y? view_s 1 0 /
+RPN_EVAL clst 7 sqr lastx 7 x!=y? view_s 1 0 /
+RPN_EVAL clst 7 sqr lastx 7 x!=y? view_s 1 0 /
+
+- X<>Y
+
+RPN_EVAL clst 1 2 x<>y 2 x=y? view_s 1 0 /
+RPN_EVAL clst 1 2 x<>y 1 x!=y? view_s 1 0 /
+
+- sto and rcl local, and exists
+RPN_EVAL cl_l ?L a view_l 1 0 /
+RPN_EVAL clst 1 <L a x!=0? view_l 1 0 /
+RPN_EVAL cl_l ?L a view_l 1 0 /
+RPN_EVAL clst 1 >L a clst <L a 1 x!=y? view_l 1 0 /
+RPN_EVAL !?L a view_l 1 0 /
+RPN_EVAL clst <L a 1 x!=y? view_l 1 0 /
+RPN_EVAL cl_l clst 1 <L a x!=0? view_l 1 0 /
+
+- sto and rcl global (hard to test), and exists
+RPN_EVAL clst cl_l ?g b 1
+RPN_EVAL x!=y? view_s view_l view_g stack 1 0 /
+RPN_EVAL clst 7 <G b x!=0? 3
+RPN_EVAL stack x=y? view_s view_l view_g 1 0 /
+RPN_EVAL clst cl_l ?g b 1
+RPN_EVAL stack x!=y? view_s view_l view_g 1 0 /
+RPN_EVAL clst 1 >G b clst <G b 1 x!=y? view_g 1 0 /
+RPN_EVAL cl_l !?g b view_g 1 0 /
+RPN_EVAL clst <G b 1 x!=y? view_g 1 0 /
+RPN_EVAL cl_l clst 1 <G b x=0? view_g 1 0 /
+
+- normal sto, rcl, and exists
+RPN_EVAL ? lx view_l view_l 1 0 /
+RPN_EVAL clst 4 > lx clst <G lx x!=0? view_s view_g view_l 1 0 /
+RPN_EVAL !? lx view_l view_g 1 0 /
+RPN_EVAL clst <L lx < lx x!=y? view_s view_l view_g 1 0 /
+RPN_EVAL cl_l ? lx view_s view_l view_g 1 0 /
+RPN_EVAL clst 8 > gx clst <L gx 8 x!=y? view_s view_l view_g 1 0 /
+RPN_EVAL clst <G gx < gx x=y? view_s view_l view_g 1 0 /
+RPN_EVAL !? gx view_l view_g 1 0 /
+RPN_EVAL clst 1 >L gx 8 >G gx clst < gx 1 x!=y? view_s view_l view_g 1 0 /
+RPN_EVAL clst 4 > gx clst < gx 4 x!=y? view_s view_l view_g 1 0 /
+RPN_EVAL clst <L gx 4 x!=y? view_s view_l view_g 1 0 /
+RPN_EVAL clst <G gx 8 x!=y? view_s view_l view_g 1 0 /
+RPN_EVAL clst cl_l < gx 8 x!=y? view_s view_l view_g 1 0 /
+
+- x>y? 
+RPN_EVAL clst 1 1 x>y? view_s 1 0 / 
+RPN_EVAL clst 1 3 x>y? 3
+RPN_EVAL stack x!=y? view_s 1 0 /
+RPN_EVAL clst 2 1 x>y? view_s 1 0 /
+
+- x>=y? 
+RPN_EVAL clst 1 1 x>=y? 3 
+RPN_EVAL stack x!=y? view_s 1 0 /
+RPN_EVAL clst 1 3 x>=y? 3
+RPN_EVAL stack x!=y? view_s 1 0 /
+RPN_EVAL clst 2 1 x>=y? view_s 1 0 /
+
+- x<y? 
+RPN_EVAL clst 1 1 x<y? view_s 1 0 / 
+RPN_EVAL clst 1 2 x<y? view_s 1 0 /
+RPN_EVAL clst 2 1 x<y? 3
+RPN_EVAL stack x!=y? view_s 1 0 /
+
+- x<=y? 
+RPN_EVAL clst 1 1 x<=y? 3 
+RPN_EVAL stack x!=y? view_s 1 0 /
+RPN_EVAL clst 1 2 x<=y? view_s 1 0 /
+RPN_EVAL clst 2 1 x<=y? 3
+RPN_EVAL stack x!=y? view_s 1 0 /
+

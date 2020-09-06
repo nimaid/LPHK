@@ -1,2 +1,12 @@
-- This demonstrates a few other commands
-RPN_EVAL 3 2 1 view view_s + * view view_s 3.141 sqr view / view_s dup 1 - view_s 1/x x<>y view_s
+- A little more complex example with some stack manipulation
+- and the use of the lastx command to recover the last value of
+- x that has been consumed
+-
+- A simple demonstrration of lastx
+RPN_EVAL 1 2 / view_s lastx view_s clst
+-
+- Using dup and lastx to separate the integer and fractional part of a number
+RPN_EVAL 11 4 / dup int lastx frac view_s clst
+-
+- I haven't checked on my HP calculators.  Does it handle -ve values correctly?
+RPN_EVAL 11 4 chs / dup int lastx frac view_s clst

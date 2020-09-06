@@ -1,4 +1,6 @@
-# operations needed to access variables
+# operations needed to access variables  
+
+# NOTE that any locking is the responsibility of the calling code!
 
 
 # Note that popping a value from an empty stack returns 0.  An alternative is

@@ -17,7 +17,8 @@ HEADERS = dict()
 
 # GLOBALS is likewise empty until global variables get created
 
-GLOBALS = dict() 
+GLOBALS = dict()                  # the globals themselvs
+GLOBAL_LOCK = threading.Lock()    # a lock got the globals to prevent simultaneous access
 
 
 COLOR_PRIMED = 5 #red
@@ -61,9 +62,9 @@ def new_symbol_table():
         "original": dict(), 
         "labels": dict(),
         "m_pos": tuple(),
-        "g_vars": GLOBALS,
-        "l_vars": dict(),      # global (to the script) variables
-        "stack": [] }        # script stack (for RPN_EVAL)        
+        "g_vars": [GLOBAL_LOCK, GLOBALS], # global (to the application) variables (and associated lock)
+        "l_vars": dict(),                 # local (to the script) variables (with no lock)
+        "stack": [] }                     # script stack (for RPN_EVAL)        
 
     return symbols
 
