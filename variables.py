@@ -68,44 +68,116 @@ def next_cmd(ret, cmds):
 # variable names should start with an alpha character
 def valid_var_name(v):
     return len(v) > 0 and ord(v[0].upper()) in range(ord('A'), ord('Z')+1)
+
+
+# return a properly formatted error message
+def error_msg(idx, name, desc, p, param, err):
+    ret = "Line:" + str(idx+1) + " -"
+    
+    if name:
+        ret += " '" + name + "'"
+    if desc:
+        ret +=  " " + desc
+    if p:
+        ret += " : param#" + str(p)
+    if param:
+        if p:
+            ret += " '" + param + "'"
+        else:
+            ret += " (" + param + ")"
+    if err:
+        ret += " " + err
+
+    ret += "."
+    
+    return ret
     
     
 # check the number of variables allowed
 def check_num(split_line, lens, idx, line, name):
     n = len(split_line)-1
     if n in lens:              
-        return True                  # it's OK
+        return True 
     
-    msg = "Line:" + str(idx+1) + " - Incorrect number of parameters (" + str(n) + ") supplied. "
+    # create a properly formatted error message
     if len(lens) == 0:
-        msg += "No valid number of parameters"
-    elif len(lens) == 1:
-        msg += str(lens[0])
+        msg = "Has no valid number of parameters described. "
+        return (error_msg(idx, name, msg, None, None, "Please correct the definition"), line)
+        
+    msg = "Incorrect number of parameters"
+    if lens == [0]:
+        return (error_msg(idx, name, msg, str(n), "supplied.  None are permitted"), line)
     else:
-        msg += ", ".join([str(el) for el in lens[0:-1]]) + ", " + str(lens[-1])    
+        cnt = ""
+        if len(lens) == 1:
+            cnt += str(lens[0])
+        else:
+            cnt += ", ".join([str(el) for el in lens[0:-1]]) + ", " + str(lens[-1]) 
        
-    msg += " required for command '" + name + "'."     
+    return (error_msg(idx, name, msg, None, str(n), "supplied, " + cnt + " are required"), line)
+
+
+# check an integer parameter
+def check_int_param(split_line, p, desc, idx, name, line, validation=None, optional=False, var_ok=True):
+    temp = None
+
+    if p >= len(split_line):
+        if optional:
+            return True
+        else:
+            return (error_msg(idx, name, desc, p, None, 'required parameter not present'), line)
     
-    return (msg, line)
-
-
-# check a parameter
-def check_param(split_line, p, desc, idx, name, line, var_ok):
     try:
         temp = int(split_line[p])
     except:
-        if not (var_ok and valid_var_name(split_line[p])):   # a variable is OK here
-            return ("Line:" + str(idx+1) + " - '" + name + "' " + desc + " '" + split_line[p] + "' not valid.", line)
+        if var_ok and valid_var_name(split_line[p]):   # a variable is OK here
+            return True
+        return (error_msg(idx, name, desc, p, split_line[p], 'not valid'), line)
+
+    if validation:
+        return validation(temp, idx, name, desc, p, split_line[p])
 
     return True 
 
 
 # get the value of a parameter
-def get_value(n, symbols):
-    v = split_line[n]
+def get_value(v, symbols):
     if valid_var_name(v):
         g_vars = symbols['g_vars']
         with g_vars[0]:                                # lock the globals while we do this
-            v = variables.get(v, symbols['l_vars'], g_vars[1])
+            v = get(v, symbols['l_vars'], g_vars[1])
             
     return v
+
+
+def validate_int_non_zero(v, idx, name, desc, p, param):
+    if v:
+        if int(float(v)) != 0:
+            return True
+        else:
+            return error_msg(idx, name, desc, p, param, 'must not be zero')
+    else:
+        return error_msg(idx, name, desc, p, param, 'must be an integer')
+
+        
+def validate_int_gt_zero(v, idx, name, desc, p, param):
+    if v:
+        if int(float(v)) > 0:
+            return True
+        else:
+            return error_msg(idx, name, desc, p, param, 'must be greater than zero')
+    else:
+        return error_msg(idx, name, desc, p, param, 'must be an integer')
+        
+        
+def validate_int_ge_zero(v, idx, name, desc, p, param):
+    if v:
+        if int(float(v)) >= 0:
+            return True
+        else:
+            return error_msg(idx, name, desc, p, param, 'must not be less than zero')
+    else:
+        return error_msg(idx, name, desc, p, param, 'must be an integer')
+        
+        
+        

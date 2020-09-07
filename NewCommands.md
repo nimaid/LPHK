@@ -19,24 +19,26 @@ If you are contemplating adding a new command to an existing module, the process
 
 You should make yourself familiar with the way existing commands work.  Look in one of the `commands_*.py` files (other than `commands_header.py`) for examples of existing commands.
 
-As an example, We'll use the `IF_UNPRESSED_GOTO_LABEL` command.   This can be found in the `commands_control.py` module.
+As an example, We'll use the `M_SCROLL` command.   This can be found in the `commands_mouse.py` module.
 
-### Decoding the IF_UNPRESSED_GOTO_LABEL command
+Recent changes to add variable support to commands has increased the complexity of each command.  Never fear, I have plans to make this even simpler than the previous version, with little to no validation coding needed in the near future.
 
-The `IF_UNPRESSED_GOTO_LABEL` command looks like this:
+### Decoding the MOUSE_SCROLL command
+
+The `M_SCROLL` command looks like this:
 
 ```python
 # ##################################################
-# ### CLASS Control_If_Unpressed_Goto_Label      ###
+# ### CLASS Mouse_Scroll                         ###
 # ##################################################
 
-# class that defines the IF_UNPRESSED_GOTO_LABEL command
-class Control_If_Unpressed_Goto_Label(command_base.Command_Basic):
+# class that defines the M_SCROLL command (???)
+class Mouse_Scroll(command_base.Command_Basic):
     def __init__(
-        self, 
+        self,
         ):
 
-        super().__init__("IF_UNPRESSED_GOTO_LABEL")  # the name of the command as you have to enter it in the code
+        super().__init__("M_SCROLL")  # the name of the command as you have to enter it in the code
 
     def Validate(
         self,
@@ -49,12 +51,17 @@ class Control_If_Unpressed_Goto_Label(command_base.Command_Basic):
         ):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
-            if len(split_line) != 2:
-               return ("'" + split_line[0] + "' takes exactly 1 argument.", line)
+            ret = variables.check_num(split_line, [1, 2], idx, line, self.name)
+            if ret != True:
+                return ret
 
-        if pass_no == 2:       # in Pass 2 we can check to make sure referenced symbols exist
-            if split_line[1] not in symbols["labels"]:
-                return ("Target not found for " + self.name, line)
+            ret = variables.check_int_param(split_line, 1, "X value", idx, self.name, line, variables.validate_int_ge_zero)
+            if ret != True:
+                return (ret, line)
+
+            ret = variables.check_int_param(split_line, 2, "Scroll amount", idx, self.name, line, variables.validate_int_ge_zero, True)
+            if ret != True:
+                return (ret, line)
 
         return True
 
@@ -67,19 +74,48 @@ class Control_If_Unpressed_Goto_Label(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "    If key is not pressed goto LABEL " + split_line[1])
+        ok = True    
+        p = len(split_line) - 1
 
-        if not split_line[1] in symbols["labels"]:            # The label should always exist
-            print("missing LABEL '" + split_line[1] + "'")    # otherwise an error
-            return -1
+        v1 = variables.get_value(split_line[1], symbols)
+        if v1:
+            v1 = int(v1)
+            
+        if p > 1:
+            v2 = variables.get_value(split_line[2], symbols)
+            if v2:
+                v2 = int(v2)
         else:
-            if not lp_events.pressed[coords[1]][coords[2]]:   # if the key is pressed
-                return symbols["labels"][split_line[1]]       # jump to the label
+            v2 = None
+            
+        if v2:
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll (" + str(v1) + ", " + str(v2) + ")")
+        else:
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll " + str(v1))
+
+        ret = variables.validate_int_ge_zero(v1, idx, self.name, "X amount", 1, split_line[1])
+        if ret != True:
+            print("[" + lib + "] " + coords[0] + "  " + ret)
+            ok = False
+
+        if v2:
+            ret = variables.validate_int_ge_zero(v2, idx, self.name, "Scroll amount", 2, split_line[2])
+            if ret != True:
+                print("[" + lib + "] " + coords[0] + "  " + ret)
+                ok = False
+
+        if not ok:
+            return -1
+            
+        if v2:
+            ms.scroll(float(v2), float(v1))
+        else:
+            ms.scroll(0, float(v1))
 
         return idx+1
 
 
-scripts.add_command(Control_If_Unpressed_Goto_Label())  # register the command
+scripts.add_command(Mouse_Scroll())  # register the command
 ```
 
 We will examine the 5 parts you need to consider
@@ -92,10 +128,10 @@ The class should always begin with some documentation to both highlight the star
 
 ```python
 # ##################################################
-# ### CLASS Control_If_Unpressed_Goto_Label      ###
+# ### CLASS Mouse_Scroll                         ###
 # ##################################################
 
-# class that defines the IF_UNPRESSED_GOTO_LABEL command
+# class that defines the M_SCROLL command (???)
 ```
 
 #### Part 2 - The Class definition
@@ -105,10 +141,10 @@ The most important part of the class definition is that the new class is derived
 It is also important that you define a unique name for your new command.  I recommend using *Module*_*Command*, where *Module* is the part of the module name after `commands_`.  
 
 ```python
-class Control_If_Unpressed_Goto_Label(command_base.Command_Basic):
+class Mouse_Scroll(command_base.Command_Basic):
 ```
 
-In this example, the `IF_UNPRESSED_GOTO_LABEL` command is contained in the `commands_control.py` module, so the name of the class is `Control_If_Unpressed_Goto_Label`.
+In this example, the `M_SCROLL` command is contained in the `commands_mouse.py` module, so the name of the class should be `Mouse_M_Scroll`, but I've called it `Mouse_Scroll` because every mouse command starts with "M_".  I will probably change this at some point.
 
 #### Part 3 - Class Initialization
 
@@ -116,10 +152,10 @@ The initialization of a command class serves to define the name of the command. 
 
 ```python
     def __init__(
-        self, 
+        self,
         ):
 
-        super().__init__("IF_UNPRESSED_GOTO_LABEL")  # the name of the command as you have to enter it in the code
+        super().__init__("M_SCROLL")  # the name of the command as you have to enter it in the code
 ```
 
 Note that commands are case sensitive, so the name should be in all uppercase to be consistent with other commands.
@@ -129,7 +165,7 @@ Note that commands are case sensitive, so the name should be in all uppercase to
 Every command requires a validation.  If you do not provide validation code, the ancestor class will return a blank error message when this command is encountered.
 
 ```python
-    def Validate(
+     def Validate(
         self,
         idx: int,              # The current line number
         line,                  # The current line
@@ -140,12 +176,17 @@ Every command requires a validation.  If you do not provide validation code, the
         ):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
-            if len(split_line) != 2:
-               return ("'" + split_line[0] + "' takes exactly 1 argument.", line)
+            ret = variables.check_num(split_line, [1, 2], idx, line, self.name)
+            if ret != True:
+                return ret
 
-        if pass_no == 2:       # in Pass 2 we can check to make sure referenced symbols exist
-            if split_line[1] not in symbols["labels"]:
-                return ("Target not found for " + self.name, line)
+            ret = variables.check_int_param(split_line, 1, "X value", idx, self.name, line, variables.validate_int_ge_zero)
+            if ret != True:
+                return (ret, line)
+
+            ret = variables.check_int_param(split_line, 2, "Scroll amount", idx, self.name, line, variables.validate_int_ge_zero, True)
+            if ret != True:
+                return (ret, line)
 
         return True
 ```
@@ -154,13 +195,13 @@ This may appear more complex than it is.  The first 10 lines are the definition 
 
 It is important to note that the validation is called twice, once for the first pass (`pass_no = 1`), and again for the second pass (`pass_no = 2`).  Commands will almost always require some coding in pass 1, and where a command refers to something that may have been defined elsewhere, pass 2 will also be required.
 
-This example has a typical, if simple, pass 1 validation.  This command simply requires that there is exactly 1 argument (we check for 2 because the command itself is also counted).  Note that in this case, because the second argument is a label, it cannot be checked here.
+This example has a typical, if simple, pass 1 validation.  This command simply requires that there are 1 or 2 arguments (we check for \[1, 2\]).  Note that in this case, the second parameter is optional
 
-In this case a pass 2 check is required to check for the existance of the label referred to in the command.  During pass 1, this label has (presumably) been defined on some other line of the script.
+No pass 2 is required for this command.
 
-If errors are to be returned, the correct format is a tuple of 2 strings, the first being the error message, and the second being the line you refer to.  The line referenced is typically (but not always) the line being parsed.
+If errors are to be returned, the correct format is a tuple of 2 strings, the first being the error message, and the second being the line you refer to.  The line referenced is typically (but not always) the line being parsed.  This string is creates automatically by the check_int_param function (that checks for an integer parameter).  By default this function allows a variable to be used, and I have also specified a validation rule.  This validation rule applies to literals.
 
-Finally, the method should return `True`.  The simple concept being that if an error has not been detected, the validation has been successful.
+Finally, the method should return `True` if there were no errors.
 
 The symbol table (`symbols`) is a structure that you need to understand if you are writing more complex commands.
 
@@ -178,34 +219,69 @@ Every command that does something (e.g. not labels - that have their effect duri
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "    If key is not pressed goto LABEL " + split_line[1])
+        ok = True    
+        p = len(split_line) - 1
 
-        if not split_line[1] in symbols["labels"]:            # The label should always exist
-            print("missing LABEL '" + split_line[1] + "'")    # otherwise an error
-            return -1
+        v1 = variables.get_value(split_line[1], symbols)
+        if v1:
+            v1 = int(v1)
+            
+        if p > 1:
+            v2 = variables.get_value(split_line[2], symbols)
+            if v2:
+                v2 = int(v2)
         else:
-            if not lp_events.pressed[coords[1]][coords[2]]:   # if the key is pressed
-                return symbols["labels"][split_line[1]]       # jump to the label
+            v2 = None
+            
+        if v2:
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll (" + str(v1) + ", " + str(v2) + ")")
+        else:
+            print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll " + str(v1))
+
+        ret = variables.validate_int_ge_zero(v1, idx, self.name, "X amount", 1, split_line[1])
+        if ret != True:
+            print("[" + lib + "] " + coords[0] + "  " + ret)
+            ok = False
+
+        if v2:
+            ret = variables.validate_int_ge_zero(v2, idx, self.name, "Scroll amount", 2, split_line[2])
+            if ret != True:
+                print("[" + lib + "] " + coords[0] + "  " + ret)
+                ok = False
+
+        if not ok:
+            return -1
+            
+        if v2:
+            ms.scroll(float(v2), float(v1))
+        else:
+            ms.scroll(0, float(v1))
 
         return idx+1
 ```
 
 Again, this looks somewhat complex, but isn't really scary.  Again, the first 8 lines are simply the method header and should be copied verbatim.
 
-The first thing this command does is write an output line describing what it is going to do.
+ok and p are set up to track the success, and store the number of parameters passed respectively.
 
-This command repeats some of the validation again, in this case it is possible that the symbol table could have been changed (probably due to a bug, but there's no reason why a command couldn't also do this) so the label is confirmed to exist. An error return for this method is -1 (actually any number outside the range of the lines in the script will work, but -1 is strongly recommended).
+The variables.get_value function call gets the constant from the command, or the value of a variable if one was specified.  If a parameter is optional (as v2 is here), None will be returned if it does not exist.
 
-In this case, if the label exists, and if the button is not pressed, the return value is given by the value of the label within the symbol table (this value is the line number of the label, and thus indicates the next line to be executed).
+Next this command writes an output line describing what it is going to do.   In this case ther are 2 possibilities based on the existance of the second parameter.
 
-Finally, the current line + 1 should be returned.  This tells the script to continue on the next line.  Some commands will never reach this line, but it should nevertheless be included (just in case you have a bug).
+The validation code is called again, since variables may have been used.  This does run-time checks of values in a manner similar to the validation that is done earlier for literal values.  It is possible to return multiple errors.
+
+If an error has been detected, the routine exits with -1 indicating failure.
+
+Finally, the work of the function is performed on the validated values.
+
+idx + 1 is returned.  This points to the nect line to execute, which in this instance is the next line (flow control commands may return different values).
 
 #### Part 5 - Command Integration
 
 The final step is to include code to incorporate this command into the set of commands available for scripts.
 
 ```python
-scripts.add_command(Control_If_Unpressed_Goto_Label())  # register the command
+scripts.add_command(Mouse_Scroll())  # register the command
 ```
 
 This line creates a command object, and passes it to the routine which adds it to the list of available commands.
@@ -219,6 +295,8 @@ Headers and Commands are very similar.  The basic format of creating them is the
 You should make yourself familiar with the way existing headers work.  Look in the `commands_header.py` file for examples of existing commands.
 
 As an example, We'll use the `@ASYNC` header.
+
+Note that this example has not been updated for variable usage.
 
 ### Decoding the @ASYNC header
 
@@ -400,6 +478,9 @@ Currently the dictionary contains x entries:
  * 'original' : A dictionary of the starting values for `REPEAT` commands
  * 'labels' : A dictionary of the label names and locations within the script
  * 'm_pos' : A tuple containing the saved mouse position
+ * 'g_vars' : A tuple containing the lock object and the dictionary of global variables
+ * 'l_vars' : A dictionary containing local variables
+ * 'stack' : A mutable tuple containing the local stack
 
 The symbol table can be modified in the `Validation` and/or `Run` methods.
 
@@ -431,13 +512,25 @@ This dictionary within the symbol table contains entries where the key is the li
 
 This dictionary within the symbol table contains entries where the key is the line number of the `REPEAT` command, and the value is the initial value for the number of repeats.
 
-### Repeats
+### Labels
 
 This dictionary within the symbol table has entries where the key is the label name, and the value is the line number.
 
 ### M_pos
 
 This tuple within the dictionary contains either an empty tuple (`tuple()`) or the saved (x,y) mouse coordinates.
+
+### Global variables
+
+The first element is a lock object used to synchronise access to the global variables.  The second element is a dictionary where the keys are the global variable names and the values are the variable values.
+
+### Local variables
+
+This is a dictionary where the keys are the local variable names and the values are the variable values.
+
+### Stack
+
+This structure contains the list of values that make up the stack for the current command.  Values are added and removed by various "RPN_EVAL" functions.
 
 ## Coords
 
