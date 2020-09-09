@@ -93,8 +93,8 @@ def error_msg(idx, name, desc, p, param, err):
     return ret
     
     
-# check the number of variables allowed
-def check_num(split_line, lens, idx, line, name):
+# check the number of parameters allowed
+def Check_num_params(split_line, lens, idx, line, name):
     n = len(split_line)-1
     if n in lens:              
         return True 
@@ -117,8 +117,30 @@ def check_num(split_line, lens, idx, line, name):
     return (error_msg(idx, name, msg, None, str(n), "supplied, " + cnt + " are required"), line)
 
 
-# check an integer parameter
-def check_int_param(split_line, p, desc, idx, name, line, validation=None, optional=False, var_ok=True):
+# check a generic parameter
+def Check_generic_param(split_line, p, desc, idx, name, line, conv, conv_name, validation=None, optional=False, var_ok=True):
+    temp = None
+
+    if p >= len(split_line):
+        if optional:
+            return True
+        else:
+            return (error_msg(idx, name, desc, p, None, 'required ' + conv_name + ' parameter not present'), line)
+    
+    try:
+        temp = conv(split_line[p])
+    except:
+        if var_ok and valid_var_name(split_line[p]):   # a variable is OK here
+            return True
+        return (error_msg(idx, name, desc, p, split_line[p], 'not a valid ' + conv_name), line)
+
+    if validation:
+        return validation(temp, idx, name, desc, p, split_line[p])
+
+    return True 
+
+
+def Check_numeric_param(split_line, p, desc, idx, name, line, validation, optional=False, var_ok=True):
     temp = None
 
     if p >= len(split_line):
@@ -128,7 +150,7 @@ def check_int_param(split_line, p, desc, idx, name, line, validation=None, optio
             return (error_msg(idx, name, desc, p, None, 'required parameter not present'), line)
     
     try:
-        temp = int(split_line[p])
+        temp = conv(split_line[p])
     except:
         if var_ok and valid_var_name(split_line[p]):   # a variable is OK here
             return True
@@ -150,9 +172,9 @@ def get_value(v, symbols):
     return v
 
 
-def validate_int_non_zero(v, idx, name, desc, p, param):
+def Validate_non_zero(v, idx, name, desc, p, param):
     if v:
-        if int(float(v)) != 0:
+        if float(v) != 0:
             return True
         else:
             return error_msg(idx, name, desc, p, param, 'must not be zero')
@@ -160,9 +182,9 @@ def validate_int_non_zero(v, idx, name, desc, p, param):
         return error_msg(idx, name, desc, p, param, 'must be an integer')
 
         
-def validate_int_gt_zero(v, idx, name, desc, p, param):
+def Validate_gt_zero(v, idx, name, desc, p, param):
     if v:
-        if int(float(v)) > 0:
+        if v > 0:
             return True
         else:
             return error_msg(idx, name, desc, p, param, 'must be greater than zero')
@@ -170,14 +192,11 @@ def validate_int_gt_zero(v, idx, name, desc, p, param):
         return error_msg(idx, name, desc, p, param, 'must be an integer')
         
         
-def validate_int_ge_zero(v, idx, name, desc, p, param):
+def Validate_ge_zero(v, idx, name, desc, p, param):
     if v:
-        if int(float(v)) >= 0:
+        if v >= 0:
             return True
         else:
             return error_msg(idx, name, desc, p, param, 'must not be less than zero')
     else:
         return error_msg(idx, name, desc, p, param, 'must be an integer')
-        
-        
-        
