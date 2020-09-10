@@ -14,11 +14,10 @@ P_P2_VALIDATION  = 6
 # constants for run state
 R_INIT     = 0
 R_GET      = 1
-R_PRE_INFO = 2
+R_INFO     = 2
 R_VALIDATE = 3
-R_INFO     = 4
-R_RUN      = 5
-R_FINAL    = 6
+R_RUN      = 4
+R_FINAL    = 5
 
 
 # ##################################################
@@ -41,7 +40,7 @@ class Command_Basic:
         self.valid_max_params = self.Calc_valid_max_params()
         self.valid_num_params = self.Calc_valid_param_counts()
 
-        self.run_states = [R_INIT, R_GET, R_PRE_INFO, R_VALIDATE, R_INFO, R_RUN, R_FINAL]
+        self.run_states = [R_INIT, R_GET, R_INFO, R_VALIDATE, R_RUN, R_FINAL]
         self.param = None
         self.param_cnt = None            
 
@@ -112,7 +111,7 @@ class Command_Basic:
         is_async
         ):
 
-        ret = self.Run_params(None, idx, split_line, symbols, coords, is_async, 1)
+        ret = self.Partial_run(idx, split_line, symbols, coords, is_async, self.run_states)
 
         if ret == -1:
             return ret
@@ -132,16 +131,13 @@ class Command_Basic:
                 if ret == -1:
                     return ret
                 
-            if R_PRE_INFO in run_subset:        
+            if R_INFO in run_subset:        
                 print("[" + self.Lib + "] " + coords[0] + "  Line:" + str(idx+1) + "     " + self.name + " parameters (" + str(v) + ")")
                 
             if R_VALIDATE in run_subset:        
                 ret = self.Run_params(ret, idx, split_line, symbols, coords, is_async, 2)
                 if ret == -1:
                     return ret
-                
-            if R_INFO in run_subset:        
-                print("[" + self.Lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    " + self.name + " values (" + str(v) + ")")
                 
             if R_RUN in run_subset:   
                 pass        

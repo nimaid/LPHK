@@ -1,5 +1,5 @@
 import command_base, ms, scripts, variables
-from command_base import R_INIT, R_GET, R_PRE_INFO, R_VALIDATE, R_INFO, R_RUN, R_FINAL
+from command_base import R_INIT, R_GET, R_INFO, R_VALIDATE, R_RUN, R_FINAL
 
 lib = "cmds_mous" # name of this library (for logging)
 
@@ -30,11 +30,14 @@ class Mouse_Move(command_base.Command_Basic):
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET, R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
                 return -1
                 
             print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Relative mouse movement (" + str(self.param[1]) + ", " + str(self.param[2]) + ")")
 
+            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+                return -1
+                
             ms.move_to_pos(float(self.param[1]), float(self.param[2]))
 
             return idx+1
@@ -73,12 +76,15 @@ class Mouse_Set(command_base.Command_Basic):
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET, R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
                 return -1
-
+                
             print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Set mouse position to (" + str(self.param[1]) + ", " + \
                 str(self.param[2]) + ")")
 
+            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+                return -1
+                
             ms.set_pos(float(self.param[1]), float(self.param[2]))
 
             return idx+1
@@ -101,7 +107,6 @@ class Mouse_Scroll(command_base.Command_Basic):
         ):
 
         super().__init__("M_SCROLL", lib, (   # the name of the command as you have to enter it in the code
-            lib,
             # Desc            Opt    Var   type      conv  p1_val p2_val 
             ("X value",       False, True, "integer", int, None,  None), \
             ("Scroll amount", False, True, "integer", int, None,  None) ) )
@@ -118,7 +123,7 @@ class Mouse_Scroll(command_base.Command_Basic):
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET, R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
                 return -1
 
             if self.param[2]:
@@ -126,7 +131,10 @@ class Mouse_Scroll(command_base.Command_Basic):
             else:
                 print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll " + str(self.param[1]))
 
-            if v2:
+            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+                return -1
+                
+            if self.param[2]:
                 ms.scroll(float(self.param[2]), float(self.param[1]))
             else:
                 ms.scroll(0, float(self.param[1]))
@@ -171,7 +179,7 @@ class Mouse_Line(command_base.Command_Basic):
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET, R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
                 return -1
 
             delay = None
@@ -192,6 +200,9 @@ class Mouse_Line(command_base.Command_Basic):
                     str(self.param[3]) + ", " + str(self,param[4]) + ") by " + \
                     str(skip) + " pixels per step and wait " + str(self.param[5]) + " milliseconds between each step")
 
+            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+                return -1
+                
             points = ms.line_coords(self.param[1], self.param[2], self.param[3], self.param[4])
 
             for x_M, y_M in points[::skip]:
@@ -242,7 +253,7 @@ class Mouse_Line_Move(command_base.Command_Basic):
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET, R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
                 return -1
 
             delay = None
@@ -261,6 +272,9 @@ class Mouse_Line_Move(command_base.Command_Basic):
                     str(self.param[1]) + ", " + str(self.param[2]) + ") by " + str(self.param[4]) + \
                     " pixels per step and wait " + str(self.param[3]) + " milliseconds between each step")
 
+            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+                return -1
+                
             x_C, y_C = ms.get_pos()
             x_N, y_N = x_C + self.param[1], y_C + self.param[2]
             points = ms.line_coords(x_C, y_C, x_N, y_N)
@@ -313,7 +327,7 @@ class Mouse_Line_Set(command_base.Command_Basic):
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET, R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
                 return -1
 
             delay = None
@@ -333,6 +347,9 @@ class Mouse_Line_Set(command_base.Command_Basic):
                 self.params[1] + ", " + self.params[2] + ") by " + str(skip) + \
                 " pixels per step and wait " + self.params[3] + " milliseconds between each step")
 
+            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+                return -1
+                
             x_C, y_C = ms.get_pos()
             points = ms.line_coords(x_C, y_C, x1, y1)
 
@@ -380,7 +397,7 @@ class Mouse_Recall_Line(command_base.Command_Basic):
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET, R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
                 return -1
 
             x1, y1 = symbols['m_pos']
@@ -401,6 +418,9 @@ class Mouse_Recall_Line(command_base.Command_Basic):
                     " in a line by " + str(skip) + " pixels per step and wait " + \
                     str(delay) + " milliseconds between each step")
 
+            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+                return -1
+                
             x_C, y_C = ms.get_pos()
             points = ms.line_coords(x_C, y_C, x1, y1)
 
@@ -446,11 +466,14 @@ class Mouse_Store(command_base.Command_Basic):
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET, R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
                 return -1
 
             print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Store mouse position")
 
+            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+                return -1
+                
             symbols["m_pos"] = ms.get_pos()  # Another example of modifying the symbol table during execution.
 
             return idx+1
@@ -486,13 +509,18 @@ class Mouse_Recall(command_base.Command_Basic):
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET, R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
                 return -1
 
             if symbols['m_pos'] == tuple():
                 print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
             else:
                 print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Recall mouse position " + str(symbols['m_pos']))
+
+            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+                return -1
+                
+            if symbols['m_pos'] != tuple():
                 ms.set_pos(symbols['m_pos'][0], symbols['m_pos'][1])
 
             return idx+1
