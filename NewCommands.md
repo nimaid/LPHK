@@ -103,7 +103,7 @@ The `M_SCROLL` command looks like this:
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
+            if self.Partial_run(*params, [RS_INIT, RS_GET]) == -1:
                 return -1
 
             if self.param[2]:
@@ -111,7 +111,7 @@ The `M_SCROLL` command looks like this:
             else:
                 print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll " + str(self.param[1]))
 
-            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [RS_VALIDATE]) == -1:
                 return -1
                 
             if self.param[2]:
@@ -122,7 +122,7 @@ The `M_SCROLL` command looks like this:
             return idx+1
             
         finally:
-            self.Partial_run(*params, [R_FINAL])
+            self.Partial_run(*params, [RS_FINAL])
 
 
 scripts.add_command(Mouse_Scroll())  # register the command
@@ -200,7 +200,7 @@ No code is required here!  The default validation code for the class can handle 
 
         params = [idx, split_line, symbols, coords, is_async]
         try:
-            if self.Partial_run(*params, [R_INIT, R_GET]) == -1:
+            if self.Partial_run(*params, [RS_INIT, RS_GET]) == -1:
                 return -1
 
             if self.param[2]:
@@ -208,7 +208,7 @@ No code is required here!  The default validation code for the class can handle 
             else:
                 print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll " + str(self.param[1]))
 
-            if self.Partial_run(*params, [R_VALIDATE]) == -1:
+            if self.Partial_run(*params, [RS_VALIDATE]) == -1:
                 return -1
                 
             if self.param[2]:
@@ -219,32 +219,32 @@ No code is required here!  The default validation code for the class can handle 
             return idx+1
             
         finally:
-            self.Partial_run(*params, [R_FINAL])
+            self.Partial_run(*params, [RS_FINAL])
 ```
 
 The first 8 lines are the standard header and should be copied verbatim.
 
-The definition of "params" on line 10 is simply a shortcut so we don't have to type the exact same set of parameters over and over again for various management functions that need to know this stuff.
+The definition of SYM_PARAMS on line 10 is simply a shortcut so we don't have to type the exact same set of parameters over and over again for various management functions that need to know this stuff.
 
 The main code is placed inside a TRY...FINALLY block to ensure that the finalization code is called.  Currently this doesn't do a lot, but as it may become more necessary in later versions, it is recommended that you code the execution in this manner.
 
 Within the TRY...FINALLY block, we call "self.Partial_run()" to execute parts of the standard execution flow.  The parts you can call are:
- * R_INIT - Perform any initialization required (should ALWAYS be called)
- * R_GET - Get the parameters, and evaluates variables (not strictly required for a command with no parameters, but STRONGLY encouraged)
- * R_INFO - Display the command with the values.  In most cases you'll want to implement this yourself as the default is pretty basic
- * R_VALIDATE - Perform run-time validation of them, possibly printing messages. (not requied if you're not using variables, but STRONGLY encouraged)
- * R_RUN - Perform the standard process of running the command.  This should NEVER be used in this situation, as you will code this part!
- * R_FINAL - Perform any finalization required.  (should ALWAYS be called - in the FINALLY)
+ * RS_INIT - Perform any initialization required (should ALWAYS be called)
+ * RS_GET - Get the parameters, and evaluates variables (not strictly required for a command with no parameters, but STRONGLY encouraged)
+ * RS_INFO - Display the command with the values.  In most cases you'll want to implement this yourself as the default is pretty basic
+ * RS_VALIDATE - Perform run-time validation of them, possibly printing messages. (not requied if you're not using variables, but STRONGLY encouraged)
+ * RS_RUN - Perform the standard process of running the command.  This should NEVER be used in this situation, as you will code this part!
+ * RS_FINAL - Perform any finalization required.  (should ALWAYS be called - in the FINALLY)
 
-In this example, we are first running R_INIT, and R_GET.  If a Partial_run returns -1, you should return immediately with -1.  
+In this example, we are first running RS_INIT, and RS_GET.  If a Partial_run returns -1, you should return immediately with -1.  
 
-After the R_GET, you can refer to self.params[n] where n is from 0 to the maximum number of parameters.  self.params[0] is the command name, and self.params[1] to self.params[n] are the parameters from 1 to n.  At this point, optional parameters that have not been passed will be None, literal values will be validated and be the correct type, and variable values will be thethe correct types, but not yet validated.
+After the RS_GET, you can refer to self.params[n] where n is from 0 to the maximum number of parameters.  self.params[0] is the command name, and self.params[1] to self.params[n] are the parameters from 1 to n.  At this point, optional parameters that have not been passed will be None, literal values will be validated and be the correct type, and variable values will be thethe correct types, but not yet validated.
 
-After performing the 3 initial steps, we do our own implementation of the R_INFO.
+After performing the 3 initial steps, we do our own implementation of the RS_INFO.
 
-Next, the R_VALIDATE step is performed.  After this, variable values will be validated.
+Next, the RS_VALIDATE step is performed.  After this, variable values will be validated.
 
-After validation, we do what is required based on the parameters passed, and return idx + 1 (that's the next line).  If we had a serious error we could return -1 to abort the script.  Instead of returning idx+1, we could possibly just return the value of the R_RUN process, however this requires more code, and introduces additional complexities.  Just do the simple thing and return the correct value!
+After validation, we do what is required based on the parameters passed, and return idx + 1 (that's the next line).  If we had a serious error we could return -1 to abort the script.  Instead of returning idx+1, we could possibly just return the value of the RS_RUN process, however this requires more code, and introduces additional complexities.  Just do the simple thing and return the correct value!
 
 No matter how we return, the FINALLY block will ensure that the finalization is called.
 
@@ -360,13 +360,13 @@ class Mouse_Scroll(command_base.Command_Basic):
 
         ret = variables.validate_int_ge_zero(v1, idx, self.name, "X amount", 1, split_line[1])
         if ret != True:
-            print("[" + lib + "] " + coords[0] + "  " + ret)
+            print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
             ok = False
 
         if v2:
             ret = variables.validate_int_ge_zero(v2, idx, self.name, "Scroll amount", 2, split_line[2])
             if ret != True:
-                print("[" + lib + "] " + coords[0] + "  " + ret)
+                print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
                 ok = False
 
         if not ok:
@@ -492,13 +492,13 @@ Note that commands are case sensitive, so the name should be in all uppercase to
 
         ret = variables.validate_int_ge_zero(v1, idx, self.name, "X amount", 1, split_line[1])
         if ret != True:
-            print("[" + lib + "] " + coords[0] + "  " + ret)
+            print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
             ok = False
 
         if v2:
             ret = variables.validate_int_ge_zero(v2, idx, self.name, "Scroll amount", 2, split_line[2])
             if ret != True:
-                print("[" + lib + "] " + coords[0] + "  " + ret)
+                print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
                 ok = False
 
         if not ok:
@@ -617,13 +617,13 @@ class Mouse_Scroll(command_base.Command_Basic):
 
         ret = variables.validate_int_ge_zero(v1, idx, self.name, "X amount", 1, split_line[1])
         if ret != True:
-            print("[" + lib + "] " + coords[0] + "  " + ret)
+            print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
             ok = False
 
         if v2:
             ret = variables.validate_int_ge_zero(v2, idx, self.name, "Scroll amount", 2, split_line[2])
             if ret != True:
-                print("[" + lib + "] " + coords[0] + "  " + ret)
+                print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
                 ok = False
 
         if not ok:
@@ -776,13 +776,13 @@ Every command that does something (e.g. not labels - that have their effect duri
 
         ret = variables.validate_int_ge_zero(v1, idx, self.name, "X amount", 1, split_line[1])
         if ret != True:
-            print("[" + lib + "] " + coords[0] + "  " + ret)
+            print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
             ok = False
 
         if v2:
             ret = variables.validate_int_ge_zero(v2, idx, self.name, "Scroll amount", 2, split_line[2])
             if ret != True:
-                print("[" + lib + "] " + coords[0] + "  " + ret)
+                print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
                 ok = False
 
         if not ok:
@@ -1037,10 +1037,10 @@ Currently the dictionary contains x entries:
  * 'repeats' : A dictionary of loop counters for `REPEAT` commands
  * 'original' : A dictionary of the starting values for `REPEAT` commands
  * 'labels' : A dictionary of the label names and locations within the script
- * 'm_pos' : A tuple containing the saved mouse position
- * 'g_vars' : A tuple containing the lock object and the dictionary of global variables
- * 'l_vars' : A dictionary containing local variables
- * 'stack' : A mutable tuple containing the local stack
+ * SYM_MOUSE : A tuple containing the saved mouse position
+ * SYM_GLOBAL : A tuple containing the lock object and the dictionary of global variables
+ * SYM_LOCAL : A dictionary containing local variables
+ * SYM_STACK : A mutable tuple containing the local stack
 
 The symbol table can be modified in the `Validation` and/or `Run` methods.
 
@@ -1048,20 +1048,20 @@ An example of adding a new label (from the `GOTO_LABEL` command) is:
 
 ```python
             # add label to symbol table                   # Add the new label to the labels in the symbol table
-            symbols["labels"][split_line[1]] = idx        # key is label, data is line number
+            symbols[SYM_LABELS][split_line[1]] = idx        # key is label, data is line number
 ```
 
 This can be checked for existance by:
 
 ```python
-            if split_line[1] in symbols["labels"]:        # Does the label already exist (that's bad)?
+            if split_line[1] in symbols[SYM_LABELS]:        # Does the label already exist (that's bad)?
                ...
 ```
 
 Finally, it can be accessed to determine where a label is:
 
 ```python
-            return symbols["labels"][split_line[1]]         # normally we return the line number the label is on
+            return symbols[SYM_LABELS][split_line[1]]         # normally we return the line number the label is on
 ```
 
 ### Repeats
@@ -1097,9 +1097,9 @@ This structure contains the list of values that make up the stack for the curren
 The coords are the current x,y values passed to the command (or header).  I believe these are the button coordinates.
 
 This array contains 3 elements:
- * coords[0] - a string describing the location
- * coords[1] - the X value
- * coords[2] - the Y value
+ * coords[BC_TEXT] - a string describing the location
+ * coords[BC_X] - the X value
+ * coords[BC_Y] - the Y value
 
 ## self.Name
 

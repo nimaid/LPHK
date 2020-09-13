@@ -49,11 +49,11 @@ class Pause_Delay(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Delay for " + split_line[1] + " seconds")
+        print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Delay for " + split_line[1] + " seconds")
 
         delay = float(split_line[1])
 
-        if not safe_sleep(delay, coords[1], coords[2], is_async):
+        if not safe_sleep(delay, coords[BC_X], coords[BC_Y], is_async):
             return -1
 
         return idx+1

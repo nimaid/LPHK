@@ -1,3 +1,5 @@
+from constants import *
+
 # operations needed to access variables  
 
 # NOTE that any locking is the responsibility of the calling code!
@@ -8,7 +10,7 @@
 def pop(syms):
     # return the top valie from the stack (and remove it)
     try:
-        return syms['stack'].pop()      # take the top value from the stack in the supplied symbol table
+        return syms[SYM_STACK].pop()      # take the top value from the stack in the supplied symbol table
     except:
         return 0
         # raise Exception("Stack empty")
@@ -16,7 +18,7 @@ def pop(syms):
  
 def push(syms, val):
     # put val on to the top of the stack
-    syms['stack'].append(val)           # Push a value onto the stack in the supplied symbol table
+    syms[SYM_STACK].append(val)           # Push a value onto the stack in the supplied symbol table
 
  
 # the top of the stack will also return 0 for an empty stack.   Alternatively it could
@@ -24,7 +26,7 @@ def push(syms, val):
 def top(syms, i):
     # peek at the top value of the stack without removing it (for i=1, y:i=2, z:i=3...)
     try:
-        return syms['stack'][-i]
+        return syms[SYM_STACK][-i]
     except:
         return 0
         #raise Exception("Stack empty")
@@ -95,6 +97,13 @@ def error_msg(idx, name, desc, p, param, err):
     
 # check the number of parameters allowed
 def Check_num_params(split_line, lens, idx, line, name):
+    # lens is an array of valid numbers of parameters
+    # it will be None if you've taken control of handling the parameters yourself.
+    # if you set it to [n, None] that means any number of parameters from n to infinity!
+    
+    if lens == None:      # if this is undefined
+        return True       # anything is valid
+        
     n = len(split_line)-1
     if n in lens:              
         return True 
@@ -111,28 +120,30 @@ def Check_num_params(split_line, lens, idx, line, name):
         cnt = ""
         if len(lens) == 1:
             cnt += str(lens[0])
+        elif len(lens) == 2 and lens[1] == None:
+            cnt += str(lens[0]) + " or more"
         else:
-            cnt += ", ".join([str(el) for el in lens[0:-1]]) + ", " + str(lens[-1]) 
+            cnt += ", ".join([str(el) for el in lens[0:-1]]) + ", or " + str(lens[-1]) 
        
     return (error_msg(idx, name, msg, None, str(n), "supplied, " + cnt + " are required"), line)
 
 
 # check a generic parameter
-def Check_generic_param(split_line, p, desc, idx, name, line, conv, conv_name, validation=None, optional=False, var_ok=True):
+def Check_generic_param(split_line, p, desc, idx, name, line, v_type, validation=None, optional=False, var_ok=True):
     temp = None
 
     if p >= len(split_line):
         if optional:
             return True
         else:
-            return (error_msg(idx, name, desc, p, None, 'required ' + conv_name + ' parameter not present'), line)
+            return (error_msg(idx, name, desc, p, None, 'required ' + v_type[AVT_TYPE] + ' parameter not present'), line)
     
     try:
-        temp = conv(split_line[p])
+        temp = v_type[AVT_CONV](split_line[p])
     except:
         if var_ok and valid_var_name(split_line[p]):   # a variable is OK here
             return True
-        return (error_msg(idx, name, desc, p, split_line[p], 'not a valid ' + conv_name), line)
+        return (error_msg(idx, name, desc, p, split_line[p], 'not a valid ' + v_type[AVT_TYPE]), line)
 
     if validation:
         return validation(temp, idx, name, desc, p, split_line[p])
@@ -140,6 +151,7 @@ def Check_generic_param(split_line, p, desc, idx, name, line, conv, conv_name, v
     return True 
 
 
+# @@@ deprecated
 def Check_numeric_param(split_line, p, desc, idx, name, line, validation, optional=False, var_ok=True):
     temp = None
 
@@ -165,9 +177,9 @@ def Check_numeric_param(split_line, p, desc, idx, name, line, validation, option
 # get the value of a parameter
 def get_value(v, symbols):
     if valid_var_name(v):
-        g_vars = symbols['g_vars']
+        g_vars = symbols[SYM_GLOBAL]
         with g_vars[0]:                                # lock the globals while we do this
-            v = get(v, symbols['l_vars'], g_vars[1])
+            v = get(v, symbols[SYM_LOCAL], g_vars[1])
             
     return v
 
@@ -200,3 +212,6 @@ def Validate_ge_zero(v, idx, name, desc, p, param):
             return error_msg(idx, name, desc, p, param, 'must not be less than zero')
     else:
         return error_msg(idx, name, desc, p, param, 'must be an integer')
+        
+
+

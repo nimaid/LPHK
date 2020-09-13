@@ -2,6 +2,7 @@ import threading, webbrowser, os, subprocess
 from time import sleep
 from functools import partial
 import lp_events, lp_colors, kb, sound, ms, files, command_base
+from constants import *
 
 
 # VALID_COMMAND is a dictionary of all commands available.
@@ -21,10 +22,6 @@ GLOBALS = dict()                  # the globals themselvs
 GLOBAL_LOCK = threading.Lock()    # a lock got the globals to prevent simultaneous access
 
 
-COLOR_PRIMED = 5 #red
-COLOR_FUNC_KEYS_PRIMED = 9 #amber
-EXIT_UPDATE_DELAY = 0.1
-DELAY_EXIT_CHECK = 0.025
 
 
 # Add a new command.  This removes any existing command of the same name from the VALID_COMMANDS
@@ -58,13 +55,13 @@ def new_symbol_table():
     # returns a new (blank) symbol table
     # symbol table is dictionary of objects
     symbols = {
-        "repeats": dict(),
-        "original": dict(), 
-        "labels": dict(),
-        "m_pos": tuple(),
-        "g_vars": [GLOBAL_LOCK, GLOBALS], # global (to the application) variables (and associated lock)
-        "l_vars": dict(),                 # local (to the script) variables (with no lock)
-        "stack": [] }                     # script stack (for RPN_EVAL)        
+        SYM_REPEATS:  dict(),
+        SYM_ORIGINAL: dict(), 
+        SYM_LABELS:   dict(),
+        SYM_MOUSE:    tuple(),
+        SYM_GLOBAL:   [GLOBAL_LOCK, GLOBALS],  # global (to the application) variables (and associated lock)
+        SYM_LOCAL:    dict(),                  # local (to the script) variables (with no lock)
+        SYM_STACK:    [] }                     # script stack (for RPN_EVAL)        
 
     return symbols
 
@@ -95,8 +92,7 @@ class Button():
         self.coords = "(" + str(self.x) + ", " + str(self.y) + ")" # let's just do this the once eh?
     
     
-        #  Do what is required to parse the script.  Parsing does not output any information unless it is an error 
-
+    #  Do what is required to parse the script.  Parsing does not output any information unless it is an error 
     def parse_script(self):
         if self.validated:                           # we don't want to repeat validation over and over
             return True
@@ -111,7 +107,7 @@ class Button():
         err = True
         errors = 0                                   # no errors found
 
-        for pass_no in (1,2):                        # pass 1, collect info & syntax check, 
+        for pass_no in (VS_PASS_1, VS_PASS_2):       # pass 1, collect info & syntax check, 
                                                      # pass 2 symbol check & assocoated processing
             for idx,line in enumerate(self.script_lines): # gen line number and text
                 if self.is_ignorable_line(line):
@@ -236,7 +232,6 @@ class Button():
 
 
     # run a script
-
     def run_script(self):
         lp_colors.updateXY(self.x, self.y)
         
@@ -293,7 +288,6 @@ class Button():
         
     # validating a script consists of doing the checks that we do prior to running, but
     # we won't run it afterwards.
-
     def validate_script(self):
         if self.validated or self.script_str == "":      # If valid or there is no script...
             self.validated = True
@@ -317,7 +311,6 @@ to_run = []
 
 
 # bind a button
-
 def bind(x, y, script_str, color):
     global to_run
     global buttons
@@ -338,7 +331,6 @@ def bind(x, y, script_str, color):
 
 
 # unbind a button
-
 def unbind(x, y):
     global to_run
     global buttons
@@ -362,8 +354,7 @@ def unbind(x, y):
     files.layout_changed_since_load = True   # Mark the layout as changed
 
 
-# swap details for two buttons
-    
+# swap details for two buttons  
 def swap(x1, y1, x2, y2):
     global text
 
@@ -387,7 +378,6 @@ def swap(x1, y1, x2, y2):
 
 
 # Duplicate a button
-
 def copy(x1, y1, x2, y2):
     global buttons
 
@@ -404,7 +394,6 @@ def copy(x1, y1, x2, y2):
 
 
 # move a button
-
 def move(x1, y1, x2, y2):
     global buttons
 
@@ -423,7 +412,6 @@ def move(x1, y1, x2, y2):
 
 
 # determine if a key is bound
-
 def is_bound(x, y):
     global buttons
 
@@ -434,7 +422,6 @@ def is_bound(x, y):
 
 
 # Unbind all keys.  
-
 def unbind_all():
     global buttons
     global to_run
@@ -453,6 +440,4 @@ def unbind_all():
     files.curr_layout = None                 # There is no current layout
     files.layout_changed_since_load = False  # So mark it as unchanged
     
-
-
 

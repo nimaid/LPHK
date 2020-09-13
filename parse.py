@@ -15,6 +15,8 @@ def set_var(var_string, val):
         if isinstance(val, str):
             value = variables[val]
             variables[var_string] = value
+        else:
+            raise
 
 def get_var(var_string):
     try:

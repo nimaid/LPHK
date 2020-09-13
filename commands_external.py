@@ -46,7 +46,7 @@ class External_Web(command_base.Command_Basic):
         if "http" not in link:
             link = "http://" + link
 
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Open website " + link + " in default browser")
+        print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Open website " + link + " in default browser")
 
         webbrowser.open(link)
 
@@ -100,7 +100,7 @@ class External_Web_New(command_base.Command_Basic):
         if "http" not in link:
             link = "http://" + link
 
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Open website " + link + " in default browser, try to make a new window")
+        print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Open website " + link + " in default browser, try to make a new window")
 
         webbrowser.open_new(link)
 
@@ -155,7 +155,7 @@ class External_Open(command_base.Command_Basic):
 
         path_name = " ".join(split_line[1:])
 
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Open file or folder " + path_name)
+        print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Open file or folder " + path_name)
 
         files.open_file_folder(path_name)
 
@@ -206,11 +206,11 @@ class External_Sound(command_base.Command_Basic):
         ):
 
         if len(split_line) > 2:
-            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Play sound file " + split_line[1] + \
+            print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Play sound file " + split_line[1] + \
                 " at volume " + str(split_line[2]))
             sound.play(split_line[1], float(split_line[2]))
         else:
-            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Play sound file " + split_line[1])
+            print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Play sound file " + split_line[1])
             sound.play(split_line[1])
 
         return idx+1
@@ -309,12 +309,12 @@ class External_Code(command_base.Command_Basic):
         ):
 
         args = " ".join(split_line[1:])
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Running code: " + args)
+        print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Running code: " + args)
 
         try:
             subprocess.run(args)
         except Exception as e:
-            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))
+            print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))
 
         return idx+1
 

@@ -41,7 +41,7 @@ class Keys_Wait_Pressed(command_base.Command_Basic):
 
         print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Wait for script key to be unpressed")
 
-        while lp_events.pressed[coords[1]][coords[2]]:
+        while lp_events.pressed[coords[BC_X]][coords[BC_Y]]:
             sleep(DELAY_EXIT_CHECK)
             if check_kill(x, y, is_async):
                 return idx + 1             
@@ -100,29 +100,29 @@ class Keys_Tap(command_base.Command_Basic):
         releasefunc = lambda: kb.release(key)
 
         if len(split_line) <= 2:
-            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Tap key " + split_line[1])
+            print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Tap key " + split_line[1])
             kb.tap(key)
         elif len(split_line) <= 3:
-            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
+            print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Tap key " + split_line[1] + " " + split_line[2] + " times")
             taps = int(split_line[2])
 
             for tap in range(taps):
-                if check_kill(coords[1], coords[2], is_async, releasefunc):
+                if check_kill(coords[BC_X], coords[BC_Y], is_async, releasefunc):
                     return idx + 1
                 kb.tap(key)
         else:
-            print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Tap key " + split_line[1] + " " + split_line[2] + \
+            print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Tap key " + split_line[1] + " " + split_line[2] + \
                 " times for " + str(split_line[3]) + " seconds each")
 
             taps = int(split_line[2])
             delay = float(split_line[3])
 
             for tap in range(taps):
-                if check_kill(coords[1], coords[2], is_async, releasefunc):
+                if check_kill(coords[BC_X], coords[BC_Y], is_async, releasefunc):
                     return -1
 
                 kb.press(key)
-                if not safe_sleep(delay, coords[1], coords[2], is_async, releasefunc):
+                if not safe_sleep(delay, coords[BC_X], coords[BC_Y], is_async, releasefunc):
                     return -1
 
         return idx+1
@@ -174,7 +174,7 @@ class Keys_Press(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Press key " + split_line[1])
+        print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Press key " + split_line[1])
 
         key = kb.sp(split_line[1])
         kb.press(key)
@@ -228,7 +228,7 @@ class Keys_Release(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Release key " + split_line[1])
+        print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Release key " + split_line[1])
 
         key = kb.sp(split_line[1])
         kb.release(key)
@@ -276,7 +276,7 @@ class Keys_Release_All(command_base.Command_Basic):
         is_async               # True if the script is running asynchronously
         ):
 
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Release all keys")
+        print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Release all keys")
 
         kb.release_all()
 
@@ -325,7 +325,7 @@ class Keys_String(command_base.Command_Basic):
 
         type_string = " ".join(split_line[1:])
 
-        print("[" + lib + "] " + coords[0] + "  Line:" + str(idx+1) + "    Type out string " + type_string)
+        print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Type out string " + type_string)
 
         kb.write(type_string)
 
