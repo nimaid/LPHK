@@ -104,8 +104,12 @@ def Check_num_params(split_line, lens, idx, line, name):
     if lens == None:      # if this is undefined
         return True       # anything is valid
         
+    ln = len(lens)
     n = len(split_line)-1
-    if n in lens:              
+    if ln == 2 and lens[1] == None:
+        if n >= lens[0]:
+            return True
+    elif n in lens:              
         return True 
     
     # create a properly formatted error message
@@ -136,14 +140,14 @@ def Check_generic_param(split_line, p, desc, idx, name, line, v_type, validation
         if optional:
             return True
         else:
-            return (error_msg(idx, name, desc, p, None, 'required ' + v_type[AVT_TYPE] + ' parameter not present'), line)
+            return (error_msg(idx, name, desc, p, None, 'required ' + v_type[AVT_DESC] + ' parameter not present'), line)
     
     try:
         temp = v_type[AVT_CONV](split_line[p])
     except:
         if var_ok and valid_var_name(split_line[p]):   # a variable is OK here
             return True
-        return (error_msg(idx, name, desc, p, split_line[p], 'not a valid ' + v_type[AVT_TYPE]), line)
+        return (error_msg(idx, name, desc, p, split_line[p], 'not a valid ' + v_type[AVT_DESC]), line)
 
     if validation:
         return validation(temp, idx, name, desc, p, split_line[p])

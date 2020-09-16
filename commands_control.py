@@ -37,11 +37,12 @@ scripts.add_command(Control_Comment())  # register the command
 
 # class that defines the LABEL command (a target of GOTO's etc)
 class Control_Label(command_base.Command_Basic):
-    def __init__(
-        self, 
+    def __init__(        
+        self 
         ):
 
-        super().__init__("LABEL",  # the name of the command as you have to enter it in the code
+        super().__init__(
+            "LABEL",  # the name of the command as you have to enter it in the code
             LIB,
             (
             # Desc         Opt    Var    type       p1_val  p2_val 
@@ -60,29 +61,152 @@ scripts.add_command(Control_Label())  # register the command
 
 
 # ##################################################
+# ### CLASS Control_Flow_Basic                   ###
+# ##################################################
+
+# class that defines an object that can handle flow control
+#
+# THIS IS NOT REGISTERED.  IT IS AN ANCESTOR CLASS FOR OTHER MORE POWERFUL COMMANDS
+class Control_Flow_Basic(command_base.Command_Basic):
+    def __init__(
+        self, 
+        name: str,                   # The name of the command (what you put in the script)
+        lib=LIB,
+        auto_validate=None,          # Definition of the input parameters
+        auto_message=None,           # Definition of the message format
+        invalid_message=None,        # Info message if invalid  
+        valid_function=None,         # Test to be performed to determine validity
+        label_preceeds=False,        # must the label preceed this line
+        reset=False,                 # do we do reset at end of loop?
+        loop_val_init_function=None, # How to initialize the loop counter
+        next_function=None,          # Passed the current value, return the next
+        test_function=None           # Test to be performed before looping None = loop always
+        ):
+
+        super().__init__(name,  # the name of the command as you have to enter it in the code
+            lib,
+            auto_validate,
+            auto_message);
+            
+        # note that it is safe to have these extra variables in the class, as they are
+        # constant for a given child class.
+        self.invalid_message = invalid_message
+        self.valid_function = valid_function
+        self.label_preceeds = label_preceeds
+        self.reset = reset
+        self.loop_val_init_function = loop_val_init_function
+        self.next_function = next_function
+        self.test_function = test_function
+
+
+    def Partial_validate_step_pass_1(self, ret, idx, line, lines, split_line, symbols):
+        ret = super().Partial_validate_step_pass_1(ret, idx, line, lines, split_line, symbols)
+        
+        if ret == None or ((type(ret) == bool) and ret):
+            if self.loop_val_init_function:
+                self.loop_val_init_function(symbols, idx, split_line)
+                ret = True
+            
+        return ret
+
+
+    def Partial_validate_step_pass_2(self, ret, idx, line, lines, split_line, symbols):
+        ret = super().Partial_validate_step_pass_2(ret, idx, line, lines, split_line, symbols)
+        
+        if (ret == None or ((type(ret) == bool) and ret)):
+            if self.label_preceeds and symbols[SYM_LABELS][split_line[1]] < idx:
+                ret = ("Line:" + str(idx+1) + " - Target for " + self.name + " must preceed the command.", line)
+            
+        return ret
+
+        
+    def Partial_run_step_info(self, ret, idx, split_line, symbols, coords, is_async):
+        ret = super().Partial_run_step_info(ret, idx, split_line, symbols, coords, is_async)
+        
+        if self.valid_function == None or self.valid_function(coords):           # if no validation function, or it returns true, continue
+            if self.test_function and self.next_function:
+                if symbols[SYM_REPEATS][idx] > 0:
+                    print(AM_PREFIX.format(self.lib, coords[BC_TEXT], str(idx+1)) + "        " + str(symbols[SYM_REPEATS][idx]) + " repeats left.")
+                else:
+                    print(AM_PREFIX.format(self.lib, coords[BC_TEXT], str(idx+1)) + "        No repeats left, not repeating.")        
+        else:
+            print(self.invalid_message)
+
+        return ret
+        
+
+    def Process(self, idx, split_line, symbols, coords, is_async):
+        ret = idx+1    # if all else fails!
+
+        if self.valid_function == None or self.valid_function(coords): # if no validation function, or it returns true, continue
+            
+            if self.next_function:                                     # if we can calc the next value of the loop
+                val = symbols[SYM_REPEATS][idx]                        # get this value
+                symbols[SYM_REPEATS][idx] = self.next_function(val)    # and calculate the next
+            
+            if not (self.test_function or self.next_function):         # it's either both or none at the moment, if neither
+                ret = symbols[SYM_LABELS][symbols[SYM_PARAMS][1]]      # this is unconditional
+            elif (self.test_function and self.next_function):          # if both, then we can do the test
+                if self.test_function(val):
+                    ret = symbols[SYM_LABELS][symbols[SYM_PARAMS][1]]  # jump if test succeeds
+                else:
+                    if self.reset:
+                        self.Reset(symbols, idx)                       # potential reset if it doesn't
+
+        return ret
+            
+
+    def Valid_key_pressed(self, coords):
+        return lp_events.pressed[coords[BC_X]][coords[BC_Y]]
+        
+        
+    def Valid_key_unpressed(self, coords):
+        return not self.Valid_key_pressed(coords)
+        
+        
+    def Test_func_ge_zero(self, val):
+        return val >= 0
+        
+        
+    def Next_decrement(self, val):
+        return val-1
+        
+        
+    def Reset(self, symbols, idx):
+        symbols[SYM_REPEATS][idx] = symbols[SYM_ORIGINAL][idx]
+    
+
+    def Init_n(self, symbols, idx, split_line):
+        symbols[SYM_ORIGINAL][idx] = int(split_line[2])
+        self.Reset(symbols, idx)
+    
+
+    def Init_n_minus_1(self, symbols, idx, split_line):
+        symbols[SYM_ORIGINAL][idx] = int(split_line[2])-1
+        self.Reset(symbols, idx)
+
+
+# ##################################################
 # ### CLASS Control_Goto_Label                   ###
 # ##################################################
 
 # class that defines the GOTO_LABEL command
-class Control_Goto_Label(command_base.Command_Basic):
+class Control_Goto_Label(Control_Flow_Basic):
     def __init__(
-        self, 
+        self 
         ):
 
-        super().__init__("GOTO_LABEL",  # the name of the command as you have to enter it in the code
+        super().__init__(
+            "GOTO_LABEL",   # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type      conv  p1_val  p2_val 
+            # Desc         Opt    Var    type      p1_val  p2_val 
             ("Label",      False, False, PT_LABEL, None,   None), 
             ),
             (
             # num params, format string                           (trailing comma is important)
             (1,           "    Goto label {1}"), 
-            ) )
-
-
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        return symbols[SYM_LABELS][symbols[SYM_PARAMS][1]]         # we simply return the line number the label is on
+            ) )  # don't even need the additional parameters!
 
 
 scripts.add_command(Control_Goto_Label())  # register the command
@@ -93,26 +217,25 @@ scripts.add_command(Control_Goto_Label())  # register the command
 # ##################################################
 
 # class that defines the IF_PRESSED_GOTO_LABEL command
-class Control_If_Pressed_Goto_Label(command_base.Command_Basic):
+class Control_If_Pressed_Goto_Label(Control_Flow_Basic):
     def __init__(
-        self, 
+        self 
         ):
 
-        super().__init__("IF_PRESSED_GOTO_LABEL",  # the name of the command as you have to enter it in the code
+        super().__init__(
+            "IF_PRESSED_GOTO_LABEL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type      conv  p1_val  p2_val 
-            ("Label",      False, False, PT_LABEL, None,   None), 
+            # desc         opt    var    type      p1_val                      p2_val 
+            ("label",      False, False, PT_LABEL, None,                       None), 
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (1,           "    If pressed goto label {1}"), 
-            ) )
-
-        
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        if lp_events.pressed[coords[BC_X]][coords[BC_Y]]:       # if key is pressed
-            return symbols[SYM_LABELS][symbols[SYM_PARAMS][1]]  # and we return the line number the label is on
+            (1,           "    if pressed goto label {1}"), 
+            ),
+            "the button is not pressed",
+            self.Valid_key_pressed
+            )
 
 
 scripts.add_command(Control_If_Pressed_Goto_Label())  # register the command
@@ -123,26 +246,25 @@ scripts.add_command(Control_If_Pressed_Goto_Label())  # register the command
 # ##################################################
 
 # class that defines the IF_UNPRESSED_GOTO_LABEL command
-class Control_If_Unpressed_Goto_Label(command_base.Command_Basic):
+class Control_If_Unpressed_Goto_Label(Control_Flow_Basic):
     def __init__(
-        self, 
+        self 
         ):
 
-        super().__init__("IF_UNPRESSED_GOTO_LABEL",  # the name of the command as you have to enter it in the code
+        super().__init__(
+            "IF_UNPRESSED_GOTO_LABEL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type      conv  p1_val  p2_val 
-            ("Label",      False, False, PT_LABEL, None,   None), 
+            # desc         opt    var    type      p1_val                      p2_val 
+            ("label",      False, False, PT_LABEL, None,                       None), 
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (1,           "    If unpressed goto label {1}"), 
-            ) )
-
-        
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        if not lp_events.pressed[coords[BC_X]][coords[BC_Y]]:   # if key is pressed
-            return symbols[SYM_LABELS][symbols[SYM_PARAMS][1]]  # and we return the line number the label is on
+            (1,           "    if unpressed goto label {1}"), 
+            ),
+            "the button is pressed",
+            self.Valid_key_unpressed
+            )
 
 
 scripts.add_command(Control_If_Unpressed_Goto_Label())  # register the command
@@ -153,54 +275,30 @@ scripts.add_command(Control_If_Unpressed_Goto_Label())  # register the command
 # ##################################################
 
 # class that defines the REPEAT_LABEL command
-class Control_Repeat_Label(command_base.Command_Basic):
+class Control_Repeat_Label(Control_Flow_Basic):
     def __init__(
-        self, 
+        self 
         ):
 
-        super().__init__("REPEAT_LABEL",  # the name of the command as you have to enter it in the code
+        super().__init__(
             LIB,
             (
-            # Desc         Opt    Var    type      p1_val                      p2_val 
-            ("Label",      False, False, PT_LABEL, None,                       None), 
-            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None), 
+            # desc         opt    var    type      p1_val                      p2_val 
+            ("label",      False, False, PT_LABEL, None,                       None), 
+            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)
             (2,           "    Repeat label {1}, {2} times max"), 
-            ) )
-
-        
-    def Partial_validate_step_pass_1(self, ret, idx, line, lines, split_line, symbols):
-        ret = super().Partial_validate_step_pass_1(ret, idx, line, lines, split_line, symbols)
-        
-        if ret == None or ret == True:
-            symbols[SYM_REPEATS][idx] = int(split_line[2])
-            symbols[SYM_ORIGINAL][idx] = int(split_line[2])
-            ret = True
-            
-        return ret
-
-        
-    def Partial_run_step_info(self, ret, idx, split_line, symbols, coords, is_async):
-        # Oddly enough, we want the original info message too.
-        ret = super().Partial_run_step_info(ret, idx, split_line, symbols, coords, is_async)
-        
-        if symbols[SYM_REPEATS][idx] > 0:
-            print(AM_PREFIX.format(self.lib, coords[BC_TEXT], str(idx+1)) + "        " + str(symbols[SYM_REPEATS][idx]) + " repeats left.")
-        else:
-            print(AM_PREFIX.format(self.lib, coords[BC_TEXT], str(idx+1)) + "        No repeats left, not repeating.")
-
-        return ret
-
-
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        
-        if symbols[SYM_REPEATS][idx] > 0:
-            symbols[SYM_REPEATS][idx] = symbols[SYM_REPEATS][idx] - 1
-            return symbols[SYM_LABELS][symbols[SYM_PARAMS][1]]
-            
-        return True
+            ),
+            None,
+            None,
+            False,
+            False,
+            self.Init_n,
+            self.Next_decrement,
+            self.Test_func_ge_zero
+            )
 
 
 scripts.add_command(Control_Repeat_Label())  # register the command
@@ -213,66 +311,31 @@ scripts.add_command(Control_Repeat_Label())  # register the command
 # class that defines the REPEAT command.  This operates more like a 
 # traditional repeat/until by causing the code to repeat n times (rather than
 # n+1, and it resets the counter at the end
-class Control_Repeat(command_base.Command_Basic):
+class Control_Repeat(Control_Flow_Basic):
     def __init__(
-        self, 
+        self 
         ):
 
-        super().__init__("REPEAT")  # the name of the command as you have to enter it in the code
-
-    def Validate(
-        self,
-        idx: int,              # The current line number
-        line,                  # The current line
-        lines,                 # The current script
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
-        ):
-
-        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
-            if len(split_line) != 3:
-                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' needs both a label name and how many times to repeat.", line)
-
-            try:
-                temp = int(split_line[2])
-                if temp < 1:
-                    return ("Line:" + str(idx+1) + " - " + split_line[0] + " requires a minimum of 1 repeat.", line)
-                else:
-                    symbols[SYM_REPEATS][idx] = int(split_line[2])-1
-                    symbols[SYM_ORIGINAL][idx] = int(split_line[2])-1
-            except:
-               return ("Line:" + str(idx+1) + " - " + split_line[0] + " number of repeats '" + split_line[2] + "' not valid.", line)
-
-        if pass_no == 2:       # in Pass 2 we can check to make sure referenced symbols exist
-            if split_line[1] not in symbols[SYM_LABELS]:
-                return ("Line:" + str(idx+1) + " - Target not found for " + self.name, line)
-
-            if symbols[SYM_LABELS][split_line[1]] > idx:
-                return ("Line:" + str(idx+1) + " - Target for " + self.name + " must preceed the command.", line)
-
-        return True
-
-    def Run(
-        self,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        coords,                # Tuple of printable coords as well as the individual x and y values
-        is_async               # True if the script is running asynchronously
-        ):
-
-        print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Repeat LABEL " + split_line[1] + " " + \
-            split_line[2] + " times max")
-
-        if symbols[SYM_REPEATS][idx] > 0:
-            print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "        " + str(symbols[SYM_REPEATS][idx]) + " repeats left.")
-            symbols[SYM_REPEATS][idx] -= 1
-            return symbols[SYM_LABELS][split_line[1]]
-        else:
-            print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "        No repeats left, not repeating.")
-            symbols[SYM_REPEATS][idx] = symbols[SYM_ORIGINAL][idx] # makes this behave like a normal loop
-        return idx+1
+        super().__init__(
+            "REPEAT",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # desc         opt    var    type      p1_val                      p2_val 
+            ("label",      False, False, PT_LABEL, None,                       None), 
+            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (2, "    repeat {1}, {2} times max"), 
+            ),
+            None,
+            None,
+            True,
+            True,
+            self.Init_n_minus_1,
+            self.Next_decrement,
+            self.Test_func_ge_zero
+            )
 
 
 scripts.add_command(Control_Repeat())  # register the command
@@ -282,71 +345,35 @@ scripts.add_command(Control_Repeat())  # register the command
 # ### CLASS Control_If_Pressed_Repeat_Label      ###
 # ##################################################
 
-# class that defines the IF_PRESSED_REPEAT_LABEL command
-class Control_If_Pressed_Repeat_Label(command_base.Command_Basic):
+# class that defines the IF_PRESSED_REPEAT_LABEL command.
+class Control_If_Pressed_Repeat_Label(Control_Flow_Basic):
     def __init__(
-        self, 
+        self 
         ):
 
-        super().__init__("IF_PRESSED_REPEAT_LABEL")  # the name of the command as you have to enter it in the code
-
-    def Validate(
-        self,
-        idx: int,              # The current line number
-        line,                  # The current line
-        lines,                 # The current script
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
-        ):
-
-        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
-            if len(split_line) != 3:
-                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' needs both a label name and how many times to repeat.", line)
-
-            try:
-                temp = int(split_line[2])
-                if temp < 1:
-                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + " requires a minimum of 1 repeat.", line)
-                else:
-                    symbols[SYM_REPEATS][idx] = int(split_line[2])
-                    symbols[SYM_ORIGINAL][idx] = int(split_line[2])
-            except:
-                return ("Line:" + str(idx+1) + " - " + split_line[0] + " number of repeats '" + split_line[2] + "' not valid.", line)
-
-        if pass_no == 2:       # in Pass 2 we can check to make sure referenced symbols exist
-            if split_line[1] not in symbols[SYM_LABELS]:
-                return ("Line:" + str(idx+1) + " - Target not found for " + self.name, line)
-
-        return True
-
-    def Run(
-        self,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        coords,                # Tuple of printable coords as well as the individual x and y values
-        is_async               # True if the script is running asynchronously
-        ):
-
-        print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    If key is pressed repeat label " + split_line[1] + " " + split_line[2] + " times max")
-
-        if not split_line[1] in symbols[SYM_LABELS]:          # The label should always exist
-            print("Line:" + str(idx+1) + " - Missing LABEL '" + split_line[1] + "'")  # otherwise an error
-            return -1
-        else:
-            if lp_events.pressed[coords[BC_X]][coords[BC_Y]]:
-                if symbols[SYM_REPEATS][idx] > 0:
-                    print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "        " + str(symbols[SYM_REPEATS][idx]) + " repeats left.")
-                    symbols[SYM_REPEATS][idx] -= 1
-                    return symbols[SYM_LABELS][split_line[1]]
-                else:
-                    print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "        No repeats left, not repeating.")
-
-        return idx+1
+        super().__init__(
+            "IF_PRESSED_REPEAT_LABEL",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # desc         opt    var    type      p1_val                      p2_val 
+            ("label",      False, False, PT_LABEL, None,                       None), 
+            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (2, "    If key is pressed repeat label {1}, {2} times max"), 
+            ),
+            "the button is umpressed",
+            self.Valid_key_pressed,
+            False,
+            False,
+            self.Init_n,
+            self.Next_decrement,
+            self.Test_func_ge_zero
+            )
 
 
-scripts.add_command(Control_If_Pressed_Repeat_Label())  # register the command
+# scripts.add_command(Control_If_Pressed_Repeat_Label())  # register the command
 
 
 # ##################################################
@@ -356,72 +383,31 @@ scripts.add_command(Control_If_Pressed_Repeat_Label())  # register the command
 # class that defines the IF_PRESSED command.  This operates more like a 
 # traditional repeat/until by causing the code to repeat n times (rather than
 # n+1, and it resets the counter at the end
-class Control_If_Pressed_Repeat(command_base.Command_Basic):
+class Control_If_Pressed_Repeat(Control_Flow_Basic):
     def __init__(
-        self, 
+        self 
         ):
 
-        super().__init__("IF_PRESSED_REPEAT")  # the name of the command as you have to enter it in the code
-
-    def Validate(
-        self,
-        idx: int,              # The current line number
-        line,                  # The current line
-        lines,                 # The current script
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
-        ):
-
-        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
-            if len(split_line) != 3:
-                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' needs both a label name and how many times to repeat.", line)
-
-            try:
-                temp = int(split_line[2])
-                if temp < 1:
-                    return ("Line:" + str(idx+1) + " - " + split_line[0] + " requires a minimum of 1 repeat.", line)
-                else:
-                    symbols[SYM_REPEATS][idx] = int(split_line[2])-1
-                    symbols[SYM_ORIGINAL][idx] = int(split_line[2])-1
-            except:
-                return ("Line:" + str(idx+1) + " - " + split_line[0] + " number of repeats '" + split_line[2] + "' not valid.", line)
-
-        if pass_no == 2:       # in Pass 2 we can check to make sure referenced symbols exist
-            if split_line[1] not in symbols[SYM_LABELS]:
-                return ("Line:" + str(idx+1) + " - Target not found for " + self.name, line)
-
-            if symbols[SYM_LABELS][split_line[1]] > idx:
-                return ("Line:" + str(idx+1) + " - Target for " + self.name + " must preceed the command.", line)
-
-
-        return True
-
-    def Run(
-        self,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        coords,                # Tuple of printable coords as well as the individual x and y values
-        is_async               # True if the script is running asynchronously
-        ):
-
-        print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    If key is pressed repeat " + split_line[1] + " " + split_line[2] + " times max")
-
-        if not split_line[1] in symbols[SYM_LABELS]:          # The label should always exist
-            print("Line:" + str(idx+1) + " - Missing LABEL '" + split_line[1] + "'")  # otherwise an error
-            return -1
-        else:
-            if lp_events.pressed[coords[BC_X]][coords[BC_Y]]:
-                if symbols[SYM_REPEATS][idx] > 0:
-                    print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "        " + str(symbols[SYM_REPEATS][idx]) + " repeats left.")
-                    symbols[SYM_REPEATS][idx] -= 1
-                    return symbols[SYM_LABELS][split_line[1]]
-                else:
-                    print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "        No repeats left, not repeating.")
-                    symbols[SYM_REPEATS][idx] = symbols[SYM_ORIGINAL][idx] # for a normal repeat statement
-
-        return idx+1
+        super().__init__(
+            "IF_PRESSED_REPEAT_LABEL",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # desc         opt    var    type      p1_val                      p2_val 
+            ("label",      False, False, PT_LABEL, None,                       None), 
+            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (2, "    If key is not pressed repeat label {1}, {2} times max"), 
+            ),
+            "the button is not pressed",
+            self.Valid_key_pressed,
+            True,
+            True,
+            self.Init_n,
+            self.Next_decrement,
+            self.Test_func_ge_zero
+            )
 
 
 scripts.add_command(Control_If_Pressed_Repeat())  # register the command
@@ -432,66 +418,31 @@ scripts.add_command(Control_If_Pressed_Repeat())  # register the command
 # ##################################################
 
 # class that defines the IF_UNPRESSED_REPEAT_LABEL command.
-class Control_If_Unpressed_Repeat_Label(command_base.Command_Basic):
+class Control_If_Unpressed_Repeat_Label(Control_Flow_Basic):
     def __init__(
-        self, 
+        self 
         ):
 
-        super().__init__("IF_UNPRESSED_REPEAT_LABEL")  # the name of the command as you have to enter it in the code
-
-    def Validate(
-        self,
-        idx: int,              # The current line number
-        line,                  # The current line
-        lines,                 # The current script
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
-        ):
-
-        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
-            if len(split_line) != 3:
-                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' needs both a label name and how many times to repeat.", line)
-
-            try:
-                temp = int(split_line[2])
-                if temp < 1:
-                    return ("Line:" + str(idx+1) + " - " + split_line[0] + " requires a minimum of 1 repeat.", line)
-                    symbols[SYM_REPEATS][idx] = int(split_line[2])
-                    symbols[SYM_ORIGINAL][idx] = int(split_line[2])
-            except:
-               return ("Line:" + str(idx+1) + " - " + split_line[0] + " number of repeats '" + split_line[2] + "' not valid.", line)
-
-        if pass_no == 2:       # in Pass 2 we can check to make sure referenced symbols exist
-            if split_line[1] not in symbols[SYM_LABELS]:
-                return ("Line:" + str(idx+1) + " - Target not found for " + self.name, line)
-
-        return True
-
-    def Run(
-        self,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        coords,                # Tuple of printable coords as well as the individual x and y values
-        is_async               # True if the script is running asynchronously
-        ):
-
-        print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    If key is not pressed repeat label " + split_line[1] + " " + split_line[2] + " times max")
-
-        if not split_line[1] in symbols[SYM_LABELS]:          # The label should always exist
-            print("  Line:" + str(idx+1) + " Missing LABEL '" + split_line[1] + "'")  # otherwise an error
-            return -1
-        else:
-            if not lp_events.pressed[coords[BC_X]][coords[BC_Y]]:
-                if symbols[SYM_REPEATS][idx] > 0:
-                    print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "        " + str(symbols[SYM_REPEATS][idx]) + " repeats left.")
-                    symbols[SYM_REPEATS][idx] -= 1
-                    return symbols[SYM_LABELS][split_line[1]]
-                else:
-                    print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "        No repeats left, not repeating.")
-
-        return idx+1
+        super().__init__(
+            "IF_UNPRESSED_REPEAT_LABEL",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # desc         opt    var    type      p1_val                      p2_val 
+            ("label",      False, False, PT_LABEL, None,                       None), 
+            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (2, "    If key is not pressed repeat label {1}, {2} times max"), 
+            ),
+            "the button is pressed",
+            self.Valid_key_unpressed,
+            False,
+            False,
+            self.Init_n,
+            self.Next_decrement,
+            self.Test_func_ge_zero
+            )
 
 
 scripts.add_command(Control_If_Unpressed_Repeat_Label())  # register the command
@@ -504,72 +455,32 @@ scripts.add_command(Control_If_Unpressed_Repeat_Label())  # register the command
 # class that defines the IF_UNPRESSED_REPEAT command.  This operates more like a 
 # traditional repeat/until by causing the code to repeat n times (rather than
 # n+1, and it resets the counter at the end
-class Control_If_Unpressed_Repeat(command_base.Command_Basic):
+class Control_If_Unpressed_Repeat(Control_Flow_Basic):
     def __init__(
-        self, 
+        self 
         ):
 
-        super().__init__("IF_UNPRESSED_REPEAT")  # the name of the command as you have to enter it in the code
-
-    def Validate(
-        self,
-        idx: int,              # The current line number
-        line,                  # The current line
-        lines,                 # The current script
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
-        ):
-
-        if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
-            if len(split_line) != 3:
-                return ("Line:" + str(idx+1) + " - '" + split_line[0] + "' needs both a label name and how many times to repeat.", line)
-
-            try:
-                temp = int(split_line[2])
-                if temp < 1:
-                    return ("Line:" + str(idx+1) + " - " + split_line[0] + " requires a minimum of 1 repeat.", line)
-                    symbols[SYM_REPEATS][idx] = int(split_line[2])-1
-                    symbols[SYM_ORIGINAL][idx] = int(split_line[2])-1
-            except:
-               return ("Line:" + str(idx+1) + " - " + split_line[0] + " number of repeats '" + split_line[2] + "' not valid.", line)
-
-        if pass_no == 2:       # in Pass 2 we can check to make sure referenced symbols exist
-            if split_line[1] not in symbols[SYM_LABELS]:
-                return ("Line:" + str(idx+1) + " - Target not found for " + self.name, line)
-
-            if symbols[SYM_LABELS][split_line[1]] > idx:
-                return ("Line:" + str(idx+1) + " - Target for " + self.name + " must preceed the command.", line)
-
-
-        return True
-
-    def Run(
-        self,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        coords,                # Tuple of printable coords as well as the individual x and y values
-        is_async               # True if the script is running asynchronously
-        ):
-
-        print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    If key is not pressed repeat " + split_line[1] + " " + split_line[2] + " times max")
-
-        if not split_line[1] in symbols[SYM_LABELS]:          # The label should always exist
-            print("missing LABEL '" + split_line[1] + "'")  # otherwise an error
-            return -1
-        else:
-            if not lp_events.pressed[coords[BC_X]][coords[BC_Y]]:
-                if symbols[SYM_REPEATS][idx] > 0:
-                    print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "        " + str(symbols[SYM_REPEATS][idx]) + " repeats left.")
-                    symbols[SYM_REPEATS][idx] -= 1
-                    return symbols[SYM_LABELS][split_line[1]]
-                else:
-                    print("[" + LIB + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "        No repeats left, not repeating.")
-                    symbols[SYM_REPEATS][idx] = symbols[SYM_ORIGINAL][idx] # to behave more normal
-
-        return idx+1
-
+        super().__init__(
+            "IF_UNPRESSED_REPEAT",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # desc         opt    var    type      p1_val                      p2_val 
+            ("label",      False, False, PT_LABEL, None,                       None), 
+            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (2, "    If key is not pressed repeat {1}, {2} times max"), 
+            ),
+            "the button is pressed",
+            self.Valid_key_unpressed,
+            True,
+            True,
+            self.Init_n_minus_1,
+            self.Next_decrement,
+            self.Test_func_ge_zero
+            )
+    
 
 scripts.add_command(Control_If_Unpressed_Repeat())  # register the command
 
@@ -579,12 +490,16 @@ scripts.add_command(Control_If_Unpressed_Repeat())  # register the command
 # ##################################################
 
 # class that defines the RESET_REPEATS command
+#
+# Here's a command that could just be defined into action, but the 
+# basic implementation using the low level interface is so simple.
 class Control_Reset_Repeats(command_base.Command_Basic):
     def __init__(
         self, 
         ):
 
         super().__init__("RESET_REPEATS")  # the name of the command as you have to enter it in the code
+
 
     def Validate(
         self,
@@ -600,6 +515,7 @@ class Control_Reset_Repeats(command_base.Command_Basic):
             return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", line)
 
         return True
+
 
     def Run(
         self,
@@ -619,5 +535,3 @@ class Control_Reset_Repeats(command_base.Command_Basic):
 
 
 scripts.add_command(Control_Reset_Repeats())  # register the command
-
-

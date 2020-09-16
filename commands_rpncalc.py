@@ -44,8 +44,9 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         # validate the number of parameters
         ret = self.Validate_param_count(ret, idx, line, lines, split_line, symbols)        
 
-        if ret == True:
+        if ((type(ret) == bool) and ret):
             c_len = len(split_line)     # Number of tokens
+            i = 1
             while i < c_len:            # for each item of the line of tokens
                 cmd = split_line[i]     # get the current one
                 

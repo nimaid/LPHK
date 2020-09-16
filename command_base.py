@@ -86,7 +86,7 @@ class Command_Basic:
         finally:        
             if type(ret) == tuple:
                 return ret
-            elif ret == None or ret == True:
+            elif ret == None or ((type(ret) == bool) and ret):
                 return True
             else:
                 return ("", "")
@@ -133,10 +133,10 @@ class Command_Basic:
 
         ret = self.Validate(idx, line, lines, split_line, symbols, pass_no)
 
-        if ret == True:
+        if ((type(ret) == bool) and ret):
             return True 
 
-        if ret == None or ret == False or len(ret) != 2:
+        if ret == None or ((type(ret) == bool) and not ret) or len(ret) != 2:
             ret = ("SYSTEM ERROR PARSING LINE " + str(idx) + ". '" + line + "' on pass " + str(pass_no), line)
 
         if ret[0]:
@@ -170,27 +170,27 @@ class Command_Basic:
             
             if RS_INIT in self.run_states:  #  Do the initialisation if required (highly recommended)
                 ret = self.Partial_run_step_init(ret, idx, split_line, symbols, coords, is_async)
-                if ret == -1 or ret == False:
+                if ret == -1 or ((type(ret) == bool) and not ret):
                     return ret
                 
             if RS_GET in self.run_states:   # Get the parameters if required      
                 ret = self.Partial_run_step_get(ret, idx, split_line, symbols, coords, is_async)
-                if ret == -1 or ret == False:
+                if ret == -1 or ((type(ret) == bool) and not ret):
                     return ret
                 
             if RS_INFO in self.run_states:   # Display info if required
                 ret = self.Partial_run_step_info(ret, idx, split_line, symbols, coords, is_async)
-                if ret == -1 or ret == False:
+                if ret == -1 or ((type(ret) == bool) and not ret):
                     return ret
                 
             if RS_VALIDATE in self.run_states:  # Validate the parameters if required       
                 ret = self.Partial_run_step_validate(ret, idx, split_line, symbols, coords, is_async)
-                if ret == -1 or ret == False:
+                if ret == -1 or ((type(ret) == bool) and not ret):
                     return ret
                 
             if RS_RUN in self.run_states:  # Actualy do the command! (calls Perform()
                 ret = self.Partial_run_step_run(ret, idx, split_line, symbols, coords, is_async)
-                if ret == -1 or ret == False:
+                if ret == -1 or ((type(ret) == bool) and not ret):
                     return ret
 
         except:
@@ -205,7 +205,7 @@ class Command_Basic:
             # Make sure the return values are tidied up.
             if type(ret) == int:
                 return ret
-            elif ret == None or ret == True:
+            elif ret == None or ((type(ret) == bool) and ret):
                 return idx+1
             else:
                 return -1
@@ -336,7 +336,7 @@ class Command_Basic:
 
         # Whilst you can override this method, you're more likely to override the Validation_step_count()
         # method which does no more than just call this.        
-        if not (ret == None or ret == True):
+        if not (ret == None or ((type(ret) == bool) and ret)):
             return ret
             
         return variables.Check_num_params(split_line, self.valid_num_params, idx, line, self.name)
@@ -347,7 +347,7 @@ class Command_Basic:
         # call the validation of the parameters one by one.  If you haven't set up the maximum parameters
         # (if you haven't used the auto_validate structure) then you can override this to validate each 
         # of your parameters.  You will need to remember that this gets called for both pass 1 and 2.
-        if not (ret == None or ret == True):
+        if not (ret == None or ((type(ret) == bool) and ret)):
             return ret
             
         for i in range(self.valid_max_params):
@@ -368,9 +368,12 @@ class Command_Basic:
         
         # Where a variable type is defined as having "special" validation, that validation is currently
         # hard coded here.  It would be better to register validation routines, but...  later.
-        if not (ret == None or ret == True):
+        if not (ret == None or ((type(ret) == bool) and ret)):
             return ret
 
+        if self.auto_validate == None:  # no auto validation can be done
+            return ret
+            
         if n <= len(self.auto_validate):
             # the normal auto-validation
             val = self.auto_validate[n-1]
@@ -381,7 +384,7 @@ class Command_Basic:
             ret = variables.Check_generic_param(split_line, n, val[AV_DESCRIPTION], idx, self.name, line, val_t, val[val_validation], val[AV_OPTIONAL], val[AV_VAR_OK])
 
             # should we do special validation?
-            if ret == True or ret == None:
+            if ret == None or ((type(ret) == bool) and ret):
                 if not val_t[AVT_SPECIAL]:
                     return True
                     
