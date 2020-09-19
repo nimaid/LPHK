@@ -42,6 +42,7 @@ PT_FLOAT    = ("float",  float, False)
 PT_TEXT     = ("text",   str,   False)
 PT_LABEL    = ("label",  str,   True)       # Note that this is for a reference to a label, not the definition of a label!
 PT_TARGET   = ("target", str,   True)       # Note that this is for the definition of a target (e.g. creating a label)
+PT_KEY      = ("key",    str,   True)       # This is a key literal
 
 # constants for auto_message
 AM_COUNT  = 0

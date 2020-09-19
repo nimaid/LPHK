@@ -185,6 +185,9 @@ class Button():
         
         if self.thread != None:
             if self.thread.is_alive():
+                # @@@ The following code creates a problem if a script is looking for a second keypress
+                # @@@ Maybe we need an option to make a script un-interruptable, or alternately require
+                # @@@ *something* else (maybe ctrl-alt) to be pressed to allow the kill to take place.
                 print("[scripts] " + self.coords + " Script already running, killing script....")
                 self.thread.kill.set()
                 return
@@ -263,11 +266,11 @@ class Button():
                 else:
                     split_line = line.split(" ")
 
-                    if split_line[0] in VALID_COMMANDS:                # if first element is a command
-                        command = VALID_COMMANDS[split_line[0]]        # get the command
-                        return command.Run(idx, split_line, self.symbols, (self.coords, self.x, self.y), self.is_async)
-                    else:
-                        print("[scripts] " + self.coords + "    Invalid command: " + split_line[0] + ", skipping...")
+                if split_line[0] in VALID_COMMANDS:                    # if first element is a command
+                    command = VALID_COMMANDS[split_line[0]]            # get the command
+                    return command.Run(idx, split_line, self.symbols, (self.coords, self.x, self.y), self.is_async)
+                else:
+                    print("[scripts] " + self.coords + "    Invalid command: " + split_line[0] + ", skipping...")
 
                 return idx + 1
 

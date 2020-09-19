@@ -10,23 +10,15 @@ LIB = "cmds_ctrl" # name of this library (for logging)
 # class that defines the comment command (single quote at beginning of line)
 # this is special because it has some different handling in the main code
 # to allow it to work without a space following it
-class Control_Comment(command_base.Command_Basic):
+class Control_Comment(command_base.Command_Text_Basic):
     def __init__(
         self, 
         ):
 
         super().__init__("-",  # the name of the command as you have to enter it in the code
             LIB,
-            (),
-            () )
+            "-" )
 
-        # this command does not have a standard list of fields, so we need to do some stuff manually
-        self.valid_max_params = 32767      # There is no maximum, but this is a reasonable limit!
-        self.valid_num_params = [0, None]  # zero or more is OK
-
-        #self.run_states = [RS_INIT, RS_INFO, RS_FINAL] # No need to do anything at all for a comment, but let's display it
-        #self.validation_states = []                    # And no validation either
-            
 
 scripts.add_command(Control_Comment())  # register the command
 
@@ -52,9 +44,6 @@ class Control_Label(command_base.Command_Basic):
             # num params, format string                           (trailing comma is important)
             (1,           "    Label {1}"), 
             ) )
-
-        #self.run_states = [RS_INIT, RS_INFO, RS_FINAL] # No need to do anything at all for a label, but let's display it
-        #self.validation_states = [VS_PASS_1]           # We need to do pass 1 validation
 
 
 scripts.add_command(Control_Label())  # register the command
@@ -373,7 +362,7 @@ class Control_If_Pressed_Repeat_Label(Control_Flow_Basic):
             )
 
 
-# scripts.add_command(Control_If_Pressed_Repeat_Label())  # register the command
+scripts.add_command(Control_If_Pressed_Repeat_Label())  # register the command
 
 
 # ##################################################
@@ -535,3 +524,50 @@ class Control_Reset_Repeats(command_base.Command_Basic):
 
 
 scripts.add_command(Control_Reset_Repeats())  # register the command
+
+
+# ##################################################
+# ### CLASS Control_End                          ###
+# ##################################################
+
+# class that defines the END command
+#
+# This command simply ends the current script.  I'm going to be working on subroutines, so this is a good
+# start.  The parameters to this command are simply the message it will print.
+# This is really like a comment that returns the next line as -1
+class Control_End(command_base.Command_Text_Basic):
+    def __init__(
+        self, 
+        ):
+
+        super().__init__("END",  # the name of the command as you have to enter it in the code
+            LIB,
+            "SCRIPT ENDED" )
+       
+       
+    def Process(self, idx, split_line, symbols, coords, is_async):
+        return -1
+
+
+scripts.add_command(Control_End())  # register the command
+
+
+# ##################################################
+# ### CLASS Control_Abort                        ###
+# ##################################################
+
+# class that defines the ABORT command
+#
+# This is effectively the same as END, but the message (and the implication) is different
+class Control_Abort(Control_End):
+    def __init__(
+        self, 
+        ):
+        
+        super().__init__()
+
+        self.name = "ABORT"
+        self.info_msg = "SCRIPT ABORTED"
+
+
+scripts.add_command(Control_Abort())  # register the command

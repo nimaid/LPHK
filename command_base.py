@@ -396,6 +396,10 @@ class Command_Basic:
 
                         # add label to symbol table                     # Add the new label to the labels in the symbol table
                         symbols[SYM_LABELS][split_line[n]] = idx        # key is label, data is line number
+                    elif val_t == PT_KEY:                    # targets (label definitions) have pass 1 validation only
+                        # check for valid key
+                        if kb.sp(split_line[n]) == None:                # Does the key exist (if not, that's bad)?
+                            return ("Unknown key", line)
                
                 elif val_validation == AV_P2_VALIDATION:
                     if val_t == PT_LABEL:                     # references (to a label) have pass 2 validation only
@@ -457,6 +461,35 @@ class Command_Basic:
                     ret = -1
            
         return ret
+
+
+# ##################################################
+# ### CLASS Command_Text_Basic                   ###
+# ##################################################
+
+# class that defines an object that can handle just text after the command
+class Command_Text_Basic(Command_Basic):
+    def __init__(
+        self, 
+        name: str,                  # The name of the command (what you put in the script) 
+        lib,
+        info_msg):                  # what we display before the text
+ 
+        super().__init__(name,      # the name of the command as you have to enter it in the code
+            lib,
+            (),
+            () )
+
+        # this command does not have a standard list of fields, so we need to do some stuff manually
+        self.valid_max_params = 32767      # There is no maximum, but this is a reasonable limit!
+        self.valid_num_params = [0, None]  # zero or more is OK
+        
+        self.info_msg = info_msg           # customised message text before parameter text
+
+
+    def Partial_run_step_info(self, ret, idx, split_line, symbols, coords, is_async):
+        print(AM_PREFIX.format(self.lib, coords[BC_TEXT], str(idx+1)) + "    " + self.info_msg + " " + " ".join(split_line[1:]).strip())
+
 
 
 # ##################################################

@@ -194,8 +194,12 @@ If this is used, all other lines in the file must either be blank lines or comme
 Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines separating commands.
 
 #### Utility [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `ABORT`
+  * Terminates the script immediately, logging any message after the command.  This has the same functionality as END, however it carries with it the notion that the termination was abnormal.
 * `DELAY`
   * Delays the script for (argument 1) seconds.
+* `END`
+  * Terminates the script immediately, logging any message after the command.  This has the same functionality as ABORT, however it indicates a normal termination.
 * `GOTO_LABEL`
   * Goto label (argument 1).
 * `IF_PRESSED_GOTO_LABEL`
