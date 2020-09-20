@@ -118,7 +118,7 @@ def shutdown():
             if scripts.buttons[x][y].thread != None:
                 scripts.buttons[x][y].thread.kill.set()
     if window.lp_connected:
-        scripts.unbind_all()
+        scripts.Unbind_all()
         lp_events.timer.cancel()
         launchpad_connector.disconnect(lp)
         window.lp_connected = False

@@ -40,9 +40,9 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
 
     
     # We can simply override the first pass validation
-    def Partial_validate_step_pass_1(self, ret, idx, line, lines, split_line, symbols):
+    def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
         # validate the number of parameters
-        ret = self.Validate_param_count(ret, idx, line, lines, split_line, symbols)        
+        ret = self.Validate_param_count(ret, btn, idx, split_line)        
 
         if ((type(ret) == bool) and ret):
             c_len = len(split_line)     # Number of tokens
@@ -64,16 +64,16 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
                     if opr in self.operators: # if it's valid
                         for p in range(self.operators[opr][1]):
                             if i + p + 1 >= c_len:
-                                return ("Line:" + str(idx+1) + " - Insufficient tokens for parameter#" + str(p+1) + " of operator #" + str(i) + " '" + cmd + "' in " + self.name, line)
+                                return ("Line:" + str(idx+1) + " - Insufficient tokens for parameter#" + str(p+1) + " of operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.line[idx])
                             else:
                                 param = split_line[i+p+1]
                                 if not variables.valid_var_name(param):
-                                    return ("Line:" + str(idx+1) + " - parameter#" + str(p+1) + " '" + param + "' of operator #" + str(i) + " '" + cmd + " must start with alpha character in " + self.name, line)
+                                    return ("Line:" + str(idx+1) + " - parameter#" + str(p+1) + " '" + param + "' of operator #" + str(i) + " '" + cmd + " must start with alpha character in " + self.name, btn.line[idx])
                         i = i + 1 + self.operators[opr][1]  # pull of additional parameters if required
                         if i > c_len:
-                            return ("Line:" + str(idx+1) + " - Insufficient parameters after operator #" + str(i) + " '" + cmd + "' in " + self.name, line)                         
+                            return ("Line:" + str(idx+1) + " - Insufficient parameters after operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.line[idx])                         
                     else:               # if invalid, report it
-                        return ("Line:" + str(idx+1) + " - Invalid operator #" + str(i) + " '" + cmd + "' in " + self.name, line)                         
+                        return ("Line:" + str(idx+1) + " - Invalid operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.line[idx])                         
         
         return ret
         
@@ -81,8 +81,8 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
     # define how to process.  We could override something at a lower level, but 
     # this retains any initialisation and finalization and simplifies return
     # requirements
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        print("[" + self.lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    " + self.name + ": ", split_line[1:]) # coords[BC_TEXT] is the text "(x, y)"
+    def Process(self, btn, idx, split_line):
+        print("[" + self.lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    " + self.name + ": ", split_line[1:]) # btn.coords is the text "(x, y)"
 
         i = 1                       # using a loop counter rather than an itterator because it's hard to pass iters as params
       
@@ -99,14 +99,28 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
                     pass
 
             if n != None:           # if it was one of the above
-                symbols[SYM_STACK].append(n) # ...put on the stack
+                btn.symbols[SYM_STACK].append(n) # ...put on the stack
                 i += 1              # move along to the next token
                 continue
 
             opr = cmd.upper()       # Convert to uppercase for searching
             if opr in self.operators: # if it's valid
                 try:
-                    i = i + self.operators[opr][0](symbols, opr, split_line[i:]) # run it
+                    # capture the return value from the operator
+                    o_ret = self.operators[opr][0](btn.symbols, opr, split_line[i:]) # run it
+                    
+                    # boolean returns are special
+                    if type(o_ret) == bool:
+                        if o_ret:
+                            # True just does a normal "go to next" 
+                            i = i + self.operators[opr][1] + 1
+                        else:
+                            # but False aborts the execution of the RPN calc AND terminates the script
+                            print("Line:" + str(idx+1) + " - RPN terminates script")
+                            return -1
+                    else:
+                        # non-boolean returns are simply indications to skip ahead the appropriate amount
+                        i = i + o_ret
                 except:
                     print("Error in evaluation: '" + str(sys.exc_info()[1]) + "' at operator #" + str(i) + " on Line:" + str(idx+1) + " '" + cmd + "'")
                     break
@@ -163,6 +177,7 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         self.operators["!?L"]    = (self.is_local_not_def,  1) # is local var not defined
         self.operators["?G"]     = (self.is_global_def,     1) # is global var defined
         self.operators["!?G"]    = (self.is_global_not_def, 1) # is global var not defined
+        self.operators["ABORT"]  = (self.abort_script,      0) # abort the script (not just the rpn calc
 
 
     def add(self, 
@@ -649,5 +664,10 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
                 return len(cmds)+1
 
 
-scripts.add_command(RpnCalc_Rpn_Eval())  # register the command
+    def abort_script(self, symbols, cmd, cmds):
+        # cause the script to be aborted
+        return False
+
+
+scripts.Add_command(RpnCalc_Rpn_Eval())  # register the command
 

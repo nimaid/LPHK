@@ -96,61 +96,61 @@ def error_msg(idx, name, desc, p, param, err):
     
     
 # check the number of parameters allowed
-def Check_num_params(split_line, lens, idx, line, name):
-    # lens is an array of valid numbers of parameters
+def Check_num_params(btn, cmd, idx, split_line): 
+    # cmd.valid_num_params is an array of valid numbers of parameters
     # it will be None if you've taken control of handling the parameters yourself.
     # if you set it to [n, None] that means any number of parameters from n to infinity!
     
-    if lens == None:      # if this is undefined
+    if cmd.valid_num_params == None:      # if this is undefined
         return True       # anything is valid
         
-    ln = len(lens)
+    ln = len(cmd.valid_num_params)
     n = len(split_line)-1
-    if ln == 2 and lens[1] == None:
-        if n >= lens[0]:
+    if ln == 2 and cmd.valid_num_params[1] == None:
+        if n >= cmd.valid_num_params[0]:
             return True
-    elif n in lens:              
+    elif n in cmd.valid_num_params:              
         return True 
     
     # create a properly formatted error message
-    if len(lens) == 0:
+    if len(cmd.valid_num_params) == 0:
         msg = "Has no valid number of parameters described. "
-        return (error_msg(idx, name, msg, None, None, "Please correct the definition"), line)
+        return (error_msg(idx, cmd.name, msg, None, None, "Please correct the definition"), btn.Line(idx))
         
     msg = "Incorrect number of parameters"
-    if lens == [0]:
-        return (error_msg(idx, name, msg, str(n), "supplied.  None are permitted"), line)
+    if cmd.valid_num_params == [0]:
+        return (error_msg(idx, cmd.name, msg, str(n), "supplied.  None are permitted"), btn.Line(idx))
     else:
         cnt = ""
-        if len(lens) == 1:
-            cnt += str(lens[0])
-        elif len(lens) == 2 and lens[1] == None:
-            cnt += str(lens[0]) + " or more"
+        if len(cmd.valid_num_params) == 1:
+            cnt += str(cmd.valid_num_params[0])
+        elif len(cmd.valid_num_params) == 2 and cmd.valid_num_params[1] == None:
+            cnt += str(cmd.valid_num_params[0]) + " or more"
         else:
-            cnt += ", ".join([str(el) for el in lens[0:-1]]) + ", or " + str(lens[-1]) 
+            cnt += ", ".join([str(el) for el in cmd.valid_num_params[0:-1]]) + ", or " + str(cmd.valid_num_params[-1]) 
        
-    return (error_msg(idx, name, msg, None, str(n), "supplied, " + cnt + " are required"), line)
+    return (error_msg(idx, cmd.name, msg, None, str(n), "supplied, " + cnt + " are required"), btn.Line(idx))
 
 
 # check a generic parameter
-def Check_generic_param(split_line, p, desc, idx, name, line, v_type, validation=None, optional=False, var_ok=True):
+def Check_generic_param(btn, cmd, idx, split_line, p, val, val_validation):
     temp = None
 
     if p >= len(split_line):
-        if optional:
+        if val[AV_OPTIONAL]:
             return True
         else:
-            return (error_msg(idx, name, desc, p, None, 'required ' + v_type[AVT_DESC] + ' parameter not present'), line)
+            return (error_msg(idx, name, desc, p, None, 'required ' + val[AV_TYPE][AVT_DESC] + ' parameter not present'), btn.line[idx])
     
     try:
-        temp = v_type[AVT_CONV](split_line[p])
+        temp = val[AV_TYPE][AVT_CONV](split_line[p])
     except:
-        if var_ok and valid_var_name(split_line[p]):   # a variable is OK here
+        if val[AV_VAR_OK] and valid_var_name(split_line[p]):   # a variable is OK here
             return True
-        return (error_msg(idx, name, desc, p, split_line[p], 'not a valid ' + v_type[AVT_DESC]), line)
+        return (error_msg(idx, cmd.name, val[AV_DESCRIPTION], p, split_line[p], 'not a valid ' + val[AV_TYPE][AVT_DESC]), btn.line[idx])
 
-    if validation:
-        return validation(temp, idx, name, desc, p, split_line[p])
+    if val[val_validation]:
+        return val[val_validation](temp, idx, cmd.name, val[AV_DESCRIPTION], p, split_line[p])
 
     return True 
 
@@ -163,14 +163,14 @@ def Check_numeric_param(split_line, p, desc, idx, name, line, validation, option
         if optional:
             return True
         else:
-            return (error_msg(idx, name, desc, p, None, 'required parameter not present'), line)
+            return (error_msg(idx, name, desc, p, None, 'required parameter not present'), btn.line[idx])
     
     try:
         temp = conv(split_line[p])
     except:
         if var_ok and valid_var_name(split_line[p]):   # a variable is OK here
             return True
-        return (error_msg(idx, name, desc, p, split_line[p], 'not valid'), line)
+        return (error_msg(idx, name, desc, p, split_line[p], 'not valid'), btn.line[idx])
 
     if validation:
         return validation(temp, idx, name, desc, p, split_line[p])

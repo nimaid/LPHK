@@ -27,7 +27,7 @@ GLOBAL_LOCK = threading.Lock()    # a lock got the globals to prevent simultaneo
 # Add a new command.  This removes any existing command of the same name from the VALID_COMMANDS
 # and returns it as the result
 
-def add_command(
+def Add_command(
     a_command: command_base.Command_Basic  # the command to add
     ):
 
@@ -51,7 +51,7 @@ def add_command(
 # it includes the locations of labels, loop counters, etc.  If we implement variables
 # this is where we would place them
 
-def new_symbol_table():
+def New_symbol_table():
     # returns a new (blank) symbol table
     # symbol table is dictionary of objects
     symbols = {
@@ -70,7 +70,7 @@ def new_symbol_table():
 # ### CLASS Button                               ###
 # ##################################################
 
-# class that defines a button command.
+# class that defines a button.
 # A button is a class containing all that's essential for a button.
 class Button():
     def __init__(
@@ -93,7 +93,7 @@ class Button():
     
     
     #  Do what is required to parse the script.  Parsing does not output any information unless it is an error 
-    def parse_script(self):
+    def Parse_script(self):
         if self.validated:                           # we don't want to repeat validation over and over
             return True
             
@@ -101,7 +101,7 @@ class Button():
             self.script_lines = self.script_str.split('\n')  # Create the lines
             self.script_lines = [i.strip() for i in self.script_lines] # Strip extra blanks
         
-            self.symbols = new_symbol_table()        # Create a shiny new symbol table
+            self.symbols = New_symbol_table()        # Create a shiny new symbol table
             self.is_async = False                    # default is NOT async
 
         err = True
@@ -110,11 +110,14 @@ class Button():
         for pass_no in (VS_PASS_1, VS_PASS_2):       # pass 1, collect info & syntax check, 
                                                      # pass 2 symbol check & assocoated processing
             for idx,line in enumerate(self.script_lines): # gen line number and text
-                if self.is_ignorable_line(line):
+                if self.Is_ignorable_line(line):
                     continue                         # don't process ignorable lines
-                split_line = line.split(" ")         # split line on spaces
-                if split_line[0] in VALID_COMMANDS:  # if first element is a command
-                    res = VALID_COMMANDS[split_line[0]].Parse(idx, line, self.script_lines, split_line, self.symbols, pass_no);
+                    
+                cmd_txt = self.Split_cmd_text(line)  # get the name of the command
+                if cmd_txt in VALID_COMMANDS:        # if first element is a command
+                    command = VALID_COMMANDS[cmd_txt]# get the command itself
+                    split_line = self.Split_text(command, cmd_txt, line) # now split the line appropriately
+                    res = command.Parse(self, idx, split_line, pass_no);
                     if res != True:
                         if err == True:
                             err = res                # note the error
@@ -122,7 +125,7 @@ class Button():
                 else:
                     msg = "Invalid command '" + split_line[0] + "' on line " + str(idx+1) + "."
                     if err == True:
-                        err = (msg, line)            # note the error
+                        err = (msg, btn.line[idx])            # note the error
                     print (msg)
                     errors += 1                      # and 1 more error
 
@@ -133,7 +136,7 @@ class Button():
         return err                                   # success or failure 
 
 
-    def check_kill(self, killfunc=None):
+    def Check_kill(self, killfunc=None):
         if not self.thread:
            print ("expecting a thread in ", self.coords)
            return False
@@ -153,11 +156,11 @@ class Button():
 
     # a sleep method that works with the multiple threads
 
-    def safe_sleep(self, time, endfunc=None):
+    def Safe_sleep(self, time, endfunc=None):
         while time > DELAY_EXIT_CHECK:
             sleep(DELAY_EXIT_CHECK)
             time -= DELAY_EXIT_CHECK
-            if check_kill(self.x, self.y, self.is_async, endfunc):
+            if self.Check_kill(endfunc):
                 return False
         if time > 0:
             sleep(time)
@@ -169,7 +172,7 @@ class Button():
     # some lines can be ignored.  These include blank lines and comments.  It's faster to identify them
     # before trying to process them than treat them as an exception afterwards.
 
-    def is_ignorable_line(self, line):
+    def Is_ignorable_line(self, line):
         line = line.strip()      # remove leading and trailing spaces
         if line != "":
             if line[0] == "-":
@@ -180,7 +183,7 @@ class Button():
             return True          # blank lines can be igmored
 
 
-    def schedule_script(self):
+    def Schedule_script(self):
         global to_run
         
         if self.thread != None:
@@ -206,7 +209,7 @@ class Button():
             self.thread.start()
         elif not self.running:
             print("[scripts] " + self.coords + " No script running, starting script in background...")
-            self.thread = threading.Thread(target=self.run_script_and_run_next, args=())
+            self.thread = threading.Thread(target=self.Run_script_and_run_next, args=())
             self.thread.kill = threading.Event()
             self.thread.start()
         else:
@@ -216,7 +219,7 @@ class Button():
         lp_colors.updateXY(self.x, self.y)
 
 
-    def run_next(self):
+    def Run_next(self):
         global to_run
         global buttons
 
@@ -226,58 +229,93 @@ class Button():
             y = tup[1]
 
             btn = buttons[x][y]
-            btn.schedule_script()
+            btn.Schedule_script()
 
 
-    def run_script_and_run_next(self):
-        self.run_script()
-        self.run_next()
+    def Run_script_and_run_next(self):
+        self.Run_script()
+        self.Run_next()
+        
+        
+    def Line(self, idx):
+        if self.script_lines and idx >=0 and idx < len(self.script_lines):
+            return self.Fix_comment(self.script_lines[idx])
+        else:
+            return ""
+
+
+    def Fix_comment(self, line):
+        # Ensure there's a space after the comment character
+        if len(line) > 1 and line[0] == "-" and line[1] != " ":
+            return line[0] + " " + line[1:]
+        else:
+            return line
+
+
+    def Split_cmd_text(self, line):
+        # Get the command text
+        return line[0:line.find(" ")]
+
+
+    def Split_text(self, command, cmd_txt, line):
+        # Split line differently for "text" type commands
+        if isinstance(command, command_base.Command_Text_Basic):
+            # just split the command from the rest of the text
+            return [cmd_txt, line[len(cmd_txt)+1:]]
+        else:
+            # for all other commands, split on spaces
+            return line.split(" ")
 
 
     # run a script
-    def run_script(self):
+    def Run_script(self):
         lp_colors.updateXY(self.x, self.y)
         
-        if self.validate_script() != True:
+        if self.Validate_script() != True:
            return
            
         print("[scripts] " + self.coords + " Now running script...")
         
         self.running = not self.is_async
 
-        cmd = "RESET_REPEATS"             # before we run, we want to rest loop counters
-        if cmd in VALID_COMMANDS:
-            command = VALID_COMMANDS[cmd]  
-            command.Run(-1, [cmd], self.symbols, (self.coords, self.x, self.y), self.is_async)        
+        cmd_txt = "RESET_REPEATS"             # before we run, we want to rest loop counters
+        if cmd_txt in VALID_COMMANDS:
+            command = VALID_COMMANDS[cmd_txt]  
+            command.Run(self, -1, [cmd_txt])        
         
         if len(self.script_lines) > 0:
             self.running = True
 
-            def main_logic(idx):
-                if self.check_kill():
+            def Main_logic(idx):
+                if self.Check_kill():
                     return idx + 1
                         
-                line = self.script_lines[idx]
+                line = self.Line(idx)
+                
+                # Handle completely blank lines
                 if line == "":
                     return idx + 1
 
-                if line[0] == "-":
-                    split_line = ["-", line[1:]]                       # comments are special -- not tokenised
-                else:
-                    split_line = line.split(" ")
+                # Get the command text
+                cmd_txt = self.Split_cmd_text(line)
 
-                if split_line[0] in VALID_COMMANDS:                    # if first element is a command
-                    command = VALID_COMMANDS[split_line[0]]            # get the command
-                    return command.Run(idx, split_line, self.symbols, (self.coords, self.x, self.y), self.is_async)
+                # Now get the command object
+                if cmd_txt in VALID_COMMANDS:
+                    command = VALID_COMMANDS[cmd_txt]
+                    
+                    split_line = self.Split_text(command, cmd_txt, line)
+                        
+                    # now run the command 
+                    return command.Run(self, idx, split_line)
                 else:
-                    print("[scripts] " + self.coords + "    Invalid command: " + split_line[0] + ", skipping...")
+                    print("[scripts] " + self.coords + "    Invalid command: '" + cmd_txt + "', skipping...")
 
                 return idx + 1
 
             run = True
             idx = 0
             while run:
-                idx = main_logic(idx)
+                idx = Main_logic(idx)
                 if (idx < 0) or (idx >= len(self.script_lines)):
                     run = False
                     
@@ -291,17 +329,17 @@ class Button():
         
     # validating a script consists of doing the checks that we do prior to running, but
     # we won't run it afterwards.
-    def validate_script(self):
+    def Validate_script(self):
         if self.validated or self.script_str == "":      # If valid or there is no script...
             self.validated = True
             return True                                  # ...validation succeeds!
 
-        if self.parse_script():                          # If parsing is OK
+        if self.Parse_script():                          # If parsing is OK
             self.validated = True                        # Script is valid
 
             if len(self.script_lines) > 0:               # look for async header and set flag
-                token = self.script_lines[0].split(" ")[0]
-                self.is_async = token in HEADERS and HEADERS[token].is_async
+                cmd_txt = self.Split_cmd_text(self.script_lines[0])
+                self.is_async = cmd_txt in HEADERS and HEADERS[cmd_txt].is_async
         else:
             self.symbols = None                          # otherwise destroy symbol table 
 
@@ -314,7 +352,7 @@ to_run = []
 
 
 # bind a button
-def bind(x, y, script_str, color):
+def Bind(x, y, script_str, color):
     global to_run
     global buttons
     
@@ -327,14 +365,14 @@ def bind(x, y, script_str, color):
             temp = to_run.pop(index)         # Remove them from the list
         return # Why do we return here?
 
-    schedule_script_bindable = lambda a, b: btn.schedule_script()
+    schedule_script_bindable = lambda a, b: btn.Schedule_script()
 
     lp_events.bind_func_with_colors(x, y, schedule_script_bindable, color)
     files.layout_changed_since_load = True   # Mark the layout as changed
 
 
 # unbind a button
-def unbind(x, y):
+def Unbind(x, y):
     global to_run
     global buttons
 
@@ -358,7 +396,7 @@ def unbind(x, y):
 
 
 # swap details for two buttons  
-def swap(x1, y1, x2, y2):
+def Swap(x1, y1, x2, y2):
     global text
 
     color_1 = lp_colors.curr_colors[x1][y1]  # Colour for btn #1
@@ -367,55 +405,55 @@ def swap(x1, y1, x2, y2):
     script_1 = buttons[x1, y1].script_str    # Script for btn #1                 
     script_2 = buttons[x2, y2].script_str    # Script for btn #2
     
-    unbind(x1, y1)                           # Unbind #1
+    Unbind(x1, y1)                           # Unbind #1
     if script_2 != "":                       # If there is a script #2...
-        bind(x1, y1, script_2, color_2)      # ...bind it to #1
+        Bind(x1, y1, script_2, color_2)      # ...bind it to #1
     lp_colors.updateXY(x1, y1)               # Update the colours for btn #1
     
-    unbind(x2, y2)                           # Do the reverse for #2
+    Unbind(x2, y2)                           # Do the reverse for #2
     if script_1 != "":
-        bind(x2, y2, script_1, color_1)
+        Bind(x2, y2, script_1, color_1)
     lp_colors.updateXY(x2, y2)
     
     files.layout_changed_since_load = True   # Flag that the layout has changed
 
 
 # Duplicate a button
-def copy(x1, y1, x2, y2):
+def Copy(x1, y1, x2, y2):
     global buttons
 
     color_1 = lp_colors.curr_colors[x1][y1]  # Get colour of btn to be copied
     
     script_1 = buttons[x1, y1].script_str    # Get script to be copied
     
-    unbind(x2, y2)                           # Unbind the destination
+    Unbind(x2, y2)                           # Unbind the destination
     if script_1 != "":                       # If we're copying a button with a script...
-        bind(x2, y2, script_1, color_1)      # ...bind the details to the destination
+        Bind(x2, y2, script_1, color_1)      # ...bind the details to the destination
     lp_colors.updateXY(x2, y2)               # Update the colours
     
     files.layout_changed_since_load = True   # Flag the layout as changed
 
 
 # move a button
-def move(x1, y1, x2, y2):
+def Move(x1, y1, x2, y2):
     global buttons
 
     color_1 = lp_colors.curr_colors[x1][y1]  # Get source button colour
     
     script_1 = buttons[x1, y1].script_str    # Get source button script
     
-    unbind(x1, y1)                           # Unbind *both* buttons
-    unbind(x2, y2)
+    Unbind(x1, y1)                           # Unbind *both* buttons
+    Unbind(x2, y2)
     
     if script_1 != "":                       # If the source had a script...
-        bind(x2, y2, script_1, color_1)      # ...bind it to the destination
+        Bind(x2, y2, script_1, color_1)      # ...bind it to the destination
     lp_colors.updateXY(x2, y2)               # Update the destination colours
     
     files.layout_changed_since_load = True   # And flag the layout as changed
 
 
 # determine if a key is bound
-def is_bound(x, y):
+def Is_bound(x, y):
     global buttons
 
     if buttons[x][y].script_str == "":       # If there is no script...
@@ -425,7 +463,7 @@ def is_bound(x, y):
 
 
 # Unbind all keys.  
-def unbind_all():
+def Unbind_all():
     global buttons
     global to_run
 

@@ -51,11 +51,6 @@ AM_FORMAT = 1
 AM_PREFIX  = "[{0}] {1}  Line:{2}"
 AM_DEFAULT = AM_PREFIX + "     {3} parameters ({4})"
 
-# constants for button coords
-BC_TEXT = 0
-BC_X    = 1
-BC_Y    = 2
-
 # Misc constants
 COLOR_PRIMED = 5 #red
 COLOR_FUNC_KEYS_PRIMED = 9 #amber

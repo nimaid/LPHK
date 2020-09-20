@@ -125,7 +125,7 @@ The `M_SCROLL` command looks like this:
             self.Partial_run(*params, [RS_FINAL])
 
 
-scripts.add_command(Mouse_Scroll())  # register the command
+scripts.Add_command(Mouse_Scroll())  # register the command
 ```
 
 We will examine the 6 parts you need to consider
@@ -253,7 +253,7 @@ No matter how we return, the FINALLY block will ensure that the finalization is 
 The final step is to include code to incorporate this command into the set of commands available for scripts.
 
 ```python
-scripts.add_command(Mouse_Scroll())  # register the command
+scripts.Add_command(Mouse_Scroll())  # register the command
 ```
 
 This line creates a command object, and passes it to the routine which adds it to the list of available commands.
@@ -311,7 +311,7 @@ class Mouse_Scroll(command_base.Command_Basic):
         ):
 
         if not self.auto_validate or len(self.auto_validate) != 2:
-            return ("Invalid command setup", line)
+            return ("Invalid command setup", btn.line[idx])
 
         ret = True
 
@@ -322,11 +322,11 @@ class Mouse_Scroll(command_base.Command_Basic):
 
             ret = variables.check_numeric_param(split_line, 1, self.auto_validate[1][0], idx, self.name, line, variables.validate_ge_zero, self.auto_validate[1][1], self.auto_validate[1][2])
             if ret != True:
-                return (ret, line)
+                return (ret, btn.line[idx])
 
             ret = variables.check_generic_param(split_line, 2, self.auto_validate[1][0], idx, self.name, line, self.auto_validate[1][4], self.auto_validate[1][3], None, False, True)
             if ret != True:
-                return (ret, line)
+                return (ret, btn.line[idx])
 
         return ret
 
@@ -360,13 +360,13 @@ class Mouse_Scroll(command_base.Command_Basic):
 
         ret = variables.validate_int_ge_zero(v1, idx, self.name, "X amount", 1, split_line[1])
         if ret != True:
-            print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
+            print("[" + lib + "] " + btn.coords + "  " + ret)
             ok = False
 
         if v2:
             ret = variables.validate_int_ge_zero(v2, idx, self.name, "Scroll amount", 2, split_line[2])
             if ret != True:
-                print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
+                print("[" + lib + "] " + btn.coords + "  " + ret)
                 ok = False
 
         if not ok:
@@ -380,7 +380,7 @@ class Mouse_Scroll(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Mouse_Scroll())  # register the command
+scripts.Add_command(Mouse_Scroll())  # register the command
 ```
 
 We will examine the 6 parts you need to consider
@@ -439,7 +439,7 @@ Note that commands are case sensitive, so the name should be in all uppercase to
         ):
 
         if not self.auto_validate or len(self.auto_validate) != 2:
-            return ("Invalid command setup", line)
+            return ("Invalid command setup", btn.line[idx])
 
         ret = True
 
@@ -450,11 +450,11 @@ Note that commands are case sensitive, so the name should be in all uppercase to
 
             ret = variables.check_numeric_param(split_line, 1, self.auto_validate[1][0], idx, self.name, line, variables.validate_ge_zero, self.auto_validate[1][1], self.auto_validate[1][2])
             if ret != True:
-                return (ret, line)
+                return (ret, btn.line[idx])
 
             ret = variables.check_generic_param(split_line, 2, self.auto_validate[1][0], idx, self.name, line, self.auto_validate[1][4], self.auto_validate[1][3], None, False, True)
             if ret != True:
-                return (ret, line)
+                return (ret, btn.line[idx])
 
         return ret
 ```
@@ -492,13 +492,13 @@ Note that commands are case sensitive, so the name should be in all uppercase to
 
         ret = variables.validate_int_ge_zero(v1, idx, self.name, "X amount", 1, split_line[1])
         if ret != True:
-            print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
+            print("[" + lib + "] " + btn.coords + "  " + ret)
             ok = False
 
         if v2:
             ret = variables.validate_int_ge_zero(v2, idx, self.name, "Scroll amount", 2, split_line[2])
             if ret != True:
-                print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
+                print("[" + lib + "] " + btn.coords + "  " + ret)
                 ok = False
 
         if not ok:
@@ -512,7 +512,7 @@ Note that commands are case sensitive, so the name should be in all uppercase to
         return idx+1
 
 
-scripts.add_command(Mouse_Scroll())  # register the command
+scripts.Add_command(Mouse_Scroll())  # register the command
 ```
 
 ##### Part 6 - Command Integration
@@ -579,11 +579,11 @@ class Mouse_Scroll(command_base.Command_Basic):
 
             ret = variables.check_int_param(split_line, 1, "X value", idx, self.name, line, variables.validate_int_ge_zero)
             if ret != True:
-                return (ret, line)
+                return (ret, btn.line[idx])
 
             ret = variables.check_int_param(split_line, 2, "Scroll amount", idx, self.name, line, variables.validate_int_ge_zero, True)
             if ret != True:
-                return (ret, line)
+                return (ret, btn.line[idx])
 
         return True
 
@@ -617,13 +617,13 @@ class Mouse_Scroll(command_base.Command_Basic):
 
         ret = variables.validate_int_ge_zero(v1, idx, self.name, "X amount", 1, split_line[1])
         if ret != True:
-            print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
+            print("[" + lib + "] " + btn.coords + "  " + ret)
             ok = False
 
         if v2:
             ret = variables.validate_int_ge_zero(v2, idx, self.name, "Scroll amount", 2, split_line[2])
             if ret != True:
-                print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
+                print("[" + lib + "] " + btn.coords + "  " + ret)
                 ok = False
 
         if not ok:
@@ -637,7 +637,7 @@ class Mouse_Scroll(command_base.Command_Basic):
         return idx+1
 
 
-scripts.add_command(Mouse_Scroll())  # register the command
+scripts.Add_command(Mouse_Scroll())  # register the command
 ```
 
 We will examine the 6 parts you need to consider
@@ -700,16 +700,16 @@ Every command requires a validation.  If you do not provide validation code, the
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             # check number of split_line
             if len(split_line) != 2:
-                return ("Line:" + str(idx+1) + " - Wrong number of parameters in " + self.ame, line)
+                return ("Line:" + str(idx+1) + " - Wrong number of parameters in " + self.ame, btn.line[idx])
 
             try:
                 temp = int(split_line[1])
                 if valid_var_name(temp):
                 
                 if temp < 1:
-                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + " parameter 1 must be a positive number.", line)
+                    return ("Line:" + str(idx+1) + " - '" + split_line[0] + " parameter 1 must be a positive number.", btn.line[idx])
             except:
-                return ("Line:" + str(idx+1) + " - " + split_line[0] + " number of repeats '" + split_line[2] + "' not valid.", line)
+                return ("Line:" + str(idx+1) + " - " + split_line[0] + " number of repeats '" + split_line[2] + "' not valid.", btn.line[idx])
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             ret = variables.check_num(split_line, [1, 2], idx, line, self.name)
@@ -718,11 +718,11 @@ Every command requires a validation.  If you do not provide validation code, the
 
             ret = variables.check_int_param(split_line, 1, "X value", idx, self.name, line, variables.validate_int_ge_zero)
             if ret != True:
-                return (ret, line)
+                return (ret, btn.line[idx])
 
             ret = variables.check_int_param(split_line, 2, "Scroll amount", idx, self.name, line, variables.validate_int_ge_zero, True)
             if ret != True:
-                return (ret, line)
+                return (ret, btn.line[idx])
 
         return True
 ```
@@ -776,13 +776,13 @@ Every command that does something (e.g. not labels - that have their effect duri
 
         ret = variables.validate_int_ge_zero(v1, idx, self.name, "X amount", 1, split_line[1])
         if ret != True:
-            print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
+            print("[" + lib + "] " + btn.coords + "  " + ret)
             ok = False
 
         if v2:
             ret = variables.validate_int_ge_zero(v2, idx, self.name, "Scroll amount", 2, split_line[2])
             if ret != True:
-                print("[" + lib + "] " + coords[BC_TEXT] + "  " + ret)
+                print("[" + lib + "] " + btn.coords + "  " + ret)
                 ok = False
 
         if not ok:
@@ -817,7 +817,7 @@ idx + 1 is returned.  This points to the nect line to execute, which in this ins
 The final step is to include code to incorporate this command into the set of commands available for scripts.
 
 ```python
-scripts.add_command(Mouse_Scroll())  # register the command
+scripts.Add_command(Mouse_Scroll())  # register the command
 ```
 
 This line creates a command object, and passes it to the routine which adds it to the list of available commands.
@@ -907,7 +907,7 @@ class Header_Async(command_base.Command_Header):
         return idx+1
 
 
-scripts.add_command(Header_Async())  # register the header
+scripts.Add_command(Header_Async())  # register the header
 ```
 
 This consists of almost exactly the same 5 parts, but with important differences.
@@ -969,7 +969,7 @@ Every command requires a validation.  If you do not provide validation code, the
                 return (self.name + " must appear on the first line.", lines[0])
 
             if len(split_line) > 1:
-                return (self.name + " takes no arguments.", line)
+                return (self.name + " takes no arguments.", btn.line[idx])
 
         return True
 ```
@@ -1004,7 +1004,7 @@ If the header's function is performed during validation (`@ASYNC` is) then there
 The final step has the same form, behavior, and cautions as for commands.
 
 ```python
-scripts.add_command(Header_Async())  # register the header
+scripts.Add_command(Header_Async())  # register the header
 ```
 
 ## Registration
@@ -1097,9 +1097,9 @@ This structure contains the list of values that make up the stack for the curren
 The coords are the current x,y values passed to the command (or header).  I believe these are the button coordinates.
 
 This array contains 3 elements:
- * coords[BC_TEXT] - a string describing the location
- * coords[BC_X] - the X value
- * coords[BC_Y] - the Y value
+ * btn.coords - a string describing the location
+ * btn.x - the X value
+ * btn.y - the Y value
 
 ## self.Name
 

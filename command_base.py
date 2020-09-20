@@ -1,4 +1,4 @@
-import variables
+import variables, kb
 from constants import *
 
 # ##################################################
@@ -47,11 +47,9 @@ class Command_Basic:
         # This method should return True if the validation was successful, otherwise it should
         # return a tuple of the error message and the line causing the error.
         self,
+        btn,
         idx: int,
-        line,
-        lines,
         split_line,
-        symbols,
         pass_no            # pass_no 1 is a symbol gathering pass, pass_no 2 is a pass that requires
                            # symbols.  Any processing that does not set up labels should be done on
                            # pass 2. For example, goto can be checked on pass 2 to ensure the label
@@ -66,17 +64,17 @@ class Command_Basic:
             if pass_no == VS_PASS_1:
                 # validate the count if required
                 if VS_COUNT in self.validation_states:
-                    ret = self.Partial_validate_step_count(ret, idx, line, lines, split_line, symbols)
+                    ret = self.Partial_validate_step_count(ret, btn, idx, split_line)
                 
                 # do pass 1 validation if required
                 if VS_PASS_1 in self.validation_states:
-                    ret = self.Partial_validate_step_pass_1(ret, idx, line, lines, split_line, symbols)
+                    ret = self.Partial_validate_step_pass_1(ret, btn, idx, split_line)
                
             # if it's pass 2
             elif pass_no == VS_PASS_2:
                 # call Pass 2 if required
                 if VS_PASS_1 in self.validation_states:
-                    ret = self.Partial_validate_step_pass_2(ret, idx, line, lines, split_line, symbols)
+                    ret = self.Partial_validate_step_pass_2(ret, btn, idx, split_line)
                                                     
         except:
             import traceback
@@ -92,37 +90,35 @@ class Command_Basic:
                 return ("", "")
 
 
-    def Partial_validate_step_count(self, ret, idx, line, lines, split_line, symbols):
+    def Partial_validate_step_count(self, ret, btn, idx, split_line):
         # Validation of the count is separated from the pass 1 validation because sometinmes 
         # you want to override one but not the other.  You would override this if you have some
         # odd way of counting parameters, or the count depends on something complex.
-        ret = self.Validate_param_count(ret, idx, line, lines, split_line, symbols)        
+        ret = self.Validate_param_count(ret, btn, idx, split_line)        
 
 
-    def Partial_validate_step_pass_1(self, ret, idx, line, lines, split_line, symbols):
+    def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
         # Pass 1 Validation is typically defined by the auto_validate structure set up in the
         # command initialisation.  You would override this if you haven't defined this, or the
         # structure cannot pass something important about the validation.  If you override this,
         # you may wish to call the ancestor first.
-        ret = self.Validate_params(ret, AV_P1_VALIDATION, idx, line, lines, split_line, symbols)
+        ret = self.Validate_params(ret, btn, idx, split_line, AV_P1_VALIDATION)
 
 
-    def Partial_validate_step_pass_2(self, ret, idx, line, lines, split_line, symbols):
+    def Partial_validate_step_pass_2(self, ret, btn, idx, split_line):
         # Pass 2 Validation is typically defined by the auto_validate structure set up in the
         # command initialisation.  You would override this if you haven't defined this, or the
         # structure cannot pass something important about the validation.  If you override this,
         # you may wish to call the ancestor first.
-        ret = self.Validate_params(ret, AV_P2_VALIDATION, idx, line, lines, split_line, symbols)
+        ret = self.Validate_params(ret, btn, idx, split_line, AV_P2_VALIDATION)
 
 
     def Parse(
         # Parse is pretty much a call to Validate, except the output of the validation is immediately printed.
         self,
+        btn,
         idx: int,
-        line,
-        lines,
         split_line,
-        symbols,
         pass_no            # pass_no 1 is a symbol gathering pass, pass_no 2 is a pass that requires
                            # symbols.  Any processing that does not set up labels should be done on
                            # pass 2.  Fatal errors can be generated on pass 1 or 2 for invalid syntax.
@@ -131,13 +127,13 @@ class Command_Basic:
                            # past pass 1).
         ):
 
-        ret = self.Validate(idx, line, lines, split_line, symbols, pass_no)
+        ret = self.Validate(btn, idx, split_line, pass_no)
 
         if ((type(ret) == bool) and ret):
             return True 
 
         if ret == None or ((type(ret) == bool) and not ret) or len(ret) != 2:
-            ret = ("SYSTEM ERROR PARSING LINE " + str(idx) + ". '" + line + "' on pass " + str(pass_no), line)
+            ret = ("SYSTEM ERROR PARSING LINE " + str(idx) + ". '" + line + "' on pass " + str(pass_no), btn.line[idx])
 
         if ret[0]:
             print(ret[0])
@@ -158,38 +154,36 @@ class Command_Basic:
         
         # To cause the script to jump to a different line, simply return the line number you wish to go to. 
         self,
+        btn,
         idx: int,
-        split_line,
-        symbols,
-        coords,
-        is_async
+        split_line
         ):
 
         try:
             ret = None  # this is an invalid return value, but it indicates nothing has happened yet
             
             if RS_INIT in self.run_states:  #  Do the initialisation if required (highly recommended)
-                ret = self.Partial_run_step_init(ret, idx, split_line, symbols, coords, is_async)
+                ret = self.Partial_run_step_init(ret, btn, idx, split_line)
                 if ret == -1 or ((type(ret) == bool) and not ret):
                     return ret
                 
             if RS_GET in self.run_states:   # Get the parameters if required      
-                ret = self.Partial_run_step_get(ret, idx, split_line, symbols, coords, is_async)
+                ret = self.Partial_run_step_get(ret, btn, idx, split_line)
                 if ret == -1 or ((type(ret) == bool) and not ret):
                     return ret
                 
             if RS_INFO in self.run_states:   # Display info if required
-                ret = self.Partial_run_step_info(ret, idx, split_line, symbols, coords, is_async)
+                ret = self.Partial_run_step_info(ret, btn, idx, split_line)
                 if ret == -1 or ((type(ret) == bool) and not ret):
                     return ret
                 
             if RS_VALIDATE in self.run_states:  # Validate the parameters if required       
-                ret = self.Partial_run_step_validate(ret, idx, split_line, symbols, coords, is_async)
+                ret = self.Partial_run_step_validate(ret, btn, idx, split_line)
                 if ret == -1 or ((type(ret) == bool) and not ret):
                     return ret
                 
             if RS_RUN in self.run_states:  # Actualy do the command! (calls Perform()
-                ret = self.Partial_run_step_run(ret, idx, split_line, symbols, coords, is_async)
+                ret = self.Partial_run_step_run(ret, btn, idx, split_line)
                 if ret == -1 or ((type(ret) == bool) and not ret):
                     return ret
 
@@ -200,7 +194,7 @@ class Command_Basic:
         
         finally:        
             if RS_FINAL in self.run_states:  # Do the finalisation if required (highly recommended)
-                self.Partial_run_step_final(ret, idx, split_line, symbols, coords, is_async)
+                self.Partial_run_step_final(ret, btn, idx, split_line)
 
             # Make sure the return values are tidied up.
             if type(ret) == int:
@@ -211,7 +205,7 @@ class Command_Basic:
                 return -1
 
 
-    def Partial_run_step_init(self, ret, idx, split_line, symbols, coords, is_async):
+    def Partial_run_step_init(self, ret, btn, idx, split_line):
         # information about *this* run of the command MUST be in the symbol table
         
         # You might be tempted to not run the init if the variables below aren't needed,
@@ -219,21 +213,21 @@ class Command_Basic:
         
         # If you need more temporary data, you can override this, call the ancestor, and 
         # create what you need.        
-        symbols[SYM_PARAMS] = [self.name] + [None] * self.valid_max_params
-        symbols[SYM_PARAM_CNT] = 0
+        btn.symbols[SYM_PARAMS] = [self.name] + [None] * self.Param_validation_count(len(split_line)-1)
+        btn.symbols[SYM_PARAM_CNT] = 0
         
         return ret
 
 
-    def Partial_run_step_get(self, ret, idx, split_line, symbols, coords, is_async):
+    def Partial_run_step_get(self, ret, btn, idx, split_line):
         # This gets the values from the command, including fetching variable values.
         # After this is run, parameters will be in the symbol table, but those coming
         # from variables will not have been validated.
-        ret = self.Run_params(ret, idx, split_line, symbols, coords, is_async, 1)
+        ret = self.Run_params(ret, btn, idx, split_line, VS_PASS_1)
         return ret
 
 
-    def Partial_run_step_info(self, ret, idx, split_line, symbols, coords, is_async):
+    def Partial_run_step_info(self, ret, btn, idx, split_line):
         # This step matches the number of parameters passed with the definitions for messages,
         # printing the matching message, or a default message if no matching message can be found.
         
@@ -242,52 +236,52 @@ class Command_Basic:
         # If you're overriding the method, you will rarely want to call the ancestor method.
         msg = False            
         if self.auto_message:
-            params = symbols[SYM_PARAMS]
-            param_cnt = symbols[SYM_PARAM_CNT] - 1
+            params = btn.symbols[SYM_PARAMS]
+            param_cnt = btn.symbols[SYM_PARAM_CNT]
             for msg_def in self.auto_message:
                 if msg_def[AM_COUNT] == param_cnt:
-                   print(AM_PREFIX.format(self.lib, coords[BC_TEXT], str(idx+1)) + msg_def[AM_FORMAT].format(*params))
+                   print(AM_PREFIX.format(self.lib, btn.coords, str(idx+1)) + msg_def[AM_FORMAT].format(*params))
                    msg = True
                    break
 
         if not msg:
-            print(AM_DEFAULT.format(self.lib, coords[BC_TEXT], str(idx+1), self.name, str(params)))
+            print(AM_DEFAULT.format(self.lib, btn.coords, str(idx+1), self.name, str(params)))
 
         return ret
 
 
-    def Partial_run_step_validate(self, ret, idx, split_line, symbols, coords, is_async):
+    def Partial_run_step_validate(self, ret, btn, idx, split_line):
         # This step performs run-time validation of values passed from variables.
         # Those that come from variables are checked using the validation method passed.
-        ret = self.Run_params(ret, idx, split_line, symbols, coords, is_async, 2)
+        ret = self.Run_params(ret, btn, idx, split_line, VS_PASS_2)
         return ret
 
 
-    def Partial_run_step_run(self, ret, idx, split_line, symbols, coords, is_async):
+    def Partial_run_step_run(self, ret, btn, idx, split_line):
         # This performs the running of the command.  Because this does nothing it is pretty much
         # ALWAYS overridden.  However, to make life easier, this function calls the Process()
         # method.  That's simpler to override.
-        ret = self.Process(idx, split_line, symbols, coords, is_async)
+        ret = self.Process(btn, idx, split_line)
         if ret == None:
             ret = idx + 1
             
         return ret
 
 
-    def Partial_run_step_final(self, ret, idx, split_line, symbols, coords, is_async):
+    def Partial_run_step_final(self, ret, btn, idx, split_line):
         # This removes stuff from the symbol table that isn't needed any more.  Whilst it may be fairly
         # superfluous at present, if you start to put more stuff in the symbol table during the execution
         # of a command this might start to get more important.
 
         # If you override this, it is conventional to call the ancestor function last, but there's no reason
         # at present that you must.        
-        del symbols[SYM_PARAMS]
-        del symbols[SYM_PARAM_CNT]
+        del btn.symbols[SYM_PARAMS]
+        del btn.symbols[SYM_PARAM_CNT]
 
         return ret
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
+    def Process(self, btn, idx, split_line):
         # This is the default process called to run a command.  Override it to do something other than 
         # nothing at runtime.
         
@@ -330,7 +324,7 @@ class Command_Basic:
         return ret
 
 
-    def Validate_param_count(self, ret, idx, line, lines, split_line, symbols): 
+    def Validate_param_count(self, ret, btn, idx, split_line): 
         # Should only be called from pass 1 (actually within VS_COUNT that happens just prior to 
         # VS_PASS_1
 
@@ -339,10 +333,20 @@ class Command_Basic:
         if not (ret == None or ((type(ret) == bool) and ret)):
             return ret
             
-        return variables.Check_num_params(split_line, self.valid_num_params, idx, line, self.name)
+        return variables.Check_num_params(btn, self, idx, split_line)
+        
+        
+    def Param_validation_count(self, n_passed):
+        # This routine determines how many parameters to check.  In cases where there are unlimited parameters,
+        # it will only recommend checking the number that exist.  Otherwise, all parameters will be checked.
+        # This function improves efficiency.
+        if self.valid_max_params < n_passed or (len(self.valid_num_params) == 2 and self.valid_num_params[1] == None):
+            return n_passed
+        else:
+            return self.valid_max_params
+        
 
-
-    def Validate_params(self, ret, val_validation, idx, line, lines, split_line, symbols):
+    def Validate_params(self, ret, btn, idx, split_line, val_validation):
         # This command is called from both pass 1 and 2 of validation  It is really just a method to 
         # call the validation of the parameters one by one.  If you haven't set up the maximum parameters
         # (if you haven't used the auto_validate structure) then you can override this to validate each 
@@ -350,15 +354,15 @@ class Command_Basic:
         if not (ret == None or ((type(ret) == bool) and ret)):
             return ret
             
-        for i in range(self.valid_max_params):
-           ret = self.Validate_param_n(ret, i+1, val_validation, idx, line, lines, split_line, symbols)
+        for i in range(self.Param_validation_count(len(split_line)-1)):
+           ret = self.Validate_param_n(ret, btn, idx, split_line, val_validation, i+1)
            if ret != True:
                return ret
 
         return ret
 
 
-    def Validate_param_n(self, ret, n, val_validation, idx, line, lines, split_line, symbols):
+    def Validate_param_n(self, ret, btn, idx, split_line, val_validation, n):
         # This method validates parameters.  For custom parameters, you're best off defining new validation
         # methods (like the current variables.Validate_gt_zero()) unless you need access to the symbol 
         # table.
@@ -380,39 +384,38 @@ class Command_Basic:
            
             opt = self.valid_num_params == [] or (set(range(1,n)) & set(self.valid_num_params)) != []
 
-            val_t = val[AV_TYPE]                             
-            ret = variables.Check_generic_param(split_line, n, val[AV_DESCRIPTION], idx, self.name, line, val_t, val[val_validation], val[AV_OPTIONAL], val[AV_VAR_OK])
+            ret = variables.Check_generic_param(btn, self, idx, split_line, n, val, val_validation)
 
             # should we do special validation?
             if ret == None or ((type(ret) == bool) and ret):
-                if not val_t[AVT_SPECIAL]:
+                if not val[AV_TYPE][AVT_SPECIAL]:
                     return True
                     
                 if val_validation == AV_P1_VALIDATION:
-                    if val_t == PT_TARGET:                    # targets (label definitions) have pass 1 validation only
+                    if val[AV_TYPE] == PT_TARGET:                    # targets (label definitions) have pass 1 validation only
                         # check for duplicate label
-                        if split_line[n] in symbols[SYM_LABELS]:        # Does the label already exist (that's bad)?
-                            return ("Duplicate LABEL", line)
+                        if split_line[n] in btn.symbols[SYM_LABELS]: # Does the label already exist (that's bad)?
+                            return ("Duplicate LABEL", btn.line[idx])
 
-                        # add label to symbol table                     # Add the new label to the labels in the symbol table
-                        symbols[SYM_LABELS][split_line[n]] = idx        # key is label, data is line number
-                    elif val_t == PT_KEY:                    # targets (label definitions) have pass 1 validation only
+                        # add label to symbol table                  # Add the new label to the labels in the symbol table
+                        btn.symbols[SYM_LABELS][split_line[n]] = idx # key is label, data is line number
+                    elif val[AV_TYPE] == PT_KEY:                     # targets (label definitions) have pass 1 validation only
                         # check for valid key
-                        if kb.sp(split_line[n]) == None:                # Does the key exist (if not, that's bad)?
-                            return ("Unknown key", line)
+                        if kb.sp(split_line[n]) == None:             # Does the key exist (if not, that's bad)?
+                            return ("Unknown key", btn.line[idx])
                
                 elif val_validation == AV_P2_VALIDATION:
-                    if val_t == PT_LABEL:                     # references (to a label) have pass 2 validation only
+                    if val[AV_TYPE] == PT_LABEL:                     # references (to a label) have pass 2 validation only
                         # check for existance of label
-                        if split_line[n] not in symbols[SYM_LABELS]:
-                            return ("Target not found", line)
+                        if split_line[n] not in btn.symbols[SYM_LABELS]:
+                            return ("Target not found", btn.Line(idx))
                     
                 return True
                
-            return (ret, line)
+            return (ret, btn.line[idx])
             
         
-    def Run_params(self, ret, idx, split_line, symbols, coords, is_async, pass_no):
+    def Run_params(self, ret, btn, idx, split_line, pass_no):
         # This method gets the parameters.  Oddly enough it has 2 passes too.  The first pass simply gets the
         # variables, while the second pass gets them and does validation.
         
@@ -421,23 +424,25 @@ class Command_Basic:
             ret = True
          
         if pass_no == 1:         
-            param_cnt = len(split_line)
-            symbols[SYM_PARAM_CNT] = param_cnt
+            param_cnt = len(split_line) - 1
+            btn.symbols[SYM_PARAM_CNT] = param_cnt
+            btn.symbols[SYM_PARAMS][0] = split_line[0]
 
-            for i in range(self.valid_max_params):
+            for i in range(self.Param_validation_count(param_cnt)):
                 if i < param_cnt:
-                    symbols[SYM_PARAMS][i+1] = self.Run_param_n(ret, idx, i+1, split_line, symbols, coords, is_async, pass_no)
+                    btn.symbols[SYM_PARAMS][i+1] = self.Run_param_n(ret, btn, idx, split_line, pass_no, i+1)
                 
         elif pass_no == 2:
             # for pass 2 we don't try to validate null variables
-            for i in range(self.valid_max_params):
-                if symbols[SYM_PARAMS][i+1] != None:
-                    ret = self.Run_param_n(ret, idx, i+1, split_line, symbols, coords, is_async, pass_no)
+            param_cnt = len(split_line) - 1
+            for i in range(self.Param_validation_count(param_cnt)):
+                if btn.symbols[SYM_PARAMS][i+1] != None:
+                    ret = self.Run_param_n(ret, btn, idx, split_line, pass_no, i+1)
 
         return ret
 
 
-    def Run_param_n(self, ret, idx, n, split_line, symbols, coords, is_async, pass_no):
+    def Run_param_n(self, ret, btn, idx, split_line, pass_no, n):
         # This function gets called to firstly get the parameter (pass_no = 1) and then
         # to validate it (with pass_no = 2)
         
@@ -446,20 +451,21 @@ class Command_Basic:
         if pass_no == 1:
             v = split_line[n]
             if self.auto_validate and n <= len(self.auto_validate) and self.auto_validate[n-1][AV_VAR_OK]:
-                v = variables.get_value(split_line[n], symbols)
+                v = variables.get_value(split_line[n], btn.symbols)
             if self.auto_validate and n <= len(self.auto_validate) and self.auto_validate[n-1][AV_TYPE] and self.auto_validate[n-1][AV_TYPE][AVT_CONV]:
                 v = self.auto_validate[n-1][AV_TYPE][AVT_CONV](v)
             return v
         elif pass_no == 2:
-            val = self.auto_validate[n-1]
-            ok = ret
-            
-            if val[AV_P1_VALIDATION]:
-                ok = val[AV_P1_VALIDATION](symbols[SYM_PARAMS][n], idx, self.name, val[AV_DESCRIPTION], n, split_line[n])
-                if ok != True:
-                    print("[" + self.lib + "] " + coords[BC_TEXT] + "  " + ok)
-                    ret = -1
-           
+            if len(self.auto_validate) != 0:
+                val = self.auto_validate[n-1]
+                ok = ret
+                
+                if val[AV_P1_VALIDATION]:
+                    ok = val[AV_P1_VALIDATION](btn.symbols[SYM_PARAMS][n], idx, self.name, val[AV_DESCRIPTION], n, split_line[n])
+                    if ok != True:
+                        print("[" + self.lib + "] " + btn.coords + "  " + ok)
+                        ret = -1
+               
         return ret
 
 
@@ -484,12 +490,14 @@ class Command_Text_Basic(Command_Basic):
         self.valid_max_params = 32767      # There is no maximum, but this is a reasonable limit!
         self.valid_num_params = [0, None]  # zero or more is OK
         
-        self.info_msg = info_msg           # customised message text before parameter text
+        if "{1}" in info_msg:
+            self.info_msg = info_msg       # customised message text before parameter text
+        else:
+            self.info_msg = info_msg + " {1}"
 
 
-    def Partial_run_step_info(self, ret, idx, split_line, symbols, coords, is_async):
-        print(AM_PREFIX.format(self.lib, coords[BC_TEXT], str(idx+1)) + "    " + self.info_msg + " " + " ".join(split_line[1:]).strip())
-
+    def Partial_run_step_info(self, ret, btn, idx, split_line):
+        print(AM_PREFIX.format(self.lib, btn.coords, str(idx+1)) + "    " + self.info_msg.format("", btn.symbols[SYM_PARAMS][1]))
 
 
 # ##################################################
@@ -512,16 +520,14 @@ class Command_Header(Command_Basic):
 
     def Validate(
         self,
+        btn,
         idx: int,
-        line,
-        lines,
         split_line,
-        symbols,
         pass_no
         ):
 
         if idx != 0:
-           return ("ERROR on line " + line + ". " + self.name + " must only appear on line 1.", -1)
+           return ("ERROR on line " + btn.Line(idx) + ". " + self.name + " must only appear on line 1.", -1)
 
         return (None, 0)
 

@@ -20,20 +20,20 @@ class Keys_Wait_Pressed(command_base.Command_Basic):
             () )
 
 
-    def Partial_run_step_info(self, ret, idx, split_line, symbols, coords, is_async):
-        print(AM_PREFIX.format(self.lib, coords[BC_TEXT], str(idx+1)) + "    Wait for script key to be unpressed")
+    def Partial_run_step_info(self, ret, btn, idx, split_line):
+        print(AM_PREFIX.format(self.lib, btn.coords, str(idx+1)) + "    Wait for script key to be unpressed")
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        while lp_events.pressed[coords[BC_X]][coords[BC_Y]]:
+    def Process(self, btn, idx, split_line):
+        while lp_events.pressed[btn.x][btn.y]:
             sleep(DELAY_EXIT_CHECK)
-            if check_kill(x, y, is_async):
+            if btn.Check_kill():
                 return idx + 1             
 
         return idx + 1             
 
 
-scripts.add_command(Keys_Wait_Pressed())  # register the command
+scripts.Add_command(Keys_Wait_Pressed())  # register the command
 
 
 # ##################################################
@@ -63,24 +63,24 @@ class Keys_Tap(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        cnt = symbols[SYM_PARAM_CNT]
-        key = kb.sp(symbols[SYM_PARAMS][1])
+    def Process(self, btn, idx, split_line):
+        cnt = btn.symbols[SYM_PARAM_CNT]
+        key = kb.sp(btn.symbols[SYM_PARAMS][1])
         releasefunc = lambda: None
 
-        times = 1
+        taps = 1
         if cnt >= 2:
-            times = int(symbols[SYM_PARAMS][2])
+            taps = int(btn.symbols[SYM_PARAMS][2])
 
         delay = 0
         if cnt == 3:
-            delay = float(symbols[SYM_PARAMS][3])
+            delay = float(btn.symbols[SYM_PARAMS][3])
             releasefunc = lambda: kb.release(key)
         
-        precheck = delay == 0 and times > 1
+        precheck = delay == 0 and taps > 1
 
         for tap in range(taps):
-            if check_kill(coords[BC_X], coords[BC_Y], is_async, releasefunc):
+            if btn.Check_kill(releasefunc):
                 return idx+1
                 
             if delay == 0:
@@ -88,17 +88,17 @@ class Keys_Tap(command_base.Command_Basic):
             else:
                 kb.press(key)
                 
-            if precheck and check_kill(coords[BC_X], coords[BC_Y], is_async, releasefunc):
+            if precheck and btn.Check_kill(releasefunc):
                 return -1
 
             if delay > 0:
-                if not safe_sleep(delay, coords[BC_X], coords[BC_Y], is_async, releasefunc):
+                if not btn.Safe_sleep(delay, releasefunc):
                     return -1
                     
             releasefunc()
     
 
-scripts.add_command(Keys_Tap())  # register the command
+scripts.Add_command(Keys_Tap())  # register the command
 
 
 # ##################################################
@@ -124,12 +124,12 @@ class Keys_Press(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        key = kb.sp(symbols[SYM_PARAMS][1])
+    def Process(self, btn, idx, split_line):
+        key = kb.sp(btn.symbols[SYM_PARAMS][1])
         kb.press(key)
 
 
-scripts.add_command(Keys_Press())  # register the command
+scripts.Add_command(Keys_Press())  # register the command
 
 
 # ##################################################
@@ -155,12 +155,12 @@ class Keys_Release(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        key = kb.sp(symbols[SYM_PARAMS][1])
+    def Process(self, btn, idx, split_line):
+        key = kb.sp(btn.symbols[SYM_PARAMS][1])
         kb.release(key)
 
 
-scripts.add_command(Keys_Release())  # register the command
+scripts.Add_command(Keys_Release())  # register the command
 
 
 # ##################################################
@@ -183,11 +183,11 @@ class Keys_Release_All(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
+    def Process(self, btn, idx, split_line):
         kb.release_all()
 
 
-scripts.add_command(Keys_Release_All())  # register the command
+scripts.Add_command(Keys_Release_All())  # register the command
 
 
 # ##################################################
@@ -208,17 +208,14 @@ class Keys_String(command_base.Command_Text_Basic):
 
     def Run(
         self,
+        btn,
         idx: int,              # The current line number
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        coords,                # Tuple of printable coords as well as the individual x and y values
-        is_async               # True if the script is running asynchronously
+        split_line             # The current line, split
         ):
 
-        type_string = " ".join(split_line[1:])
-        kb.write(type_string)
+        kb.write(split_line[1])
 
         return idx+1
 
 
-scripts.add_command(Keys_String())  # register the command
+scripts.Add_command(Keys_String())  # register the command

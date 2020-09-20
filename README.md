@@ -348,6 +348,8 @@ All Mouse movement commands can now use variables in place of constants.  Variab
     * !?L {x} - Does a local variable {x} not exist
     * ?G {x} - Does a global variable {x} exist
     * !?G {x} - Does a global variable {x} not exist
+  * One command allows you to affect script execution
+    * abort - causes the script to terminate
   * The stack is local to the current script, however it is maintained between executions!
   * The global variables are global to all scripts. 
   * Local variables are local to the current script (and are maintained across executions)
@@ -489,7 +491,7 @@ In order of priority:
     * Move `@SIMPLE` to keyboard module.
       * Allow F['COMMAND']['macro'] = True to disallow other non-comment lines in the script. Default is False.
         * Macros will automatically have `_` added to the beginning (`@` will only be for headers)
-        * `validate_script()` will take care of making sure macros are alone (after comment/nl stripping)
+        * `Validate_script()` will take care of making sure macros are alone (after comment/nl stripping)
       * Allow F['COMMAND']['macro_async'] = True to enable async on a macro. Default is False, ignored if not a macro.
         * When importing functions on startup, make a dict to keep track of what macros are async
         * `scripts.py` will have a `run_async` dict to keep track of if a script is async

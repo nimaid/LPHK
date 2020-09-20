@@ -26,11 +26,11 @@ class Mouse_Move(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        ms.move_to_pos(float(symbols[SYM_PARAMS][1]), float(symbols[SYM_PARAMS][2]))
+    def Process(self, btn, idx, split_line):
+        ms.move_to_pos(float(btn.symbols[SYM_PARAMS][1]), float(btn.symbols[SYM_PARAMS][2]))
     
 
-scripts.add_command(Mouse_Move())  # register the command
+scripts.Add_command(Mouse_Move())  # register the command
 
 
 # ##################################################
@@ -56,11 +56,11 @@ class Mouse_Set(command_base.Command_Basic):
             ) )
 
 
-    def Process(self):
-        ms.set_pos(float(symbols[SYM_PARAMS][1]), float(symbols[SYM_PARAMS][2]))
+    def Process(self, btn, idx, split_line):
+        ms.set_pos(float(btn.symbols[SYM_PARAMS][1]), float(btn.symbols[SYM_PARAMS][2]))
 
 
-scripts.add_command(Mouse_Set())  # register the command
+scripts.Add_command(Mouse_Set())  # register the command
 
 
 # ##################################################
@@ -87,14 +87,14 @@ class Mouse_Scroll(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        if symbols[SYM_PARAMS][2]:
-            ms.scroll(float(symbols[SYM_PARAMS][2]), float(symbols[SYM_PARAMS][1]))
+    def Process(self, btn, idx, split_line):
+        if btn.symbols[SYM_PARAMS][2]:
+            ms.scroll(float(btn.symbols[SYM_PARAMS][2]), float(btn.symbols[SYM_PARAMS][1]))
         else:
-            ms.scroll(0, float(symbols[SYM_PARAMS][1]))
+            ms.scroll(0, float(btn.symbols[SYM_PARAMS][1]))
 
 
-scripts.add_command(Mouse_Scroll())  # register the command
+scripts.Add_command(Mouse_Scroll())  # register the command
 
 
 # ##################################################
@@ -126,29 +126,29 @@ class Mouse_Line(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
+    def Process(self, btn, idx, split_line):
         delay = None
-        if symbols[SYM_PARAMS][5]:
-            delay = float(symbols[SYM_PARAMS][5]) / 1000.0
+        if btn.symbols[SYM_PARAMS][5]:
+            delay = float(btn.symbols[SYM_PARAMS][5]) / 1000.0
 
         skip = 1
-        if symbols[SYM_PARAMS][6]:
-            skip = int(symbols[SYM_PARAMS][6])
+        if btn.symbols[SYM_PARAMS][6]:
+            skip = int(btn.symbols[SYM_PARAMS][6])
 
-        points = ms.line_coords(symbols[SYM_PARAMS][1], symbols[SYM_PARAMS][2], symbols[SYM_PARAMS][3], symbols[SYM_PARAMS][4])
+        points = ms.line_coords(btn.symbols[SYM_PARAMS][1], btn.symbols[SYM_PARAMS][2], btn.symbols[SYM_PARAMS][3], btn.symbols[SYM_PARAMS][4])
 
         for x_M, y_M in points[::skip]:
-            if check_kill(coords[BC_X], coords[BC_Y], is_async):
+            if btn.Check_kill():
                 return -1
 
             ms.set_pos(x_M, y_M)
 
             if (delay != None) and (delay > 0):
-                if not safe_sleep(delay, coords[BC_X], coords[BC_Y], is_async):
+                if not btn.Safe_sleep(delay):
                     return -1
 
 
-scripts.add_command(Mouse_Line())  # register the command
+scripts.Add_command(Mouse_Line())  # register the command
 
 
 # ##################################################
@@ -178,32 +178,32 @@ class Mouse_Line_Move(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
+    def Process(self, btn, idx, split_line):
         delay = None
-        if symbols[SYM_PARAMS][3]:
-            delay = float(symbols[SYM_PARAMS][3]) / 1000.0
+        if btn.symbols[SYM_PARAMS][3]:
+            delay = float(btn.symbols[SYM_PARAMS][3]) / 1000.0
 
         skip = 1
-        if symbols[SYM_PARAMS][4]:
-            skip = int(symbols[SYM_PARAMS][4])
+        if btn.symbols[SYM_PARAMS][4]:
+            skip = int(btn.symbols[SYM_PARAMS][4])
             
         x_C, y_C = ms.get_pos()
-        x_N, y_N = x_C + symbols[SYM_PARAMS][1], y_C + symbols[SYM_PARAMS][2]
+        x_N, y_N = x_C + btn.symbols[SYM_PARAMS][1], y_C + btn.symbols[SYM_PARAMS][2]
         points = ms.line_coords(x_C, y_C, x_N, y_N)
 
         for x_M, y_M in points[::skip]:
-            if check_kill(coords[BC_X], coords[BC_Y], is_async):
+            if btn.Check_kill():
                 return -1
 
             ms.set_pos(x_M, y_M)
 
             if (delay != None) and (delay > 0):
-                if not safe_sleep(delay, coords[BC_X], coords[BC_Y], is_async):
+                if not btn.Safe_sleep(delay):
                     return -1
 
 
 
-scripts.add_command(Mouse_Line_Move())  # register the command
+scripts.Add_command(Mouse_Line_Move())  # register the command
 
 
 # ##################################################
@@ -233,7 +233,7 @@ class Mouse_Line_Set(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
+    def Process(self, btn, idx, split_line):
         delay = None
         if self.params[3]:
             delay = float(self.params[3]) / 1000.0
@@ -246,15 +246,15 @@ class Mouse_Line_Set(command_base.Command_Basic):
         points = ms.line_coords(x_C, y_C, params[1], params[2])
 
         for x_M, y_M in points[::skip]:
-            if check_kill(coords[BC_X], coords[BC_Y], is_async):
+            if btn.Check_kill():
                 return -1
             ms.set_pos(x_M, y_M)
             if (delay != None) and (delay > 0):
-                if not safe_sleep(delay, coords[BC_X], coords[BC_Y], is_async):
+                if not btn.Safe_sleep(delay):
                     return -1
 
 
-scripts.add_command(Mouse_Line_Set())  # register the command
+scripts.Add_command(Mouse_Line_Set())  # register the command
 
 
 # ##################################################
@@ -282,14 +282,14 @@ class Mouse_Recall_Line(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
+    def Process(self, btn, idx, split_line):
         # while this looks like validation, it is just a warning
-        if symbols[SYM_MOUSE] == tuple():
-            print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
+        if btn.symbols[SYM_MOUSE] == tuple():
+            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
         else:
-            print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Recall mouse position " + str(symbols[SYM_MOUSE]))
+            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    Recall mouse position " + str(btn.symbols[SYM_MOUSE]))
 
-            x1, y1 = symbols[SYM_MOUSE]
+            x1, y1 = btn.symbols[SYM_MOUSE]
 
             delay = 0
             if self.params[1]:
@@ -303,17 +303,17 @@ class Mouse_Recall_Line(command_base.Command_Basic):
             points = ms.line_coords(x_C, y_C, x1, y1)
 
             for x_M, y_M in points[::skip]:
-                if check_kill(coords[BC_X], coords[BC_Y], is_async):
+                if btn.Check_kill():
                     return -1
 
                 ms.set_pos(x_M, y_M)
 
                 if (delay != None) and (delay > 0):
-                    if not safe_sleep(delay, coords[BC_X], coords[BC_Y], is_async):
+                    if not btn.Safe_sleep(delay):
                         return -1
 
 
-scripts.add_command(Mouse_Recall_Line())  # register the command
+scripts.Add_command(Mouse_Recall_Line())  # register the command
 
 
 # ##################################################
@@ -337,11 +337,11 @@ class Mouse_Store(command_base.Command_Basic):
             ) )
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
-        symbols[SYM_MOUSE] = ms.get_pos()  # Another example of modifying the symbol table during execution.
+    def Process(self, btn, idx, split_line):
+        btn.symbols[SYM_MOUSE] = ms.get_pos()  # Another example of modifying the symbol table during execution.
 
 
-scripts.add_command(Mouse_Store())  # register the command
+scripts.Add_command(Mouse_Store())  # register the command
 
 
 # ##################################################
@@ -365,13 +365,13 @@ class Mouse_Recall(command_base.Command_Basic):
         self.run_states = [RS_INIT, RS_GET, RS_VALIDATE, RS_RUN, RS_FINAL]  # we won't do RS_INFO
 
 
-    def Process(self, idx, split_line, symbols, coords, is_async):
+    def Process(self, btn, idx, split_line):
         # while this looks like validation, it is really just the info. Putting it here is easy
-        if symbols[SYM_MOUSE] == tuple():
-            print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
+        if btn.symbols[SYM_MOUSE] == tuple():
+            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
         else:
-            print("[" + lib + "] " + coords[BC_TEXT] + "  Line:" + str(idx+1) + "    Recall mouse position " + str(symbols[SYM_MOUSE]))
-            ms.set_pos(symbols[SYM_MOUSE][0], symbols[SYM_MOUSE][1])
+            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    Recall mouse position " + str(btn.symbols[SYM_MOUSE]))
+            ms.set_pos(btn.symbols[SYM_MOUSE][0], btn.symbols[SYM_MOUSE][1])
 
 
-scripts.add_command(Mouse_Recall())  # register the command
+scripts.Add_command(Mouse_Recall())  # register the command
