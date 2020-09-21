@@ -37,6 +37,7 @@ root_destroyed = None
 restart = False
 lp_object = None
 
+DEFAULT_LOAD_FILE = None
 
 load_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT, files.LEGACY_LAYOUT_EXT])]
 load_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT, files.LEGACY_SCRIPT_EXT])]
@@ -49,7 +50,7 @@ lp_mode = None
 colors_to_set = [[DEFAULT_COLOR for y in range(9)] for x in range(9)]
 
 
-def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, version_in, platform_in):
+def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, version_in, platform_in, default_load_file):
     global lp_object
     global launchpad
     global PATH
@@ -58,6 +59,7 @@ def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, versio
     global VERSION
     global PLATFORM
     global MAIN_ICON
+    global DEFAULT_LOAD_FILE
     lp_object = lp_object_in
     launchpad = launchpad_in
     PATH = path_in
@@ -65,6 +67,7 @@ def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, versio
     USER_PATH = user_path_in
     VERSION = version_in
     PLATFORM = platform_in
+    DEFAULT_LOAD_FILE = default_load_file
     
     if PLATFORM == "windows":
         MAIN_ICON = os.path.join(PATH, "resources", "LPHK.ico")
@@ -94,7 +97,7 @@ class Main_Window(tk.Frame):
 
     def init_window(self):
         global root
-        
+
         self.master.title("LPHK - Novation Launchpad Macro Scripting System")
         self.pack(fill="both", expand=1)
 
@@ -137,7 +140,9 @@ class Main_Window(tk.Frame):
         self.stat = tk.Label(self, text="No Launchpad Connected", bg=STAT_INACTIVE_COLOR, fg="#fff")
         self.stat.grid(row=1, column=0, sticky=tk.EW)
         self.stat.config(font=("Courier", BUTTON_SIZE // 3, "bold"))
-    
+
+        
+
     def raise_above_all(self):
         self.master.attributes('-topmost', 1)
         self.master.attributes('-topmost', 0)
@@ -163,6 +168,7 @@ class Main_Window(tk.Frame):
         global lp_connected
         global lp_mode
         global lp_object
+        global DEFAULT_LOAD_FILE
 
         lp = lpcon.get_launchpad()
 
@@ -187,13 +193,13 @@ class Main_Window(tk.Frame):
             lp_object = lp
             lp_mode = lpcon.get_mode(lp)
 
-            if lp_mode is "Pro":
-                self.popup(self, "Connect to Launchpad Pro", self.error_image,
-                           """This is a BETA feature! The Pro is not fully supported yet,as the bottom and left rows are not mappable currently.
-                           I (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)
-                           You must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the
-                           upper left corner, then release the 'Setup' key. Please only continue once this step is completed.""",
-                           "I am in Live mode.")
+            # if lp_mode is "Pro":
+            #     self.popup(self, "Connect to Launchpad Pro", self.error_image,
+            #                """This is a BETA feature! The Pro is not fully supported yet,as the bottom and left rows are not mappable currently.
+            #                I (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)
+            #                You must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the
+            #                upper left corner, then release the 'Setup' key. Please only continue once this step is completed.""",
+            #                "I am in Live mode.")
 
             lp_object.ButtonFlush()
 
@@ -206,6 +212,9 @@ class Main_Window(tk.Frame):
             self.enable_menu("Layout")
             self.stat["text"] = f"Connected to {lpcon.get_display_name(lp)}"
             self.stat["bg"] = STAT_ACTIVE_COLOR
+
+        if lp_connected is True and DEFAULT_LOAD_FILE is not None:
+            files.load_layout_to_lp(os.path.join(files.LAYOUT_PATH, DEFAULT_LOAD_FILE))
 
     def disconnect_lp(self):
         global lp_connected
