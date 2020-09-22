@@ -214,7 +214,17 @@ class Main_Window(tk.Frame):
             self.stat["bg"] = STAT_ACTIVE_COLOR
 
         if lp_connected is True and DEFAULT_LOAD_FILE is not None:
-            files.load_layout_to_lp(os.path.join(files.LAYOUT_PATH, DEFAULT_LOAD_FILE))
+            if os.path.isabs(DEFAULT_LOAD_FILE):
+                file_name = DEFAULT_LOAD_FILE
+            else:
+                file_name = os.path.join(files.LAYOUT_PATH, DEFAULT_LOAD_FILE)
+
+            if os.path.exists(file_name):
+                files.load_layout_to_lp(file_name)
+            else:
+                self.popup(self, "Unable to load layout", self.error_image,
+                           "The system cannot find the file specified in the command line argument.", "Okay")
+
 
     def disconnect_lp(self):
         global lp_connected
