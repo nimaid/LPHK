@@ -110,3 +110,6 @@ user_layouts/*.*
 __setup__/*
 __release__/*
 USERPATH
+/pyinstaller-develop/
+/src/
+/INSTALL/windows/src/

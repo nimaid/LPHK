@@ -72,6 +72,35 @@ It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](
 * As an interface to other programs with hotkeys
 * ... and many more!
 
+### Load layout on startup
+
+*New Feature*
+
+To load a layout on startup, the command line argument `-l` has been added.
+
+#### Windows
+
+On Windows, open the shortcut properties window. In the "Target" field, it should look like
+```cmd
+"<absolute path>/LPHK.exe"
+```
+
+This is the command line command that Windows runs when launching the shortcut. Add the following line to load a
+specific layout on startup:
+```shell
+-l "<absolute path to .lpl file>"
+```
+
+So it should look something like
+```shell
+"C:\Program Files (x86)\LPHK-dev\LPHK.exe" -l "C:\Users\%USER%\Documents\LPHK-develop\user_layouts\Basic.lpl"
+```
+
+Make sure to surround the paths with double quotes so Windows is happy.
+
+
+---
+
 LPHK has all of its core features functional and ready to use! There are a lot of new features wanted, and there are massive bugs that need fixing, and it needs some more polish, but you can still do quite a lot with it as it is currently!
 
 LPHK is still a work-in-progress, so things will be changing often. [See below for a todo list.](https://github.com/nimaid/LPHK#todo-list-table-of-contents) I have a life (a crazy one at that), so no promises on a delivery date. Feel free to offer your help! You can see project updates and ask questions on the [official Discord server](https://discord.gg/mDCzB8X)! You can also donate on the [official Patreon page](https://www.patreon.com/user?u=16848673) to help speed up development, or just say thanks!
