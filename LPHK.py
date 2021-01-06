@@ -149,6 +149,7 @@ def shutdown():
 
 def main():
     init()
+    DEFAULT_LOAD_FILE = None
     if (len(sys.argv) >= 2):
         DEFAULT_LOAD_FILE = args['load']
     window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH, VERSION, PLATFORM, DEFAULT_LOAD_FILE)
