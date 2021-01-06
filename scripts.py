@@ -20,7 +20,7 @@ text = [["" for y in range(9)] for x in range(9)]
 
 def check_kill(x, y, is_async, killfunc=None):
     coords = "(" + str(x) + ", " + str(y) + ")"
-    
+
     if threads[x][y].kill.is_set():
         print("[scripts] " + coords + " Recieved exit flag, script exiting...")
         threads[x][y].kill.clear()
@@ -107,19 +107,21 @@ def run_script_and_run_next(script_in, x_in, y_in):
     run_script(script_in, x_in, y_in)
     run_next()
 
+
+# noinspection PyRedundantParentheses
 def run_script(script_str, x, y):
     global running
     global exit
 
     lp_colors.updateXY(x, y)
     coords = "(" + str(x) + ", " + str(y) + ")"
-    
+
     print("[scripts] " + coords + " Now running script...")
 
     script_lines = script_str.split("\n")
-    
+
     script_lines = [i.strip() for i in script_lines]
-    
+
     #remove comments
     if len(script_lines) > 0:
         while(is_ignorable_line(script_lines[0])):
@@ -128,36 +130,36 @@ def run_script(script_str, x, y):
                 print("[scripts] " + coords + "    Comment: " + line[1:])
             if len(script_lines) <= 0:
                 break
-    
+
     if len(script_lines) > 0:
         is_async = False
         if script_lines[0].split(" ")[0] in ASYNC_HEADERS:
             is_async = True
         else:
             running = True
-        
+
         if script_lines[0].split(" ")[0] == "@ASYNC":
             temp = script_lines.pop(0)
-        
+
         #parse labels
         labels = dict()
         for idx,line in enumerate(script_lines):
             split_line = line.split(" ")
             if split_line[0] == "LABEL":
                 labels[split_line[1]] = idx
-        
+
         #prepare repeat counter {idx:repeats_left}
         repeats = dict()
         repeats_original = dict()
-        
+
         m_pos = ()
-        
+
         def main_logic(idx):
             nonlocal m_pos
-            
+
             if check_kill(x, y, is_async):
                 return idx + 1
-                
+
             line = script_lines[idx]
             if line == "":
                 return idx + 1
@@ -245,7 +247,7 @@ def run_script(script_str, x, y):
                     while lp_events.pressed[x][y]:
                         sleep(DELAY_EXIT_CHECK)
                         if check_kill(x, y, is_async):
-                            return idx + 1             
+                            return idx + 1
                 elif split_line[0] == "M_STORE":
                     print("[scripts] " + coords + "    Store mouse position")
                     m_pos = ms.get_pos()
@@ -486,13 +488,13 @@ def run_script(script_str, x, y):
             idx = main_logic(idx)
             if (idx < 0) or (idx >= len(script_lines)):
                 run = False
-                
+
         if not is_async:
             running = False
         threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (x, y)).start()
-    
+
     print("[scripts] (" + str(x) + ", " + str(y) + ") Script done running.")
-    
+
 
 def bind(x, y, script_down, color):
     global to_run
@@ -520,20 +522,20 @@ def unbind(x, y):
     if threads[x][y] != None:
         threads[x][y].kill.set()
     files.layout_changed_since_load = True
-    
+
 def swap(x1, y1, x2, y2):
     global text
     color_1 = lp_colors.curr_colors[x1][y1]
     color_2 = lp_colors.curr_colors[x2][y2]
-    
+
     script_1 = text[x1][y1]
     script_2 = text[x2][y2]
-    
+
     unbind(x1, y1)
     if script_2 != "":
         bind(x1, y1, script_2, color_2)
     lp_colors.updateXY(x1, y1)
-    
+
     unbind(x2, y2)
     if script_1 != "":
         bind(x2, y2, script_1, color_1)
@@ -543,9 +545,9 @@ def swap(x1, y1, x2, y2):
 def copy(x1, y1, x2, y2):
     global text
     color_1 = lp_colors.curr_colors[x1][y1]
-    
+
     script_1 = text[x1][y1]
-    
+
     unbind(x2, y2)
     if script_1 != "":
         bind(x2, y2, script_1, color_1)
@@ -555,9 +557,9 @@ def copy(x1, y1, x2, y2):
 def move(x1, y1, x2, y2):
     global text
     color_1 = lp_colors.curr_colors[x1][y1]
-    
+
     script_1 = text[x1][y1]
-    
+
     unbind(x1, y1)
     unbind(x2, y2)
     if script_1 != "":
@@ -585,20 +587,22 @@ def unbind_all():
                     threads[x][y].kill.set()
     files.curr_layout = None
     files.layout_changed_since_load = False
-    
+
+
+# noinspection PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses,PyRedundantParentheses
 def validate_script(script_str):
     if script_str == "":
         return True
     script_lines = script_str.split('\n')
-    
+
     script_lines = [i.strip() for i in script_lines]
-    
+
     if len(script_lines) > 0:
         while(is_ignorable_line(script_lines[0])):
             line = script_lines.pop(0)
             if len(script_lines) <= 0:
                 return True
-    
+
     first_line = script_lines[0]
     first_line_split = first_line.split(" ")
 
@@ -606,7 +610,7 @@ def validate_script(script_str):
         if len(first_line_split) > 1:
             return ("@ASYNC takes no arguments.", script_lines[0])
         temp = script_lines.pop(0)
-    
+
     if first_line_split[0] == "@SIMPLE":
         if len(first_line_split) < 2:
             return ("@SIMPLE requires a key to bind.", first_line)
@@ -617,7 +621,7 @@ def validate_script(script_str):
         for line in script_lines[1:]:
             if line != "" and line[0] != "-":
                 return ("When @SIMPLE is used, scripts can only contain comments.", line)
-    
+
     if first_line_split[0] == "@LOAD_LAYOUT":
         for line in script_lines[1:]:
             if line != "" and line[0] != "-":
@@ -627,12 +631,12 @@ def validate_script(script_str):
         layout_path = os.path.join(files.LAYOUT_PATH, " ".join(first_line_split[1:]))
         if not os.path.isfile(layout_path):
             return ("'" + layout_path + "' does not exist!", first_line)
-        
+
         try:
             layout = files.load_layout(layout_path, popups=False, save_converted=False, printing=False)
         except:
             return ("Layout '" + layout_path + "' is malformatted.", first_line)
-    
+
     #parse labels
     labels = []
     for line in script_lines:
@@ -644,7 +648,7 @@ def validate_script(script_str):
                 return ("Label '" + split_line[1] + "' defined multiple times.", line)
             else:
                 labels.append(split_line[1])
-    
+
     for idx, line in enumerate(script_lines):
         if line != "":
             if line[0] != "-":

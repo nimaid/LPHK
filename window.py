@@ -1,12 +1,19 @@
+import os
+import tkcolorpicker
 import tkinter as tk
-import tkinter.filedialog, tkinter.scrolledtext, tkinter.messagebox, tkcolorpicker
-from PIL import ImageTk, Image
-import os, sys
-from functools import partial
+import tkinter.filedialog
+import tkinter.scrolledtext
 import webbrowser
+from functools import partial
 
-import scripts, files, lp_colors, lp_events
+from PIL import ImageTk, Image
+
+import files
+import lp_colors
+import lp_events
+import scripts
 from utils import launchpad_connector as lpcon
+
 
 BUTTON_SIZE = 40
 HS_SIZE = 200
@@ -68,7 +75,7 @@ def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, versio
     VERSION = version_in
     PLATFORM = platform_in
     DEFAULT_LOAD_FILE = default_load_file
-    
+
     if PLATFORM == "windows":
         MAIN_ICON = os.path.join(PATH, "resources", "LPHK.ico")
     else:
@@ -82,7 +89,7 @@ class Main_Window(tk.Frame):
         tk.Frame.__init__(self, master)
         self.master = master
         self.init_window()
-        
+
         self.about_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/LPHK-banner.png"))
         self.info_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/info.png"))
         self.warning_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/warning.png"))
@@ -116,7 +123,7 @@ class Main_Window(tk.Frame):
         self.m.add_cascade(label="Layout", menu=self.m_Layout)
 
         self.disable_menu("Layout")
-        
+
         self.m_Help = tk.Menu(self.m, tearoff=False)
         open_readme = lambda: webbrowser.open("https://github.com/nimaid/LPHK#lphk-launchpad-hotkey")
         self.m_Help.add_command(label="Open README...", command=open_readme)
@@ -141,24 +148,24 @@ class Main_Window(tk.Frame):
         self.stat.grid(row=1, column=0, sticky=tk.EW)
         self.stat.config(font=("Courier", BUTTON_SIZE // 3, "bold"))
 
-        
+
 
     def raise_above_all(self):
         self.master.attributes('-topmost', 1)
         self.master.attributes('-topmost', 0)
-    
+
     def enable_menu(self, name):
         self.m.entryconfig(name, state="normal")
 
     def disable_menu(self, name):
         self.m.entryconfig(name, state="disabled")
-    
+
     def connect_dummy(self):
         # WIP
         global lp_connected
         global lp_mode
         global lp_object
-        
+
         lp_connected = True
         lp_mode = "Dummy"
         self.draw_canvas()
@@ -223,7 +230,7 @@ class Main_Window(tk.Frame):
                 files.load_layout_to_lp(file_name)
             else:
                 self.popup(self, "Unable to load layout", self.error_image,
-                           "The system cannot find the file specified in the command line argument.", "Okay")
+                           "The system cannot find the file specified in the command line argument: " + DEFAULT_LOAD_FILE, "Okay")
 
 
     def disconnect_lp(self):
@@ -281,11 +288,11 @@ class Main_Window(tk.Frame):
         else:
             files.save_lp_to_layout(files.curr_layout)
             files.load_layout_to_lp(files.curr_layout)
-    
+
     def click(self, event):
         gap = int(BUTTON_SIZE // 4)
-        
-        
+
+
         column = min(8, int(event.x // (BUTTON_SIZE + gap)))
         row = min(8, int(event.y // (BUTTON_SIZE + gap)))
 
@@ -300,7 +307,7 @@ class Main_Window(tk.Frame):
                 elif self.button_mode == "swap":
                     self.button_mode = "copy"
                 else:
-                    self.button_mode = "edit"  
+                    self.button_mode = "edit"
                 self.draw_canvas()
             else:
                 if self.button_mode == "edit":
@@ -315,7 +322,7 @@ class Main_Window(tk.Frame):
                         move_func = partial(scripts.move, self.last_clicked[0], self.last_clicked[1], column, row)
                         swap_func = partial(scripts.swap, self.last_clicked[0], self.last_clicked[1], column, row)
                         copy_func = partial(scripts.copy, self.last_clicked[0], self.last_clicked[1], column, row)
-                        
+
                         if self.button_mode == "move":
                             if scripts.is_bound(column, row) and ((self.last_clicked) != (column, row)):
                                 self.popup_choice(self, "Button Already Bound", self.warning_image, "You are attempting to move a button to an already\nbound button. What would you like to do?", [["Overwrite", move_func], ["Swap", swap_func], ["Cancel", None]])
@@ -330,7 +337,7 @@ class Main_Window(tk.Frame):
                             swap_func()
                         self.last_clicked = None
                 self.draw_canvas()
-                    
+
     def draw_button(self, column, row, color="#000000", shape="square"):
         gap = int(BUTTON_SIZE // 4)
 
@@ -354,7 +361,7 @@ class Main_Window(tk.Frame):
                 y_start = round((BUTTON_SIZE * self.last_clicked[1]) + (gap * self.last_clicked[1]))
                 x_end = round(x_start + BUTTON_SIZE + gap)
                 y_end = round(y_start + BUTTON_SIZE + gap)
-                
+
                 if (self.last_clicked[1] == 0) or (self.last_clicked[0] == 8):
                     self.outline_box = self.c.create_oval(x_start + (gap // 2), y_start + (gap // 2), x_end - (gap // 2), y_end - (gap // 2), fill=SELECT_COLOR, outline="")
                 else:
@@ -364,7 +371,7 @@ class Main_Window(tk.Frame):
             if self.outline_box != None:
                 self.c.delete(self.outline_box)
                 self.outline_box = None
-        
+
         if self.grid_drawn:
             for x in range(8):
                 y = 0
@@ -377,7 +384,7 @@ class Main_Window(tk.Frame):
             for x in range(8):
                 for y in range(1, 9):
                     self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
-            
+
             self.c.itemconfig(self.grid_rects[8][0], text=self.button_mode.capitalize())
         else:
             for x in range(8):
@@ -391,12 +398,12 @@ class Main_Window(tk.Frame):
             for x in range(8):
                 for y in range(1, 9):
                     self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y))
-            
+
             gap = int(BUTTON_SIZE // 4)
             text_x = round((BUTTON_SIZE * 8) + (gap * 8) + (BUTTON_SIZE / 2) + (gap / 2))
             text_y = round((BUTTON_SIZE / 2) + (gap / 2))
             self.grid_rects[8][0] = self.c.create_text(text_x, text_y, text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold"))
-            
+
             self.grid_drawn = True
 
     def clear_canvas(self):
@@ -406,7 +413,7 @@ class Main_Window(tk.Frame):
 
     def script_entry_window(self, x, y, text_override=None, color_override=None):
         global color_to_set
-        
+
         w = tk.Toplevel(self)
         w.winfo_toplevel().title("Editing Script for Button (" + str(x) + ", " + str(y) + ")")
         w.resizable(False, False)
@@ -416,11 +423,11 @@ class Main_Window(tk.Frame):
                 dummy = None
                 #w.call('wm', 'iconphoto', w._w, tk.PhotoImage(file=MAIN_ICON))
             else:
-                w.iconbitmap(MAIN_ICON)           
-        
+                w.iconbitmap(MAIN_ICON)
+
         def validate_func():
             nonlocal x, y, t
-            
+
             text_string = t.get(1.0, tk.END)
             try:
                 script_validate = scripts.validate_script(text_string)
@@ -441,7 +448,7 @@ class Main_Window(tk.Frame):
 
         t = tk.scrolledtext.ScrolledText(w)
         t.grid(column=0, row=0, rowspan=3, padx=10, pady=10)
-        
+
         if text_override == None:
             t.insert(tk.INSERT, scripts.text[x][y])
         else:
@@ -454,21 +461,21 @@ class Main_Window(tk.Frame):
         export_script_func = lambda: self.export_script(t, w)
         e_m_Script.add_command(label="Export script", command=export_script_func)
         e_m.add_cascade(label="Script", menu=e_m_Script)
-        
+
         if color_override == None:
             colors_to_set[x][y] =  lp_colors.getXY(x, y)
         else:
             colors_to_set[x][y] = color_override
-        
+
         if type(colors_to_set[x][y]) == int:
             colors_to_set[x][y] = lp_colors.code_to_RGB(colors_to_set[x][y])
-        
+
         if all(c < 4 for c in colors_to_set[x][y]):
             if lp_mode == "Mk1":
                 colors_to_set[x][y] = MK1_DEFAULT_COLOR
             else:
                 colors_to_set[x][y] = DEFAULT_COLOR
-        
+
         ask_color_func = lambda: self.ask_color(w, color_button, x, y, colors_to_set[x][y])
         color_button = tk.Button(w, text="Select Color", command=ask_color_func)
         color_button.grid(column=1, row=0, padx=(0, 10), pady=(10, 50), sticky="nesw")
@@ -503,60 +510,60 @@ class Main_Window(tk.Frame):
                 #w.call('wm', 'iconphoto', popup._w, tk.PhotoImage(file=MAIN_ICON))
             else:
                 w.iconbitmap(MAIN_ICON)
-        
+
         w.protocol("WM_DELETE_WINDOW", w.destroy)
-        
+
         color = ""
-        
+
         def return_color(col):
             nonlocal color
             color = col
             w.destroy()
-        
+
         button_frame = tk.Frame(w)
         button_frame.grid(padx=(10, 0), pady=(10, 0))
-        
+
         def make_grid_button(column, row, color_hex, func=None, size=100):
             nonlocal w
             f = tk.Frame(button_frame, width=size, height=size)
 
             b = tk.Button(f, command=func)
-            
+
             f.rowconfigure(0, weight = 1)
             f.columnconfigure(0, weight = 1)
             f.grid_propagate(0)
-            
+
             f.grid(column=column, row=row)
             b.grid(padx=(0,10), pady=(0,10), sticky="nesw")
             b.config(bg=color_hex)
-        
+
         def make_color_button(button_color, column, row, size=100):
             button_color_hex = "#%02x%02x%02x" % button_color
-            
+
             b_func = lambda: return_color(button_color)
             make_grid_button(column, row, button_color_hex, b_func, size)
-        
+
         for c in range(4):
             for r in range(4):
                 if not (c == 0 and r == 3):
                     red = int(c * (255 / 3))
                     green = int((3 - r) * (255 / 3))
-                    
+
                     make_color_button((red, green, 0), c, r, size=75)
 
         w.wait_visibility()
         w.grab_set()
         w.wait_window()
-        
+
         if color:
             hex = "#%02x%02x%02x" % color
             return color, hex
         else:
             return None, None
-       
+
     def ask_color(self, window, button, x, y, default_color):
         global colors_to_set
-        
+
         if lp_mode == "Mk1":
             color = self.classic_askcolor(color=tuple(default_color), title="Select Color for Button (" + str(x) + ", " + str(y) + ")")
         else:
@@ -604,9 +611,9 @@ class Main_Window(tk.Frame):
 
     def save_script(self, window, x, y, script_text, open_editor = False, color=None):
         global colors_to_set
-        
+
         script_text = script_text.strip()
-        
+
         def open_editor_func():
             nonlocal x, y
             if open_editor:
@@ -676,7 +683,7 @@ class Main_Window(tk.Frame):
         popup.wait_visibility()
         popup.grab_set()
         popup.wait_window()
-    
+
     def popup_choice(self, window, title, image, text, choices):
         popup = tk.Toplevel(window)
         popup.resizable(False, False)
@@ -688,7 +695,7 @@ class Main_Window(tk.Frame):
                 popup.iconbitmap(MAIN_ICON)
         popup.wm_title(title)
         popup.tkraise(window)
-        
+
         def run_end(func):
             popup.destroy()
             if func != None:
@@ -704,7 +711,7 @@ class Main_Window(tk.Frame):
         popup.wait_visibility()
         popup.grab_set()
         popup.wait_window()
-    
+
     def modified_layout_save_prompt(self):
         if files.layout_changed_since_load == True:
             layout_empty = True
@@ -713,7 +720,7 @@ class Main_Window(tk.Frame):
                     if text != "":
                         layout_empty = False
                         break
-            
+
             if not layout_empty:
                 self.popup_choice(self, "Save Changes?", self.warning_image, "You have made changes to this layout.\nWould you like to save this layout before exiting?", [["Save", self.save_layout], ["Save As...", self.save_layout_as], ["Discard", None]])
 
