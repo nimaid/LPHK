@@ -140,14 +140,14 @@ def Check_generic_param(btn, cmd, idx, split_line, p, val, val_validation):
         if val[AV_OPTIONAL]:
             return True
         else:
-            return (error_msg(idx, name, desc, p, None, 'required ' + val[AV_TYPE][AVT_DESC] + ' parameter not present'), btn.line[idx])
+            return (error_msg(idx, name, desc, p, None, 'required ' + val[AV_TYPE][AVT_DESC] + ' parameter not present'), split_line[p])
     
     try:
         temp = val[AV_TYPE][AVT_CONV](split_line[p])
     except:
         if val[AV_VAR_OK] and valid_var_name(split_line[p]):   # a variable is OK here
             return True
-        return (error_msg(idx, cmd.name, val[AV_DESCRIPTION], p, split_line[p], 'not a valid ' + val[AV_TYPE][AVT_DESC]), btn.line[idx])
+            return (error_msg(idx, cmd.name, val[AV_DESCRIPTION], p, split_line[p], 'not a valid ' + val[AV_TYPE][AVT_DESC]), split_line[p])
 
     if val[val_validation]:
         return val[val_validation](temp, idx, cmd.name, val[AV_DESCRIPTION], p, split_line[p])
@@ -163,14 +163,14 @@ def Check_numeric_param(split_line, p, desc, idx, name, line, validation, option
         if optional:
             return True
         else:
-            return (error_msg(idx, name, desc, p, None, 'required parameter not present'), btn.line[idx])
+            return (error_msg(idx, name, desc, p, None, 'required parameter not present'), btn.Line(idx))
     
     try:
         temp = conv(split_line[p])
     except:
         if var_ok and valid_var_name(split_line[p]):   # a variable is OK here
             return True
-        return (error_msg(idx, name, desc, p, split_line[p], 'not valid'), btn.line[idx])
+        return (error_msg(idx, name, desc, p, split_line[p], 'not valid'), btn.Line(idx))
 
     if validation:
         return validation(temp, idx, name, desc, p, split_line[p])

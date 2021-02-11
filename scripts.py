@@ -112,8 +112,9 @@ class Button():
             for idx,line in enumerate(self.script_lines): # gen line number and text
                 if self.Is_ignorable_line(line):
                     continue                         # don't process ignorable lines
-                    
+                 
                 cmd_txt = self.Split_cmd_text(line)  # get the name of the command
+
                 if cmd_txt in VALID_COMMANDS:        # if first element is a command
                     command = VALID_COMMANDS[cmd_txt]# get the command itself
                     split_line = self.Split_text(command, cmd_txt, line) # now split the line appropriately
@@ -123,9 +124,9 @@ class Button():
                             err = res                # note the error
                         errors += 1                  # and 1 more error
                 else:
-                    msg = "Invalid command '" + split_line[0] + "' on line " + str(idx+1) + "."
+                    msg = " Invalid command '" + cmd_txt + "' on line " + str(idx+1) + "."
                     if err == True:
-                        err = (msg, btn.line[idx])            # note the error
+                        err = (msg, line)            # note the error
                     print (msg)
                     errors += 1                      # and 1 more error
 
@@ -254,6 +255,7 @@ class Button():
 
     def Split_cmd_text(self, line):
         # Get the command text
+        line += ' '
         return line[0:line.find(" ")]
 
 

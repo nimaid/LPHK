@@ -110,10 +110,10 @@ class External_Sound(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", btn.Line(idx))
 
             if len(split_line) > 3:
-                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", btn.Line(idx))
 
         return True
 
@@ -197,7 +197,7 @@ class External_Code(command_base.Command_Basic):
 
         if pass_no == 1:       # in Pass 1 we can do general syntax check and gather symbol definitions
             if len(split_line) < 2:
-                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", btn.Line(idx))
 
         return True
 

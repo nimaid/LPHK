@@ -25,15 +25,15 @@ class Pause_Delay(command_base.Command_Basic):
         if pass_no == 1:
             # check number of split_line
             if len(split_line) < 2:
-                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - Too few arguments for command '" + split_line[0] + "'.", btn.Line(idx))
 
             if len(split_line) > 2:
-                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - Too many arguments for command '" + split_line[0] + "'.", btn.Line(idx))
 
             try:
                 temp = float(split_line[1])
             except:
-                return ("Line:" + str(idx+1) + " - Delay time '" + split_line[1] + "' not valid.", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - Delay time '" + split_line[1] + "' not valid.", btn.Line(idx))
 
         return True
 

@@ -80,7 +80,7 @@ class Command_Basic:
             import traceback
             traceback.print_exc()
             ret = ("", "")
-        
+
         finally:        
             if type(ret) == tuple:
                 return ret
@@ -94,7 +94,8 @@ class Command_Basic:
         # Validation of the count is separated from the pass 1 validation because sometinmes 
         # you want to override one but not the other.  You would override this if you have some
         # odd way of counting parameters, or the count depends on something complex.
-        ret = self.Validate_param_count(ret, btn, idx, split_line)        
+        ret = self.Validate_param_count(ret, btn, idx, split_line)  
+        return ret        
 
 
     def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
@@ -103,6 +104,7 @@ class Command_Basic:
         # structure cannot pass something important about the validation.  If you override this,
         # you may wish to call the ancestor first.
         ret = self.Validate_params(ret, btn, idx, split_line, AV_P1_VALIDATION)
+        return ret        
 
 
     def Partial_validate_step_pass_2(self, ret, btn, idx, split_line):
@@ -111,6 +113,7 @@ class Command_Basic:
         # structure cannot pass something important about the validation.  If you override this,
         # you may wish to call the ancestor first.
         ret = self.Validate_params(ret, btn, idx, split_line, AV_P2_VALIDATION)
+        return ret        
 
 
     def Parse(
@@ -133,7 +136,7 @@ class Command_Basic:
             return True 
 
         if ret == None or ((type(ret) == bool) and not ret) or len(ret) != 2:
-            ret = ("SYSTEM ERROR PARSING LINE " + str(idx) + ". '" + line + "' on pass " + str(pass_no), btn.line[idx])
+            ret = ("SYSTEM ERROR PARSING LINE " + str(idx) + ". '" + line + "' on pass " + str(pass_no), btn.Line(idx))
 
         if ret[0]:
             print(ret[0])
@@ -314,9 +317,12 @@ class Command_Basic:
             ret = []
             vn = len(self.auto_validate)
             for i in range(vn):
-                i_val = self.auto_validate[i]
-                if (i_val[AV_OPTIONAL] == True) or (i+1 == vn):
-                  ret += [i+1]
+                if (i+1 == vn):                      # if this is the last argument
+                    ret += [i+1]                     # obviously it's valid to have this many
+                else:
+                    i_val = self.auto_validate[i+1]  # get the *next* parameter
+                    if (i_val[AV_OPTIONAL] == True): # if it's optional
+                        ret += [i+1]                 # then it's valid to have this many too
             
         if ret:
             return ret
@@ -340,7 +346,7 @@ class Command_Basic:
         # This routine determines how many parameters to check.  In cases where there are unlimited parameters,
         # it will only recommend checking the number that exist.  Otherwise, all parameters will be checked.
         # This function improves efficiency.
-        if self.valid_max_params < n_passed or (len(self.valid_num_params) == 2 and self.valid_num_params[1] == None):
+        if ((self.valid_max_params == None and n_passed == 0) or (self.valid_max_params < n_passed)) or (len(self.valid_num_params) == 2 and self.valid_num_params[1] == None):
             return n_passed
         else:
             return self.valid_max_params
@@ -356,7 +362,7 @@ class Command_Basic:
             
         for i in range(self.Param_validation_count(len(split_line)-1)):
            ret = self.Validate_param_n(ret, btn, idx, split_line, val_validation, i+1)
-           if ret != True:
+           if not ((type(ret) == bool) and ret):
                return ret
 
         return ret
@@ -395,14 +401,14 @@ class Command_Basic:
                     if val[AV_TYPE] == PT_TARGET:                    # targets (label definitions) have pass 1 validation only
                         # check for duplicate label
                         if split_line[n] in btn.symbols[SYM_LABELS]: # Does the label already exist (that's bad)?
-                            return ("Duplicate LABEL", btn.line[idx])
+                            return ("Duplicate LABEL", btn.Line(idx))
 
                         # add label to symbol table                  # Add the new label to the labels in the symbol table
                         btn.symbols[SYM_LABELS][split_line[n]] = idx # key is label, data is line number
                     elif val[AV_TYPE] == PT_KEY:                     # targets (label definitions) have pass 1 validation only
                         # check for valid key
                         if kb.sp(split_line[n]) == None:             # Does the key exist (if not, that's bad)?
-                            return ("Unknown key", btn.line[idx])
+                            return ("Unknown key", btn.Line(idx))
                
                 elif val_validation == AV_P2_VALIDATION:
                     if val[AV_TYPE] == PT_LABEL:                     # references (to a label) have pass 2 validation only
@@ -412,7 +418,7 @@ class Command_Basic:
                     
                 return True
                
-            return (ret, btn.line[idx])
+            return (ret, btn.Line(idx))
             
         
     def Run_params(self, ret, btn, idx, split_line, pass_no):

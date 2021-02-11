@@ -23,10 +23,10 @@ class Header_Async(command_base.Command_Header):
         
         if pass_no == 1:
             if idx > 0:        # headers normally have to check the line number
-                return ("Line:" + str(idx+1) + " - " + self.name + " must appear on the first line.", lines[0])
+                return ("Line:" + str(idx+1) + " - " + self.name + " must appear on the first line.", btn.Line(0))
 
             if len(split_line) > 1:
-                return ("Line:" + str(idx+1) + " - " + self.name + " takes no arguments.", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - " + self.name + " takes no arguments.", btn.Line(idx))
 
         return True
 
@@ -66,16 +66,16 @@ class Header_Simple(command_base.Command_Header):
 
         if pass_no == 1:
             if idx > 0:        # headers normally have to check the line number
-                return ("Line:" + str(idx+1) + " - " + self.name + " must appear on the first line.", lines[0])
+                return ("Line:" + str(idx+1) + " - " + self.name + " must appear on the first line.", btn.Line(0))
 
             if len(split_line) < 2:
-                return ("Line:" + str(idx+1) + " - " + self.name + " requires a key to bind.", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - " + self.name + " requires a key to bind.", btn.Line(idx))
 
             if len(split_line) > 2:
-                return ("Line:" + str(idx+1) + " - " + self.name + " only take one argument", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - " + self.name + " only take one argument", btn.Line(idx))
 
             if kb.sp(split_line[1]) == None:
-                return ("Line:" + str(idx+1) + " - No key named '" + split_line[1] + "'.", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - No key named '" + split_line[1] + "'.", btn.Line(idx))
 
             for lin in lines[1:]:
                 if lin != "" and lin[0] != "-":
@@ -139,7 +139,7 @@ class Header_Load_Layout(command_base.Command_Header):
                 return ("Line:" + str(idx+1) + " - " + self.name + " must appear on the first line.", lines[0])
 
             if len(split_line) < 2:
-                return ("Line:" + str(idx+1) + " - " + self.name + " requires a filename as a parameter.", btn.line[idx])
+                return ("Line:" + str(idx+1) + " - " + self.name + " requires a filename as a parameter.", btn.Line(idx))
 
         return True
 
