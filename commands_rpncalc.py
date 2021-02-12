@@ -64,16 +64,16 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
                     if opr in self.operators: # if it's valid
                         for p in range(self.operators[opr][1]):
                             if i + p + 1 >= c_len:
-                                return ("Line:" + str(idx+1) + " - Insufficient tokens for parameter#" + str(p+1) + " of operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.line[idx])
+                                return ("Line:" + str(idx+1) + " - Insufficient tokens for parameter#" + str(p+1) + " of operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.Line(idx))
                             else:
                                 param = split_line[i+p+1]
                                 if not variables.valid_var_name(param):
-                                    return ("Line:" + str(idx+1) + " - parameter#" + str(p+1) + " '" + param + "' of operator #" + str(i) + " '" + cmd + " must start with alpha character in " + self.name, btn.line[idx])
+                                    return ("Line:" + str(idx+1) + " - parameter#" + str(p+1) + " '" + param + "' of operator #" + str(i) + " '" + cmd + " must start with alpha character in " + self.name, btn.Line(idx))
                         i = i + 1 + self.operators[opr][1]  # pull of additional parameters if required
                         if i > c_len:
-                            return ("Line:" + str(idx+1) + " - Insufficient parameters after operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.line[idx])                         
+                            return ("Line:" + str(idx+1) + " - Insufficient parameters after operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.Line(idx))                         
                     else:               # if invalid, report it
-                        return ("Line:" + str(idx+1) + " - Invalid operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.line[idx])                         
+                        return ("Line:" + str(idx+1) + " - Invalid operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.Line(idx))                         
         
         return ret
         
@@ -473,13 +473,7 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         ret, v = variables.next_cmd(ret, cmds)                      # what's the name of the variable?   
         a = variables.top(symbols, 1)                               # will be stored from the top of the stack
 
-        with symbols[SYM_GLOBAL][0]:                                # lock the globals while we do this
-            if variables.is_defined(v, symbols[SYM_LOCAL]):         # Is it local...
-                variables.put(v, a, symbols[SYM_LOCAL])             # ...then store it locally
-            elif variables.is_defined(v, symbols[SYM_GLOBAL][1]):   # Is it global...
-                variables.put(v, a, symbols[SYM_GLOBAL][1])         # ...store it globally
-            else:
-                variables.put(v, a, symbols[SYM_LOCAL])             # default is to create new in locals
+        variables.AutoStore(v, a, symbols)                          # "auto store" the value
         
         return ret
         
