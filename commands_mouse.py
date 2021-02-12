@@ -235,12 +235,12 @@ class Mouse_Line_Set(command_base.Command_Basic):
 
     def Process(self, btn, idx, split_line):
         delay = None
-        if self.params[3]:
-            delay = float(self.params[3]) / 1000.0
+        if btn.symbols[SYM_PARAMS][3]:
+            delay = float(btn.symbols[SYM_PARAMS][3]) / 1000.0
 
         skip = 1
-        if self.params[4]:
-            skip = int(self.params[4])
+        if btn.symbols[SYM_PARAMS][4]:
+            skip = int(btn.symbols[SYM_PARAMS][4])
 
         x_C, y_C = ms.get_pos()
         points = ms.line_coords(x_C, y_C, params[1], params[2])
@@ -292,12 +292,12 @@ class Mouse_Recall_Line(command_base.Command_Basic):
             x1, y1 = btn.symbols[SYM_MOUSE]
 
             delay = 0
-            if self.params[1]:
-                delay = float(self.params[3]) / 1000.0
+            if btn.symbols[SYM_PARAMS][1]:
+                delay = float(btn.symbols[SYM_PARAMS][1]) / 1000.0
 
             skip = 1
-            if self.params[2]:
-                skip = int(self.params[4])
+            if btn.symbols[SYM_PARAMS][2]:
+                skip = int(btn.symbols[SYM_PARAMS][2])
 
             x_C, y_C = ms.get_pos()
             points = ms.line_coords(x_C, y_C, x1, y1)
@@ -329,16 +329,25 @@ class Mouse_Store(command_base.Command_Basic):
         super().__init__("M_STORE",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # no variables defined, so none are allowed
+            # Desc         Opt    Var   type     p1_val                      p2_val 
+            ("X value",    True , True, PT_VAR,  None,                       None),
+            ("Y value",    False, True, PT_VAR,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
             (0,           "    Store mouse position"), 
+            (2,           "    Store mouse position in variables ({1}, {2})"), 
             ) )
 
 
     def Process(self, btn, idx, split_line):
-        btn.symbols[SYM_MOUSE] = ms.get_pos()  # Another example of modifying the symbol table during execution.
+        mpos = ms.get_pos()
+        
+        if not btn.symbols[SYM_PARAMS][1]:
+            btn.symbols[SYM_MOUSE] = mpos  # Another example of modifying the symbol table during execution.
+        else:
+            variables.Auto_store(btn.symbols[SYM_PARAMS][1], mpos[0], btn.symbols)
+            variables.Auto_store(btn.symbols[SYM_PARAMS][2], mpos[1], btn.symbols)
 
 
 scripts.Add_command(Mouse_Store())  # register the command

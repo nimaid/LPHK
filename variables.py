@@ -69,7 +69,7 @@ def next_cmd(ret, cmds):
 
 # variable names should start with an alpha character
 def valid_var_name(v):
-    return len(v) > 0 and ord(v[0].upper()) in range(ord('A'), ord('Z')+1)
+    return isinstance(v, str) and len(v) > 0 and ord(v[0].upper()) in range(ord('A'), ord('Z')+1)
 
 
 # return a properly formatted error message
@@ -217,5 +217,16 @@ def Validate_ge_zero(v, idx, name, desc, p, param):
     else:
         return error_msg(idx, name, desc, p, param, 'must be an integer')
         
+
+def Auto_store(v, a, symbols):
+    # automatically stores the variable in the "right" place        
+    with symbols[SYM_GLOBAL][0]:                                # lock the globals while we do this
+        if is_defined(v, symbols[SYM_LOCAL]):                   # Is it local...
+            put(v, a, symbols[SYM_LOCAL])                       # ...then store it locally
+        elif is_defined(v, symbols[SYM_GLOBAL][1]):             # Is it global...
+            put(v, a, symbols[SYM_GLOBAL][1])                   # ...store it globally
+        else:
+            put(v, a, symbols[SYM_LOCAL])                       # default is to create new in locals
+
 
 

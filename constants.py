@@ -36,13 +36,15 @@ AV_P1_VALIDATION  = 4
 AV_P2_VALIDATION  = 5
 
 # constants for parameter types
-#              desc      conv   special  (special means additional auto-validation
+#              desc      conv   special  (special means additional auto-validation)
 PT_INT      = ("int",    int,   False)
 PT_FLOAT    = ("float",  float, False)
 PT_TEXT     = ("text",   str,   False)
 PT_LABEL    = ("label",  str,   True)       # Note that this is for a reference to a label, not the definition of a label!
 PT_TARGET   = ("target", str,   True)       # Note that this is for the definition of a target (e.g. creating a label)
 PT_KEY      = ("key",    str,   True)       # This is a key literal
+PT_BOOL     = ("bool",   str,   True)       # True/False, Yes/No, Y/N, nonzero/zero <-- for variables
+PT_VAR      = ("var",    str,   True)       # Variable is *required*, typically for storage of results
 
 # constants for auto_message
 AM_COUNT  = 0
@@ -50,6 +52,11 @@ AM_FORMAT = 1
 
 AM_PREFIX  = "[{0}] {1}  Line:{2}"
 AM_DEFAULT = AM_PREFIX + "     {3} parameters ({4})"
+
+# constants for boolean values
+VALID_BOOL_TRUE  = ["TRUE", "YES"]
+VALID_BOOL_FALSE = ["FALSE", "NO"]
+VALID_BOOL       = VALID_BOOL_TRUE + VALID_BOOL_FALSE
 
 # Misc constants
 COLOR_PRIMED = 5 #red

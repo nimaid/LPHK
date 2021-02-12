@@ -312,20 +312,16 @@ class Command_Basic:
         # This routine does not return it, but setting the counts to [n, None] indicates to the parameter number
         # validation routine that n or more parameters are acceptable -- this is great for comments etc.
         ret = None
-        
+
         if self.auto_validate:
             ret = []
             vn = len(self.auto_validate)
             for i in range(vn):
-                if (i+1 == vn):                      # if this is the last argument
-                    ret += [i+1]                     # obviously it's valid to have this many
-                else:
-                    i_val = self.auto_validate[i+1]  # get the *next* parameter
-                    if (i_val[AV_OPTIONAL] == True): # if it's optional
-                        ret += [i+1]                 # then it's valid to have this many too
-            
-        if ret:
-            return ret
+                i_val = self.auto_validate[i]         # get the parameter
+                if (i_val[AV_OPTIONAL] == True):      # if this one is optional 
+                    ret += [i]                        # then 1 fewer is OK
+
+            ret += [vn]                               # it's always valid to pass *all* the parameters       
 
         return ret
 
@@ -359,7 +355,7 @@ class Command_Basic:
         # of your parameters.  You will need to remember that this gets called for both pass 1 and 2.
         if not (ret == None or ((type(ret) == bool) and ret)):
             return ret
-            
+
         for i in range(self.Param_validation_count(len(split_line)-1)):
            ret = self.Validate_param_n(ret, btn, idx, split_line, val_validation, i+1)
            if not ((type(ret) == bool) and ret):
@@ -379,6 +375,9 @@ class Command_Basic:
         # Where a variable type is defined as having "special" validation, that validation is currently
         # hard coded here.  It would be better to register validation routines, but...  later.
         if not (ret == None or ((type(ret) == bool) and ret)):
+            return ret
+            
+        if n > len(split_line):
             return ret
 
         if self.auto_validate == None:  # no auto validation can be done
@@ -405,10 +404,18 @@ class Command_Basic:
 
                         # add label to symbol table                  # Add the new label to the labels in the symbol table
                         btn.symbols[SYM_LABELS][split_line[n]] = idx # key is label, data is line number
-                    elif val[AV_TYPE] == PT_KEY:                     # targets (label definitions) have pass 1 validation only
+                    elif val[AV_TYPE] == PT_KEY:                     # Keys have pass 1 validation only
                         # check for valid key
                         if kb.sp(split_line[n]) == None:             # Does the key exist (if not, that's bad)?
                             return ("Unknown key", btn.Line(idx))
+                    elif val[AV_TYPE] == PT_BOOL:                    # booleans have pass 1 validation only
+                        # check for valid boolean value
+                        if not (split_line[n].upper() in VALID_BOOL): # Is it a valid boolean?
+                            return ("Invalid boolean value", btn.Line(idx))
+                    elif val[AV_TYPE] == PT_VAR:                     # mandatory variables have pass 1 validation only
+                        # check for valid variable name
+                        if not variables.valid_var_name(split_line[n]): # Is it a valid variable name?
+                            return ("Invalid variable name", btn.Line(idx))
                
                 elif val_validation == AV_P2_VALIDATION:
                     if val[AV_TYPE] == PT_LABEL:                     # references (to a label) have pass 2 validation only
@@ -456,7 +463,8 @@ class Command_Basic:
         # if validation has passed.
         if pass_no == 1:
             v = split_line[n]
-            if self.auto_validate and n <= len(self.auto_validate) and self.auto_validate[n-1][AV_VAR_OK]:
+            
+            if self.auto_validate and n <= len(self.auto_validate) and self.auto_validate[n-1][AV_VAR_OK] and not (self.auto_validate[n-1][AV_TYPE] == PT_VAR) :
                 v = variables.get_value(split_line[n], btn.symbols)
             if self.auto_validate and n <= len(self.auto_validate) and self.auto_validate[n-1][AV_TYPE] and self.auto_validate[n-1][AV_TYPE][AVT_CONV]:
                 v = self.auto_validate[n-1][AV_TYPE][AVT_CONV](v)
