@@ -47,8 +47,8 @@ class Mouse_Set(command_base.Command_Basic):
             LIB,
             (
             # Desc      Opt    Var   type     p1_val                      p2_val 
-            ("X value", False, True, PT_INT,  variables.Validate_ge_zero, None),
-            ("Y value", False, True, PT_INT,  variables.Validate_ge_zero, None),
+            ("X value", False, True, PT_INT,  None,                       None),
+            ("Y value", False, True, PT_INT,  None,                       None),
             ),
             (                          # How to log runtime execution 
             # num params, format string                           (trailing comma is important)
@@ -111,10 +111,10 @@ class Mouse_Line(command_base.Command_Basic):
             LIB,
             (
             # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X1 value",   False, True, PT_INT,  variables.Validate_ge_zero, None), 
-            ("Y1 value",   False, True, PT_INT,  variables.Validate_ge_zero, None), 
-            ("X2 value",   False, True, PT_INT,  variables.Validate_ge_zero, None), 
-            ("Y2 value",   False, True, PT_INT,  variables.Validate_ge_zero, None), 
+            ("X1 value",   False, True, PT_INT,  None,                       None), 
+            ("Y1 value",   False, True, PT_INT,  None,                       None), 
+            ("X2 value",   False, True, PT_INT,  None,                       None), 
+            ("Y2 value",   False, True, PT_INT,  None,                       None), 
             ("Wait value", True,  True, PT_INT,  variables.Validate_ge_zero, None), 
             ("Skip value", True,  True, PT_INT,  variables.Validate_gt_zero, None),
             ),
@@ -220,8 +220,8 @@ class Mouse_Line_Set(command_base.Command_Basic):
             LIB,
             (
             # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X value",    False, True, PT_INT,  variables.Validate_ge_zero, None),
-            ("Y value",    False, True, PT_INT,  variables.Validate_ge_zero, None),
+            ("X value",    False, True, PT_INT,  None,                       None),
+            ("Y value",    False, True, PT_INT,  None,                       None),
             ("Wait value", True,  True, PT_INT,  variables.Validate_ge_zero, None),
             ("Skip value", True,  True, PT_INT,  variables.Validate_gt_zero, None),
             ),
