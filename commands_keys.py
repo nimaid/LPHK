@@ -64,17 +64,17 @@ class Keys_Tap(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        cnt = btn.symbols[SYM_PARAM_CNT]
-        key = kb.sp(btn.symbols[SYM_PARAMS][1])
+        cnt = self.Param_count(btn)
+        key = kb.sp(self.Get_param(btn, 1))
         releasefunc = lambda: None
 
         taps = 1
         if cnt >= 2:
-            taps = int(btn.symbols[SYM_PARAMS][2])
+            taps = self.Get_param(btn, 2)
 
         delay = 0
         if cnt == 3:
-            delay = float(btn.symbols[SYM_PARAMS][3])
+            delay = self.Get_param(btn, 3)
             releasefunc = lambda: kb.release(key)
         
         precheck = delay == 0 and taps > 1
@@ -125,7 +125,7 @@ class Keys_Press(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        key = kb.sp(btn.symbols[SYM_PARAMS][1])
+        key = kb.sp(self.Get_param(btn, 1))
         kb.press(key)
 
 
@@ -156,7 +156,7 @@ class Keys_Release(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        key = kb.sp(btn.symbols[SYM_PARAMS][1])
+        key = kb.sp(self.Get_param(btn, 1))
         kb.release(key)
 
 
