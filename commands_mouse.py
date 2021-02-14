@@ -27,7 +27,10 @@ class Mouse_Move(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        ms.move_to_pos(float(btn.symbols[SYM_PARAMS][1]), float(btn.symbols[SYM_PARAMS][2]))
+        x = self.Get_param(btn, 1)
+        y = self.Get_param(btn, 1)
+        
+        ms.move_to_pos(x, y)
     
 
 scripts.Add_command(Mouse_Move())  # register the command
@@ -57,7 +60,10 @@ class Mouse_Set(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        ms.set_pos(float(btn.symbols[SYM_PARAMS][1]), float(btn.symbols[SYM_PARAMS][2]))
+        x = self.Get_param(btn, 1)
+        y = self.Get_param(btn, 2)
+        
+        ms.set_pos(x, y)
 
 
 scripts.Add_command(Mouse_Set())  # register the command
@@ -88,10 +94,10 @@ class Mouse_Scroll(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        if btn.symbols[SYM_PARAMS][2]:
-            ms.scroll(float(btn.symbols[SYM_PARAMS][2]), float(btn.symbols[SYM_PARAMS][1]))
-        else:
-            ms.scroll(0, float(btn.symbols[SYM_PARAMS][1]))
+        s = self.Get_Param(btn, 1)
+        x = self.Get_param(btn, 2, 0)
+            
+        ms.scroll(x, s)
 
 
 scripts.Add_command(Mouse_Scroll())  # register the command
@@ -128,14 +134,16 @@ class Mouse_Line(command_base.Command_Basic):
 
     def Process(self, btn, idx, split_line):
         delay = None
-        if btn.symbols[SYM_PARAMS][5]:
-            delay = float(btn.symbols[SYM_PARAMS][5]) / 1000.0
+        if self.Has_param(btn, 5):
+            delay = float(self.Get_param(btn, 5)) / 1000.0
 
-        skip = 1
-        if btn.symbols[SYM_PARAMS][6]:
-            skip = int(btn.symbols[SYM_PARAMS][6])
+        skip = self.Get_param(btn, 6, 1)
 
-        points = ms.line_coords(btn.symbols[SYM_PARAMS][1], btn.symbols[SYM_PARAMS][2], btn.symbols[SYM_PARAMS][3], btn.symbols[SYM_PARAMS][4])
+        x1 = self.Get_param(btn, 1)
+        y1 = self.Get_param(btn, 2)
+        x2 = self.Get_param(btn, 3)
+        y2 = self.Get_param(btn, 4)
+        points = ms.line_coords(x1, y1, x2, y2)
 
         for x_M, y_M in points[::skip]:
             if btn.Check_kill():
@@ -180,15 +188,13 @@ class Mouse_Line_Move(command_base.Command_Basic):
 
     def Process(self, btn, idx, split_line):
         delay = None
-        if btn.symbols[SYM_PARAMS][3]:
-            delay = float(btn.symbols[SYM_PARAMS][3]) / 1000.0
+        if self.Has_param(btn, 3):
+            delay = float(self.Get_param(btn, 3)) / 1000.0
 
-        skip = 1
-        if btn.symbols[SYM_PARAMS][4]:
-            skip = int(btn.symbols[SYM_PARAMS][4])
+        skip = int(self.Get_param(btn, 4, 1))
             
         x_C, y_C = ms.get_pos()
-        x_N, y_N = x_C + btn.symbols[SYM_PARAMS][1], y_C + btn.symbols[SYM_PARAMS][2]
+        x_N, y_N = x_C + self.Get_param(btn, 1), y_C + self.Get_param(btn, 2)
         points = ms.line_coords(x_C, y_C, x_N, y_N)
 
         for x_M, y_M in points[::skip]:
@@ -234,23 +240,21 @@ class Mouse_Line_Set(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        delay = None
-        if btn.symbols[SYM_PARAMS][3]:
-            delay = float(btn.symbols[SYM_PARAMS][3]) / 1000.0
+        delay = None                                         # default value of parameter
+        if self.Has_param(btn, 3):                           # can't use the default param because if we have one
+            delay = float(self.Get_param(btn, 3)) / 1000.0   # we need to do math on it
 
-        skip = 1
-        if btn.symbols[SYM_PARAMS][4]:
-            skip = int(btn.symbols[SYM_PARAMS][4])
+        skip = self.Get_param(btn, 4, 1)                     # skip parameter has a default value of 1
 
-        x_C, y_C = ms.get_pos()
-        points = ms.line_coords(x_C, y_C, params[1], params[2])
+        x_C, y_C = ms.get_pos()                              # where are we now?
+        points = ms.line_coords(x_C, y_C, self.Get_param(btn, 1), self.Get_param(btn, 2)) # how do we get to where we want to be
 
-        for x_M, y_M in points[::skip]:
-            if btn.Check_kill():
+        for x_M, y_M in points[::skip]:                      # For each point we're going to use
+            if btn.Check_kill():                             # Just make sure we should still be running
                 return -1
-            ms.set_pos(x_M, y_M)
-            if (delay != None) and (delay > 0):
-                if not btn.Safe_sleep(delay):
+            ms.set_pos(x_M, y_M)                             # set the position
+            if (delay != None) and (delay > 0):              # if we have a delay
+                if not btn.Safe_sleep(delay):                # delay "safely"
                     return -1
 
 
@@ -291,13 +295,11 @@ class Mouse_Recall_Line(command_base.Command_Basic):
 
             x1, y1 = btn.symbols[SYM_MOUSE]
 
-            delay = 0
-            if btn.symbols[SYM_PARAMS][1]:
-                delay = float(btn.symbols[SYM_PARAMS][1]) / 1000.0
+            delay = None
+            if self.Has_param(btn, 1):
+                delay = float(self.Get_param(btn, 1)) / 1000.0
 
-            skip = 1
-            if btn.symbols[SYM_PARAMS][2]:
-                skip = int(btn.symbols[SYM_PARAMS][2])
+            skip = self.Get_param(btn, 1, 1)
 
             x_C, y_C = ms.get_pos()
             points = ms.line_coords(x_C, y_C, x1, y1)
@@ -343,11 +345,11 @@ class Mouse_Store(command_base.Command_Basic):
     def Process(self, btn, idx, split_line):
         mpos = ms.get_pos()
         
-        if not btn.symbols[SYM_PARAMS][1]:
-            btn.symbols[SYM_MOUSE] = mpos  # Another example of modifying the symbol table during execution.
+        if self.Has_param(btn, 1):            # do we have a parameter 1?
+            self.Set_param(btn, 1, mpos[0])   # store into first and second patrameters
+            self.Set_param(btn, 2, mpos[1])
         else:
-            variables.Auto_store(btn.symbols[SYM_PARAMS][1], mpos[0], btn.symbols)
-            variables.Auto_store(btn.symbols[SYM_PARAMS][2], mpos[1], btn.symbols)
+            btn.symbols[SYM_MOUSE] = mpos     # Another example of modifying the symbol table during execution.
 
 
 scripts.Add_command(Mouse_Store())  # register the command

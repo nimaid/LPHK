@@ -342,7 +342,8 @@ class Command_Basic:
         # This routine determines how many parameters to check.  In cases where there are unlimited parameters,
         # it will only recommend checking the number that exist.  Otherwise, all parameters will be checked.
         # This function improves efficiency.
-        if ((self.valid_max_params == None and n_passed == 0) or (self.valid_max_params < n_passed)) or (len(self.valid_num_params) == 2 and self.valid_num_params[1] == None):
+        if ((self.valid_max_params == None and n_passed == 0) or (self.valid_max_params < n_passed)) or \
+            (len(self.valid_num_params) == 2 and self.valid_num_params[1] == None):
             return n_passed
         else:
             return self.valid_max_params
@@ -377,7 +378,7 @@ class Command_Basic:
         if not (ret == None or ((type(ret) == bool) and ret)):
             return ret
             
-        if n > len(split_line):
+        if n >= len(split_line):
             return ret
 
         if self.auto_validate == None:  # no auto validation can be done
@@ -482,6 +483,40 @@ class Command_Basic:
                
         return ret
 
+
+    # Is there a parameter n?
+    def Has_param(self, btn, n):  
+        val = btn.symbols[SYM_PARAMS][n]
+        return not (val is None)
+
+
+    # How many parameters do we have?
+    def Param_count(self, btn):  
+        return btn.symbols[SYM_PARAM_CNT]
+
+
+    # gets the value of the nth parameter (button is required for context).  Other is default value if param does not exist
+    def Get_param(self, btn, n, other=None):  
+        val = self.auto_validate[n-1]
+        param = btn.symbols[SYM_PARAMS][n]
+        if param == None:
+            ret = other
+        else:
+            if val[AV_TYPE] == PT_VAR:
+                ret = variables.get(param, btn.symbols[SYM_LOCAL], btn.symbols[SYM_GLOBAL][1])    
+            else:
+                ret = param
+            
+        return ret
+        
+
+    # sets the value of the nth parameter (if it is a variable)
+    def Set_param(self, btn, n, val):  
+        param = btn.symbols[SYM_PARAMS][n]
+        av = self.auto_validate[n-1]
+        if av[AV_TYPE] == PT_VAR:
+            variables.Auto_store(btn.symbols[SYM_PARAMS][n], val, btn.symbols) # return result in variable
+        
 
 # ##################################################
 # ### CLASS Command_Text_Basic                   ###

@@ -346,7 +346,7 @@ class Button():
             self.symbols = None                          # otherwise destroy symbol table 
 
         return self.validated                            # and tell us the result            
-        
+
 
 
 buttons = [[Button(x, y, "") for y in range(9)] for x in range(9)]
