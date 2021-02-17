@@ -47,6 +47,19 @@ def Add_command(
     return p                                   # return any replaced command
        
  
+# Remove a command.  This could be useful in handling subroutines (@@@ UNTESTED)
+
+def Remove_command(
+    command_name  # the command to remove
+    ):
+
+    if command_name in HEADERS:                # if this was previously a header
+        HEADERS.pop(command_name)
+  
+    if command_name in VALID_COMMANDS:         # if it already exists
+        HEADERS.pop(command_name)              # remove it
+       
+ 
 # Create a new symbol table.  This contains information required for the script to run
 # it includes the locations of labels, loop counters, etc.  If we implement variables
 # this is where we would place them
