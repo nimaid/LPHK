@@ -109,7 +109,7 @@ def save_lp_to_layout(name):
         layout["buttons"].append([])
         for y in range(9):
             color = lp_colors.curr_colors[x][y]
-            script_text = scripts.text[x][y]
+            script_text = scripts.buttons[x][y].script_str
             
             layout["buttons"][-1].append({"color": color, "text": script_text})
     

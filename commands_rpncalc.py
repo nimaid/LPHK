@@ -473,7 +473,7 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         ret, v = variables.next_cmd(ret, cmds)                      # what's the name of the variable?   
         a = variables.top(symbols, 1)                               # will be stored from the top of the stack
 
-        variables.AutoStore(v, a, symbols)                          # "auto store" the value
+        variables.Auto_store(v, a, symbols)                          # "auto store" the value
         
         return ret
         
