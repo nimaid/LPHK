@@ -24,6 +24,12 @@ try:
 except ImportError:
     print("[LPHK] WARNING: Windows specific commands are not available")  
 
+# This library could be considered optional  
+try:
+    import commands_scrape
+except ImportError:
+    print("[LPHK] WARNING: Screen scraping")  
+
 # Any that were not optional should set the error flag so we can exit
 if IMPORT_FATAL:
     sys.exit("[LPHK] ERROR: Required command modules are absent")
