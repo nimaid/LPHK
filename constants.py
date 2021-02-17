@@ -35,6 +35,11 @@ AVT_SPECIAL = 2
 AV_P1_VALIDATION  = 4
 AV_P2_VALIDATION  = 5
 
+# constants for allowing variables
+VA_NO    = False # 0 # only literals are allowed
+VA_VAL   = True  # 1 # variables are passed by value (i.e. you can't change them) - CAN be a variuable
+VA_REF   = 2         # variables are passed by reference - MUST be a variable
+
 # constants for parameter types
 #              desc      conv   special  (special means additional auto-validation)
 PT_INT      = ("int",    int,   False)

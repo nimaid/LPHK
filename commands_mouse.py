@@ -82,9 +82,9 @@ class Mouse_Scroll(command_base.Command_Basic):
         super().__init__("M_SCROLL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc            Opt    Var   type     p1_val p2_val 
-            ("Scroll amount", False, True, PT_INT,  None,  None),
-            ("X value",       True,  True, PT_INT,  None,  None),
+            # Desc            Opt    Var     type     p1_val p2_val 
+            ("Scroll amount", False, VA_VAL, PT_INT,  None,  None),
+            ("X value",       True,  VA_VAL, PT_INT,  None,  None),
             ),
             (                          # How to log runtime execution 
             # num params, format string                           (trailing comma is important)
