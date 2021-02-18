@@ -180,11 +180,11 @@ scripts.Add_command(Scrape_Image_Fingerprint())  # register the command
 
 
 # ##################################################
-# ### CLASS S_IMAGE_FINGERPRINT_DISTANCE         ###
+# ### CLASS SCRAPE_FINGERPRINT_DISTANCE          ###
 # ##################################################
 
 # class that defines the S_FDIST command -- calculates the hamming difference between fingerprints
-class Scrape_Fingerprint_Distance(Command_Scrape):
+class Scrape_Fingerprint_Distance(command_base.Command_Basic):
     def __init__(
         self,
         ):
@@ -195,7 +195,7 @@ class Scrape_Fingerprint_Distance(Command_Scrape):
             # Desc         Opt    Var       type     p1_val                      p2_val 
             ("F1",         False, AVV_YES,  PT_INT,  None,                       None),
             ("F2",         False, AVV_YES,  PT_INT,  None,                       None),
-            ("Distance",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("Distance",   False, AVV_REQD, PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)

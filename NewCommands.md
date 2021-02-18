@@ -31,29 +31,6 @@ You can take advantage of several levels of abstraction when writing your own co
 
 This is where I'm aiming to get.  You will still need to write some code to perform the actual function, but you can do so by just writing that code, and all the rest is handled for you.  (I'm doing all this work because I'm lazy, and I want you to be able to be lazy too!)
 
-#### Requirements:
- * Declare your parameters
- * Declare your output message format(s) 
- * Define a method to perform the function on prevalidated parameters and include this method in the definition
- * Register your command
-
-#### Benefits:
- * NO individual Validate method
- * NO individual Run method
- * Optional parameters supported
- * Allows use of internally managed numeric variables as well as literal values
- * Minimal debugging needed
- * Easily understandable, without needing to read code
- * Unlikely to introduce maintenance overhead
-
-#### Costs:
- * Parameters must conform to "standard" declarations
- * Less flexible execution of command
-
-#### An example?
-
-There will be one as soon as this is developed!
-
 ### Declarative definition, with minimal coding
 
 Currently working, this involves declarative definition of the parameters, with manual control over the stages of execution of the Run method.
@@ -80,52 +57,42 @@ This has a shorter list of requirements, but it's more coding, and requires more
 
 #### An example - Decoding an old version of the MOUSE_SCROLL command
 
-The `M_SCROLL` command looks like this:
+The `S_FDIST` command looks like this:
 ```python
+# ##################################################
+# ### CLASS SCRAPE_FINGERPRINT_DISTANCE          ###
+# ##################################################
+
+# class that defines the S_FDIST command -- calculates the hamming difference between fingerprints
+class Scrape_Fingerprint_Distance(command_base.Command_Basic):
     def __init__(
         self,
         ):
 
-        super().__init__("M_SCROLL", lib, (   # the name of the command as you have to enter it in the code
-            # Desc            Opt    Var   type      conv  p1_val p2_val 
-            ("X value",       False, True, "integer", int, None,  None), \
-            ("Scroll amount", False, True, "integer", int, None,  None) ) )
+        super().__init__("S_FDIST",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("F1",         False, AVV_YES,  PT_INT,  None,                       None),
+            ("F2",         False, AVV_YES,  PT_INT,  None,                       None),
+            ("Distance",   False, AVV_REQD, PT_INT,  None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (3,           "    Return the hamming distance between fingerprints {1} and {2} into {3}"), 
+            ) )
 
 
-    def Run(
-        self,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        coords,                # Tuple of printable coords as well as the individual x and y values
-        is_async               # True if the script is running asynchronously
-        ):
+    def Process(self, btn, idx, split_line):
+        f1 = self.Get_param(btn, 1)                    # get the fingerprints
+        f2 = self.Get_param(btn, 2)
+        
+        dist = dhash.get_num_bits_different(f1, f2)    # hamming distance (number of bits different)
+                    
+        self.Set_param(btn, 3, dist)                   # pass the distance back            
 
-        params = [idx, split_line, symbols, coords, is_async]
-        try:
-            if self.Partial_run(*params, [RS_INIT, RS_GET]) == -1:
-                return -1
-
-            if self.param[2]:
-                print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll (" + str(self.param[1]) + ", " + str(self.param[2]) + ")")
-            else:
-                print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll " + str(self.param[1]))
-
-            if self.Partial_run(*params, [RS_VALIDATE]) == -1:
-                return -1
-                
-            if self.param[2]:
-                ms.scroll(float(self.param[2]), float(self.param[1]))
-            else:
-                ms.scroll(0, float(self.param[1]))
-
-            return idx+1
-            
-        finally:
-            self.Partial_run(*params, [RS_FINAL])
-
-
-scripts.Add_command(Mouse_Scroll())  # register the command
+        
+scripts.Add_command(Scrape_Fingerprint_Distance())  # register the command
 ```
 
 We will examine the 6 parts you need to consider
@@ -138,20 +105,20 @@ The class should always begin with some documentation to both highlight the star
 
 ```python
 # ##################################################
-# ### CLASS Mouse_Scroll                         ###
+# ### CLASS SCRAPE_FINGERPRINT_DISTANCE          ###
 # ##################################################
 
-# class that defines the M_SCROLL command (???)
+# class that defines the S_FDIST command -- calculates the hamming difference between fingerprints
 ```
 
 ##### Part 2 - The Class definition
 
-The most important part of the class definition is that the new class is derived from the appropriate base class.  For normal commands, this should be `command_base.Command_Basic` although experienced python programmers could also create a new command definition that derives from another command.
+The most important part of the class definition is that the new class is derived from the appropriate base class.  For normal commands, this should be `command_base.Command_Basic` although experienced python programmers could also create a new command definition that derives from another command.  Looking at some of the other commands you'll often find a new class defined based on `command_base.Command_Basic` or one of it's derivitives so that common functionality can be made available to all commands derived from it.
 
 It is also important that you define a unique name for your new command.  I recommend using *Module*_*Command*, where *Module* is the part of the module name after `commands_`.  
 
 ```python
-class Mouse_Scroll(command_base.Command_Basic):
+class Scrape_Fingerprint_Distance(command_base.Command_Basic):
 ```
 
 ##### Part 3 - Class Initialization
@@ -163,24 +130,35 @@ The initialization of a command class serves to define the name of the command. 
         self,
         ):
 
-        super().__init__("M_SCROLL", lib, (   # the name of the command as you have to enter it in the code
-            # Desc            Opt    Var   type      conv  p1_val p2_val 
-            ("X value",       False, True, "integer", int, None,  None), \
-            ("Scroll amount", False, True, "integer", int, None,  None) ) )
+        super().__init__("S_FDIST",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("F1",         False, AVV_YES,  PT_INT,  None,                       None),
+            ("F2",         False, AVV_YES,  PT_INT,  None,                       None),
+            ("Distance",   False, AVV_REQD, PT_INT,  None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (3,           "    Return the hamming distance between fingerprints {1} and {2} into {3}"), 
+            ) )
 ```
 
-The 5th line defines the name of the command and also passes the name of the current library (lib) to the the object.  Note that commands are case sensitive, so the name should be in all uppercase to be consistent with other commands. The current library will be used to define where the command originates from in some of the low level reporting functions. 
+The 5th line defines the name of the command.  Note that command names are case sensitive, so the name should be in all uppercase to be consistent. 
 
-Lines 7 and 8 define the two parameters expected for this function.  Note that this definition actually commences on line 5 with the opening parenthesis.
+Line 6 passes the name of the current library (lib) to the the object.  The current library will be used to define where the command originates from in some of the low level reporting functions. 
+
+Lines 9 to 11 define the three parameters expected for this function.  Note that this definition actually commences on line 7 with the opening parenthesis and ends on line 12 with the closing parenthesis.  Each parameter is defined by a tuple.
 
 7 values must be entered in each tuple.  The parameters are:
  * The name of the parameter -- this will be used in multiple places to create messages that are understandable.
  * Is this parameter optional? -- Entering True here means that it is valid to pass all the previous parameters, but stop here.  Entering False means that if you have supplied one fewer than this parameter, then you must also supply this one.
- * Can a variable be substituted? - Entering True allows a variable name to be used here instead of a literal value.  Entering False means that only literal values are permitted.  Note that literal values are validated before execution, variables are validated at execution.
- * What is the type of the parameter -- This is a human-readable description of the datatype required.  It is used in messages.
- * Conversion function to desired type -- as an example used here, "int()" is used to convert strings (and other types) to integers.  Other functions, like float, or str can be used.  Note that this is an actual function name, so it is acceptable to define your own function if needed.
+ * Can a variable be substituted? - Entering AVV_NO means that only literals are allowed.  AVV_YES means that literals or a variable are permitted.  AVV_REQD means a variable is required.  AVV_REQD is typically used where the command returns or changes the value in this variable.   Note that literal values are validated before execution, variables are validated at execution.
+ * What is the type of the parameter -- This is a human-readable description of the datatype required.  It is used in messages, and in validation of literals and variables.
  * Pass 1 Validation - this is a function used to perform pass 1 evaluation of the parameter value.  This will be called at validation for literal values, and at execution for variable values.  Examples of this are variables.Validate_ge_zero, a function that validates a numeric parameter value is greater than or equal to zero.  Use None if no validation is required.  Write your own pass 1 validation routine if you wish!
  * Pass 2 Validation - this is a function called only on pass 2 of the validation.  It is required for commands that reference labels (to determine if the label exists).  None are defined yet, but that will change...
+
+Line 15 contains a skeleton of logging information.  This is a tuple that consists of the number of variables passed, and the format of the message.  In this example it is only valid to pass all three parameters so there is only a single tuple defined.  The magic values '{n}' are replaced by the literal or variable passed to the command.
 
 ##### Part 4 - Command Validation
 
@@ -189,77 +167,39 @@ No code is required here!  The default validation code for the class can handle 
 ##### Part 5 - Command Execution
 
 ```python
-    def Run(
-        self,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        symbols,               # The symbol table (a dictionary containing labels, loop counters etc.)
-        coords,                # Tuple of printable coords as well as the individual x and y values
-        is_async               # True if the script is running asynchronously
-        ):
-
-        params = [idx, split_line, symbols, coords, is_async]
-        try:
-            if self.Partial_run(*params, [RS_INIT, RS_GET]) == -1:
-                return -1
-
-            if self.param[2]:
-                print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll (" + str(self.param[1]) + ", " + str(self.param[2]) + ")")
-            else:
-                print("[" + lib + "] " + coords + "  Line:" + str(idx+1) + "    Scroll " + str(self.param[1]))
-
-            if self.Partial_run(*params, [RS_VALIDATE]) == -1:
-                return -1
-                
-            if self.param[2]:
-                ms.scroll(float(self.param[2]), float(self.param[1]))
-            else:
-                ms.scroll(0, float(self.param[1]))
-
-            return idx+1
-            
-        finally:
-            self.Partial_run(*params, [RS_FINAL])
+    def Process(self, btn, idx, split_line):
+        f1 = self.Get_param(btn, 1)                    # get the fingerprints
+        f2 = self.Get_param(btn, 2)
+        
+        dist = dhash.get_num_bits_different(f1, f2)    # hamming distance (number of bits different)
+                    
+        self.Set_param(btn, 3, dist)                   # pass the distance back            
 ```
 
-The first 8 lines are the standard header and should be copied verbatim.
+The first line is the standard header and should be copied verbatim.
 
-The definition of SYM_PARAMS on line 10 is simply a shortcut so we don't have to type the exact same set of parameters over and over again for various management functions that need to know this stuff.
+The parameters are accessed using 'self.Get_param(btn, n)' where 'n' is the parameter number.  This function takes care of both literal values and values passed in variables.  A third (optional) parameter allows you to set a default value if that parameter was not supplied.  It is also possible to use the functions 'self.Param_count(btn)' that returns the number of parameters passed, and 'self.Has_param(btn, n)' to determine if parameter number 'n' has been passed.
 
-The main code is placed inside a TRY...FINALLY block to ensure that the finalization code is called.  Currently this doesn't do a lot, but as it may become more necessary in later versions, it is recommended that you code the execution in this manner.
+Tyically, once the parameters are obtained, the code is inserted to perform the function.  In this case it is a single line calling 'dhash.get_num_bits_different()'
 
-Within the TRY...FINALLY block, we call "self.Partial_run()" to execute parts of the standard execution flow.  The parts you can call are:
- * RS_INIT - Perform any initialization required (should ALWAYS be called)
- * RS_GET - Get the parameters, and evaluates variables (not strictly required for a command with no parameters, but STRONGLY encouraged)
- * RS_INFO - Display the command with the values.  In most cases you'll want to implement this yourself as the default is pretty basic
- * RS_VALIDATE - Perform run-time validation of them, possibly printing messages. (not requied if you're not using variables, but STRONGLY encouraged)
- * RS_RUN - Perform the standard process of running the command.  This should NEVER be used in this situation, as you will code this part!
- * RS_FINAL - Perform any finalization required.  (should ALWAYS be called - in the FINALLY)
-
-In this example, we are first running RS_INIT, and RS_GET.  If a Partial_run returns -1, you should return immediately with -1.  
-
-After the RS_GET, you can refer to self.params[n] where n is from 0 to the maximum number of parameters.  self.params[0] is the command name, and self.params[1] to self.params[n] are the parameters from 1 to n.  At this point, optional parameters that have not been passed will be None, literal values will be validated and be the correct type, and variable values will be thethe correct types, but not yet validated.
-
-After performing the 3 initial steps, we do our own implementation of the RS_INFO.
-
-Next, the RS_VALIDATE step is performed.  After this, variable values will be validated.
-
-After validation, we do what is required based on the parameters passed, and return idx + 1 (that's the next line).  If we had a serious error we could return -1 to abort the script.  Instead of returning idx+1, we could possibly just return the value of the RS_RUN process, however this requires more code, and introduces additional complexities.  Just do the simple thing and return the correct value!
-
-No matter how we return, the FINALLY block will ensure that the finalization is called.
+Finally, if there are any parameters to be returned, call 'self.Set_param(btn, n, v)' to return the value 'v' in the nth parameter.  Note that attempting to return values for parameters that are not defined as AVV_REQD will silently fail.
 
 ##### Part 6 - Command Integration
 
 The final step is to include code to incorporate this command into the set of commands available for scripts.
 
 ```python
-scripts.Add_command(Mouse_Scroll())  # register the command
+scripts.Add_command(Scrape_Fingerprint_Distance())  # register the command
 ```
 
 This line creates a command object, and passes it to the routine which adds it to the list of available commands.
 
-It is important to note that the definition of more than one command with exactly the same name will result in only the second one being available.  
+It is important to note that the definition of more than one command with exactly the same name will result in only the last one being available.  
 
+
+## DO NOT READ ANY FURTHER IF YOU VALUE YOUR SANITY.  I HAVE TO MAKE THIS EASIER TO UNDERSTAND
+
+There is value (indeed necessity) in using some of these techniques, however many of them are just unneccessary now that I have refined the process of creating commands from their very early implementation.
 
 ### Declarative definition, with manual control over parameter handling
 
