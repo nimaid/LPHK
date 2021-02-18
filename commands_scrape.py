@@ -48,13 +48,13 @@ class Scrape_OCR_Form_Text(Command_Scrape):
         super().__init__("S_OCR",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X1 value",   False, True, PT_INT,  None,                       None),
-            ("Y1 value",   False, True, PT_INT,  None,                       None),
-            ("X2 value",   False, True, PT_INT,  None,                       None),
-            ("Y2 value",   False, True, PT_INT,  None,                       None),
-            ("OCR value",  False, True, PT_VAR,  None,                       None),
-            ("HWND",       True,  True, PT_VAR,  None,                       None),
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("X1 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("Y1 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("X2 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("Y2 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("OCR value",  False, AVV_REQD, PT_TEXT, None,                       None),
+            ("HWND",       True,  AVV_REQD, PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -92,13 +92,13 @@ class Scrape_Image_Hash(Command_Scrape):
         super().__init__("S_HASH",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X1 value",   False, True, PT_INT,  None,                       None),
-            ("Y1 value",   False, True, PT_INT,  None,                       None),
-            ("X2 value",   False, True, PT_INT,  None,                       None),
-            ("Y2 value",   False, True, PT_INT,  None,                       None),
-            ("Hash value", False, True, PT_VAR,  None,                       None),
-            ("HWND",       True,  True, PT_VAR,  None,                       None),
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("X1 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("Y1 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("X2 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("Y2 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("Hash value", False, AVV_REQD, PT_INT,  None,                       None),
+            ("HWND",       True,  AVV_REQD, PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -141,13 +141,13 @@ class Scrape_Image_Fingerprint(Command_Scrape):
         super().__init__("S_FINGERPRINT",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X1 value",   False, True, PT_INT,  None,                       None),
-            ("Y1 value",   False, True, PT_INT,  None,                       None),
-            ("X2 value",   False, True, PT_INT,  None,                       None),
-            ("Y2 value",   False, True, PT_INT,  None,                       None),
-            ("Fingerprint",False, True, PT_VAR,  None,                       None),
-            ("HWND",       True,  True, PT_VAR,  None,                       None),
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("X1 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("Y1 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("X2 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("Y2 value",   False, AVV_YES,  PT_INT,  None,                       None),
+            ("Fingerprint",False, AVV_REQD, PT_INT,  None,                       None),
+            ("HWND",       True,  AVV_REQD, PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -192,10 +192,10 @@ class Scrape_Fingerprint_Distance(Command_Scrape):
         super().__init__("S_FDIST",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("F1",         False, True, PT_INT,  None,                       None),
-            ("F2",         False, True, PT_INT,  None,                       None),
-            ("Distance",   False, True, PT_VAR,  None,                       None),
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("F1",         False, AVV_YES,  PT_INT,  None,                       None),
+            ("F2",         False, AVV_YES,  PT_INT,  None,                       None),
+            ("Distance",   False, AVV_YES,  PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)

@@ -15,20 +15,20 @@ import \
 # This library could be considered optional
 try:
     import commands_rpncalc
-except ImportError:
+except:
     print("[LPHK] WARNING: RPN_EVAL command is not available")  
 
 # This library could be considered optional  
 try:
     import commands_win32
-except ImportError:
+except:
     print("[LPHK] WARNING: Windows specific commands are not available")  
 
 # This library could be considered optional  
 try:
     import commands_scrape
-except ImportError:
-    print("[LPHK] WARNING: Screen scraping")  
+except:
+    print("[LPHK] WARNING: Screen scraping commands are unavailable")  
 
 # Any that were not optional should set the error flag so we can exit
 if IMPORT_FATAL:

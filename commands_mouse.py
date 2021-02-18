@@ -16,9 +16,9 @@ class Mouse_Move(command_base.Command_Basic):
         super().__init__("M_MOVE",     # the name of the command as you have to enter it in the code
             LIB,                       # the name of this module
             (                          # description of parameters
-            # Desc      Opt    Var   type      p1_val p2_val  (trailing comma is important)
-            ("X value", False, True, PT_INT,   None,  None), 
-            ("Y value", False, True, PT_INT,   None,  None),
+            # Desc      Opt    Var    type      p1_val p2_val  (trailing comma is important)
+            ("X value", False, AVV_NO, PT_INT,   None,  None), 
+            ("Y value", False, AVV_NO, PT_INT,   None,  None),
             ),
             (                          # How to log runtime execution 
             # num params, format string                           (trailing comma is important)
@@ -49,9 +49,9 @@ class Mouse_Set(command_base.Command_Basic):
         super().__init__("M_SET",   # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc      Opt    Var   type     p1_val                      p2_val 
-            ("X value", False, True, PT_INT,  None,                       None),
-            ("Y value", False, True, PT_INT,  None,                       None),
+            # Desc      Opt    Var      type     p1_val                      p2_val 
+            ("X value", False, AVV_YES, PT_INT,  None,                       None),
+            ("Y value", False, AVV_YES, PT_INT,  None,                       None),
             ),
             (                          # How to log runtime execution 
             # num params, format string                           (trailing comma is important)
@@ -82,9 +82,9 @@ class Mouse_Scroll(command_base.Command_Basic):
         super().__init__("M_SCROLL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc            Opt    Var     type     p1_val p2_val 
-            ("Scroll amount", False, VA_VAL, PT_INT,  None,  None),
-            ("X value",       True,  VA_VAL, PT_INT,  None,  None),
+            # Desc            Opt    Var      type     p1_val p2_val 
+            ("Scroll amount", True,  AVV_NO,  PT_INT,  None,  None),
+            ("X value",       False, AVV_YES, PT_INT,  None,  None),
             ),
             (                          # How to log runtime execution 
             # num params, format string                           (trailing comma is important)
@@ -116,13 +116,13 @@ class Mouse_Line(command_base.Command_Basic):
         super().__init__("M_LINE",   # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X1 value",   False, True, PT_INT,  None,                       None), 
-            ("Y1 value",   False, True, PT_INT,  None,                       None), 
-            ("X2 value",   False, True, PT_INT,  None,                       None), 
-            ("Y2 value",   False, True, PT_INT,  None,                       None), 
-            ("Wait value", True,  True, PT_INT,  variables.Validate_ge_zero, None), 
-            ("Skip value", True,  True, PT_INT,  variables.Validate_gt_zero, None),
+            # Desc         Opt    Var      type     p1_val                      p2_val 
+            ("X1 value",   False, AVV_YES, PT_INT,  None,                       None), 
+            ("Y1 value",   False, AVV_YES, PT_INT,  None,                       None), 
+            ("X2 value",   False, AVV_YES, PT_INT,  None,                       None), 
+            ("Y2 value",   False, AVV_YES, PT_INT,  None,                       None), 
+            ("Wait value", True,  AVV_YES, PT_INT,  variables.Validate_ge_zero, None), 
+            ("Skip value", True,  AVV_YES, PT_INT,  variables.Validate_gt_zero, None),
             ),
             (                          # How to log runtime execution 
             # num params, format string                           (trailing comma is important)
@@ -172,11 +172,11 @@ class Mouse_Line_Move(command_base.Command_Basic):
         super().__init__("M_LINE_MOVE",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X value",    False, True, PT_INT,  None, None), 
-            ("Y value",    False, True, PT_INT,  None, None), 
-            ("Wait value", True,  True, PT_INT,  variables.Validate_gt_zero, None), 
-            ("Skip value", True,  True, PT_INT,  variables.Validate_ge_zero, None),
+            # Desc         Opt    Var      type     p1_val                      p2_val 
+            ("X value",    False, AVV_YES, PT_INT,  None, None), 
+            ("Y value",    False, AVV_YES, PT_INT,  None, None), 
+            ("Wait value", True,  AVV_YES, PT_INT,  variables.Validate_gt_zero, None), 
+            ("Skip value", True,  AVV_YES, PT_INT,  variables.Validate_ge_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -225,11 +225,11 @@ class Mouse_Line_Set(command_base.Command_Basic):
         super().__init__("M_LINE_SET",   # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X value",    False, True, PT_INT,  None,                       None),
-            ("Y value",    False, True, PT_INT,  None,                       None),
-            ("Wait value", True,  True, PT_INT,  variables.Validate_ge_zero, None),
-            ("Skip value", True,  True, PT_INT,  variables.Validate_gt_zero, None),
+            # Desc         Opt    Var      type     p1_val                      p2_val 
+            ("X value",    False, AVV_YES, PT_INT,  None,                       None),
+            ("Y value",    False, AVV_YES, PT_INT,  None,                       None),
+            ("Wait value", True,  AVV_YES, PT_INT,  variables.Validate_ge_zero, None),
+            ("Skip value", True,  AVV_YES, PT_INT,  variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -274,9 +274,9 @@ class Mouse_Recall_Line(command_base.Command_Basic):
         super().__init__("M_RECALL_LINE",   # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("Wait value", True , True, PT_INT,  variables.Validate_ge_zero, None),
-            ("Skip value", True,  True, PT_INT,  variables.Validate_gt_zero, None),
+            # Desc         Opt    Var      type     p1_val                      p2_val 
+            ("Wait value", True , AVV_YES, PT_INT,  variables.Validate_ge_zero, None),
+            ("Skip value", True,  AVV_YES, PT_INT,  variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -331,9 +331,9 @@ class Mouse_Store(command_base.Command_Basic):
         super().__init__("M_STORE",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X value",    True , True, PT_VAR,  None,                       None),
-            ("Y value",    False, True, PT_VAR,  None,                       None),
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("X value",    True , AVV_REQD, PT_INT,  None,                       None),
+            ("Y value",    False, AVV_REQD, PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)

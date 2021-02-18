@@ -394,35 +394,34 @@ class Command_Basic:
 
             # should we do special validation?
             if ret == None or ((type(ret) == bool) and ret):
-                if not val[AV_TYPE][AVT_SPECIAL]:
-                    return True
-                    
-                if val_validation == AV_P1_VALIDATION:
-                    if val[AV_TYPE] == PT_TARGET:                    # targets (label definitions) have pass 1 validation only
-                        # check for duplicate label
-                        if split_line[n] in btn.symbols[SYM_LABELS]: # Does the label already exist (that's bad)?
-                            return ("Duplicate LABEL", btn.Line(idx))
+                if val[AV_VAR_OK] == AVV_REQD:
+                    # check for valid variable name
+                    if not variables.valid_var_name(split_line[n]): # Is it a valid variable name?
+                        return ("Invalid variable name", btn.Line(idx))
+                        
+                elif val[AV_TYPE][AVT_SPECIAL]:
+                    if val_validation == AV_P1_VALIDATION:
+                        if val[AV_TYPE] == PT_TARGET:                    # targets (label definitions) have pass 1 validation only
+                            # check for duplicate label
+                            if split_line[n] in btn.symbols[SYM_LABELS]: # Does the label already exist (that's bad)?
+                                return ("Duplicate LABEL", btn.Line(idx))
 
-                        # add label to symbol table                  # Add the new label to the labels in the symbol table
-                        btn.symbols[SYM_LABELS][split_line[n]] = idx # key is label, data is line number
-                    elif val[AV_TYPE] == PT_KEY:                     # Keys have pass 1 validation only
-                        # check for valid key
-                        if kb.sp(split_line[n]) == None:             # Does the key exist (if not, that's bad)?
-                            return ("Unknown key", btn.Line(idx))
-                    elif val[AV_TYPE] == PT_BOOL:                    # booleans have pass 1 validation only
-                        # check for valid boolean value
-                        if not (split_line[n].upper() in VALID_BOOL): # Is it a valid boolean?
-                            return ("Invalid boolean value", btn.Line(idx))
-                    elif val[AV_TYPE] == PT_VAR:                     # mandatory variables have pass 1 validation only
-                        # check for valid variable name
-                        if not variables.valid_var_name(split_line[n]): # Is it a valid variable name?
-                            return ("Invalid variable name", btn.Line(idx))
-               
-                elif val_validation == AV_P2_VALIDATION:
-                    if val[AV_TYPE] == PT_LABEL:                     # references (to a label) have pass 2 validation only
-                        # check for existance of label
-                        if split_line[n] not in btn.symbols[SYM_LABELS]:
-                            return ("Target not found", btn.Line(idx))
+                            # add label to symbol table                  # Add the new label to the labels in the symbol table
+                            btn.symbols[SYM_LABELS][split_line[n]] = idx # key is label, data is line number
+                        elif val[AV_TYPE] == PT_KEY:                     # Keys have pass 1 validation only
+                            # check for valid key
+                            if kb.sp(split_line[n]) == None:             # Does the key exist (if not, that's bad)?
+                                return ("Unknown key", btn.Line(idx))
+                        elif val[AV_TYPE] == PT_BOOL:                    # booleans have pass 1 validation only
+                            # check for valid boolean value
+                            if not (split_line[n].upper() in VALID_BOOL): # Is it a valid boolean?
+                                return ("Invalid boolean value", btn.Line(idx))
+                   
+                    elif val_validation == AV_P2_VALIDATION:
+                        if val[AV_TYPE] == PT_LABEL:                     # references (to a label) have pass 2 validation only
+                            # check for existance of label
+                            if split_line[n] not in btn.symbols[SYM_LABELS]:
+                                return ("Target not found", btn.Line(idx))
                     
                 return True
                
@@ -465,7 +464,7 @@ class Command_Basic:
         if pass_no == 1:
             v = split_line[n]
             
-            if self.auto_validate and n <= len(self.auto_validate) and self.auto_validate[n-1][AV_VAR_OK] and not (self.auto_validate[n-1][AV_TYPE] == PT_VAR) :
+            if self.auto_validate and n <= len(self.auto_validate) and self.auto_validate[n-1][AV_VAR_OK] == AVV_YES:
                 v = variables.get_value(split_line[n], btn.symbols)
             if self.auto_validate and n <= len(self.auto_validate) and self.auto_validate[n-1][AV_TYPE] and self.auto_validate[n-1][AV_TYPE][AVT_CONV]:
                 v = self.auto_validate[n-1][AV_TYPE][AVT_CONV](v)
@@ -502,7 +501,7 @@ class Command_Basic:
         if param == None:
             ret = other
         else:
-            if val[AV_TYPE] == PT_VAR:
+            if val[AV_VAR_OK] == AVV_REQD:
                 ret = variables.get(param, btn.symbols[SYM_LOCAL], btn.symbols[SYM_GLOBAL][1])    
             else:
                 ret = param
@@ -514,7 +513,7 @@ class Command_Basic:
     def Set_param(self, btn, n, val):  
         param = btn.symbols[SYM_PARAMS][n]
         av = self.auto_validate[n-1]
-        if av[AV_TYPE] == PT_VAR:
+        if val[AV_VAR_OK] == AVV_REQD:
             variables.Auto_store(btn.symbols[SYM_PARAMS][n], val, btn.symbols) # return result in variable
         
 

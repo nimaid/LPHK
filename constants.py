@@ -27,18 +27,19 @@ VS_PASS_2 = 2
 # Constants for auto validation
 AV_DESCRIPTION    = 0
 AV_OPTIONAL       = 1
-AV_VAR_OK         = 2
+
+AV_VAR_OK         = 2  # this is no longer boolean
+AVV_NO    = 0          # only literals
+AVV_YES   = 1          # var permitted (pass by value)
+AVV_REQD  = 2          # var required (pass by reference)
+
 AV_TYPE           = 3  # This is a tuple
 AVT_DESC    = 0        # and this is what is inside the tuple
 AVT_CONV    = 1
 AVT_SPECIAL = 2
+
 AV_P1_VALIDATION  = 4
 AV_P2_VALIDATION  = 5
-
-# constants for allowing variables
-VA_NO    = False # 0 # only literals are allowed
-VA_VAL   = True  # 1 # variables are passed by value (i.e. you can't change them) - CAN be a variuable
-VA_REF   = 2         # variables are passed by reference - MUST be a variable
 
 # constants for parameter types
 #              desc      conv   special  (special means additional auto-validation)
@@ -49,7 +50,6 @@ PT_LABEL    = ("label",  str,   True)       # Note that this is for a reference 
 PT_TARGET   = ("target", str,   True)       # Note that this is for the definition of a target (e.g. creating a label)
 PT_KEY      = ("key",    str,   True)       # This is a key literal
 PT_BOOL     = ("bool",   str,   True)       # True/False, Yes/No, Y/N, nonzero/zero <-- for variables
-PT_VAR      = ("var",    str,   True)       # Variable is *required*, typically for storage of results
 
 # constants for auto_message
 AM_COUNT  = 0

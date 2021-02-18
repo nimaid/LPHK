@@ -152,8 +152,8 @@ class External_Sound_Stop(command_base.Command_Basic):
             "SOUND_STOP",   # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("Fade value", True , True, PT_INT,  variables.Validate_gt_zero, None),
+            # Desc         Opt    Var      type     p1_val                      p2_val 
+            ("Fade value", True,  AVV_YES, PT_INT,  variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)

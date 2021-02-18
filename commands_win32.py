@@ -52,9 +52,9 @@ class Win32_Get_Caret(Command_Win32):
         super().__init__("W_GET_CARET",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X value",    False, True, PT_VAR,  None,                       None),
-            ("Y value",    False, True, PT_VAR,  None,                       None),
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("X value",    False, AVV_REQD, PT_INT,  None,                       None),
+            ("Y value",    False, AVV_REQD, PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -101,8 +101,8 @@ class Win32_Get_Fg_Hwnd(Command_Win32):
         super().__init__("W_GET_FG_HWND",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("HWND",       False, True, PT_VAR,  None,                       None),
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -133,8 +133,8 @@ class Win32_Set_Fg_Hwnd(Command_Win32):
         super().__init__("W_SET_FG_HWND",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("HWND",       False, True, PT_INT,  None,                       None),
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("HWND",       False, AVV_YES,  PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -171,10 +171,10 @@ class Win32_Client_To_Screen(Command_Win32):
         super().__init__("W_CLIENT_TO_SCREEN",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X value",    False, True, PT_VAR,  None,                       None),
-            ("Y value",    False, True, PT_VAR,  None,                       None),
-            ("HWND",       True,  True, PT_INT,  None,                       None),
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("X value",    False, AVV_REQD, PT_INT,  None,                       None),
+            ("Y value",    False, AVV_REQD, PT_INT,  None,                       None),
+            ("HWND",       True,  AVV_YES,  PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -214,10 +214,10 @@ class Win32_Screen_To_Client(Command_Win32):
         super().__init__("W_SCREEN_TO_CLIENT",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var   type     p1_val                      p2_val 
-            ("X value",    False, True, PT_VAR,  None,                       None),
-            ("Y value",    False, True, PT_VAR,  None,                       None),
-            ("HWND",       True,  True, PT_INT,  None,                       None),
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("X value",    False, AVV_REQD, PT_INT,  None,                       None),
+            ("Y value",    False, AVV_REQD, PT_INT,  None,                       None),
+            ("HWND",       True,  AVV_YES,  PT_INT,  None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -257,11 +257,11 @@ class Win32_Find_Hwnd(Command_Win32):
         super().__init__("W_FIND_HWND",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type     p1_val                      p2_val 
-            ("Title",      False, False, PT_TEXT, None,                       None),   # name to search for (use ~ for space
-            ("HWND",       False, True,  PT_VAR,  None,                       None),   # variable to contain HWND
-            ("M",          False, True,  PT_VAR,  None,                       None),   # number of matches found (if M<N then error)
-            ("N",          False, True,  PT_INT,  variables.Validate_gt_zero, None),   # number of match desired
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("Title",      False, AVV_YES,  PT_TEXT, None,                       None),   # name to search for (use ~ for space
+            ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
+            ("M",          False, AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
+            ("N",          False, AVV_YES,  PT_INT,  variables.Validate_gt_zero, None),   # number of match desired
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -312,8 +312,8 @@ class Win32_Copy(Command_Win32):
         super().__init__("W_COPY",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type     p1_val                      p2_val 
-            ("Clipboard",  True,  True,  PT_VAR,  None,                       None),   # variable to contain cut item
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("Clipboard",  True,  AVV_REQD, PT_TEXT, None,                       None),   # variable to contain cut item
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -363,8 +363,8 @@ class Win32_Paste(Command_Win32):
         super().__init__("W_PASTE",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type     p1_val                      p2_val 
-            ("Clipboard",  True,  True,  PT_VAR,  None,                       None),   # variable to contain item to paste
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("Clipboard",  True,  AVV_REQD, PT_TEXT, None,                       None),   # variable to contain item to paste
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -409,8 +409,8 @@ class Win32_Wait(Command_Win32):
         super().__init__("W_WAIT",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type     p1_val                      p2_val 
-            ("HWND",       False, True,  PT_VAR,  None,                       None),   # variable to contain item to paste
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("HWND",       False, AVV_YES,  PT_INT,  None,                       None),   # variable to contain item to paste
             ),
             (
             # num params, format string                           (trailing comma is important)

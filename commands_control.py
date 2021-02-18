@@ -37,8 +37,8 @@ class Control_Label(command_base.Command_Basic):
             "LABEL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type       p1_val  p2_val 
-            ("Label",      False, False, PT_TARGET, None,   None), 
+            # Desc         Opt    Var     type       p1_val  p2_val 
+            ("Label",      False, AVV_NO, PT_TARGET, None,   None), 
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -189,8 +189,8 @@ class Control_Goto_Label(Control_Flow_Basic):
             "GOTO_LABEL",   # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type      p1_val  p2_val 
-            ("Label",      False, False, PT_LABEL, None,   None), 
+            # Desc         Opt    Var     type      p1_val  p2_val 
+            ("Label",      False, AVV_NO, PT_LABEL, None,   None), 
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -215,8 +215,8 @@ class Control_If_Pressed_Goto_Label(Control_Flow_Basic):
             "IF_PRESSED_GOTO_LABEL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # desc         opt    var    type      p1_val                      p2_val 
-            ("label",      False, False, PT_LABEL, None,                       None), 
+            # desc         opt    var     type      p1_val                      p2_val 
+            ("label",      False, AVV_NO, PT_LABEL, None,                       None), 
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -244,8 +244,8 @@ class Control_If_Unpressed_Goto_Label(Control_Flow_Basic):
             "IF_UNPRESSED_GOTO_LABEL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # desc         opt    var    type      p1_val                      p2_val 
-            ("label",      False, False, PT_LABEL, None,                       None), 
+            # desc         opt    var     type      p1_val                      p2_val 
+            ("label",      False, AVV_NO, PT_LABEL, None,                       None), 
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -273,9 +273,9 @@ class Control_Repeat_Label(Control_Flow_Basic):
             "REPEAT_LABEL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # desc         opt    var    type      p1_val                      p2_val 
-            ("Label",      False, False, PT_LABEL, None,                       None), 
-            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            # desc         opt    var     type      p1_val                      p2_val 
+            ("Label",      False, AVV_NO, PT_LABEL, None,                       None), 
+            ("Repeats",    False, AVV_NO, PT_INT,   variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -310,9 +310,9 @@ class Control_Repeat(Control_Flow_Basic):
             "REPEAT",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # desc         opt    var    type      p1_val                      p2_val 
-            ("Label",      False, False, PT_LABEL, None,                       None), 
-            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            # desc         opt    var     type      p1_val                      p2_val 
+            ("Label",      False, AVV_NO, PT_LABEL, None,                       None), 
+            ("Repeats",    False, AVV_NO, PT_INT,   variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -345,9 +345,9 @@ class Control_If_Pressed_Repeat_Label(Control_Flow_Basic):
             "IF_PRESSED_REPEAT_LABEL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # desc         opt    var    type      p1_val                      p2_val 
-            ("label",      False, False, PT_LABEL, None,                       None), 
-            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            # desc         opt    var     type      p1_val                      p2_val 
+            ("label",      False, AVV_NO, PT_LABEL, None,                       None), 
+            ("Repeats",    False, AVV_NO, PT_INT,   variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -382,9 +382,9 @@ class Control_If_Pressed_Repeat(Control_Flow_Basic):
             "IF_PRESSED_REPEAT_LABEL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # desc         opt    var    type      p1_val                      p2_val 
-            ("label",      False, False, PT_LABEL, None,                       None), 
-            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            # desc         opt    var     type      p1_val                      p2_val 
+            ("label",      False, AVV_NO, PT_LABEL, None,                       None), 
+            ("Repeats",    False, AVV_NO, PT_INT,   variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -417,9 +417,9 @@ class Control_If_Unpressed_Repeat_Label(Control_Flow_Basic):
             "IF_UNPRESSED_REPEAT_LABEL",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # desc         opt    var    type      p1_val                      p2_val 
-            ("label",      False, False, PT_LABEL, None,                       None), 
-            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            # desc         opt    var     type      p1_val                      p2_val 
+            ("label",      False, AVV_NO, PT_LABEL, None,                       None), 
+            ("Repeats",    False, AVV_NO, PT_INT,   variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -454,9 +454,9 @@ class Control_If_Unpressed_Repeat(Control_Flow_Basic):
             "IF_UNPRESSED_REPEAT",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # desc         opt    var    type      p1_val                      p2_val 
-            ("label",      False, False, PT_LABEL, None,                       None), 
-            ("Repeats",    False, False, PT_INT,   variables.Validate_gt_zero, None),
+            # desc         opt    var     type      p1_val                      p2_val 
+            ("label",      False, AVV_NO, PT_LABEL, None,                       None), 
+            ("Repeats",    False, AVV_NO, PT_INT,   variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)

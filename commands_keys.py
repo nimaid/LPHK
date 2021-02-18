@@ -50,10 +50,10 @@ class Keys_Tap(command_base.Command_Basic):
             "TAP",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type       p1_val                        p2_val 
-            ("Key",        False, False, PT_KEY,    None,                         None), 
-            ("Times",      True,  True,  PT_INT,    variables.Validate_gt_zero,   None), 
-            ("Duration",   True,  True,  PT_FLOAT,  variables.Validate_ge_zero,   None), 
+            # Desc         Opt    Var      type       p1_val                        p2_val 
+            ("Key",        False, AVV_NO,  PT_KEY,    None,                         None), 
+            ("Times",      True,  AVV_YES, PT_INT,    variables.Validate_gt_zero,   None), 
+            ("Duration",   True,  AVV_YES, PT_FLOAT,  variables.Validate_ge_zero,   None), 
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -115,8 +115,8 @@ class Keys_Press(command_base.Command_Basic):
             "PRESS",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type       p1_val              p2_val 
-            ("Key",        False, False, PT_KEY,    None,               None), 
+            # Desc         Opt    Var     type       p1_val              p2_val 
+            ("Key",        False, AVV_NO, PT_KEY,    None,               None), 
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -146,8 +146,8 @@ class Keys_Release(command_base.Command_Basic):
             "RELEASE",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var    type       p1_val              p2_val 
-            ("Key",        False, False, PT_KEY,    None,               None), 
+            # Desc         Opt    Var     type       p1_val              p2_val 
+            ("Key",        False, AVV_NO, PT_KEY,    None,               None), 
             ),
             (
             # num params, format string                           (trailing comma is important)
