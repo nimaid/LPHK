@@ -1,6 +1,6 @@
 import ctypes
 from ctypes import wintypes
-import pyautogui
+import system_apis.keyboard_unix as unix_controller
 
 # code in this file comes from https://gist.github.com/Aniruddha-Tapas/1627257344780e5429b10bc92eb2f52a
 
@@ -246,4 +246,4 @@ def release(key):
 
 
 def write(string):
-    pyautogui.write(string)
+    unix_controller.write(string)
