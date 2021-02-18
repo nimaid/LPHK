@@ -1,4 +1,4 @@
-import sys, os, subprocess
+import sys, os, subprocess, argparse
 from datetime import datetime
 
 print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!\n")
@@ -94,17 +94,27 @@ lp = launchpad.Launchpad()
 
 EXIT_ON_WINDOW_CLOSE = True
 
-
 def init():
     global EXIT_ON_WINDOW_CLOSE
-    if len(sys.argv) > 1:
-        if ("--debug" in sys.argv) or ("-d" in sys.argv):
-            EXIT_ON_WINDOW_CLOSE = False
-            print("[LPHK] Debugging mode active! Will not shut down on window close.")
-            print("[LPHK] Run shutdown() to manually close the program correctly.")
+    
+    ap = argparse.ArgumentParser()
+    ap.add_argument(
+        "-d", "--debug", 
+        help = "turn on debugging mode", action="store_true")
+    ap.add_argument(
+        "-l", "--layout", 
+        help = "load a layout", 
+        type=argparse.FileType('r'))
+    ap.add_argument(
+        "-m", "--minimised", 
+        help = "Start the application minimised", action="store_true")
 
-        else:
-            print("[LPHK] Invalid argument: " + sys.argv[1] + ". Ignoring...")
+    window.ARGS = vars(ap.parse_args())
+
+    if window.ARGS['debug']:
+        EXIT_ON_WINDOW_CLOSE = False
+        print("[LPHK] Debugging mode active! Will not shut down on window close.")
+        print("[LPHK] Run shutdown() to manually close the program correctly.")
     
     files.init(USER_PATH)
     sound.init(USER_PATH)

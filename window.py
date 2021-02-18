@@ -37,6 +37,7 @@ root_destroyed = None
 restart = False
 lp_object = None
 
+ARGS = dict()
 
 load_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT, files.LEGACY_LAYOUT_EXT])]
 load_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT, files.LEGACY_SCRIPT_EXT])]
@@ -205,7 +206,13 @@ class Main_Window(tk.Frame):
             self.draw_canvas()
             self.enable_menu("Layout")
             self.stat["text"] = f"Connected to {lpcon.get_display_name(lp)}"
-            self.stat["bg"] = STAT_ACTIVE_COLOR
+            self.stat["bg"] = STAT_ACTIVE_COLOR    
+
+    # load a layout on startup
+    def load_initial_layout(self):
+        global ARGS
+        if ARGS['layout']:                                 # did the user pass the option to load an initial layout?
+            files.load_layout_to_lp(ARGS['layout'].name)   # Load it!
 
     def disconnect_lp(self):
         global lp_connected
@@ -706,7 +713,13 @@ def make():
     global app
     global root_destroyed
     global redetect_before_start
+    global ARGS
     root = tk.Tk()
+
+    # does the user want to start the form minimised?
+    if ARGS['minimised']:
+        root.iconify()
+
     root_destroyed = False
     root.protocol("WM_DELETE_WINDOW", close)
     root.resizable(False, False)
@@ -717,7 +730,10 @@ def make():
             root.iconbitmap(MAIN_ICON)
     app = Main_Window(root)
     app.raise_above_all()
+
     app.after(100, app.connect_lp)
+    app.after(110, app.load_initial_layout)   # Load the initial layout if you have specified one
+
     app.mainloop()
 
 
