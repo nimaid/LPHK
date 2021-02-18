@@ -43,13 +43,13 @@ class Command_Win32(command_base.Command_Basic):
 # ### CLASS WIN32_GET_CURSOR                     ###
 # ##################################################
 
-# class that defines the W_GET_CURSOR command -- gets the location of the cursor on the current form
-class Win32_Get_Cursor(Command_Win32):
+# class that defines the W_GET_CARET command -- gets the location of the cursor on the current form
+class Win32_Get_Caret(Command_Win32):
     def __init__(
         self,
         ):
 
-        super().__init__("W_GET_CURSOR",  # the name of the command as you have to enter it in the code
+        super().__init__("W_GET_CARET",  # the name of the command as you have to enter it in the code
             LIB,
             (
             # Desc         Opt    Var   type     p1_val                      p2_val 
@@ -58,12 +58,12 @@ class Win32_Get_Cursor(Command_Win32):
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (2,           "    Store screen absolute cursor position in variables ({1}, {2})"), 
+            (2,           "    Store screen absolute caret position in variables ({1}, {2})"), 
             ) )
 
 
-    def get_cursor(self):
-        # get current cursor position within window
+    def get_caret(self):
+        # get current caret position within window
 
         res = (-1, -1) # failure value
         
@@ -85,7 +85,7 @@ class Win32_Get_Cursor(Command_Win32):
         self.Set_param(btn, 2, y)
 
 
-scripts.Add_command(Win32_Get_Cursor())  # register the command
+scripts.Add_command(Win32_Get_Caret())  # register the command
 
 
 # ##################################################
@@ -205,7 +205,7 @@ scripts.Add_command(Win32_Client_To_Screen())  # register the command
 # ### CLASS W_SCREEN_TO_CLIENT                   ###
 # ##################################################
 
-# class that defines the W_CLIENT_TO_SCREEN command - converts a form relative coordinate to a screen (absolute) coord
+# class that defines the W_SCREEN_TO_CLIENT command - converts a screen (absolute) coord to a form relative coordinate
 class Win32_Screen_To_Client(Command_Win32):
     def __init__(
         self,
@@ -222,7 +222,7 @@ class Win32_Screen_To_Client(Command_Win32):
             (
             # num params, format string                           (trailing comma is important)
             (2,           "    Convert form absolute coord in ({1}, {2}) to relative to current window"), 
-            (3,           "    Convert form absolute coord in ({1}, {2}) to relative to current window"), 
+            (3,           "    Convert form absolute coord in ({1}, {2}) to relative to window {3}"), 
             ) )
 
             

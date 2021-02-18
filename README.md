@@ -355,6 +355,38 @@ All Mouse movement commands can now use variables in place of constants.  Variab
   * Local variables are local to the current script (and are maintained across executions)
   * The stack and local variables will be lost if the script is edited.
 
+#### Win32 Commands [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `W_GET_CARET`
+  * Places the window-relative X and Y coordinates of the text cursor (caret) into the 2 variables passed as parameters
+* `W_GET_FG_HWND`
+  * Places the handle of the currently active window into the variable passed as parameter 1
+* `W_SET_FG_HWND`
+  * Sets the current foreground window using the handle passed as the first parameter (variable or constant)
+* `W_CLIENT_TO_SCREEN`
+  * Converts the X, Y values in the first 2 parameters from form relative to screen absolute.  Assumes current FG window unless another handle is passed as parameter 3
+* `W_SCREEN_TO_CLIENT`
+  * Converts the X, Y values in the first 2 parameters from screen absolute to form relative.  Assumes current FG window unless another handle is passed as parameter 3
+* `W_FIND_HWND`
+  * Searches for window with title (param 1) returning handle (param 2).  Param 3 allows handles for duplicate windows, param 4 returns the number of duplicate windows.
+* `W_COPY`
+  * Executes a "copy" to clipboard, and optionally to variable (param 1) on the current window
+* `W_PASTE` 
+  * Executes a "paste" from clipboard, or optionally from variable (param 1) in the current window
+* `W_WAIT`
+  * Waits until the window (param 1) is ready for input
+
+#### Screen Scraping Commands [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `S_OCR`
+  * pass x1 y1 x2 y2 to describe a window-relative rectangle
+  * the region of the screen is OCRed and the result is returned in param 5 (a variable)
+  * if other than the current FG window, pass window handle as param 6
+* `S_HASH`
+  * same params as S_OCR except param 5 is a variable to hold the MD5 hash of the image area
+* `S_FINGERPRINT`
+  * same params as S_OCR except param 5 is a variable to hold a fingerprint of the image area
+* `S_FDIST` 
+  * first 2 parameters are a pair of fingerprints.  Third param is the distance between them 0 = very close.
+
 ### Key Names [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitespace keys and the following key names are allowed:
 * `alt`
@@ -434,7 +466,7 @@ In order of priority:
   * Draw icons
   * With this, allow buttons to be bound with the light off
 * Add startup config file
-  * Default layout specification
+  * Default layout specification -- DONE
   * Auto connect overide
   * Force launchpad model setting
 * Add more sound commands
@@ -451,8 +483,8 @@ In order of priority:
   * ~~Should use a `conda` environment created from an `environment.yml` file~~
   * Should copy LPHK files into an appropriate directory
   * Should give options to add various shortcuts
-* Add temporary command `__M_PRINT_POPUP__` that gives a pop-up with the current cursor position
-* Option to minimize to system tray
+* Add temporary command `__M_PRINT_POPUP__` that gives a pop-up with the current cursor position -- (Can now be done with a script)
+* Option to minimize to system tray - DONE for startup
   * Tkinter does not provide a way to do this. There may be Windows-specific extentions I can use, but maybe not.
 * Add auto-update feature using `git`
   * ~~There will be a VERSION file in the main directory with the version string~~
