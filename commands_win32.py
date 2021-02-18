@@ -1,5 +1,5 @@
 # This module is VERY specific to Win32
-import command_base, ms, kb, scripts, variables, win32gui, win32process, win32api, win32con, win32clipboard
+import command_base, ms, kb, scripts, variables, win32gui, win32process, win32api, win32con, win32clipboard, win32event
 from constants import *
 
 LIB = "cmds_wn32" # name of this library (for logging)
@@ -300,7 +300,7 @@ scripts.Add_command(Win32_Find_Hwnd())  # register the command
 
 
 # ##################################################
-# ### CLASS W_COPY                                ###
+# ### CLASS W_COPY                               ###
 # ##################################################
 
 # class that defines the W_COPY command - copies and places (optionally) text into variable
@@ -351,7 +351,7 @@ scripts.Add_command(Win32_Copy())  # register the command
 
 
 # ##################################################
-# ### CLASS W_COPY                                ###
+# ### CLASS W_PASTE                              ###
 # ##################################################
 
 # class that defines the W_Paste command - copies and places (optionally) text into variable
@@ -394,3 +394,40 @@ class Win32_Paste(Command_Win32):
 
 
 scripts.Add_command(Win32_Paste())  # register the command
+
+
+# ##################################################
+# ### CLASS W_WAIT                               ###
+# ##################################################
+
+# class that defines the W_WAIT command - waits until the process for a window handle is ready for input
+class Win32_Wait(Command_Win32):
+    def __init__(
+        self,
+        ): 
+        
+        super().__init__("W_WAIT",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # Desc         Opt    Var    type     p1_val                      p2_val 
+            ("HWND",       False, True,  PT_VAR,  None,                       None),   # variable to contain item to paste
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (0,           "    Wait until {1} is ready for input"), 
+            ) )
+            
+    def Process(self, btn, idx, split_line):
+    
+        hwnd = self.Get_param(btn, 1)                          # get the window
+        tid, pid = win32process.GetWindowThreadProcessId(hwnd) # find the pid
+        hproc = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION , False, pid) # find the process id
+        
+        res = win32con.WAIT_TIMEOUT
+        while res == win32con.WAIT_TIMEOUT:
+            res = win32event.WaitForInputIdle(hproc, 20)
+            if btn.Check_kill():
+                return False
+
+
+scripts.Add_command(Win32_Wait())  # register the command
