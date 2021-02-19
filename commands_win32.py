@@ -38,6 +38,20 @@ class Command_Win32(command_base.Command_Basic):
         if hwnd != old_hwnd:                                     # set fg window if it was different
             win32gui.SetForegroundWindow(old_hwnd)
 
+    # returns a list of hwnds for a process id
+    def get_hwnds_for_pid(self, pid):
+        
+        def callback (hwnd, hwnds):
+            if win32gui.IsWindowVisible(hwnd) and win32gui.IsWindowEnabled(hwnd):
+                _, found_pid = win32process.GetWindowThreadProcessId(hwnd)
+                if found_pid == pid:
+                    hwnds.append (hwnd)
+            return True
+        
+        hwnds = []
+        win32gui.EnumWindows (callback, hwnds)
+        return hwnds
+
 
 # ##################################################
 # ### CLASS WIN32_GET_CURSOR                     ###
@@ -431,3 +445,38 @@ class Win32_Wait(Command_Win32):
 
 
 scripts.Add_command(Win32_Wait())  # register the command
+
+
+# ##################################################
+# ### CLASS W_PID_TO_HWND                        ###
+# ##################################################
+
+# class that defines the W_WAIT command - waits until the process for a window handle is ready for input
+class Win32_Pid_To_Hwnd(Command_Win32):
+    def __init__(
+        self,
+        ): 
+        
+        super().__init__("W_PID_TO_HWND",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("pid",        False, AVV_YES,  PT_INT,  None,                       None),   # variable containing pid
+            ("hwnd",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain hwnd
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (2,           "    return hwnd in {2} for pid {1}"), 
+            ) )
+            
+    def Process(self, btn, idx, split_line):
+    
+        pid = self.Get_param(btn, 1)                          # get the pid
+        hwnds = self.get_hwnds_for_pid(pid)                   # find any hwnds
+        if len(hwnds) == 1:
+            self.Set_param(btn, 2, hwnds[0])
+        else:
+            self.Set_param(btn, 2, hwnds)
+
+
+scripts.Add_command(Win32_Pid_To_Hwnd())  # register the command

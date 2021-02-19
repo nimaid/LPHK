@@ -464,10 +464,11 @@ class Command_Basic:
         if pass_no == 1:
             v = split_line[n]
             
-            if self.auto_validate and n <= len(self.auto_validate) and self.auto_validate[n-1][AV_VAR_OK] == AVV_YES:
-                v = variables.get_value(split_line[n], btn.symbols)
-            if self.auto_validate and n <= len(self.auto_validate) and self.auto_validate[n-1][AV_TYPE] and self.auto_validate[n-1][AV_TYPE][AVT_CONV]:
-                v = self.auto_validate[n-1][AV_TYPE][AVT_CONV](v)
+            if self.auto_validate and n <= len(self.auto_validate):
+                if self.auto_validate[n-1][AV_VAR_OK] == AVV_YES:
+                    v = variables.get_value(split_line[n], btn.symbols)
+                elif self.auto_validate[n-1][AV_VAR_OK] != AVV_REQD and self.auto_validate[n-1][AV_TYPE] and self.auto_validate[n-1][AV_TYPE][AVT_CONV]:
+                    v = self.auto_validate[n-1][AV_TYPE][AVT_CONV](v)
             return v
         elif pass_no == 2:
             if len(self.auto_validate) != 0:
@@ -513,7 +514,7 @@ class Command_Basic:
     def Set_param(self, btn, n, val):  
         param = btn.symbols[SYM_PARAMS][n]
         av = self.auto_validate[n-1]
-        if val[AV_VAR_OK] == AVV_REQD:
+        if av[AV_VAR_OK] == AVV_REQD:
             variables.Auto_store(btn.symbols[SYM_PARAMS][n], val, btn.symbols) # return result in variable
         
 

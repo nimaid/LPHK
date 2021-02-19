@@ -238,6 +238,10 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * Open website (argument 1) in default browser.
 * `WEB_NEW`
   * Open website (argument 1) in default browser, try new window.
+* `CODE`
+  * runs anything, waits for it to end
+* `CODE_NOWAIT`
+  * runs anything, returns immediately with pid of process
   
 #### Keypresses [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * `PRESS`
@@ -374,6 +378,8 @@ All Mouse movement commands can now use variables in place of constants.  Variab
   * Executes a "paste" from clipboard, or optionally from variable (param 1) in the current window
 * `W_WAIT`
   * Waits until the window (param 1) is ready for input
+* `W_PID_TO_HWND`
+  * Converts PID in param 1 to HWND in param 2
 
 #### Screen Scraping Commands [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * `S_OCR`

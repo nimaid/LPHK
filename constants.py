@@ -37,19 +37,23 @@ AV_TYPE           = 3  # This is a tuple
 AVT_DESC    = 0        # and this is what is inside the tuple
 AVT_CONV    = 1
 AVT_SPECIAL = 2
+AVT_LAST    = 3
 
 AV_P1_VALIDATION  = 4
 AV_P2_VALIDATION  = 5
 
 # constants for parameter types
-#              desc      conv   special  (special means additional auto-validation)
-PT_INT      = ("int",    int,   False)
-PT_FLOAT    = ("float",  float, False)
-PT_TEXT     = ("text",   str,   False)
-PT_LABEL    = ("label",  str,   True)       # Note that this is for a reference to a label, not the definition of a label!
-PT_TARGET   = ("target", str,   True)       # Note that this is for the definition of a target (e.g. creating a label)
-PT_KEY      = ("key",    str,   True)       # This is a key literal
-PT_BOOL     = ("bool",   str,   True)       # True/False, Yes/No, Y/N, nonzero/zero <-- for variables
+#              desc      conv   special last (special means additional auto-validation, last means MUST be last)
+PT_INT      = ("int",    int,   False, False)
+PT_FLOAT    = ("float",  float, False, False)
+#PT_STR      = ("str",    str,   True,  False)       # a string without whitespace or a quoted string
+#PT_STRS     = ("strs",   str,   True,  True)        # 1 or more strings without whitespace or quoted
+#PT_LINE     = ("line",   str,   True,  True)        # the rest of the line following first preceeding whitespace
+PT_TEXT     = ("text",   str,   False, False)       # a string without whitespace <-- obsolete once the above are added 
+PT_LABEL    = ("label",  str,   True,  False)       # Note that this is for a reference to a label, not the definition of a label!
+PT_TARGET   = ("target", str,   True,  False)       # Note that this is for the definition of a target (e.g. creating a label)
+PT_KEY      = ("key",    str,   True,  False)       # This is a key literal
+PT_BOOL     = ("bool",   str,   True,  False)       # True/False, Yes/No, Y/N, nonzero/zero <-- for variables
 
 # constants for auto_message
 AM_COUNT  = 0

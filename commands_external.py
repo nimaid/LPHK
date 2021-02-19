@@ -125,11 +125,11 @@ class External_Sound(command_base.Command_Basic):
         ):
 
         if len(split_line) > 2:
-            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    Play sound file " + split_line[1] + \
+            print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Play sound file " + split_line[1] + \
                 " at volume " + str(split_line[2]))
             sound.play(split_line[1], float(split_line[2]))
         else:
-            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    Play sound file " + split_line[1])
+            print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Play sound file " + split_line[1])
             sound.play(split_line[1])
 
         return idx+1
@@ -210,16 +210,53 @@ class External_Code(command_base.Command_Basic):
         ):
 
         args = " ".join(split_line[1:])
-        print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    Running code: " + args)
+        print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Running code: " + args)
 
         try:
             subprocess.run(args)
         except Exception as e:
-            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))
+            print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))
 
         return idx+1
 
 
 scripts.Add_command(External_Code())  # register the command
+
+
+# ##################################################
+# ### CLASS External_Code_NOWAIT                 ###
+# ##################################################
+
+# class that defines the CODE_NOWAIT command (runs something).  This returns immediately 
+class External_Code_Nowait(command_base.Command_Basic):
+    def __init__(
+        self,
+        ): 
+        
+        super().__init__("CODE_NOWAIT",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("PID",        False, AVV_REQD, PT_INT,  None,                       None),   # variable to get PID of new process
+            ("Command",    False, AVV_NO,   PT_TEXT, None,                       None),   # text of command
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (2,           "    Run {2} retuning PID in {1}"), 
+            ) )
+            
+    def Process(self, btn, idx, split_line):
+        args = self.Get_param(btn, 2).replace('~', ' ')       # get the command we want to run  
+
+        pid = -1        
+        try:
+            proc = subprocess.Popen(args) #['C:\Program Files\Internet Explorer\iexplore.exe', 'http://hsecs/'])
+        except Exception as e:
+            print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))
+
+        self.Set_param(btn, 1, proc.pid)                          # get the window
+
+
+scripts.Add_command(External_Code_Nowait())  # register the command
 
 
