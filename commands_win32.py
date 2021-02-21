@@ -272,7 +272,7 @@ class Win32_Find_Hwnd(Command_Win32):
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val 
-            ("Title",      False, AVV_YES,  PT_TEXT, None,                       None),   # name to search for (use ~ for space
+            ("Title",      False, AVV_NO,   PT_STR,  None,                       None),   # name to search for
             ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
             ("M",          False, AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
             ("N",          False, AVV_YES,  PT_INT,  variables.Validate_gt_zero, None),   # number of match desired
@@ -290,7 +290,7 @@ class Win32_Find_Hwnd(Command_Win32):
                 data['hwnds'] += [hwnd]                        # add to list
         
         hwnds = []                                             # reset the list of window handles
-        title = self.Get_param(btn, 1).replace('~', ' ')       # get the title we're searching for
+        title = self.Get_param(btn, 1)                         # get the title we're searching for
 
         data = {'title':title, 'hwnds':hwnds}                  # data structure to be used by the callback routine
         win32gui.EnumWindows(CheckWindow, data)                # enumerate windows
@@ -327,7 +327,7 @@ class Win32_Copy(Command_Win32):
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val 
-            ("Clipboard",  True,  AVV_REQD, PT_TEXT, None,                       None),   # variable to contain cut item
+            ("Clipboard",  True,  AVV_REQD, PT_STR,  None,                       None),   # variable to contain cut item
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -378,7 +378,7 @@ class Win32_Paste(Command_Win32):
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val 
-            ("Clipboard",  True,  AVV_REQD, PT_TEXT, None,                       None),   # variable to contain item to paste
+            ("Clipboard",  True,  AVV_REQD, PT_STR,  None,                       None),   # variable to contain item to paste
             ),
             (
             # num params, format string                           (trailing comma is important)

@@ -1,21 +1,10 @@
 import sys, os, subprocess, argparse
 from datetime import datetime
+from constants import *
 
 print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!\n")
 
 LOG_TITLE = "LPHK.log"
-
-# Get platform information
-PLATFORMS = [   {"search_string": "win", "name_string": "windows"},
-                {"search_string": "linux", "name_string": "linux"},
-                {"search_string": "darwin", "name_string": "macintosh"} ]
-PLATFORM = None
-for plat in PLATFORMS:
-    if sys.platform.startswith(plat["search_string"]):
-        PLATFORM = plat["name_string"]
-        break
-if PLATFORM == None:
-    PLATFORM = "other"
 
 # Test if this is a PyInstaller executable or a .py file
 if getattr(sys, 'frozen', False):

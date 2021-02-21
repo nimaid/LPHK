@@ -25,6 +25,8 @@ class Command_Basic:
         self.auto_validate = auto_validate    # any auto-validation, if defined
         self.auto_message = auto_message      # format for any messages we need
         
+        self.validate_init()
+        
         self.valid_max_params = self.Calc_valid_max_params()     # calculate the max number of parmeters
         self.valid_num_params = self.Calc_valid_param_counts()   # calculate the set of valid numbers of parameters
 
@@ -32,6 +34,17 @@ class Command_Basic:
         self.validation_states = [VS_COUNT, VS_PASS_1, VS_PASS_2]                    # by default we'll do a count and both passes if you don't override
         
  
+    def validate_init(self):
+        # This helps validate the parameters passed to __init__.  It helps enforce the rules
+        avl = self.auto_validate
+        if avl != None:
+            np = len(avl) - 1 
+            for p, av in enumerate(avl): 
+                if av[AV_TYPE][AVT_LAST] and p < np:          # variable type is "last" but it's not the last
+                    raise Exception('ERROR in command "' + self.name + '" - the parameter #' + str(p+1) + ' (' + av[AVT_DESC] + ') is not the last parameter') 
+                if not (av[AV_VAR_OK] in av[AV_TYPE][AVT_MAX_VAR]):  # some types can't be passed variables
+                    raise Exception('ERROR in command "' + self.name + '" - the parameter #' + str(p+1) + ' (' + av[AVT_DESC] + ') specifies a variable type that is not permittted') 
+
     def Validate(
         # This is a low level validation routine.  If you take over this function you must take
         # responsibility for all validation.
@@ -297,8 +310,11 @@ class Command_Basic:
         # Return the maximum number of parameters.  We can calculate this simply based on the number defined
         # in the auto_validate.  If you aren't using the auto_validate, then you may need to set this yourself
         # in the __init__()
-        if self.auto_validate:
-            return len(self.auto_validate)
+        # if the last parameter is "last" then there is no maximum!
+        avl = self.auto_validate
+        if avl:
+            if len(avl) == 0 or not avl[-1][AV_TYPE][AVT_LAST]:
+                return len(avl)
             
         return None
 
@@ -313,15 +329,18 @@ class Command_Basic:
         # validation routine that n or more parameters are acceptable -- this is great for comments etc.
         ret = None
 
-        if self.auto_validate:
+        avl = self.auto_validate
+        if avl:
             ret = []
-            vn = len(self.auto_validate)
-            for i in range(vn):
-                i_val = self.auto_validate[i]         # get the parameter
-                if (i_val[AV_OPTIONAL] == True):      # if this one is optional 
+            vn = len(avl)
+            for i, av in enumerate(avl):
+                if av[AV_OPTIONAL]:                   # if this one is optional 
                     ret += [i]                        # then 1 fewer is OK
 
-            ret += [vn]                               # it's always valid to pass *all* the parameters       
+            if vn > 0 and avl[-1][AV_TYPE][AVT_LAST]:
+                ret += [vn, None]                     # if the last parameter is a "last" parameter, there is no limit on parameters
+            else:
+                ret += [vn]                           # it's always valid to pass *all* the parameters       
 
         return ret
 
@@ -335,18 +354,20 @@ class Command_Basic:
         if not (ret == None or ((type(ret) == bool) and ret)):
             return ret
             
-        return variables.Check_num_params(btn, self, idx, split_line)
+        v = variables.Check_num_params(btn, self, idx, split_line)
+
+        return v
         
         
     def Param_validation_count(self, n_passed):
         # This routine determines how many parameters to check.  In cases where there are unlimited parameters,
         # it will only recommend checking the number that exist.  Otherwise, all parameters will be checked.
         # This function improves efficiency.
-        if ((self.valid_max_params == None and n_passed == 0) or (self.valid_max_params < n_passed)) or \
-            (len(self.valid_num_params) == 2 and self.valid_num_params[1] == None):
+        vmp = self.valid_max_params
+        if (vmp == None) or (vmp < n_passed):
             return n_passed
         else:
-            return self.valid_max_params
+            return vmp
         
 
     def Validate_params(self, ret, btn, idx, split_line, val_validation):
@@ -381,51 +402,56 @@ class Command_Basic:
         if n >= len(split_line):
             return ret
 
-        if self.auto_validate == None:  # no auto validation can be done
+        if self.auto_validate == None or self.auto_validate == ():  # no auto validation can be done
             return ret
             
         if n <= len(self.auto_validate):
             # the normal auto-validation
             val = self.auto_validate[n-1]
-           
-            opt = self.valid_num_params == [] or (set(range(1,n)) & set(self.valid_num_params)) != []
+        else:
+            # special case for "last" parameters
+            val = self.auto_validate[-1]
+            
+        opt = self.valid_num_params == [] or \
+            self.valid_num_params[-1] == None or \
+            (set(range(1,n)) & set(self.valid_num_params)) != []
 
-            ret = variables.Check_generic_param(btn, self, idx, split_line, n, val, val_validation)
+        ret = variables.Check_generic_param(btn, self, idx, split_line, n, val, val_validation)
 
-            # should we do special validation?
-            if ret == None or ((type(ret) == bool) and ret):
-                if val[AV_VAR_OK] == AVV_REQD:
-                    # check for valid variable name
-                    if not variables.valid_var_name(split_line[n]): # Is it a valid variable name?
-                        return ("Invalid variable name", btn.Line(idx))
-                        
-                elif val[AV_TYPE][AVT_SPECIAL]:
-                    if val_validation == AV_P1_VALIDATION:
-                        if val[AV_TYPE] == PT_TARGET:                    # targets (label definitions) have pass 1 validation only
-                            # check for duplicate label
-                            if split_line[n] in btn.symbols[SYM_LABELS]: # Does the label already exist (that's bad)?
-                                return ("Duplicate LABEL", btn.Line(idx))
-
-                            # add label to symbol table                  # Add the new label to the labels in the symbol table
-                            btn.symbols[SYM_LABELS][split_line[n]] = idx # key is label, data is line number
-                        elif val[AV_TYPE] == PT_KEY:                     # Keys have pass 1 validation only
-                            # check for valid key
-                            if kb.sp(split_line[n]) == None:             # Does the key exist (if not, that's bad)?
-                                return ("Unknown key", btn.Line(idx))
-                        elif val[AV_TYPE] == PT_BOOL:                    # booleans have pass 1 validation only
-                            # check for valid boolean value
-                            if not (split_line[n].upper() in VALID_BOOL): # Is it a valid boolean?
-                                return ("Invalid boolean value", btn.Line(idx))
-                   
-                    elif val_validation == AV_P2_VALIDATION:
-                        if val[AV_TYPE] == PT_LABEL:                     # references (to a label) have pass 2 validation only
-                            # check for existance of label
-                            if split_line[n] not in btn.symbols[SYM_LABELS]:
-                                return ("Target not found", btn.Line(idx))
+        # should we do special validation?
+        if ret == None or ((type(ret) == bool) and ret):
+            if val[AV_VAR_OK] == AVV_REQD:
+                # check for valid variable name
+                if not variables.valid_var_name(split_line[n]): # Is it a valid variable name?
+                    return ("Invalid variable name", btn.Line(idx))
                     
-                return True
+            elif val[AV_TYPE][AVT_SPECIAL]:
+                if val_validation == AV_P1_VALIDATION:
+                    if val[AV_TYPE] == PT_TARGET:                    # targets (label definitions) have pass 1 validation only
+                        # check for duplicate label
+                        if split_line[n] in btn.symbols[SYM_LABELS]: # Does the label already exist (that's bad)?
+                            return ("Duplicate LABEL", btn.Line(idx))
+
+                        # add label to symbol table                  # Add the new label to the labels in the symbol table
+                        btn.symbols[SYM_LABELS][split_line[n]] = idx # key is label, data is line number
+                    elif val[AV_TYPE] == PT_KEY:                     # Keys have pass 1 validation only
+                        # check for valid key
+                        if kb.sp(split_line[n]) == None:             # Does the key exist (if not, that's bad)?
+                            return ("Unknown key", btn.Line(idx))
+                    elif val[AV_TYPE] == PT_BOOL:                    # booleans have pass 1 validation only
+                        # check for valid boolean value
+                        if not (split_line[n].upper() in VALID_BOOL): # Is it a valid boolean?
+                            return ("Invalid boolean value", btn.Line(idx))
                
-            return (ret, btn.Line(idx))
+                elif val_validation == AV_P2_VALIDATION:
+                    if val[AV_TYPE] == PT_LABEL:                     # references (to a label) have pass 2 validation only
+                        # check for existance of label
+                        if split_line[n] not in btn.symbols[SYM_LABELS]:
+                            return ("Target not found", btn.Line(idx))
+                
+            return True
+           
+        return (ret, btn.Line(idx))
             
         
     def Run_params(self, ret, btn, idx, split_line, pass_no):
@@ -461,26 +487,31 @@ class Command_Basic:
         
         # Note that pass 1 returns the variable value, where pass 2 returns a value indicating
         # if validation has passed.
-        if pass_no == 1:
-            v = split_line[n]
-            
-            if self.auto_validate and n <= len(self.auto_validate):
-                if self.auto_validate[n-1][AV_VAR_OK] == AVV_YES:
+        avl = self.auto_validate
+        if avl:
+            if n <= len(avl):
+                av = avl[n-1]
+            else:
+                av = avl[-1]
+                
+            if pass_no == 1:
+                v = split_line[n]
+                
+                if av[AV_VAR_OK] == AVV_YES:
                     v = variables.get_value(split_line[n], btn.symbols)
-                elif self.auto_validate[n-1][AV_VAR_OK] != AVV_REQD and self.auto_validate[n-1][AV_TYPE] and self.auto_validate[n-1][AV_TYPE][AVT_CONV]:
-                    v = self.auto_validate[n-1][AV_TYPE][AVT_CONV](v)
-            return v
-        elif pass_no == 2:
-            if len(self.auto_validate) != 0:
-                val = self.auto_validate[n-1]
+                elif av[AV_VAR_OK] != AVV_REQD and av[AV_TYPE] and av[AV_TYPE][AVT_CONV]:
+                    v = av[AV_TYPE][AVT_CONV](v)
+                    
+                return v
+            elif pass_no == 2:
                 ok = ret
                 
-                if val[AV_P1_VALIDATION]:
-                    ok = val[AV_P1_VALIDATION](btn.symbols[SYM_PARAMS][n], idx, self.name, val[AV_DESCRIPTION], n, split_line[n])
+                if av[AV_P1_VALIDATION]:
+                    ok = av[AV_P1_VALIDATION](btn.symbols[SYM_PARAMS][n], idx, self.name, av[AV_DESCRIPTION], n, split_line[n])
                     if ok != True:
                         print("[" + self.lib + "] " + btn.coords + "  " + ok)
                         ret = -1
-               
+                   
         return ret
 
 
@@ -496,8 +527,12 @@ class Command_Basic:
 
 
     # gets the value of the nth parameter (button is required for context).  Other is default value if param does not exist
-    def Get_param(self, btn, n, other=None):  
-        val = self.auto_validate[n-1]
+    def Get_param(self, btn, n, other=None): 
+        # handle the repeating last parameter
+        avl = len(self.auto_validate)
+        m = min(n, avl)        
+        val = self.auto_validate[m-1]
+        
         param = btn.symbols[SYM_PARAMS][n]
         if param == None:
             ret = other
@@ -505,7 +540,10 @@ class Command_Basic:
             if val[AV_VAR_OK] == AVV_REQD:
                 ret = variables.get(param, btn.symbols[SYM_LOCAL], btn.symbols[SYM_GLOBAL][1])    
             else:
-                ret = param
+                if type(param) == str and param[0:1] == '"':
+                    ret = param[1:]
+                else:
+                    ret = param
             
         return ret
         

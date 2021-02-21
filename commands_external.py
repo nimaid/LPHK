@@ -238,7 +238,7 @@ class External_Code_Nowait(command_base.Command_Basic):
             (
             # Desc         Opt    Var       type     p1_val                      p2_val 
             ("PID",        False, AVV_REQD, PT_INT,  None,                       None),   # variable to get PID of new process
-            ("Command",    False, AVV_NO,   PT_TEXT, None,                       None),   # text of command
+            ("Command",    False, AVV_NO,   PT_STRS, None,                       None),   # text of command
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -246,17 +246,20 @@ class External_Code_Nowait(command_base.Command_Basic):
             ) )
             
     def Process(self, btn, idx, split_line):
-        args = self.Get_param(btn, 2).replace('~', ' ')       # get the command we want to run  
+        args = []
+        for i in range(2, self.Param_count(btn)+1):
+            args += [self.Get_param(btn, i)]    # get the command we want to run  
 
         pid = -1        
         try:
-            proc = subprocess.Popen(args) #['C:\Program Files\Internet Explorer\iexplore.exe', 'http://hsecs/'])
+            proc = subprocess.Popen(args) 
+            pid = proc.pid
         except Exception as e:
             print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))
 
-        self.Set_param(btn, 1, proc.pid)                          # get the window
+        self.Set_param(btn, 1, pid)       # return the pid
 
 
-scripts.Add_command(External_Code_Nowait())  # register the command
+scripts.Add_command(External_Code_Nowait())    # register the command
 
 

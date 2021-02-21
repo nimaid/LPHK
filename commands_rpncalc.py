@@ -17,7 +17,7 @@ LIB = "cmds_rpnc" # name of this library (for logging)
 # passing parameters to and from other routines if the stack is preserved
 # in the symbol table.  In this version The output is to the log, but it
 # is easily extended.
-class RpnCalc_Rpn_Eval(command_base.Command_Basic):
+class Rpn_Eval(command_base.Command_Basic):
     def __init__(
         self, 
         ):
@@ -663,5 +663,35 @@ class RpnCalc_Rpn_Eval(command_base.Command_Basic):
         return False
 
 
-scripts.Add_command(RpnCalc_Rpn_Eval())  # register the command
+scripts.Add_command(Rpn_Eval())  # register the command
 
+
+# ##################################################
+# ### CLASS RPN_SET                              ###
+# ##################################################
+
+# class that defines the RPN_SET command -- Sets a variable to a string value
+class Rpn_Set(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("RPN_SET",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val 
+            ("Variable",   False, AVV_REQD, PT_STR,  None,                       None),
+            ("Value",      False, AVV_YES,  PT_STR,  None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (2,           "    Assign '{2} to variable {1}"), 
+            ) )
+
+
+    def Process(self, btn, idx, split_line):
+        val = self.Get_param(btn, 2)   # Get the from coords
+        self.Set_param(btn, 1, val)                                  # pass the hash back            
+
+        
+scripts.Add_command(Rpn_Set())  # register the command

@@ -105,7 +105,7 @@ def Check_num_params(btn, cmd, idx, split_line):
         return True       # anything is valid
         
     ln = len(cmd.valid_num_params)
-    n = len(split_line)-1
+    n = len(split_line)-1 
     if ln == 2 and cmd.valid_num_params[1] == None:
         if n >= cmd.valid_num_params[0]:
             return True
@@ -145,7 +145,7 @@ def Check_generic_param(btn, cmd, idx, split_line, p, val, val_validation):
     try:
         temp = val[AV_TYPE][AVT_CONV](split_line[p])
     except:
-        if val[AV_VAR_OK] >= AVV_YES and valid_var_name(split_line[p]):   # a variable is OK here
+        if val[AV_VAR_OK] in AWS_YES and valid_var_name(split_line[p]):   # a variable is OK here
             return True
         else:
             return (error_msg(idx, cmd.name, val[AV_DESCRIPTION], p, split_line[p], 'not a valid ' + val[AV_TYPE][AVT_DESC]), split_line[p])

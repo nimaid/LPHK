@@ -1,7 +1,7 @@
 import threading, webbrowser, os, subprocess
 from time import sleep
 from functools import partial
-import lp_events, lp_colors, kb, sound, ms, files, command_base
+import lp_events, lp_colors, kb, sound, ms, files, command_base, variables
 from constants import *
 
 
@@ -131,11 +131,17 @@ class Button():
                 if cmd_txt in VALID_COMMANDS:        # if first element is a command
                     command = VALID_COMMANDS[cmd_txt]# get the command itself
                     split_line = self.Split_text(command, cmd_txt, line) # now split the line appropriately
-                    res = command.Parse(self, idx, split_line, pass_no);
-                    if res != True:
+                    
+                    if type(split_line) == tuple:
                         if err == True:
-                            err = res                # note the error
-                        errors += 1                  # and 1 more error
+                           err = split_line
+                           errors += 1
+                    else:
+                        res = command.Parse(self, idx, split_line, pass_no);
+                        if res != True:
+                            if err == True:
+                                err = res            # note the error
+                            errors += 1              # and 1 more error
                 else:
                     msg = " Invalid command '" + cmd_txt + "' on line " + str(idx+1) + "."
                     if err == True:
@@ -143,8 +149,8 @@ class Button():
                     print (msg)
                     errors += 1                      # and 1 more error
 
-            print('Pass ' + str(pass_no) + ' complete.  ' + str(errors) + ' errors detected.')
             if err != True:
+                print('Pass ' + str(pass_no) + ' complete for button (' + str(self.x+1) + ',' + str(self.y+1) + ').  ' + str(errors) + ' errors detected.')
                 break                                # errors prevent next pass
 
         return err                                   # success or failure 
@@ -278,8 +284,86 @@ class Button():
             # just split the command from the rest of the text
             return [cmd_txt, line[len(cmd_txt)+1:]]
         else:
+            def split1(line):
+                param = line.split()[0]
+                line = line[len(param):].strip()  # strip off the parameter
+                
+                return param, line
+                
+            def strip_quoted(line):
+                l2 = line
+                q = l2[0]
+                out = ''
+                l2 = l2[1:]
+                while len(l2) > 0:
+                    if l2[0] == q:
+                        if len(l2) == 1 or l2[1] == ' ':
+                            l2 = l2[1:].strip()
+                            return True, out, l2
+                        elif line[1] == q:
+                            out += q
+                            l2 = l2[2:]
+                        else:
+                            return False, out, line
+                    else:
+                        out += l2[0]
+                        l2 = l2[1:]
+                
+                return False, out, line
+            
             # for all other commands, split on spaces
-            return line.split(" ")
+            if isinstance(command, command_base.Command_Basic):
+                pline = line                            # something we can alter
+                avl = command.auto_validate
+                if avl != None and len(avl) > 0:
+                    cmd, pline = split1(pline)             # the command is always a simple split
+                    sline = [cmd]                          # add it to the return variable
+
+                    n = -1
+                    while len(pline) > 0:
+                        n += 1
+                        if n < len(avl):
+                            av = avl[n]
+                        else:
+                            av = avl[-1]
+                            
+                        desc = av[AV_TYPE][AVT_DESC]
+
+                        if (desc == PT_STR[AVT_DESC]) or (desc == PT_STRS[AVT_DESC]):   # Just the next parameter, unless it starts with a quote ['"`]
+                            if pline[0] in ['"', "'", '`']:
+                               if av[AV_VAR_OK] == AVV_REQD:
+                                   return ('Error, quoted string not permitted for param #' + str(n+1), line) # literal not expected
+                               else:
+                                   ok, param, pline = strip_quoted(pline)
+                                   if ok:
+                                       sline += ['"'+param]
+                                   else:
+                                       return ('Error in quoted string for param #' + str(n+1), line) # This is generally something to do with the closing quote
+                            else:
+                                if av[AV_VAR_OK] != AVV_NO:
+                                    param = pline.split()[0]
+                                    pline = pline[len(param):].strip()
+                                    if not variables.valid_var_name(param):
+                                        return ('Error in variable for param #' + str(n+1), line) # if it's not a string and not a variable...
+                                    else:
+                                        sline += [param]
+                                else:    
+                                    return ('Error starting quoted string for param#' + str(n+1), line) # This is generally a missing initial quote
+                                
+                        elif desc == PT_LINE[AVT_DESC]:    # the rest of the line (regardless of spaces)
+                            sline += [line]
+                            pline = ""
+                            
+                        else:
+                            param = pline.split(" ")[0]
+                            sline += [param]
+                            pline = pline[len(param):].strip()
+                     
+                    return sline
+                    
+                else:
+                    # without autovalidate we just split on spaces
+                    return line.split(" ")
 
 
     # run a script
@@ -319,9 +403,12 @@ class Button():
                     command = VALID_COMMANDS[cmd_txt]
                     
                     split_line = self.Split_text(command, cmd_txt, line)
-                        
-                    # now run the command 
-                    return command.Run(self, idx, split_line)
+
+                    if type(split_line) == tuple:
+                        print("[scripts] " + self.coords + "    Error in: '" + cmd_txt + "' - "  + split_line[0] + ", skipping...")
+                    else:    
+                        # now run the command 
+                        return command.Run(self, idx, split_line)
                 else:
                     print("[scripts] " + self.coords + "    Invalid command: '" + cmd_txt + "', skipping...")
 

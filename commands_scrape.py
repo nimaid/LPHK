@@ -53,7 +53,7 @@ class Scrape_OCR_Form_Text(Command_Scrape):
             ("Y1 value",   False, AVV_YES,  PT_INT,  None,                       None),
             ("X2 value",   False, AVV_YES,  PT_INT,  None,                       None),
             ("Y2 value",   False, AVV_YES,  PT_INT,  None,                       None),
-            ("OCR value",  False, AVV_REQD, PT_TEXT, None,                       None),
+            ("OCR value",  False, AVV_REQD, PT_STR,  None,                       None),
             ("HWND",       True,  AVV_REQD, PT_INT,  None,                       None),
             ),
             (
