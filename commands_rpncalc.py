@@ -670,7 +670,7 @@ scripts.Add_command(Rpn_Eval())  # register the command
 # ### CLASS RPN_SET                              ###
 # ##################################################
 
-# class that defines the RPN_SET command -- Sets a variable to a string value
+# class that defines the RPN_SET command -- Sets a variable to a string value (or a heap of appended string values)
 class Rpn_Set(command_base.Command_Basic):
     def __init__(
         self,
@@ -681,17 +681,19 @@ class Rpn_Set(command_base.Command_Basic):
             (
             # Desc         Opt    Var       type     p1_val                      p2_val 
             ("Variable",   False, AVV_REQD, PT_STR,  None,                       None),
-            ("Value",      False, AVV_YES,  PT_STR,  None,                       None),
+            ("Value",      False, AVV_YES,  PT_STRS, None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (2,           "    Assign '{2} to variable {1}"), 
+            (2,           "    Assign '{2}' to variable {1}"), 
             ) )
 
 
     def Process(self, btn, idx, split_line):
-        val = self.Get_param(btn, 2)   # Get the from coords
-        self.Set_param(btn, 1, val)                                  # pass the hash back            
+        val = ''
+        for i in range(2, self.Param_count(btn)+1): # for each parameter (after the first)
+            val += str(self.Get_param(btn, i))      # append all the values (force to string)
+        self.Set_param(btn, 1, val)                 # pass the combined string back            
 
         
 scripts.Add_command(Rpn_Set())  # register the command

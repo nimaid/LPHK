@@ -540,7 +540,7 @@ class Command_Basic:
             if val[AV_VAR_OK] == AVV_REQD:
                 ret = variables.get(param, btn.symbols[SYM_LOCAL], btn.symbols[SYM_GLOBAL][1])    
             else:
-                if type(param) == str and param[0:1] == '"':
+                if type(param) == str and val[AV_TYPE][AVT_DESC] in {PT_STR[AVT_DESC], PT_STRS[AVT_DESC]} and param[0:1] == '"':
                     ret = param[1:]
                 else:
                     ret = param

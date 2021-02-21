@@ -145,7 +145,7 @@ def Check_generic_param(btn, cmd, idx, split_line, p, val, val_validation):
     try:
         temp = val[AV_TYPE][AVT_CONV](split_line[p])
     except:
-        if val[AV_VAR_OK] in AWS_YES and valid_var_name(split_line[p]):   # a variable is OK here
+        if val[AV_VAR_OK] in AVVS_YES and valid_var_name(split_line[p]):   # a variable is OK here
             return True
         else:
             return (error_msg(idx, cmd.name, val[AV_DESCRIPTION], p, split_line[p], 'not a valid ' + val[AV_TYPE][AVT_DESC]), split_line[p])

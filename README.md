@@ -358,7 +358,8 @@ All Mouse movement commands can now use variables in place of constants.  Variab
   * The global variables are global to all scripts. 
   * Local variables are local to the current script (and are maintained across executions)
   * The stack and local variables will be lost if the script is edited.
-
+* `RPN_SET`
+  * Appends all values passed as parameters 2 (strings and variables) onwards and assignes the result to the variable parameter 1
 #### Win32 Commands [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * `W_GET_CARET`
   * Places the window-relative X and Y coordinates of the text cursor (caret) into the 2 variables passed as parameters
@@ -481,7 +482,7 @@ In order of priority:
   * Add `SOUND_VOLUME` to set the sound volume by label
   * Add `SOUND_STOP` to stop playing sound by label and delete the sound label
   * Add `SOUND_ALL_*` commands to stop/change the volume of all sounds
-* Let `SOUND` use spaces in it's path if it has double quotes around it
+* Let `SOUND` use spaces in it's path if it has double quotes around it (this can now be added easily)
 * Let program function as a layout editor without LP connection
   * Would probably be easier to write a "Dummy LP" class
 * Make an installer for Linux
@@ -491,7 +492,7 @@ In order of priority:
   * Should give options to add various shortcuts
 * Add temporary command `__M_PRINT_POPUP__` that gives a pop-up with the current cursor position -- (Can now be done with a script)
 * Option to minimize to system tray - DONE for startup
-  * Tkinter does not provide a way to do this. There may be Windows-specific extentions I can use, but maybe not.
+  * Tkinter does not provide a way to do this (yes it does :-)). There may be Windows-specific extentions I can use, but maybe not.
 * Add auto-update feature using `git`
   * ~~There will be a VERSION file in the main directory with the version string~~
     * This can be polled at `https://raw.githubusercontent.com/nimaid/LPHK/master/VERSION`
@@ -525,7 +526,7 @@ In order of priority:
   * There are a few complex refactoring tasks required for this, I will be crossing them off here on the testing branch:
     * ~~Make a killable delay/time library that monitors thread kill flags~~
     * ~~Port keyboard functions over to LPHKfunction modules~~
-    * Make `commands.py` module to house the actual command logic
+    * Make `commands.py` module to house the actual command logic (DONE)
     * Move `@SIMPLE` to keyboard module.
       * Allow F['COMMAND']['macro'] = True to disallow other non-comment lines in the script. Default is False.
         * Macros will automatically have `_` added to the beginning (`@` will only be for headers)
@@ -537,16 +538,16 @@ In order of priority:
     * Write the importer library (test standalone w/ simple delay)
     * ~~Lobotomize the program (read: remove the hellish logic in scripts.py)~~
     * Integrate the importer into the main program (scripts.py)
-    * Find and kill all of the bugs
+    * Find and kill all of the bugs (DONE, replaced with brand new bugs)
     * Port the rest of the old logic to LPHKfuction modules
     * Deal with the Pandora's box that porting those functions will open (this list will probably grow)
-    * Make a way for modules to use standard commands, and to use other modules
-    * Take a drink and merge the branches
+    * Make a way for modules to use standard commands, and to use other modules (DONE?)
+    * Take a drink and merge the branches (Let me buy you a beer)
 * Allow named arguments for certain commands
 * Add a `Choose default MIDI device` option to the `Sound` menu. (For multiple launchpads plugged in)
 * Add a third argument to `SOUND` for overriding the default sound device
 * Add variables and mathematical evaluation (mostly done!)
-* Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) 
+* Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) (DONE?)
 * Add syntax highlighting
 * Add GUI scaling
 * Full support for Launchpad Pro
