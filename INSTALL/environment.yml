@@ -13,3 +13,7 @@ dependencies:
     - tkcolorpicker
     - py-getch
     - pyautogui
+    - pywin32
+    - pytesseract
+    - imagehash
+    - dhash

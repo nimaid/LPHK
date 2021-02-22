@@ -2,7 +2,7 @@
 
 IMPORT_FATAL = False
 
-import sys
+import sys, traceback
 from constants import *
 
 import \
@@ -18,6 +18,7 @@ try:
     import commands_rpncalc
 except ImportError:
     print("[LPHK] WARNING: RPN_EVAL command is not available")  
+    traceback.print_exc()
 
 # This library could be considered optional  
 if PLATFORM == "windows":
@@ -25,6 +26,7 @@ if PLATFORM == "windows":
         import commands_win32
     except ImportError:
         print("[LPHK] ERROR: Windows specific commands are not available") 
+        traceback.print_exc()
 else: 
     print("[LPHK] WARNING: Windows specific commands can not be loaded") 
 
@@ -34,6 +36,7 @@ if PLATFORM == "windows":
         import commands_scrape
     except ImportError:
         print("[LPHK] ERROR: Screen scraping commands are not available")  
+        traceback.print_exc()
 else: 
     print("[LPHK] WARNING: Screen scraping commands can not be loaded")  
 
