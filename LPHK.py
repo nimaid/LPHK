@@ -85,20 +85,20 @@ EXIT_ON_WINDOW_CLOSE = True
 
 def init():
     global EXIT_ON_WINDOW_CLOSE
-    
-    ap = argparse.ArgumentParser()
-    ap.add_argument(
+
+    ap = argparse.ArgumentParser()                             # argparse makes argument processing easy
+    ap.add_argument(                                           # reimnplementation of debug (-d or --debug)
         "-d", "--debug", 
         help = "turn on debugging mode", action="store_true")
-    ap.add_argument(
+    ap.add_argument(                                           # new option to automatically load a layout
         "-l", "--layout", 
         help = "load a layout", 
         type=argparse.FileType('r'))
-    ap.add_argument(
+    ap.add_argument(                                           # new option to start minimised
         "-m", "--minimised", 
         help = "Start the application minimised", action="store_true")
 
-    window.ARGS = vars(ap.parse_args())
+    window.ARGS = vars(ap.parse_args())                        # store the arguments in a place anything can get to
 
     if window.ARGS['debug']:
         EXIT_ON_WINDOW_CLOSE = False
@@ -109,19 +109,19 @@ def init():
     sound.init(USER_PATH)
 
 def shutdown():
-    if lp_events.timer != None:
+    if lp_events.timer != None:                          # cancel any outstanding events
         lp_events.timer.cancel()
-    scripts.to_run = []
+    scripts.to_run = []                                  # remove anything from the list of scripts scheduled to run
     for x in range(9):
         for y in range(9):
             if scripts.buttons[x][y].thread != None:
-                scripts.buttons[x][y].thread.kill.set()
+                scripts.buttons[x][y].thread.kill.set()  # request to kill any running threads
     if window.lp_connected:
-        scripts.Unbind_all()
-        lp_events.timer.cancel()
-        launchpad_connector.disconnect(lp)
+        scripts.Unbind_all()                             # unbind all the buttons
+        lp_events.timer.cancel()                         # cancel all the timers
+        launchpad_connector.disconnect(lp)               # disconnect from the launchpad
         window.lp_connected = False
-    logger.stop()
+    logger.stop()                                        # stop logging
     if window.restart:
         if IS_EXE:
             os.startfile(sys.argv[0])

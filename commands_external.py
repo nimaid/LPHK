@@ -7,7 +7,7 @@ LIB = "cmds_extn" # name of this library (for logging)
 # ### CLASS External_Web                         ###
 # ##################################################
 
-# class that defines the WEB command 
+# class that defines the WEB command.  @@@ this should be updated to use the more modern interface
 class External_Web(command_base.Command_Text_Basic):
     def __init__(
         self, 
@@ -44,7 +44,7 @@ scripts.Add_command(External_Web())  # register the command
 # ### CLASS External_Web_New                     ###
 # ##################################################
 
-# class that defines the WEB_NEW command 
+# class that defines the WEB_NEW command.  @@@ this should be updated to use the more modern interface 
 class External_Web_New(External_Web):
     def __init__(
         self, 
@@ -67,7 +67,7 @@ scripts.Add_command(External_Web_New())  # register the command
 # ### CLASS External_Open                        ###
 # ##################################################
 
-# class that defines the OPEN command 
+# class that defines the OPEN command.  @@@ this should be updated to use the more modern interface
 class External_Open(command_base.Command_Text_Basic):
     def __init__(
         self, 
@@ -93,7 +93,7 @@ scripts.Add_command(External_Open())  # register the command
 # ### CLASS External_Sound                       ###
 # ##################################################
 
-# class that defines the SOUND command (plays a sound file) 
+# class that defines the SOUND command (plays a sound file).  @@@ this should be updated to use the more modern interface 
 class External_Sound(command_base.Command_Basic):
     def __init__(
         self, 
@@ -163,7 +163,7 @@ class External_Sound_Stop(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        delay = btn.symbols[SYM_PARAMS][1]
+        delay = btn.symbols[SYM_PARAMS][1]   # @@@ update this
         
         if delay == None or delay <= 0:
             sound.stop()
@@ -178,7 +178,7 @@ scripts.Add_command(External_Sound())  # register the command
 # ### CLASS External_Code                        ###
 # ##################################################
 
-# class that defines the CODE command (runs something) 
+# class that defines the CODE command (runs something).  @@@ this should be updated to use the more modern interface
 class External_Code(command_base.Command_Basic):
     def __init__(
         self, 

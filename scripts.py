@@ -284,82 +284,83 @@ class Button():
             # just split the command from the rest of the text
             return [cmd_txt, line[len(cmd_txt)+1:]]
         else:
-            def split1(line):
-                param = line.split()[0]
+            def split1(line):                     # just strip off a single (non-quoted) parameter
+                param = line.split()[0]           # get the parameter
                 line = line[len(param):].strip()  # strip off the parameter
                 
-                return param, line
+                return param, line                # return the parameter and the rest of the line
                 
+            # grab a quoted string from the line passed.  Does not handle embedded quotes @@@ but it should
             def strip_quoted(line):
-                l2 = line
-                q = l2[0]
-                out = ''
-                l2 = l2[1:]
-                while len(l2) > 0:
-                    if l2[0] == q:
-                        if len(l2) == 1 or l2[1] == ' ':
-                            l2 = l2[1:].strip()
-                            return True, out, l2
-                        elif line[1] == q:
-                            out += q
-                            l2 = l2[2:]
+                l2 = line                                 # a copy of the line we can edit
+                q = l2[0]                                 # the first character is assumed to be a quote
+                out = ''                                  # nothing to output yet
+                l2 = l2[1:]                               # strip the quote from the string
+                while len(l2) > 0:                        # while something remains in the line
+                    if l2[0] == q:                        # if the quote is repeated
+                        if len(l2) == 1 or l2[1] == ' ':  # and if it's the last character or followed by a space
+                            l2 = l2[1:].strip()           # clean up the rest of the string
+                            return True, out, l2          # return success
+                        elif len(l2) > 1 and l2[1] == q:  # if we have 2 quotes in a row
+                            out += q                      # then this is literally a quote
+                            l2 = l2[2:]                   # but we need to clean up 2 characters this time
                         else:
-                            return False, out, line
-                    else:
-                        out += l2[0]
-                        l2 = l2[1:]
+                            return False, out, line       # any other quote-related stuff must be an error
+                    else:                                 # for non-quote characters
+                        out += l2[0]                      # we just pass them through to the output string
+                        l2 = l2[1:]                       # and strip them off.
                 
-                return False, out, line
+                return False, out, line                   # if we fall through, that's an error (no closing quote)
             
             # for all other commands, split on spaces
             if isinstance(command, command_base.Command_Basic):
-                pline = line                            # something we can alter
+                pline = line                              # something we can alter
                 avl = command.auto_validate
                 if avl != None and len(avl) > 0:
-                    cmd, pline = split1(pline)             # the command is always a simple split
-                    sline = [cmd]                          # add it to the return variable
+                    cmd, pline = split1(pline)            # the command is always a simple split
+                    sline = [cmd]                         # add it to the return variable
 
-                    n = -1
-                    while len(pline) > 0:
-                        n += 1
-                        if n < len(avl):
-                            av = avl[n]
-                        else:
-                            av = avl[-1]
+                    n = -1                                # initialise parameter number pointer to one before the first
+                    while len(pline) > 0:                 # keep stripping parameters while the line has some content
+                        n += 1                            # point to the next parameters
+                        if n < len(avl):                  # if this parameter has an auto-validation
+                            av = avl[n]                   # then grab it
+                        else:                             # otherwise the last parameter must allow for multiple values
+                            av = avl[-1]                  # so take the last auto-validation
                             
-                        desc = av[AV_TYPE][AVT_DESC]
+                        desc = av[AV_TYPE][AVT_DESC]      # get the description of the parameter type (not the description of the parameter!)
 
-                        if (desc == PT_STR[AVT_DESC]) or (desc == PT_STRS[AVT_DESC]):   # Just the next parameter, unless it starts with a quote ['"`]
-                            if pline[0] in ['"', "'", '`']:
-                               if av[AV_VAR_OK] == AVV_REQD:
+                        if (desc == PT_STR[AVT_DESC]) or (desc == PT_STRS[AVT_DESC]):   # Is this one that wants quoted strings?
+                            if pline[0] in ['"', "'", '`']:                             # if so, does it start with an acceptable quote?
+                               if av[AV_VAR_OK] == AVV_REQD:                            # it's a problem if a variable is required
                                    return ('Error, quoted string not permitted for param #' + str(n+1), line) # literal not expected
                                else:
-                                   ok, param, pline = strip_quoted(pline)
-                                   if ok:
-                                       sline += ['"'+param]
+                                   ok, param, pline = strip_quoted(pline)               # otherwise we can strip off a quoted string
+                                   if ok:                                               # and if that suceeded
+                                       sline += ['"'+param]                             # we'll add it as the parameter value.  Note we add a leading " to distinguish it from a variable
                                    else:
                                        return ('Error in quoted string for param #' + str(n+1), line) # This is generally something to do with the closing quote
-                            else:
-                                if av[AV_VAR_OK] != AVV_NO:
-                                    param = pline.split()[0]
-                                    pline = pline[len(param):].strip()
-                                    if not variables.valid_var_name(param):
+                            else:                                                       # if we want a quoted string, but value doesn't start with a quote 
+                                if av[AV_VAR_OK] != AVV_NO:                             # Are we allowed to pass a variable?
+                                    param = pline.split()[0]                            # then that's OK, just strip off an un-quoted string
+                                    pline = pline[len(param):].strip()                  # and clean up the line (@@@ why not use strip1()??)
+                                    if not variables.valid_var_name(param):             # but check it's a valid variable name
                                         return ('Error in variable for param #' + str(n+1), line) # if it's not a string and not a variable...
                                     else:
-                                        sline += [param]
+                                        sline += [param]                                # add it to the list of parameters if it's OK
                                 else:    
                                     return ('Error starting quoted string for param#' + str(n+1), line) # This is generally a missing initial quote
                                 
                         elif desc == PT_LINE[AVT_DESC]:    # the rest of the line (regardless of spaces)
-                            sline += [line]
-                            pline = ""
+                            sline += [line]                # just grab the rest of the line
+                            pline = ""                     # and leave nothing behind
                             
-                        else:
-                            param = pline.split(" ")[0]
+                        else:                              # in all other cases
+                            param = pline.split(" ")[0]    # just strip the first unquoted parameter (@@@ why not use strip1()???)
                             sline += [param]
                             pline = pline[len(param):].strip()
                      
-                    return sline
+                    return sline                           # return a list of command and parameters
                     
                 else:
                     # without autovalidate we just split on spaces
@@ -385,48 +386,48 @@ class Button():
         if len(self.script_lines) > 0:
             self.running = True
 
-            def Main_logic(idx):
-                if self.Check_kill():
-                    return idx + 1
+            def Main_logic(idx):                                          # the main logic to run a line of a script
+                if self.Check_kill():                                     # first check to see if we've been asked to die
+                    return idx + 1                                        # we just return the next line, @@@ returning -1 is better
                         
-                line = self.Line(idx)
+                line = self.Line(idx)                                     # get the line of the script
                 
                 # Handle completely blank lines
                 if line == "":
                     return idx + 1
 
                 # Get the command text
-                cmd_txt = self.Split_cmd_text(line)
+                cmd_txt = self.Split_cmd_text(line)                       # Just get the command name leaving the line intact
 
                 # Now get the command object
-                if cmd_txt in VALID_COMMANDS:
-                    command = VALID_COMMANDS[cmd_txt]
+                if cmd_txt in VALID_COMMANDS:                             # make sure it's a valid command
+                    command = VALID_COMMANDS[cmd_txt]                     # get the command object that will execute the command
                     
-                    split_line = self.Split_text(command, cmd_txt, line)
+                    split_line = self.Split_text(command, cmd_txt, line)  # get all the parameters as a list, including quoted parameters
 
-                    if type(split_line) == tuple:
+                    if type(split_line) == tuple:                         # bad news if we get a tuple rather than a list
                         print("[scripts] " + self.coords + "    Error in: '" + cmd_txt + "' - "  + split_line[0] + ", skipping...")
                     else:    
                         # now run the command 
-                        return command.Run(self, idx, split_line)
+                        return command.Run(self, idx, split_line)         # otherwise we can ask the command to execute itself with the parameters we've parsed out
                 else:
                     print("[scripts] " + self.coords + "    Invalid command: '" + cmd_txt + "', skipping...")
 
-                return idx + 1
+                return idx + 1                                            # defaut action is to ask for the next line
 
-            run = True
-            idx = 0
-            while run:
-                idx = Main_logic(idx)
-                if (idx < 0) or (idx >= len(self.script_lines)):
-                    run = False
+            run = True                                                    # flag that we're running
+            idx = 0                                                       # point at the first line
+            while run:                                                    # and while we're still running
+                idx = Main_logic(idx)                                     # run the current line
+                if (idx < 0) or (idx >= len(self.script_lines)):          # if the next line isn't valid
+                    run = False                                           # then we're not going to keep running!
                     
-            if not self.is_async:
-                self.running = False
+            if not self.is_async:                                         # async commands don't just end
+                self.running = False                                      # they have to say they're not running
                 
-            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (self.x, self.y)).start()
+            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (self.x, self.y)).start() # queue up a request to update the button colours
         
-        print("[scripts] " + self.coords + " Script done running.")
+        print("[scripts] " + self.coords + " Script done running.")       # and print (log?) that the script is complete
 
         
     # validating a script consists of doing the checks that we do prior to running, but
@@ -448,7 +449,7 @@ class Button():
         return self.validated                            # and tell us the result            
 
 
-
+# define the buttons structure here.  Note that subroutines will likely be a different sort of button, so this may change
 buttons = [[Button(x, y, "") for y in range(9)] for x in range(9)]
 to_run = []
 
@@ -465,9 +466,9 @@ def Bind(x, y, script_str, color):
         indexes = [i for i, v in enumerate(to_run) if ((v[1] == x) and (v[2] == y))]  #... create a list of locations in the list for this button 
         for index in indexes[::-1]:          # and for each of them (in reverse order)
             temp = to_run.pop(index)         # Remove them from the list
-        return # Why do we return here?
+        return # @@@ Why do we return here?
 
-    schedule_script_bindable = lambda a, b: btn.Schedule_script()
+    schedule_script_bindable = lambda a, b: btn.Schedule_script() # @@@ What is this doing?
 
     lp_events.bind_func_with_colors(x, y, schedule_script_bindable, color)
     files.layout_changed_since_load = True   # Mark the layout as changed

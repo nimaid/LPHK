@@ -64,24 +64,24 @@ class Keys_Tap(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        cnt = self.Param_count(btn)
-        key = kb.sp(self.Get_param(btn, 1))
-        releasefunc = lambda: None
+        cnt = self.Param_count(btn)                      # how many parameters?
+        key = kb.sp(self.Get_param(btn, 1))              # what key?
+        releasefunc = lambda: None                       # default is no release function
 
-        taps = 1
-        if cnt >= 2:
+        taps = 1                                         # Assume 1 tap unless we are told there's more 
+        if cnt >= 2:                                     # @@@ this section can be simplified to taps = self.Get_param(btn, 2, 1)
             taps = self.Get_param(btn, 2)
 
-        delay = 0
+        delay = 0                                        # assume no delay unless we're told there is one
         if cnt == 3:
             delay = self.Get_param(btn, 3)
-            releasefunc = lambda: kb.release(key)
+            releasefunc = lambda: kb.release(key)        # and in this case we'll also need to set up a lambda to release it
         
-        precheck = delay == 0 and taps > 1
+        precheck = delay == 0 and taps > 1               # we need to check if there's no delay and (possibly many) taps
 
-        for tap in range(taps):
-            if btn.Check_kill(releasefunc):
-                return idx+1
+        for tap in range(taps):                          # for each tap
+            if btn.Check_kill(releasefunc):              # see if we've been killed
+                return idx+1                             # @@@ shouldn't this be -1?
                 
             if delay == 0:
                 kb.tap(key)

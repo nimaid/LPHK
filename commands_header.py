@@ -117,6 +117,7 @@ scripts.Add_command(Header_Simple())  # register the header
 # ### CLASS Header_Load_Layout                   ###
 # ##################################################
 
+# Loads a new layout.  @@@ This should probably be rewritten in the newest style
 class Header_Load_Layout(command_base.Command_Header):
     def __init__(
         self, 

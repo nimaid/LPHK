@@ -89,34 +89,34 @@ class Control_Flow_Basic(command_base.Command_Basic):
 
 
     def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
-        ret = super().Partial_validate_step_pass_1(ret, btn, idx, split_line)
+        ret = super().Partial_validate_step_pass_1(ret, btn, idx, split_line)     # perform the original pass 1 validation
         
-        if ret == None or ((type(ret) == bool) and ret):
-            if self.loop_val_init_function:
-                self.loop_val_init_function(btn, idx, split_line)
-                ret = True
+        if ret == None or ((type(ret) == bool) and ret):                          # if the original validation hasn't raised an error
+            if self.loop_val_init_function:                                       # and if we have a validation
+                self.loop_val_init_function(btn, idx, split_line)                 # then perform the additional validation
+                ret = True                                                        # not sure why we always return true @@@
             
         return ret
 
 
     def Partial_validate_step_pass_2(self, ret, btn, idx, split_line):
-        ret = super().Partial_validate_step_pass_2(ret, btn, idx, split_line)
+        ret = super().Partial_validate_step_pass_2(ret, btn, idx, split_line)     # perform the original pass 2 validation
         
-        if (ret == None or ((type(ret) == bool) and ret)):
-            if self.label_preceeds and btn.symbols[SYM_LABELS][split_line[1]] > idx:
+        if (ret == None or ((type(ret) == bool) and ret)):                        # if the original validation hasn't raised an error
+            if self.label_preceeds and btn.symbols[SYM_LABELS][split_line[1]] > idx: # If the label must preceed the command, ensure that it is so!
                 ret = ("Line:" + str(idx+1) + " - Target for " + self.name + " (" + split_line[1] + ") must preceed the command.", btn.Line(idx))
             
         return ret
 
         
     def Partial_run_step_info(self, ret, btn, idx, split_line):
-        ret = super().Partial_run_step_info(ret, btn, idx, split_line)
+        ret = super().Partial_run_step_info(ret, btn, idx, split_line)        # perform the original notification of a partial execution
         
         if self.valid_function == None or self.valid_function(btn):           # if no validation function, or it returns true, continue
-            if self.test_function and self.next_function:
-                if btn.symbols[SYM_REPEATS][idx] > 0:
+            if self.test_function and self.next_function:                     # if there is a test function and it returns true
+                if btn.symbols[SYM_REPEATS][idx] > 0:                         # if repeats remain
                     print(AM_PREFIX.format(self.lib, btn.coords, str(idx+1)) + "        " + str(btn.symbols[SYM_REPEATS][idx]) + " repeats left.")
-                else:
+                else:                                                         # if no repeats remain
                     print(AM_PREFIX.format(self.lib, btn.coords, str(idx+1)) + "        No repeats left, not repeating.")        
         else:
             print(self.invalid_message)
@@ -146,31 +146,31 @@ class Control_Flow_Basic(command_base.Command_Basic):
             
 
     def Valid_key_pressed(self, btn):
-        return lp_events.pressed[btn.x][btn.y]
+        return lp_events.pressed[btn.x][btn.y]                         # Is the button pressed
         
         
     def Valid_key_unpressed(self, btn):
-        return not self.Valid_key_pressed(btn)
+        return not self.Valid_key_pressed(btn)                         # is the button unpressed
         
         
-    def Test_func_ge_zero(self, val):
+    def Test_func_ge_zero(self, val):                                  # testing for a value >= 0
         return val >= 0
         
         
-    def Next_decrement(self, val):
+    def Next_decrement(self, val):                                     # Standard decrement function
         return val-1
         
         
     def Reset(self, btn, idx):
-        btn.symbols[SYM_REPEATS][idx] = btn.symbols[SYM_ORIGINAL][idx]
+        btn.symbols[SYM_REPEATS][idx] = btn.symbols[SYM_ORIGINAL][idx] # standard function to reset a loop counter
     
 
     def Init_n(self, btn, idx, split_line):
-        btn.symbols[SYM_ORIGINAL][idx] = int(split_line[2])
+        btn.symbols[SYM_ORIGINAL][idx] = int(split_line[2])            # set repeats to n (will cause n+1 loop executions)
         self.Reset(btn, idx)
     
 
-    def Init_n_minus_1(self, btn, idx, split_line):
+    def Init_n_minus_1(self, btn, idx, split_line):                    # set repeats to n-1 (will cause n loop executions)
         btn.symbols[SYM_ORIGINAL][idx] = int(split_line[2])-1
         self.Reset(btn, idx)
 
@@ -353,7 +353,7 @@ class Control_If_Pressed_Repeat_Label(Control_Flow_Basic):
             # num params, format string                           (trailing comma is important)
             (2, "    If key is pressed repeat label {1}, {2} times max"), 
             ),
-            "the button is umpressed",
+            "the button is not pressed",
             self.Valid_key_pressed,
             False,
             False,

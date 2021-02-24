@@ -127,8 +127,7 @@ class Win32_Get_Fg_Hwnd(Command_Win32):
     def Process(self, btn, idx, split_line):
         hwnd = win32gui.GetForegroundWindow()  # get the current window
         
-        #variables.Auto_store(btn.symbols[SYM_PARAMS][1], hwnd, btn.symbols)  # Return the current window
-        self.Set_param(btn, 1, hwnd)
+        self.Set_param(btn, 1, hwnd)           # Return the current window
 
 
 scripts.Add_command(Win32_Get_Fg_Hwnd())  # register the command
@@ -204,9 +203,9 @@ class Win32_Client_To_Screen(Command_Win32):
         hwnd = self.Get_param(btn, 3, win32gui.GetForegroundWindow())  # get the window
         state = self.restore_window(hwnd)
         try:
-            x, y = win32gui.ClientToScreen(hwnd, (x, y))                   # convert client coords to screen coords
+            x, y = win32gui.ClientToScreen(hwnd, (x, y))               # convert client coords to screen coords
                
-            self.Set_param(btn, 1, x)                                      # set new x, y values
+            self.Set_param(btn, 1, x)                                  # set new x, y values
             self.Set_param(btn, 2, y)
         finally:
             self.reset_window(state)
@@ -247,9 +246,9 @@ class Win32_Screen_To_Client(Command_Win32):
         hwnd = self.Get_param(btn, 3, win32gui.GetForegroundWindow())  # get the window
         state = self.restore_window(hwnd)
         try:        
-            x, y = win32gui.ScreenToClient(hwnd, (x, y))                   # convert client coords to screen coords
+            x, y = win32gui.ScreenToClient(hwnd, (x, y))               # convert client coords to screen coords
                
-            self.Set_param(btn, 1, x)                                      # set new x, y values
+            self.Set_param(btn, 1, x)                                  # set new x, y values
             self.Set_param(btn, 2, y)        
         finally:
             self.reset_window(state)
@@ -350,7 +349,6 @@ class Win32_Copy(Command_Win32):
             kb.tap(kb.sp('c'))   
         finally:
             kb.release(kb.sp('ctrl'))        
-        #win32api.SendMessage(hwnd, win32con.WM_COPYDATA, 0, 0) # do a copy
         
         if self.Param_count(btn) > 0:                          # save to variable if required
             try:
@@ -437,11 +435,11 @@ class Win32_Wait(Command_Win32):
         tid, pid = win32process.GetWindowThreadProcessId(hwnd) # find the pid
         hproc = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION , False, pid) # find the process id
         
-        res = win32con.WAIT_TIMEOUT
-        while res == win32con.WAIT_TIMEOUT:
-            res = win32event.WaitForInputIdle(hproc, 20)
-            if btn.Check_kill():
-                return False
+        res = win32con.WAIT_TIMEOUT                            # set the failure mode to timeout
+        while res == win32con.WAIT_TIMEOUT:                    # while we're still timing out
+            res = win32event.WaitForInputIdle(hproc, 20)       # wait a little while for window to become idle
+            if btn.Check_kill():                               # check if we've been killed
+                return False                                   # and die
 
 
 scripts.Add_command(Win32_Wait())  # register the command
@@ -474,9 +472,9 @@ class Win32_Pid_To_Hwnd(Command_Win32):
         pid = self.Get_param(btn, 1)                          # get the pid
         hwnds = self.get_hwnds_for_pid(pid)                   # find any hwnds
         if len(hwnds) == 1:
-            self.Set_param(btn, 2, hwnds[0])
+            self.Set_param(btn, 2, hwnds[0])                  # return a value if we have a unique window id
         else:
-            self.Set_param(btn, 2, hwnds)
+            self.Set_param(btn, 2, hwnds)                     # @@@ not sure it's a good idea to return a list if > 1 id
 
 
 scripts.Add_command(Win32_Pid_To_Hwnd())  # register the command
