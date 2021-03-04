@@ -109,7 +109,7 @@ def save_lp_to_layout(name):
         layout["buttons"].append([])
         for y in range(9):
             color = lp_colors.curr_colors[x][y]
-            script_text = scripts.text[x][y]
+            script_text = scripts.buttons[x][y].script_str
             
             layout["buttons"][-1].append({"color": color, "text": script_text})
     
@@ -122,7 +122,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
     
     converted_to_rg = False
     
-    scripts.unbind_all()
+    scripts.Unbind_all()
     window.app.draw_canvas()
     
     if preload == None:
@@ -144,7 +144,8 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
             if script_text != "":
                 script_validation = None
                 try:
-                    script_validation = scripts.validate_script(script_text)
+                    btn = scripts.Button(x, y, script_text)
+                    script_validation = btn.Validate_script()
                 except:
                     new_layout_func = lambda: window.app.unbind_lp(prompt_save = False)
                     if popups:
@@ -159,7 +160,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
                     window.app.save_script(window.app, x, y, script_text, open_editor = True, color = color)
                     in_error = False
                 else:
-                    scripts.bind(x, y, script_text, color)
+                    scripts.Bind(x, y, script_text, color)
             else:
                 lp_colors.setXY(x, y, color)
     lp_colors.update_all()

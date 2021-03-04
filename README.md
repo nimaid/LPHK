@@ -194,24 +194,34 @@ If this is used, all other lines in the file must either be blank lines or comme
 Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines separating commands.
 
 #### Utility [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `ABORT`
+  * Terminates the script immediately, logging any message after the command.  This has the same functionality as END, however it carries with it the notion that the termination was abnormal.
 * `DELAY`
   * Delays the script for (argument 1) seconds.
+* `END`
+  * Terminates the script immediately, logging any message after the command.  This has the same functionality as ABORT, however it indicates a normal termination.
 * `GOTO_LABEL`
   * Goto label (argument 1).
 * `IF_PRESSED_GOTO_LABEL`
   * If the button the script is bound to is pressed, goto label (argument 1).
 * `IF_PRESSED_REPEAT_LABEL`
   * If the button the script is bound to is pressed, goto label (argument 1) a maximum of (argument 2) times.
+* `IF_PRESSED_REPEAT`
+  * Works the same as the IF_PRESSED_REPEAT_LABEL command, except the number of times the loop is executed is defined by argument 2.  In addition, the loop counter is reset automatically allowing loops to be nested.
 * `IF_UNPRESSED_GOTO_LABEL`
   * If the button the script is bound to is not pressed, goto label (argument 1).
 * `IF_UNPRESSED_REPEAT_LABEL`
   * If the button the script is bound to is not pressed, goto label (argument 1) a maximum of (argument 2) times.
+* `IF_UNPRESSED_REPEAT`
+  * Works the same as the IF_UNPRESSED_REPEAT_LABEL command, except the number of times the loop is executed is defined by argument 2.  In addition, the loop counter is reset automatically allowing loops to be nested.
 * `LABEL`
   * Sets a label named (argument 1) for use with the `*GOTO_LABEL` commands.
 * `OPEN`
   * Opens the file or folder (argument 1).
 * `REPEAT_LABEL`
   * Goto label (argument 1) a maximum of (argument 2) times.
+* `REPEAT`
+  * Works the same as the REPEAT_LABEL command, except the number of times the loop is executed is defined by argument 2.  In addition, the loop counter is reset automatically allowing loops to be nested.
 * `RESET_REPEATS`
   * Reset the counter on all repeats. (no arguments)
 * `SOUND`
@@ -228,6 +238,10 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * Open website (argument 1) in default browser.
 * `WEB_NEW`
   * Open website (argument 1) in default browser, try new window.
+* `CODE`
+  * runs anything, waits for it to end
+* `CODE_NOWAIT`
+  * runs anything, returns immediately with pid of process
   
 #### Keypresses [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * `PRESS`
@@ -247,6 +261,7 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * If (argument 3) supplied,  delay (argument 3) seconds before releasing each time.
   
 #### Mouse Movement [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+All Mouse movement commands can now use variables in place of constants.  Variables are taken from the local variables first, then global.  Undefined variables return 0.  Variable names must start with an alphabetic character and are not case sensitive.
 * `M_LINE`
   * Move the mouse in a line from absolute point (argument 1),(argument 2) to absolute point (argument 3),(argument 4).
   * If (argument 5) supplied, delay (argument 5) milliseconds between each step.
@@ -280,6 +295,104 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * Sets the absolute cursor position to (argument 1) horizontal and (argument 2) vertical.
 * `M_STORE`
   * Stores the current mouse position for use with the `M_RECALL*` commands.
+
+#### Variables and calculator [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `RPN_EVAL`
+  * An RPN (stack-based) calculator that implements local and global variables.
+  * Any number of commands may follow from 1 to infinity?
+  * Commands and variables are NOT case sensitive
+  * Variables must begin with an alphabetic character and cannot contain spaces.
+  * Variables can be used in the Mouse commands in place of constants
+  * Any numeric value is pushed onto the stack
+  * Common functions pop their parameters off the stack and push the result.  Note that any function requiring more values that there are on the stack will be returned zero for all additional parameters.
+    * + - replaces the top two values on the stack with their sum
+    * - - replaces the top two values on the stack with their difference
+    * * - replaces the top two values on the stack with their product
+    * / - replaces the top two values on the stack with their quotient
+	* // - performs integer division
+	* mod - calculates the modulus (remainder)
+	* y^x - raises the second value on the stack to the power of the first value on the stack
+  * Some operations only change the top value on the stack.
+    * 1/x - replaces the top value on the stack with it's inverse
+    * sqr - replaces the value on the top of the stack with its square
+	* int - replaces the value on trhe top of the stack with the integer part
+	* frac - replaces the value on trhe top of the stack with the fractional part
+	* chs - changes the sign of the value on the top of the stack (does not affect lastx)
+  * Some operations manipulate the stack
+    * dup - duplicates the value on the top of the stack
+    * pop - removes the top item from the stack
+    * x<>y - swaps the position of the top two items on the stack
+    * clst - clears the stack
+	* stack - pushes the length of the stack onto the stack
+  * Some operations handle variables (these are all followed by a variable name).  Note that refering to a variable that does not exist will return zero, but not greate that variable.  Whilst it is possible to name a variable using a string of numbers representing a number (e.g. '32') these will likely not be accessible from other commands -- AVOID THEM
+    * >L {x} - Takes the value on the top of the stack and stores it in local variable {x}
+    * >G {x} - Takes the value on the top of the stack and stores it in the globalk variable {x}
+    * > {x} - Stores the value in the local variable {x} if it exists, otherwise the global variable {x} if it exists, otherwise creates a new local variable {x}
+    * <L {x} - Pushes the value in the local variable {x} onto the stack.
+    * <G {x} - Pushes the value of the global variable {x} onto the stack.
+    * < {x} - Pushes the value of the local variable {x} if it exists, otherwise the global variable {x}
+	* cl_l - clears all local variables
+  * Some operations display resuls or other status information
+    * view - displays the value on the top of the stack
+    * view_s - displays the entire stack
+    * view_l - displays all local variables
+    * view_g - displays all global variables
+  * Some operations can perform a test and terminate the RPN_EVAL is the test fails
+    * X=0? - Does the top value of the stack equal zero?
+    * X!=0? - Does the top value of the stack equal something other than zero?
+    * X=Y? - Does the top value of the stack equal the next value on the stack?
+    * X!=Y? - Does the top value of the stack equal something other thanthe next value on the stack
+    * X>Y? - Is the top value of the stack greater than the next value on the stack
+    * X>=Y? - Is the top value of the stack greater than or equal to the next value on the stack
+    * X<Y? - Is the top value of the stack less than the next value on the stack
+    * X<=Y? - Is the top value of the stack less than or equal to the next value on the stack
+    * ? {x} - Does a variable {x} exist
+    * !? {x} - Does a variable {x} not exist
+    * ?L {x} - Does a local variable {x} exist
+    * !?L {x} - Does a local variable {x} not exist
+    * ?G {x} - Does a global variable {x} exist
+    * !?G {x} - Does a global variable {x} not exist
+  * One command allows you to affect script execution
+    * abort - causes the script to terminate
+  * The stack is local to the current script, however it is maintained between executions!
+  * The global variables are global to all scripts. 
+  * Local variables are local to the current script (and are maintained across executions)
+  * The stack and local variables will be lost if the script is edited.
+* `RPN_SET`
+  * Appends all values passed as parameters 2 (strings and variables) onwards and assignes the result to the variable parameter 1
+#### Win32 Commands [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `W_GET_CARET`
+  * Places the window-relative X and Y coordinates of the text cursor (caret) into the 2 variables passed as parameters
+* `W_GET_FG_HWND`
+  * Places the handle of the currently active window into the variable passed as parameter 1
+* `W_SET_FG_HWND`
+  * Sets the current foreground window using the handle passed as the first parameter (variable or constant)
+* `W_CLIENT_TO_SCREEN`
+  * Converts the X, Y values in the first 2 parameters from form relative to screen absolute.  Assumes current FG window unless another handle is passed as parameter 3
+* `W_SCREEN_TO_CLIENT`
+  * Converts the X, Y values in the first 2 parameters from screen absolute to form relative.  Assumes current FG window unless another handle is passed as parameter 3
+* `W_FIND_HWND`
+  * Searches for window with title (param 1) returning handle (param 2).  Param 3 allows handles for duplicate windows, param 4 returns the number of duplicate windows.
+* `W_COPY`
+  * Executes a "copy" to clipboard, and optionally to variable (param 1) on the current window
+* `W_PASTE` 
+  * Executes a "paste" from clipboard, or optionally from variable (param 1) in the current window
+* `W_WAIT`
+  * Waits until the window (param 1) is ready for input
+* `W_PID_TO_HWND`
+  * Converts PID in param 1 to HWND in param 2
+
+#### Screen Scraping Commands [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+* `S_OCR`
+  * pass x1 y1 x2 y2 to describe a window-relative rectangle
+  * the region of the screen is OCRed and the result is returned in param 5 (a variable)
+  * if other than the current FG window, pass window handle as param 6
+* `S_HASH`
+  * same params as S_OCR except param 5 is a variable to hold the MD5 hash of the image area
+* `S_FINGERPRINT`
+  * same params as S_OCR except param 5 is a variable to hold a fingerprint of the image area
+* `S_FDIST` 
+  * first 2 parameters are a pair of fingerprints.  Third param is the distance between them 0 = very close.
 
 ### Key Names [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitespace keys and the following key names are allowed:
@@ -360,7 +473,7 @@ In order of priority:
   * Draw icons
   * With this, allow buttons to be bound with the light off
 * Add startup config file
-  * Default layout specification
+  * Default layout specification -- DONE
   * Auto connect overide
   * Force launchpad model setting
 * Add more sound commands
@@ -369,7 +482,7 @@ In order of priority:
   * Add `SOUND_VOLUME` to set the sound volume by label
   * Add `SOUND_STOP` to stop playing sound by label and delete the sound label
   * Add `SOUND_ALL_*` commands to stop/change the volume of all sounds
-* Let `SOUND` use spaces in it's path if it has double quotes around it
+* Let `SOUND` use spaces in it's path if it has double quotes around it (this can now be added easily)
 * Let program function as a layout editor without LP connection
   * Would probably be easier to write a "Dummy LP" class
 * Make an installer for Linux
@@ -377,9 +490,9 @@ In order of priority:
   * ~~Should use a `conda` environment created from an `environment.yml` file~~
   * Should copy LPHK files into an appropriate directory
   * Should give options to add various shortcuts
-* Add temporary command `__M_PRINT_POPUP__` that gives a pop-up with the current cursor position
-* Option to minimize to system tray
-  * Tkinter does not provide a way to do this. There may be Windows-specific extentions I can use, but maybe not.
+* Add temporary command `__M_PRINT_POPUP__` that gives a pop-up with the current cursor position -- (Can now be done with a script)
+* Option to minimize to system tray - DONE for startup
+  * Tkinter does not provide a way to do this (yes it does :-)). There may be Windows-specific extentions I can use, but maybe not.
 * Add auto-update feature using `git`
   * ~~There will be a VERSION file in the main directory with the version string~~
     * This can be polled at `https://raw.githubusercontent.com/nimaid/LPHK/master/VERSION`
@@ -413,11 +526,11 @@ In order of priority:
   * There are a few complex refactoring tasks required for this, I will be crossing them off here on the testing branch:
     * ~~Make a killable delay/time library that monitors thread kill flags~~
     * ~~Port keyboard functions over to LPHKfunction modules~~
-    * Make `commands.py` module to house the actual command logic
+    * Make `commands.py` module to house the actual command logic (DONE)
     * Move `@SIMPLE` to keyboard module.
       * Allow F['COMMAND']['macro'] = True to disallow other non-comment lines in the script. Default is False.
         * Macros will automatically have `_` added to the beginning (`@` will only be for headers)
-        * `validate_script()` will take care of making sure macros are alone (after comment/nl stripping)
+        * `Validate_script()` will take care of making sure macros are alone (after comment/nl stripping)
       * Allow F['COMMAND']['macro_async'] = True to enable async on a macro. Default is False, ignored if not a macro.
         * When importing functions on startup, make a dict to keep track of what macros are async
         * `scripts.py` will have a `run_async` dict to keep track of if a script is async
@@ -425,16 +538,16 @@ In order of priority:
     * Write the importer library (test standalone w/ simple delay)
     * ~~Lobotomize the program (read: remove the hellish logic in scripts.py)~~
     * Integrate the importer into the main program (scripts.py)
-    * Find and kill all of the bugs
+    * Find and kill all of the bugs (DONE, replaced with brand new bugs)
     * Port the rest of the old logic to LPHKfuction modules
     * Deal with the Pandora's box that porting those functions will open (this list will probably grow)
-    * Make a way for modules to use standard commands, and to use other modules
-    * Take a drink and merge the branches
+    * Make a way for modules to use standard commands, and to use other modules (DONE?)
+    * Take a drink and merge the branches (Let me buy you a beer)
 * Allow named arguments for certain commands
 * Add a `Choose default MIDI device` option to the `Sound` menu. (For multiple launchpads plugged in)
 * Add a third argument to `SOUND` for overriding the default sound device
 * Add variables and mathematical evaluation (mostly done!)
-* Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) 
+* Add conditional jumps based on value comparisons (Would this make LPHKscript Turing complete? :D) (DONE?)
 * Add syntax highlighting
 * Add GUI scaling
 * Full support for Launchpad Pro

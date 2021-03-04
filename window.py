@@ -37,6 +37,7 @@ root_destroyed = None
 restart = False
 lp_object = None
 
+ARGS = dict()
 
 load_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT, files.LEGACY_LAYOUT_EXT])]
 load_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT, files.LEGACY_SCRIPT_EXT])]
@@ -205,12 +206,18 @@ class Main_Window(tk.Frame):
             self.draw_canvas()
             self.enable_menu("Layout")
             self.stat["text"] = f"Connected to {lpcon.get_display_name(lp)}"
-            self.stat["bg"] = STAT_ACTIVE_COLOR
+            self.stat["bg"] = STAT_ACTIVE_COLOR    
+
+    # load a layout on startup
+    def load_initial_layout(self):
+        global ARGS
+        if ARGS['layout']:                                 # did the user pass the option to load an initial layout?
+            files.load_layout_to_lp(ARGS['layout'].name)   # Load it!
 
     def disconnect_lp(self):
         global lp_connected
         try:
-            scripts.unbind_all()
+            scripts.Unbind_all()
             lp_events.timer.cancel()
             lpcon.disconnect(lp_object)
         except:
@@ -232,7 +239,7 @@ class Main_Window(tk.Frame):
     def unbind_lp(self, prompt_save=True):
         if prompt_save:
             self.modified_layout_save_prompt()
-        scripts.unbind_all()
+        scripts.Unbind_all()
         files.curr_layout = None
         self.draw_canvas()
 
@@ -298,12 +305,12 @@ class Main_Window(tk.Frame):
                         copy_func = partial(scripts.copy, self.last_clicked[0], self.last_clicked[1], column, row)
                         
                         if self.button_mode == "move":
-                            if scripts.is_bound(column, row) and ((self.last_clicked) != (column, row)):
+                            if scripts.Is_bound(column, row) and ((self.last_clicked) != (column, row)):
                                 self.popup_choice(self, "Button Already Bound", self.warning_image, "You are attempting to move a button to an already\nbound button. What would you like to do?", [["Overwrite", move_func], ["Swap", swap_func], ["Cancel", None]])
                             else:
                                 move_func()
                         elif self.button_mode == "copy":
-                            if scripts.is_bound(column, row) and ((self.last_clicked) != (column, row)):
+                            if scripts.Is_bound(column, row) and ((self.last_clicked) != (column, row)):
                                 self.popup_choice(self, "Button Already Bound", self.warning_image, "You are attempting to copy a button to an already\nbound button. What would you like to do?", [["Overwrite", copy_func], ["Swap", swap_func], ["Cancel", None]])
                             else:
                                 copy_func()
@@ -404,7 +411,8 @@ class Main_Window(tk.Frame):
             
             text_string = t.get(1.0, tk.END)
             try:
-                script_validate = scripts.validate_script(text_string)
+                btn = scripts.Button(x, y, text_string)
+                script_validate = btn.Parse_script()
             except:
                 #self.save_script(w, x, y, text_string) # This will fail and throw a popup error
                 self.popup(w, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK")
@@ -424,7 +432,7 @@ class Main_Window(tk.Frame):
         t.grid(column=0, row=0, rowspan=3, padx=10, pady=10)
         
         if text_override == None:
-            t.insert(tk.INSERT, scripts.text[x][y])
+            t.insert(tk.INSERT, scripts.buttons[x][y].script_str)
         else:
             t.insert(tk.INSERT, text_override)
         t.bind("<<Paste>>", self.custom_paste)
@@ -579,7 +587,7 @@ class Main_Window(tk.Frame):
         return "break"
 
     def unbind_destroy(self, x, y, window):
-        scripts.unbind(x, y)
+        scripts.Unbind(x, y)
         self.draw_canvas()
         window.destroy()
 
@@ -591,16 +599,18 @@ class Main_Window(tk.Frame):
         def open_editor_func():
             nonlocal x, y
             if open_editor:
-                    self.script_entry_window(x, y, script_text, color)
+                self.script_entry_window(x, y, script_text, color)
+                
         try:
-            script_validate = scripts.validate_script(script_text)
+            btn = scripts.Button(x, y, script_text)
+            script_validate = btn.Parse_script()
         except:
             self.popup(window, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK", end_command = open_editor_func)
             raise
         if script_validate == True:
             if script_text != "":
                 script_text = files.strip_lines(script_text)
-                scripts.bind(x, y, script_text, colors_to_set[x][y])
+                scripts.Bind(x, y, script_text, colors_to_set[x][y])
                 self.draw_canvas()
                 lp_colors.updateXY(x, y)
                 window.destroy()
@@ -689,9 +699,9 @@ class Main_Window(tk.Frame):
     def modified_layout_save_prompt(self):
         if files.layout_changed_since_load == True:
             layout_empty = True
-            for x_texts in scripts.text:
-                for text in x_texts:
-                    if text != "":
+            for x_btns in scripts.buttons:
+                for btn in x_btns:
+                    if btn.script_str != "":
                         layout_empty = False
                         break
             
@@ -703,7 +713,13 @@ def make():
     global app
     global root_destroyed
     global redetect_before_start
+    global ARGS
     root = tk.Tk()
+
+    # does the user want to start the form minimised?
+    if ARGS['minimised']:
+        root.iconify()
+
     root_destroyed = False
     root.protocol("WM_DELETE_WINDOW", close)
     root.resizable(False, False)
@@ -714,7 +730,10 @@ def make():
             root.iconbitmap(MAIN_ICON)
     app = Main_Window(root)
     app.raise_above_all()
+
     app.after(100, app.connect_lp)
+    app.after(110, app.load_initial_layout)   # Load the initial layout if you have specified one
+
     app.mainloop()
 
 

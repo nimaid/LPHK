@@ -4,11 +4,11 @@ color_modes = [["solid" for y in range(9)] for x in range(9)]
 import lp_events, scripts, window
 import colorsys
 
-lp_object = None
+lp_object = None # another suspiciously non-threadsafe way of doing things :-(
 
 def init(lp_object_in):
     global lp_object
-    lp_object = lp_object_in
+    lp_object = lp_object_in   # this function just stores the object in a global variable (what?!)
 
 def code_to_RGB(code):
     # Used to convert old layouts to the new format only
@@ -61,9 +61,11 @@ def RGB_to_RG(rgb):
     else:
         return rgb
 
+# Set the colour of a button (but not the current colour of the button!)
 def setXY(x, y, color):
     curr_colors[x][y] = color
 
+# Get the currently recorded colour of the button (not necessarily it's current colour!)
 def getXY(x, y):
     return curr_colors[x][y]
 
@@ -84,36 +86,38 @@ def getXY_RGB(x, y):
 def luminance(r, g, b):
 	return ((0.299 * r) + (0.587 * g) + (0.114 * b)) / 255.0
 
+# update the colour of a button
 def updateXY(x, y):
-    if window.lp_connected:
-        if (x, y) != (8, 0):
-            is_running = False
-            if scripts.threads[x][y] != None:
-                if scripts.threads[x][y].isAlive():
-                    is_running = True
+    if window.lp_connected:                                     # must be connected to a launchpad
+        btn = scripts.buttons[x][y]                             # get the button
+        if (x, y) != (8, 0):                                    # this is the "missing" button in the top right corner
+            is_running = False                                  # assume it's not running
+            if btn.thread != None:
+                if btn.thread.isAlive():
+                    is_running = True                           # unless it is
 
-            is_func_key = ((y == 0) or (x == 8))
+            is_func_key = ((y == 0) or (x == 8))                # top row or right column
 
             #print("Update colors for (" + str(x) + ", " + str(y) + "), is_running = " + str(is_running))
 
-            if is_running:
-                set_color = scripts.COLOR_PRIMED
-                color_modes[x][y] = "flash"
-            elif (x, y) in [l[1:] for l in scripts.to_run]:
+            if is_running:                                      # if the button is running
+                set_color = scripts.COLOR_PRIMED                # set the desired colour 
+                color_modes[x][y] = "flash"                     # and mode
+            elif (x, y) in [l[1:] for l in scripts.to_run]:     # is it waiting to run?
                 if is_func_key:
-                    set_color = scripts.COLOR_FUNC_KEYS_PRIMED
+                    set_color = scripts.COLOR_FUNC_KEYS_PRIMED  # function keys have one colour
                 else:
-                    set_color = scripts.COLOR_PRIMED
+                    set_color = scripts.COLOR_PRIMED            # and other keys have another
                     color_modes[x][y] = "pulse"
             else:
-                set_color = curr_colors[x][y]
-                color_modes[x][y] = "solid"
+                set_color = curr_colors[x][y]                   # this button is not running (or not even asigned)
+                color_modes[x][y] = "solid"                     # set the mode alone
 
-            if window.lp_mode == "Mk1":
+            if window.lp_mode == "Mk1":                         # how to actually set the colours of Mk:1 launchpads
                 if type(set_color) is int:
                     set_color = code_to_RGB(set_color)
                 lp_object.LedCtrlXY(x, y, set_color[0]//64, set_color[1]//64)
-            else:
+            else:                                               # setting colours for all other launchpads
                 if (color_modes[x][y] == "solid") or is_func_key:
                     #pulse and flash only work on main grid
                     if type(set_color) is list:
@@ -133,11 +137,12 @@ def updateXY(x, y):
     else:
         print("[lp_colors] (" + str(x) + ", " + str(y) + ") Launchpad is disconnected, cannot update.")
 
+# update the colours of all buttons
 def update_all():
     if window.lp_connected:
         for x in range(9):
             for y in range(9):
-                updateXY(x, y)
+                updateXY(x, y)  # call this for each buttn
     else:
         print("[lp_colors] Launchpad is disconnected, cannot update.")
 

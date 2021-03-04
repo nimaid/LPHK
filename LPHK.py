@@ -1,21 +1,10 @@
-import sys, os, subprocess
+import sys, os, subprocess, argparse
 from datetime import datetime
+from constants import *
 
 print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!\n")
 
 LOG_TITLE = "LPHK.log"
-
-# Get platform information
-PLATFORMS = [   {"search_string": "win", "name_string": "windows"},
-                {"search_string": "linux", "name_string": "linux"},
-                {"search_string": "darwin", "name_string": "macintosh"} ]
-PLATFORM = None
-for plat in PLATFORMS:
-    if sys.platform.startswith(plat["search_string"]):
-        PLATFORM = plat["name_string"]
-        break
-if PLATFORM == None:
-    PLATFORM = "other"
 
 # Test if this is a PyInstaller executable or a .py file
 if getattr(sys, 'frozen', False):
@@ -87,39 +76,52 @@ print("")
 import lp_events, scripts, kb, files, sound, window
 from utils import launchpad_connector
 
+# just import the control modules to automatically integrate them
+import command_list
+
 lp = launchpad.Launchpad()
 
 EXIT_ON_WINDOW_CLOSE = True
 
-
 def init():
     global EXIT_ON_WINDOW_CLOSE
-    if len(sys.argv) > 1:
-        if ("--debug" in sys.argv) or ("-d" in sys.argv):
-            EXIT_ON_WINDOW_CLOSE = False
-            print("[LPHK] Debugging mode active! Will not shut down on window close.")
-            print("[LPHK] Run shutdown() to manually close the program correctly.")
 
-        else:
-            print("[LPHK] Invalid argument: " + sys.argv[1] + ". Ignoring...")
+    ap = argparse.ArgumentParser()                             # argparse makes argument processing easy
+    ap.add_argument(                                           # reimnplementation of debug (-d or --debug)
+        "-d", "--debug", 
+        help = "turn on debugging mode", action="store_true")
+    ap.add_argument(                                           # new option to automatically load a layout
+        "-l", "--layout", 
+        help = "load a layout", 
+        type=argparse.FileType('r'))
+    ap.add_argument(                                           # new option to start minimised
+        "-m", "--minimised", 
+        help = "Start the application minimised", action="store_true")
+
+    window.ARGS = vars(ap.parse_args())                        # store the arguments in a place anything can get to
+
+    if window.ARGS['debug']:
+        EXIT_ON_WINDOW_CLOSE = False
+        print("[LPHK] Debugging mode active! Will not shut down on window close.")
+        print("[LPHK] Run shutdown() to manually close the program correctly.")
     
     files.init(USER_PATH)
     sound.init(USER_PATH)
 
 def shutdown():
-    if lp_events.timer != None:
+    if lp_events.timer != None:                          # cancel any outstanding events
         lp_events.timer.cancel()
-    scripts.to_run = []
+    scripts.to_run = []                                  # remove anything from the list of scripts scheduled to run
     for x in range(9):
         for y in range(9):
-            if scripts.threads[x][y] != None:
-                scripts.threads[x][y].kill.set()
+            if scripts.buttons[x][y].thread != None:
+                scripts.buttons[x][y].thread.kill.set()  # request to kill any running threads
     if window.lp_connected:
-        scripts.unbind_all()
-        lp_events.timer.cancel()
-        launchpad_connector.disconnect(lp)
+        scripts.Unbind_all()                             # unbind all the buttons
+        lp_events.timer.cancel()                         # cancel all the timers
+        launchpad_connector.disconnect(lp)               # disconnect from the launchpad
         window.lp_connected = False
-    logger.stop()
+    logger.stop()                                        # stop logging
     if window.restart:
         if IS_EXE:
             os.startfile(sys.argv[0])
