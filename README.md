@@ -219,6 +219,9 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
     * Supports `.wav`, `.flac`, and `.ogg` only.
   * If (argument 2) supplied, set volume to (argument 2).
     * Range is 0 to 100
+* `SOUND_STOP`
+  * Stops all sounds currently playing.
+  * If (argument 1) supplied, fading for (argument 1) milliseconds and then stops the sounds.
 * `WAIT_UNPRESSED`
   * Waits until the button the script is bound to is unpressed. (no arguments)
 * `WEB`

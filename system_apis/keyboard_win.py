@@ -224,6 +224,9 @@ key_map = {
     "'": 0xDE,
     "\\": 0xDC,
     "`": 0xC0,
+
+    # very special keys
+    "clear": 0x0C,
 }
 
 
