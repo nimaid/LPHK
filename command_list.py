@@ -28,18 +28,14 @@ if PLATFORM == "windows":
     except ImportError:
         print("[LPHK] ERROR: Windows specific commands are not available") 
         traceback.print_exc()
-else: 
-    print("[LPHK] WARNING: Windows specific commands can not be loaded") 
 
-# This library could be considered optional, and is also platform specific
-if PLATFORM == "windows":
     try:
         import commands_scrape
     except ImportError:
         print("[LPHK] ERROR: Screen scraping commands are not available")
         traceback.print_exc()
 else: 
-    print("[LPHK] WARNING: Screen scraping commands can not be loaded")
+    print("[LPHK] WARNING: Windows specific and screen scraping commands cannot be loaded")
 
 # Any that were not optional should set the error flag so we can exit
 if IMPORT_FATAL:  # Not using this at present
