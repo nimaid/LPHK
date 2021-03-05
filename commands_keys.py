@@ -68,9 +68,7 @@ class Keys_Tap(command_base.Command_Basic):
         key = kb.sp(self.Get_param(btn, 1))              # what key?
         releasefunc = lambda: None                       # default is no release function
 
-        taps = 1                                         # Assume 1 tap unless we are told there's more 
-        if cnt >= 2:                                     # @@@ this section can be simplified to taps = self.Get_param(btn, 2, 1)
-            taps = self.Get_param(btn, 2)
+        taps = self.Get_param(btn, 2, 1)                 # Assume 1 tap unless we are told there's more 
 
         delay = 0                                        # assume no delay unless we're told there is one
         if cnt == 3:

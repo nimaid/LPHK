@@ -41,14 +41,18 @@ ARGS = dict()
 
 load_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT, files.LEGACY_LAYOUT_EXT])]
 load_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT, files.LEGACY_SCRIPT_EXT])]
+load_subroutine_filetypes = [('LPHK subroutine files', [files.SUBROUTINE_EXT])]
 
 save_layout_filetypes = [('LPHK layout files', [files.LAYOUT_EXT])]
 save_script_filetypes = [('LPHK script files', [files.SCRIPT_EXT])]
+save_subroutine_filetypes = [('LPHK subroutine files', [files.SUBROUTINE_EXT])]
 
 lp_connected = False
 lp_mode = None
 colors_to_set = [[DEFAULT_COLOR for y in range(9)] for x in range(9)]
 
+MENU_LAYOUT = "Layout"
+MENU_SUBROUTINES = "Subroutines"
 
 def init(lp_object_in, launchpad_in, path_in, prog_path_in, user_path_in, version_in, platform_in):
     global lp_object
@@ -111,9 +115,16 @@ class Main_Window(tk.Frame):
         self.m_Layout.add_command(label="Load Layout", command=self.load_layout)
         self.m_Layout.add_command(label="Save Layout", command=self.save_layout)
         self.m_Layout.add_command(label="Save Layout As...", command=self.save_layout_as)
-        self.m.add_cascade(label="Layout", menu=self.m_Layout)
+        self.m.add_cascade(label=MENU_LAYOUT, menu=self.m_Layout)
 
-        self.disable_menu("Layout")
+        self.disable_menu(MENU_LAYOUT)
+        
+        self.m_Subroutine = tk.Menu(self.m, tearoff=False)
+        self.m_Subroutine.add_command(label="Load", command=self.load_subroutines)
+        self.m_Subroutine.add_command(label="Clear", command=self.clear_subroutines)
+        self.m.add_cascade(label=MENU_SUBROUTINES, menu=self.m_Subroutine)
+
+        self.disable_menu(MENU_SUBROUTINES)
         
         self.m_Help = tk.Menu(self.m, tearoff=False)
         open_readme = lambda: webbrowser.open("https://github.com/nimaid/LPHK#lphk-launchpad-hotkey")
@@ -158,7 +169,8 @@ class Main_Window(tk.Frame):
         lp_connected = True
         lp_mode = "Dummy"
         self.draw_canvas()
-        self.enable_menu("Layout")
+        self.enable_menu(MENU_LAYOUT)
+        self.enable_menu(MENU_SUBROUTINES)
 
     def connect_lp(self):
         global lp_connected
@@ -204,7 +216,8 @@ class Main_Window(tk.Frame):
 
             lp_events.start(lp_object)
             self.draw_canvas()
-            self.enable_menu("Layout")
+            self.enable_menu(MENU_LAYOUT)
+            self.enable_menu(MENU_SUBROUTINES)
             self.stat["text"] = f"Connected to {lpcon.get_display_name(lp)}"
             self.stat["bg"] = STAT_ACTIVE_COLOR    
 
@@ -226,7 +239,8 @@ class Main_Window(tk.Frame):
 
         self.clear_canvas()
 
-        self.disable_menu("Layout")
+        self.disable_menu(MENU_LAYOUT)
+        self.disable_menu(MENU_SUBROUTINES)
 
         self.stat["text"] = "No Launchpad Connected"
         self.stat["bg"] = STAT_INACTIVE_COLOR
@@ -251,6 +265,19 @@ class Main_Window(tk.Frame):
                                           filetypes=load_layout_filetypes)
         if name:
             files.load_layout_to_lp(name)
+
+    # user requests subroutine load
+    def load_subroutines(self):
+        name = tk.filedialog.askopenfilename(parent=app,
+                                          initialdir=files.SUBROUTINE_PATH,
+                                          title="Load subroutines",
+                                          filetypes=load_subroutine_filetypes) # get the filename
+        if name:
+            files.load_subroutines_to_lp(name)                                  # and load routines if a file was selected
+
+    # user requests clearing all subroutines
+    def clear_subroutines(self):
+        scripts.Unload_all()    # unload all subroutines
 
     def save_layout_as(self):
         name = tk.filedialog.asksaveasfilename(parent=app,

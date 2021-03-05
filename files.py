@@ -1,14 +1,18 @@
 import lp_colors, scripts
 from time import sleep
 import os, json, platform, subprocess
+from constants import *
 
 LAYOUT_DIR = "user_layouts"
 SCRIPT_DIR = "user_scripts"
+SUBROUTINE_DIR = "user_subroutines"
 
-FILE_VERSION = "0.1.1"
+FILE_VERSION = "0.1.1"         # file is unchanged if no subroutines are saved
+FILE_VERSION_SUBS = "0.2"      # file version if subroutines are saved
 
 LAYOUT_EXT = ".lpl"
 SCRIPT_EXT = ".lps"
+SUBROUTINE_EXT = ".lpc"
 
 LEGACY_LAYOUT_EXT = ".LPHKlayout"
 LEGACY_SCRIPT_EXT = ".LPHKscript"
@@ -16,6 +20,7 @@ LEGACY_SCRIPT_EXT = ".LPHKscript"
 USER_PATH = None
 LAYOUT_PATH = None
 SCRIPT_PATH = None
+SUBROUTINE_PATH = None
 
 import window
 
@@ -27,9 +32,11 @@ def init(user_path_in):
     global USER_PATH
     global LAYOUT_PATH
     global SCRIPT_PATH
+    global SUBROUTINE_PATH
     USER_PATH = user_path_in
     LAYOUT_PATH = os.path.join(USER_PATH, LAYOUT_DIR)
     SCRIPT_PATH = os.path.join(USER_PATH, SCRIPT_DIR)
+    SUBROUTINE_PATH = os.path.join(USER_PATH, SUBROUTINE_DIR)
 
 def save_layout(layout, name, printing=True):
     with open(name, "w") as f:
@@ -102,7 +109,8 @@ def load_layout(name, popups=True, save_converted=True, printing=True):
 
 def save_lp_to_layout(name):
     layout = dict()
-    layout["version"] = FILE_VERSION
+    
+    has_subs = False
     
     layout["buttons"] = []
     for x in range(9):
@@ -112,6 +120,19 @@ def save_lp_to_layout(name):
             script_text = scripts.buttons[x][y].script_str
             
             layout["buttons"][-1].append({"color": color, "text": script_text})
+            
+    for x in scripts.VALID_COMMANDS:               # for all the commands that exist
+        if x.startswith(SUBROUTINE_PREFIX):        # if this command is a subroutine
+            if not has_subs:
+                layout["subroutines"] = []         # only add the key if required
+                has_subs = True
+            cmd = scripts.VALID_COMMANDS[x]        # get the command
+            layout["subroutines"] += [cmd.routine] # add the command to the list (name is embedded in the subroutine)                               
+
+    if has_subs:                                   # file version depends on the existance of subroutines 
+        layout["version"] = FILE_VERSION_SUBS
+    else:
+        layout["version"] = FILE_VERSION
     
     save_layout(layout=layout, name=name)
 
@@ -123,6 +144,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
     converted_to_rg = False
     
     scripts.Unbind_all()
+    scripts.Unload_all()                         # remove all existing subroutines when you load a new layout
     window.app.draw_canvas()
     
     if preload == None:
@@ -130,6 +152,11 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
     else:
         layout = preload
         
+    # load subroutines before buttons so you don't get errors on buttons using them
+    if "subroutines" in layout:                  # were subroutines saved?
+        for sub in layout["subroutines"]:        # for all the subroutines that were saved
+            load_subroutine(sub, 0, 'LAYOUT')    # load the subroutine
+
     for x in range(9):
         for y in range(9):
             button = layout["buttons"][x][y]
@@ -163,6 +190,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
                     scripts.Bind(x, y, script_text, color)
             else:
                 lp_colors.setXY(x, y, color)
+
     lp_colors.update_all()
     window.app.draw_canvas()
         
@@ -175,6 +203,24 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
         layout_changed_since_load = True
     else:
         layout_changed_since_load = False
+
+# load all the subroutines in a file
+def load_subroutines_to_lp(name, popups=True, preload=None):
+    with open(name, 'r') as in_subs:
+       subs = in_subs.read().split('\n===\n')
+       
+    for i, sub in enumerate(subs):
+        load_subroutine(sub.splitlines(), i+1, name)
+
+# load a single subroutine
+def load_subroutine(sub, sub_n, fname):
+    import commands_subroutines
+    ok, name, params = commands_subroutines.Add_Function(sub, sub_n, fname) # Attempt to load the command
+    
+    if ok:
+        pass # @@@ there must be more to do! :-)
+    else:
+        pass # @@@ likewise
 
 def import_script(name):
     with open(name, "r") as f:

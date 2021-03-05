@@ -644,7 +644,7 @@ Every command requires a validation.  If you do not provide validation code, the
 
             try:
                 temp = int(split_line[1])
-                if valid_var_name(temp):
+                if variables.valid_var_name(temp):
                 
                 if temp < 1:
                     return ("Line:" + str(idx+1) + " - '" + split_line[0] + " parameter 1 must be a positive number.", btn.line[idx])

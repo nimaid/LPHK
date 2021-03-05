@@ -1,9 +1,13 @@
 from constants import *
+import variables
+import re
 
 # operations needed to access variables  
 
 # NOTE that any locking is the responsibility of the calling code!
 
+# Regular expression for validating variable names
+VALID_RE = re.compile('^[A-Za-z][A-Za-z0-9_]*$')
 
 # Note that popping a value from an empty stack returns 0.  An alternative is
 # to return an error
@@ -67,9 +71,9 @@ def next_cmd(ret, cmds):
         return ret+1, v # and we return an updated pointer and the removed element
 
 
-# variable names should start with an alpha character
+# variable names should start with an alpha character and contain only alpha numeric and underscores
 def valid_var_name(v):
-    return isinstance(v, str) and len(v) > 0 and ord(v[0].upper()) in range(ord('A'), ord('Z')+1)
+    return isinstance(v, str) and VALID_RE.match(v)
 
 
 # return a properly formatted error message
@@ -219,15 +223,45 @@ def Validate_ge_zero(v, idx, name, desc, p, param):
         return error_msg(idx, name, desc, p, param, 'must be an integer')
         
 
-def Auto_store(v, a, symbols):
+def Auto_store(v_name, value, symbols):
     # automatically stores the variable in the "right" place        
     with symbols[SYM_GLOBAL][0]:                                # lock the globals while we do this
-        if is_defined(v, symbols[SYM_LOCAL]):                   # Is it local...
-            put(v, a, symbols[SYM_LOCAL])                       # ...then store it locally
-        elif is_defined(v, symbols[SYM_GLOBAL][1]):             # Is it global...
-            put(v, a, symbols[SYM_GLOBAL][1])                   # ...store it globally
+        if is_defined(v_name, symbols[SYM_LOCAL]):              # Is it local...
+            put(v_name, value, symbols[SYM_LOCAL])              # ...then store it locally
+        elif is_defined(v_name, symbols[SYM_GLOBAL][1]):        # Is it global...
+            put(v_name, value, symbols[SYM_GLOBAL][1])          # ...store it globally
         else:
-            put(v, a, symbols[SYM_LOCAL])                       # default is to create new in locals
+            put(v_name, value, symbols[SYM_LOCAL])              # default is to create new in locals
 
 
+def Local_store(v_name, value, symbols):
+    # stores the variable locally        
+    put(v_name, value, symbols[SYM_LOCAL])                      # and store it locally
 
+
+def Global_store(v_name, value, symbols):
+    # stores the variable globally        
+    with symbols[SYM_GLOBAL][0]:                                # lock the globals while we do this
+        put(v_name, value, symbols[SYM_GLOBAL][1])              # and store it globally
+
+
+def Auto_recall(v_name, symbols):
+    # automatically recalls the variable from the "right" place        
+    with symbols[SYM_GLOBAL][0]:                                # lock the globals while we do this
+        a = variables.get(v_name, symbols[SYM_LOCAL], symbols[SYM_GLOBAL][1]) # try local, then global
+        
+    return a
+
+
+def Local_recall(v_name, symbols):
+    # automatically recalls the local variable
+    a = variables.get(v_name, symbols[SYM_LOCAL], None)         # get the value from the local vars
+    return a
+        
+
+def Global_recall(v_name, symbols):
+    # automatically recalls the global variable
+    with symbols[SYM_GLOBAL][0]:                                # lock the globals while we do this
+        a = variables.get(v_name, None, symbols[SYM_GLOBAL][1]) # grab the value from the global vars
+
+    return a

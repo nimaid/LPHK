@@ -1,0 +1,2 @@
+@SUB ADD_ONE @a%
+RPN_EVAL view_l < a 1 + > a view_l

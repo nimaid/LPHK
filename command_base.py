@@ -554,7 +554,7 @@ class Command_Basic:
         av = self.auto_validate[n-1]
         if av[AV_VAR_OK] == AVV_REQD:
             variables.Auto_store(btn.symbols[SYM_PARAMS][n], val, btn.symbols) # return result in variable
-        
+                
 
 # ##################################################
 # ### CLASS Command_Text_Basic                   ###

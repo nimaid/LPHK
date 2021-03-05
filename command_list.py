@@ -12,7 +12,8 @@ import \
   commands_keys, \
   commands_mouse, \
   commands_pause, \
-  commands_external
+  commands_external, \
+  commands_subroutines
 
 # This library could be considered optional, but is not platform specific
 try:
