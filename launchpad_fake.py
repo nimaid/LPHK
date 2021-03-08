@@ -1,5 +1,8 @@
 # A fake connector to allow operation without a launchpad connected
 
+import global_vars
+
+
 class Launchpad():
     def __init__(self):
         pass
@@ -38,10 +41,10 @@ class Launchpad_Fake_Connector():
         return True
         
     def get_mode(self, lp):
-        return "*ALONE*"
+        return global_vars.ARGS['standalone']
 
     def get_display_name(self, lp):
-        return "Standalone Mode"
+        return "Emulated Launchpad " + global_vars.ARGS['standalone']
 
     def disconnect(self, lp_object):
         pass

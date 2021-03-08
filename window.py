@@ -60,7 +60,7 @@ LPCON = None
 
 # Are we in standalone mode?
 def IsStandalone():
-    return global_vars.ARGS['standalone']
+    return not (global_vars.ARGS['standalone'] == None)
 
 
 def lpcon():
@@ -230,7 +230,7 @@ buttons by right clicking on them.""",
             lp_object = lp
             lp_mode = lpcon().get_mode(lp)
 
-            if lp_mode is "Pro":
+            if lp_mode is LP_PRO:
                 self.popup(self, "Connect to Launchpad Pro", self.error_image,
                            """This is a BETA feature! The Pro is not fully supported yet,as the bottom and left rows are not mappable currently.
 I (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)
@@ -241,7 +241,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             lp_object.ButtonFlush()
 
             # special case?
-            if lp_mode is not "Mk1":
+            if lp_mode != LP_MK1:
                 lp_object.LedCtrlBpm(INDICATOR_BPM)
 
             lp_events.start(lp_object)
@@ -513,7 +513,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             colors_to_set[x][y] = lp_colors.code_to_RGB(colors_to_set[x][y])
 
         if all(c < 4 for c in colors_to_set[x][y]):
-            if lp_mode == "Mk1":
+            if lp_mode == LP_MK1:
                 colors_to_set[x][y] = MK1_DEFAULT_COLOR
             else:
                 colors_to_set[x][y] = DEFAULT_COLOR
@@ -606,7 +606,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
     def ask_color(self, window, button, x, y, default_color):
         global colors_to_set
 
-        if lp_mode == "Mk1":
+        if lp_mode == LP_MK1:
             color = self.classic_askcolor(color=tuple(default_color), title="Select Color for Button (" + str(x) + ", " + str(y) + ")")
         else:
             color = tkcolorpicker.askcolor(color=tuple(default_color), parent=window, title="Select Color for Button (" + str(x) + ", " + str(y) + ")")

@@ -109,7 +109,7 @@ def init():
         help = "Start the application minimised", action="store_true")
     ap.add_argument(                                           # option to start without connecting to a Launchpad
         "-s", "--standalone",
-        help = "Operate without connection to Launchpad", action="store_true")
+        help = "Operate without connection to Launchpad", type=str, choices=['Mk1', "Mk2", "Mini", "Pro"])
 
     global_vars.ARGS = vars(ap.parse_args())                   # store the arguments in a place anything can get to
 

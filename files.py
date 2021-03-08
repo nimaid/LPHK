@@ -163,7 +163,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
             color = button["color"]
             script_text = button["text"]
 
-            if window.lp_mode == "Mk1":
+            if window.lp_mode == LP_MK1:
                 if color[2] != 0:
                     color = lp_colors.RGB_to_RG(color)
                     converted_to_rg = True

@@ -1,6 +1,6 @@
 # Constants used all over the place.  An excuse to use "from constants import *"
 
-from param_convs import *
+import param_convs
 
 # Get platform information
 PLATFORMS = [   {"search_string": "win", "name_string": "windows"},
@@ -64,17 +64,17 @@ AV_P1_VALIDATION  = 4
 AV_P2_VALIDATION  = 5
 
 # constants for parameter types
-#              desc      conv    special last   var (special means additional auto-validation, last means MUST be last, var is the max AV_VAR allowed)
-PT_INT      = ("int",    _int,   False,  False, AVVS_ALL)
-PT_FLOAT    = ("float",  _float, False,  False, AVVS_ALL)
-PT_STR      = ("str",    _str,   True,   False, AVVS_ALL)        # a quoted string
-PT_STRS     = ("strs",   _str,   True,   True,  AVVS_ALL)        # 1 or more quoted strings
-PT_LINE     = ("line",   _str,   True,   True,  AVVS_NO)         # the rest of the line following first preceeding whitespace
-PT_TEXT     = ("text",   _str,   False,  False, AVVS_AMB)        # a string without whitespace @@@ DEPRECATED
-PT_LABEL    = ("label",  _str,   True,   False, AVVS_NO)         # Note that this is for a reference to a label, not the definition of a label!
-PT_TARGET   = ("target", _str,   True,   False, AVVS_NO)         # Note that this is for the definition of a target (e.g. creating a label)
-PT_KEY      = ("key",    _str,   True,   False, AVVS_NO)         # This is a key literal
-PT_BOOL     = ("bool",   _str,   True,   False, AVVS_ALL)        # True/False, Yes/No, Y/N, nonzero/zero <-- for variables
+#              desc      conv                special last   var (special means additional auto-validation, last means MUST be last, var is the max AV_VAR allowed)
+PT_INT      = ("int",    param_convs._int,   False,  False, AVVS_ALL)
+PT_FLOAT    = ("float",  param_convs._float, False,  False, AVVS_ALL)
+PT_STR      = ("str",    param_convs._str,   True,   False, AVVS_ALL)        # a quoted string
+PT_STRS     = ("strs",   param_convs._str,   True,   True,  AVVS_ALL)        # 1 or more quoted strings
+PT_LINE     = ("line",   param_convs._str,   True,   True,  AVVS_NO)         # the rest of the line following first preceeding whitespace
+PT_TEXT     = ("text",   param_convs._str,   False,  False, AVVS_AMB)        # a string without whitespace @@@ DEPRECATED
+PT_LABEL    = ("label",  param_convs._str,   True,   False, AVVS_NO)         # Note that this is for a reference to a label, not the definition of a label!
+PT_TARGET   = ("target", param_convs._str,   True,   False, AVVS_NO)         # Note that this is for the definition of a target (e.g. creating a label)
+PT_KEY      = ("key",    param_convs._str,   True,   False, AVVS_NO)         # This is a key literal
+PT_BOOL     = ("bool",   param_convs._str,   True,   False, AVVS_ALL)        # True/False, Yes/No, Y/N, nonzero/zero <-- for variables
 
 # constants for auto_message
 AM_COUNT  = 0
@@ -95,3 +95,8 @@ EXIT_UPDATE_DELAY = 0.1
 DELAY_EXIT_CHECK = 0.025
 
 SUBROUTINE_PREFIX = "CALL:"
+
+# Launchpad constants
+
+LP_MK1 = "Mk1"
+LP_PRO = "Pro"

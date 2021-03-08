@@ -1,6 +1,5 @@
-import command_base, lp_events, scripts, variables, sys
+import command_base, lp_events, scripts, variables, sys, param_convs
 from constants import *
-from param_convs import *
 
 LIB = "cmds_rpnc" # name of this library (for logging)
 
