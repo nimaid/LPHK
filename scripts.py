@@ -13,7 +13,7 @@ VALID_COMMANDS = dict()
 
 # HEADERS is likewise empty until added (all headers, not just async ones)
 
-HEADERS = dict() 
+HEADERS = dict()
 
 
 # GLOBALS is likewise empty until global variables get created
@@ -33,7 +33,7 @@ def Add_command(
 
     if a_command.name in HEADERS:              # if this was previously a header, now it isn't
         HEADERS.pop(a_command.name)
-  
+
     if a_command.name in VALID_COMMANDS:       # if it already exists
         p = VALID_COMMANDS[a_command.name]     # get it
     else:                                      # otherwise
@@ -45,8 +45,8 @@ def Add_command(
         HEADERS[a_command.name] = a_command.is_async # add it
 
     return p                                   # return any replaced command
-       
- 
+
+
 # Remove a command.  This could be useful in handling subroutines (@@@ UNTESTED)
 
 def Remove_command(
@@ -55,11 +55,11 @@ def Remove_command(
 
     if command_name in HEADERS:                # if this was previously a header
         HEADERS.pop(command_name)              # remove the header
-  
+
     if command_name in VALID_COMMANDS:         # if it already exists
         VALID_COMMANDS.pop(command_name)       # remove the command
-       
- 
+
+
 # Create a new symbol table.  This contains information required for the script to run
 # it includes the locations of labels, loop counters, etc.  If we implement variables
 # this is where we would place them
@@ -69,12 +69,12 @@ def New_symbol_table():
     # symbol table is dictionary of objects
     symbols = {
         SYM_REPEATS:  dict(),
-        SYM_ORIGINAL: dict(), 
+        SYM_ORIGINAL: dict(),
         SYM_LABELS:   dict(),
         SYM_MOUSE:    tuple(),
         SYM_GLOBAL:   [GLOBAL_LOCK, GLOBALS],  # global (to the application) variables (and associated lock)
         SYM_LOCAL:    dict(),                  # local (to the script) variables (with no lock)
-        SYM_STACK:    [] }                     # script stack (for RPN_EVAL)        
+        SYM_STACK:    [] }                     # script stack (for RPN_EVAL)
 
     return symbols
 
@@ -87,7 +87,7 @@ def New_symbol_table():
 # A button is a class containing all that's essential for a button.
 class Button():
     def __init__(
-        self, 
+        self,
         x,                                   # The button column
         y,                                   # The button row
         script_str,                          # The Script
@@ -108,45 +108,45 @@ class Button():
             self.coords = "(" + str(self.x) + ", " + str(self.y) + ")" # let's just do this the once eh?
         else:
             self.coords = "(SUB)"            # subroutines don't have coordinates
-            
-        # The "root" is the button that is scheduled.  This allows subroutines to check if the 
+
+        # The "root" is the button that is scheduled.  This allows subroutines to check if the
         # initiating button has been killed.
         if root == None:                     # if we are not being called
             self.root = self                 # then we are the root
         else:                                # otherwise
             self.root = root                 # the caller is the root
-    
-    
-    #  Do what is required to parse the script.  Parsing does not output any information unless it is an error 
+
+
+    #  Do what is required to parse the script.  Parsing does not output any information unless it is an error
     def Parse_script(self):
         if self.validated:                           # we don't want to repeat validation over and over
             return True
-            
+
         if self.script_lines == None:                # A little setup if the script lines are not created
             if isinstance(self.script_str, list):    # Subroutines already have this as a list of lines
                 self.script_lines = self.script_str  # Copy the lines
             else:                                    # But commands just have the raw stream from a file
                 self.script_lines = self.script_str.split('\n')  # Create the lines
             self.script_lines = [i.strip() for i in self.script_lines] # Strip extra blanks
-        
+
             self.symbols = New_symbol_table()        # Create a shiny new symbol table
             self.is_async = False                    # default is NOT async
 
         err = True
         errors = 0                                   # no errors found
 
-        for pass_no in (VS_PASS_1, VS_PASS_2):       # pass 1, collect info & syntax check, 
+        for pass_no in (VS_PASS_1, VS_PASS_2):       # pass 1, collect info & syntax check,
                                                      # pass 2 symbol check & assocoated processing
             for idx,line in enumerate(self.script_lines): # gen line number and text
                 if self.Is_ignorable_line(line):
                     continue                         # don't process ignorable lines
-                 
+
                 cmd_txt = self.Split_cmd_text(line)  # get the name of the command
 
                 if cmd_txt in VALID_COMMANDS:        # if first element is a command
                     command = VALID_COMMANDS[cmd_txt]# get the command itself
                     split_line = self.Split_text(command, cmd_txt, line) # now split the line appropriately
-                    
+
                     if type(split_line) == tuple:
                         if err == True:
                            err = split_line
@@ -168,28 +168,28 @@ class Button():
                 print('Pass ' + str(pass_no) + ' complete for button (' + str(self.x+1) + ',' + str(self.y+1) + ').  ' + str(errors) + ' errors detected.')
                 break                                # errors prevent next pass
 
-        return err                                   # success or failure 
+        return err                                   # success or failure
 
 
-    #  copies parsed info from self to new_btn 
+    #  copies parsed info from self to new_btn
     def Copy_parsed(self, new_btn, name="SUB"):
         new_btn.script_lines = self.script_lines                             # Copy the lines
         new_btn.coords = "(" + name + ")"                                    # set the name
-        
+
         new_btn.symbols = New_symbol_table()
         new_btn.symbols[SYM_REPEATS] = self.symbols[SYM_REPEATS].copy()      # copy the repeats
         new_btn.symbols[SYM_ORIGINAL] = self.symbols[SYM_ORIGINAL].copy()    # and the original values
         new_btn.symbols[SYM_LABELS] = self.symbols[SYM_LABELS].copy()        # and the position of labels
-        
+
         new_btn.is_async = self.is_async                                     # default is NOT async
-        
+
 
     # check "self" for death notification
-    def Check_self_kill(self, killfunc=None):  
+    def Check_self_kill(self, killfunc=None):
         if not self.thread:
            print ("expecting a thread in ", self.coords)
            return False
-           
+
         if self.thread.kill.is_set():
             print("[scripts] " + self.coords + " Recieved exit flag, script exiting...")
             self.thread.kill.clear()
@@ -239,7 +239,7 @@ class Button():
     def Schedule_script(self):
         # @@@ may be worth checking to see if it's a subroutine.  Because subroutines shouldn't use this
         global to_run
-        
+
         if self.thread != None:
             if self.thread.is_alive():
                 # @@@ The following code creates a problem if a script is looking for a second keypress
@@ -269,7 +269,7 @@ class Button():
         else:
             print("[scripts] " + self.coords + " A script is already running, scheduling...")
             to_run.append((self.x, self.y))
-            
+
         lp_colors.updateXY(self.x, self.y)
 
 
@@ -289,8 +289,8 @@ class Button():
     def Run_script_and_run_next(self):
         self.Run_script()
         self.Run_next()
-        
-        
+
+
     def Line(self, idx):
         if self.script_lines and idx >=0 and idx < len(self.script_lines):
             return self.Fix_comment(self.script_lines[idx])
@@ -321,9 +321,9 @@ class Button():
             def split1(line):                     # just strip off a single (non-quoted) parameter
                 param = line.split()[0]           # get the parameter
                 line = line[len(param):].strip()  # strip off the parameter
-                
+
                 return param, line                # return the parameter and the rest of the line
-                
+
             # grab a quoted string from the line passed.  Handles embedded quotes
             def strip_quoted(line):
                 l2 = line                                 # a copy of the line we can edit
@@ -343,9 +343,9 @@ class Button():
                     else:                                 # for non-quote characters
                         out += l2[0]                      # we just pass them through to the output string
                         l2 = l2[1:]                       # and strip them off.
-                
+
                 return False, out, line                   # if we fall through, that's an error (no closing quote)
-            
+
             # for all other commands, split on spaces
             if isinstance(command, command_base.Command_Basic):
                 pline = line                              # something we can alter
@@ -361,7 +361,7 @@ class Button():
                             av = avl[n]                   # then grab it
                         else:                             # otherwise the last parameter must allow for multiple values
                             av = avl[-1]                  # so take the last auto-validation
-                            
+
                         desc = av[AV_TYPE][AVT_DESC]      # get the description of the parameter type (not the description of the parameter!)
 
                         if (desc == PT_STR[AVT_DESC]) or (desc == PT_STRS[AVT_DESC]):   # Is this one that wants quoted strings?
@@ -374,7 +374,7 @@ class Button():
                                        sline += ['"'+param]                             # we'll add it as the parameter value.  Note we add a leading " to distinguish it from a variable
                                    else:
                                        return ('Error in quoted string for param #' + str(n+1), line) # This is generally something to do with the closing quote
-                            else:                                                       # if we want a quoted string, but value doesn't start with a quote 
+                            else:                                                       # if we want a quoted string, but value doesn't start with a quote
                                 if av[AV_VAR_OK] != AVV_NO:                             # Are we allowed to pass a variable?
                                     param = pline.split()[0]                            # then that's OK, just strip off an un-quoted string
                                     pline = pline[len(param):].strip()                  # and clean up the line (@@@ why not use strip1()??)
@@ -382,20 +382,20 @@ class Button():
                                         return ('Error in variable for param #' + str(n+1), line) # if it's not a string and not a variable...
                                     else:
                                         sline += [param]                                # add it to the list of parameters if it's OK
-                                else:    
+                                else:
                                     return ('Error starting quoted string for param#' + str(n+1), line) # This is generally a missing initial quote
-                                
+
                         elif desc == PT_LINE[AVT_DESC]:    # the rest of the line (regardless of spaces)
                             sline += [line]                # just grab the rest of the line
                             pline = ""                     # and leave nothing behind
-                            
+
                         else:                              # in all other cases
                             param = pline.split(" ")[0]    # just strip the first unquoted parameter (@@@ why not use strip1()???)
                             sline += [param]
                             pline = pline[len(param):].strip()
-                     
+
                     return sline                           # return a list of command and parameters
-                    
+
                 else:
                     # without autovalidate we just split on spaces
                     return line.split(" ")
@@ -405,28 +405,28 @@ class Button():
     def Run_script(self):
         # @@@ maybe check we're not a subroutine (subroutines should not use this)
         lp_colors.updateXY(self.x, self.y)
-        
+
         if self.Validate_script() != True:
            return
-           
+
         print("[scripts] " + self.coords + " Now running script...")
-        
+
         self.running = not self.is_async
 
         cmd_txt = "RESET_REPEATS"                                         # before we run, we want to rest loop counters
         if cmd_txt in VALID_COMMANDS:
-            command = VALID_COMMANDS[cmd_txt]  
-            command.Run(self, -1, [cmd_txt])        
-        
+            command = VALID_COMMANDS[cmd_txt]
+            command.Run(self, -1, [cmd_txt])
+
         if len(self.script_lines) > 0:
             self.running = True
 
             def Main_logic(idx):                                          # the main logic to run a line of a script
                 if self.Check_kill():                                     # first check to see if we've been asked to die
                     return idx + 1                                        # we just return the next line, @@@ returning -1 is better
-                        
+
                 line = self.Line(idx)                                     # get the line of the script
-                
+
                 # Handle completely blank lines
                 if line == "":
                     return idx + 1
@@ -437,13 +437,13 @@ class Button():
                 # Now get the command object
                 if cmd_txt in VALID_COMMANDS:                             # make sure it's a valid command
                     command = VALID_COMMANDS[cmd_txt]                     # get the command object that will execute the command
-                    
+
                     split_line = self.Split_text(command, cmd_txt, line)  # get all the parameters as a list, including quoted parameters
 
                     if type(split_line) == tuple:                         # bad news if we get a tuple rather than a list
                         print("[scripts] " + self.coords + "    Error in: '" + cmd_txt + "' - "  + split_line[0] + ", skipping...")
-                    else:    
-                        # now run the command 
+                    else:
+                        # now run the command
                         return command.Run(self, idx, split_line)         # otherwise we can ask the command to execute itself with the parameters we've parsed out
                 else:
                     print("[scripts] " + self.coords + "    Invalid command: '" + cmd_txt + "', skipping...")
@@ -456,31 +456,31 @@ class Button():
                 idx = Main_logic(idx)                                     # run the current line
                 if (idx < 0) or (idx >= len(self.script_lines)):          # if the next line isn't valid
                     run = False                                           # then we're not going to keep running!
-                    
+
             if not self.is_async:                                         # async commands don't just end
                 self.running = False                                      # they have to say they're not running
-                
+
             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (self.x, self.y)).start() # queue up a request to update the button colours
-        
+
         print("[scripts] " + self.coords + " Script ended.")              # and print (log?) that the script is complete
 
-        
-    # run a subroutine.  This is a simplified version of running a script because the script takes care of being scheduled and killed 
+
+    # run a subroutine.  This is a simplified version of running a script because the script takes care of being scheduled and killed
     # @@@ this is so close to run_script that it probably should be merged with it at some point -- after I know its working
     def Run_subroutine(self):
         # @@@ maybe check that we **are** a subroutine first.  This is for subroutines ONLY
         if self.Validate_script() != True:                                # validates if not validated
            return
-           
+
         print("[scripts] " + self.coords + " Now running subroutine ...")
-        
+
         self.running = not self.is_async                                  # @@@ not sure a async subroutine makes sense
 
         cmd_txt = "RESET_REPEATS"                                         # before we run, we want to rest loop counters
         if cmd_txt in VALID_COMMANDS:
-            command = VALID_COMMANDS[cmd_txt]  
-            command.Run(self, -1, [cmd_txt])        
-        
+            command = VALID_COMMANDS[cmd_txt]
+            command.Run(self, -1, [cmd_txt])
+
         if len(self.script_lines) > 0:
             self.running = True
 
@@ -489,7 +489,7 @@ class Button():
                     return idx + 1                                        # we just return the next line, @@@ returning -1 is better
 
                 line = self.Line(idx)                                     # get the line of the script
-                
+
                 # Handle completely blank lines
                 if line == "":
                     return idx + 1
@@ -500,13 +500,13 @@ class Button():
                 # Now get the command object
                 if cmd_txt in VALID_COMMANDS:                             # make sure it's a valid command
                     command = VALID_COMMANDS[cmd_txt]                     # get the command object that will execute the command
-                    
+
                     split_line = self.Split_text(command, cmd_txt, line)  # get all the parameters as a list, including quoted parameters
 
                     if type(split_line) == tuple:                         # bad news if we get a tuple rather than a list
                         print("[scripts] " + self.coords + "    Error in: '" + cmd_txt + "' - "  + split_line[0] + ", skipping...")
-                    else:    
-                        # now run the command 
+                    else:
+                        # now run the command
                         return command.Run(self, idx, split_line)         # otherwise we can ask the command to execute itself with the parameters we've parsed out
                 else:
                     print("[scripts] " + self.coords + "    Invalid command: '" + cmd_txt + "', skipping...")
@@ -519,13 +519,13 @@ class Button():
                 idx = Main_logic(idx)                                     # run the current line
                 if (idx < 0) or (idx >= len(self.script_lines)):          # if the next line isn't valid
                     run = False                                           # then we're not going to keep running!
-                    
+
             if not self.is_async:                                         # async commands don't just end @@@ again, not sure this makes sense for subroutines
                 self.running = False                                      # they have to say they're not running
-                        
+
         print("[scripts] " + self.coords + " Subroutine ended.")          # and print (log?) that the script is complete
 
-        
+
     # validating a script consists of doing the checks that we do prior to running, but
     # we won't run it afterwards.
     def Validate_script(self):
@@ -540,9 +540,9 @@ class Button():
                 cmd_txt = self.Split_cmd_text(self.script_lines[0])
                 self.is_async = cmd_txt in HEADERS and HEADERS[cmd_txt].is_async
         else:
-            self.symbols = None                          # otherwise destroy symbol table 
+            self.symbols = None                          # otherwise destroy symbol table
 
-        return self.validated                            # and tell us the result            
+        return self.validated                            # and tell us the result
 
 
 # define the buttons structure here.  Note that subroutines will likely be a different sort of button, so this may change
@@ -554,12 +554,12 @@ to_run = []
 def Bind(x, y, script_str, color):
     global to_run
     global buttons
-    
+
     btn = Button(x, y, script_str)
     buttons[x][y] = btn
 
     if (x, y) in [l[1:] for l in to_run]:    # If this button is scheduled to run...
-        indexes = [i for i, v in enumerate(to_run) if ((v[1] == x) and (v[2] == y))]  #... create a list of locations in the list for this button 
+        indexes = [i for i, v in enumerate(to_run) if ((v[1] == x) and (v[2] == y))]  #... create a list of locations in the list for this button
         for index in indexes[::-1]:          # and for each of them (in reverse order)
             temp = to_run.pop(index)         # Remove them from the list
         return # @@@ Why do we return here?
@@ -576,11 +576,11 @@ def Unbind(x, y):
     global buttons
 
     lp_events.unbind(x, y)                   # Clear any events associated with the button
-    
+
     btn = Button(x, y, "")                   # create the new blank button
 
     if (x, y) in [l[1:] for l in to_run]:    # If this button is scheduled to run...
-        indexes = [i for i, v in enumerate(to_run) if ((v[1] == x) and (v[2] == y))]  #... create a list of locations in the list for this button 
+        indexes = [i for i, v in enumerate(to_run) if ((v[1] == x) and (v[2] == y))]  #... create a list of locations in the list for this button
         for index in indexes[::-1]:          # and for each of them (in reverse order)
             temp = to_run.pop(index)         # Remove them from the list
         buttons[x][y] = btn                  # Clear the button script
@@ -588,32 +588,32 @@ def Unbind(x, y):
 
     if thread[x][y] != None:                 # If the button is actially executing
         thread[x][y].kill.set()              # then kill it
-    
+
     buttons[x][y] = btn                      # Clear the button script
-    
+
     files.layout_changed_since_load = True   # Mark the layout as changed
 
 
-# swap details for two buttons  
+# swap details for two buttons
 def Swap(x1, y1, x2, y2):
     global text
 
     color_1 = lp_colors.curr_colors[x1][y1]  # Colour for btn #1
     color_2 = lp_colors.curr_colors[x2][y2]  # Colour for btn #2
-    
-    script_1 = buttons[x1, y1].script_str    # Script for btn #1                 
+
+    script_1 = buttons[x1, y1].script_str    # Script for btn #1
     script_2 = buttons[x2, y2].script_str    # Script for btn #2
-    
+
     Unbind(x1, y1)                           # Unbind #1
     if script_2 != "":                       # If there is a script #2...
         Bind(x1, y1, script_2, color_2)      # ...bind it to #1
     lp_colors.updateXY(x1, y1)               # Update the colours for btn #1
-    
+
     Unbind(x2, y2)                           # Do the reverse for #2
     if script_1 != "":
         Bind(x2, y2, script_1, color_1)
     lp_colors.updateXY(x2, y2)
-    
+
     files.layout_changed_since_load = True   # Flag that the layout has changed
 
 
@@ -622,14 +622,14 @@ def Copy(x1, y1, x2, y2):
     global buttons
 
     color_1 = lp_colors.curr_colors[x1][y1]  # Get colour of btn to be copied
-    
+
     script_1 = buttons[x1, y1].script_str    # Get script to be copied
-    
+
     Unbind(x2, y2)                           # Unbind the destination
     if script_1 != "":                       # If we're copying a button with a script...
         Bind(x2, y2, script_1, color_1)      # ...bind the details to the destination
     lp_colors.updateXY(x2, y2)               # Update the colours
-    
+
     files.layout_changed_since_load = True   # Flag the layout as changed
 
 
@@ -638,16 +638,16 @@ def Move(x1, y1, x2, y2):
     global buttons
 
     color_1 = lp_colors.curr_colors[x1][y1]  # Get source button colour
-    
+
     script_1 = buttons[x1, y1].script_str    # Get source button script
-    
+
     Unbind(x1, y1)                           # Unbind *both* buttons
     Unbind(x2, y2)
-    
+
     if script_1 != "":                       # If the source had a script...
         Bind(x2, y2, script_1, color_1)      # ...bind it to the destination
     lp_colors.updateXY(x2, y2)               # Update the destination colours
-    
+
     files.layout_changed_since_load = True   # And flag the layout as changed
 
 
@@ -676,18 +676,18 @@ def kill_all():
                     btn.thread.kill.set()    # ...kill it
 
 
-# Unbind all keys.  
+# Unbind all keys.
 def Unbind_all():
     lp_events.unbind_all()                   # Unbind all events
     text = [["" for y in range(9)] for x in range(9)] # Reienitialise all scripts to blank
-    
+
     kill_all()                               # stop everything running
 
     files.curr_layout = None                 # There is no current layout
     files.layout_changed_since_load = False  # So mark it as unchanged
-    
 
-# Unload all subroutines.  
+
+# Unload all subroutines.
 def Unload_all():
     kill_all()                               # stop everything running
 
@@ -695,10 +695,10 @@ def Unload_all():
     for cmd in VALID_COMMANDS:               # for all the commands that exist
         if cmd.startswith(SUBROUTINE_PREFIX):# if this command is a subroutine
             subs += [cmd]                    # add the command to the list
-            
+
     for cmd in subs:                         # for each subroutine we've found
         Remove_command(cmd)                  # remove it
 
     files.layout_changed_since_load = True   # mark layout as changed
-    
+
 

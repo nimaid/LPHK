@@ -101,7 +101,7 @@ def updateXY(x, y):
             #print("Update colors for (" + str(x) + ", " + str(y) + "), is_running = " + str(is_running))
 
             if is_running:                                      # if the button is running
-                set_color = scripts.COLOR_PRIMED                # set the desired colour 
+                set_color = scripts.COLOR_PRIMED                # set the desired colour
                 color_modes[x][y] = "flash"                     # and mode
             elif (x, y) in [l[1:] for l in scripts.to_run]:     # is it waiting to run?
                 if is_func_key:

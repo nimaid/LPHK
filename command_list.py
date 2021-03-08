@@ -19,7 +19,7 @@ import \
 try:
     import commands_rpncalc
 except ImportError:
-    print("[LPHK] WARNING: RPN_EVAL command is not available")  
+    print("[LPHK] WARNING: RPN_EVAL command is not available")
     traceback.print_exc()
 
 # This library could be considered optional, and is also platform specific
@@ -27,7 +27,7 @@ if PLATFORM == "windows":
     try:
         import commands_win32
     except ImportError:
-        print("[LPHK] ERROR: Windows specific commands are not available") 
+        print("[LPHK] ERROR: Windows specific commands are not available")
         traceback.print_exc()
 
     try:
@@ -35,7 +35,7 @@ if PLATFORM == "windows":
     except ImportError:
         print("[LPHK] ERROR: Screen scraping commands are not available")
         traceback.print_exc()
-else: 
+else:
     print("[LPHK] WARNING: Windows specific and screen scraping commands cannot be loaded")
 
 # Any that were not optional should set the error flag so we can exit

@@ -7,7 +7,7 @@ import command_base, kb, lp_events, scripts
 
 class Header_Async(command_base.Command_Header):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__("@ASYNC",      # the name of the header as you have to enter it in the code
@@ -20,7 +20,7 @@ class Header_Async(command_base.Command_Header):
         split_line,            # The current line, split
         pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
         ):
-        
+
         if pass_no == 1:
             if idx > 0:        # headers normally have to check the line number
                 return ("Line:" + str(idx+1) + " - " + self.name + " must appear on the first line.", btn.Line(0))
@@ -50,7 +50,7 @@ scripts.Add_command(Header_Async())  # register the header
 
 class Header_Simple(command_base.Command_Header):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__("@SIMPLE",      # the name of the header as you have to enter it in the code
@@ -120,7 +120,7 @@ scripts.Add_command(Header_Simple())  # register the header
 # Loads a new layout.  @@@ This should probably be rewritten in the newest style
 class Header_Load_Layout(command_base.Command_Header):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__("@LOAD_LAYOUT",      # the name of the header as you have to enter it in the code

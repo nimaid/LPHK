@@ -10,7 +10,7 @@ LIB = "cmds_extn" # name of this library (for logging)
 # class that defines the WEB command.  @@@ this should be updated to use the more modern interface
 class External_Web(command_base.Command_Text_Basic):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__(
@@ -25,11 +25,11 @@ class External_Web(command_base.Command_Text_Basic):
     def Partial_run_step_get(self, ret, btn, idx, split_line):
         # This gets the values as normal, then modifies them as required
         ret = super().Partial_run_step_get(ret, btn, idx, split_line)
-        
+
         link = split_line[1]
         if "http" not in link:
-            split_line[1] = "http://" + link        
-        
+            split_line[1] = "http://" + link
+
         return ret
 
 
@@ -44,10 +44,10 @@ scripts.Add_command(External_Web())  # register the command
 # ### CLASS External_Web_New                     ###
 # ##################################################
 
-# class that defines the WEB_NEW command.  @@@ this should be updated to use the more modern interface 
+# class that defines the WEB_NEW command.  @@@ this should be updated to use the more modern interface
 class External_Web_New(External_Web):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__()
@@ -70,7 +70,7 @@ scripts.Add_command(External_Web_New())  # register the command
 # class that defines the OPEN command.  @@@ this should be updated to use the more modern interface
 class External_Open(command_base.Command_Text_Basic):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__(
@@ -93,10 +93,10 @@ scripts.Add_command(External_Open())  # register the command
 # ### CLASS External_Sound                       ###
 # ##################################################
 
-# class that defines the SOUND command (plays a sound file).  @@@ this should be updated to use the more modern interface 
+# class that defines the SOUND command (plays a sound file).  @@@ this should be updated to use the more modern interface
 class External_Sound(command_base.Command_Basic):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__("SOUND")  # the name of the command as you have to enter it in the code
@@ -142,29 +142,29 @@ scripts.Add_command(External_Sound())  # register the command
 # ### CLASS External_Sound_STOP                  ###
 # ##################################################
 
-# class that defines the SOUND_STOP command (stops sound) 
+# class that defines the SOUND_STOP command (stops sound)
 class External_Sound_Stop(command_base.Command_Basic):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__(
             "SOUND_STOP",   # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var      type     p1_val                      p2_val 
+            # Desc         Opt    Var      type     p1_val                      p2_val
             ("Fade value", True,  AVV_YES, PT_INT,  variables.Validate_gt_zero, None),
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (0,           "    Stopping sounds immediately"), 
-            (1,           "    Stopping sounds with {1} milliseconds fadeout time"), 
+            (0,           "    Stopping sounds immediately"),
+            (1,           "    Stopping sounds with {1} milliseconds fadeout time"),
             ) )
 
 
     def Process(self, btn, idx, split_line):
         delay = btn.symbols[SYM_PARAMS][1]   # @@@ update this
-        
+
         if delay == None or delay <= 0:
             sound.stop()
         else:
@@ -181,7 +181,7 @@ scripts.Add_command(External_Sound())  # register the command
 # class that defines the CODE command (runs something).  @@@ this should be updated to use the more modern interface
 class External_Code(command_base.Command_Basic):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__("CODE")  # the name of the command as you have to enter it in the code
@@ -227,32 +227,32 @@ scripts.Add_command(External_Code())  # register the command
 # ### CLASS External_Code_NOWAIT                 ###
 # ##################################################
 
-# class that defines the CODE_NOWAIT command (runs something).  This returns immediately 
+# class that defines the CODE_NOWAIT command (runs something).  This returns immediately
 class External_Code_Nowait(command_base.Command_Basic):
     def __init__(
         self,
-        ): 
-        
+        ):
+
         super().__init__("CODE_NOWAIT",  # the name of the command as you have to enter it in the code
             LIB,
             (
-            # Desc         Opt    Var       type     p1_val                      p2_val 
+            # Desc         Opt    Var       type     p1_val                      p2_val
             ("PID",        False, AVV_REQD, PT_INT,  None,                       None),   # variable to get PID of new process
             ("Command",    False, AVV_NO,   PT_STRS, None,                       None),   # text of command
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (2,           "    Run {2} retuning PID in {1}"), 
+            (2,           "    Run {2} retuning PID in {1}"),
             ) )
-            
+
     def Process(self, btn, idx, split_line):
         args = []
         for i in range(2, self.Param_count(btn)+1):
-            args += [self.Get_param(btn, i)]    # get the command we want to run  
+            args += [self.Get_param(btn, i)]    # get the command we want to run
 
-        pid = -1        
+        pid = -1
         try:
-            proc = subprocess.Popen(args) 
+            proc = subprocess.Popen(args)
             pid = proc.pid
         except Exception as e:
             print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))

@@ -33,14 +33,14 @@ def run(lp_object):
                 pressed[x][y] = False
             else:                          # I presume this is "button pressed"
                 pressed[x][y] = True
-                press_funcs[x][y](x, y)    # do whatever you need to do with a pressed button 
+                press_funcs[x][y](x, y)    # do whatever you need to do with a pressed button
             lp_colors.updateXY(x, y)       # and update the button colour
         else:                              # but if there's no event pending
             break                          # break out of the loop
     init(lp_object)                        # and schedule this button to run after the delay
     timer.start()
 
-# "start" an object by initialising it then running it.    
+# "start" an object by initialising it then running it.
 def start(lp_object):
     lp_colors.init(lp_object)   # assign this to a global (what?!)
     init(lp_object)             # create the timer object for this lp_object (button)

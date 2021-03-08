@@ -1,8 +1,8 @@
 # Logger module by Ella J. (nimaid)
-# 
+#
 # This module provides basic logging of STDOUT and STDERR to a text file
 # Usage:
-# 
+#
 # import logger
 # logger.start("/path/to/my/log.txt")
 # ...
@@ -18,12 +18,12 @@ class _Logger:
         self._file = open(self.path, "w")
         self._stdout_logger = self._LoggerStdout(self._file)
         self._stderr_logger = self._LoggerStderr(self._file)
-    
+
     def __del__(self):
         self._stdout_logger.__del__()
         self._stderr_logger.__del__()
         self._file.close()
-    
+
     class _LoggerStdout:
         def __init__(self, file_in):
             self._file = file_in
@@ -37,7 +37,7 @@ class _Logger:
             self._file.flush()
         def flush(self):
             self._file.flush()
-    
+
     class _LoggerStderr:
         def __init__(self, file_in):
             self._file = file_in

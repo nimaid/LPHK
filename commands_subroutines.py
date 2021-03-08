@@ -16,7 +16,7 @@ LIB = "cmds_subr" # name of this library (for logging)
 # but is ignored in the normal running of commands
 class Header_Subroutine(command_base.Command_Header):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__("@SUB",              # the name of the header as you have to enter it in the code
@@ -64,49 +64,49 @@ class Subroutine(command_base.Command_Basic):
         Name,              # The name of the command
         Params,            # The parameter tuple
         Lines              # The text of the subroutine/function
-        ): 
-            
+        ):
+
         super().__init__(SUBROUTINE_PREFIX + Name,  # the name of the command as you have to enter it in the code
             LIB,
             Params,
             (
             # num params, format string                           (trailing comma is important)
-            (0,           "    Call "+ Name), 
+            (0,           "    Call "+ Name),
             ) )
-            
+
         self.routine = Lines           # the routine to execute
         self.btn = scripts.Button(-1, -1, self.routine) # we retain this so we only have to validate it once.  executions use a deep-ish copy
-       
-       
+
+
     # process for a subroutine handles parameter passing and then passes off the process to the script in a "dummy" button
     def Process(self, btn, idx, split_line):
         sub_btn = scripts.Button(-1, -1, self.routine, btn.root) # create a new button and pass the script to it
-        
+
         self.btn.Copy_parsed(sub_btn, self.name)                 # copy the info created when parsed
-                
+
         variables.Local_store('sub__np', self.Param_count(btn), sub_btn.symbols) # number of parameters passed
-        
+
         d = variables.Local_recall('sub__d',btn.symbols)         # get current call depth
         variables.Local_store('sub__d', d+1, sub_btn.symbols)    # and pass that + 1
-        
+
         #@@@ will fail with multiple parameters at the end!
         #Which is not so much of a problem because there is no way to name or retrieve them currently
-        
+
         for n in range(self.Param_count(btn)):                   # for all the params passed
             pn = self.Get_param(btn, n+1)                        # get the param
             variables.Local_store(self.auto_validate[n][AV_DESCRIPTION], pn, sub_btn.symbols) # and store it
 
         sub_btn.Run_subroutine()
-        
+
         for n in range(self.Param_count(btn)):                   # for all the params passed
             if self.auto_validate[n][AV_VAR_OK] == AVV_REQD:     # if this is passed by reference
                 pn = variables.Local_recall(self.auto_validate[n][AV_DESCRIPTION], sub_btn.symbols) # get the variable
                 self.Set_param(btn, n+1, pn)                     # and store it
-        
-        
+
+
     # This is not the parse routine called for validation!
     def Parse_Sub(self):
-        try:           
+        try:
             script_validate = self.btn.Parse_script()
         except:
             self.popup(w, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK")
@@ -119,9 +119,9 @@ VALID_CONSOLIDATED = {"M", "I", "V"}                     # set of all valid cons
 
 
 def Get_Name_And_Params(lines, sub_n, fname):
-    # Have we found a line with @SUB? 
+    # Have we found a line with @SUB?
     found = False
-    
+
     for lin_num, line in enumerate(lines):
         line = line.strip()
         if line == '' or line[0] == '-':
@@ -131,8 +131,8 @@ def Get_Name_And_Params(lines, sub_n, fname):
         else:
             found = True
             break
-     
-    # Not finding the header is a bad problem     
+
+    # Not finding the header is a bad problem
     if not found:
         return '', f'Error - Subroutine has no content up to line {lin_num+1} of subroutine {sub_n} in "{fname}"', lin_num
 
@@ -141,32 +141,32 @@ def Get_Name_And_Params(lines, sub_n, fname):
     if len(sline) < 2:
         return '', f'Error - Subroutine does not have a name on line {lin_num+1} of subroutine {sub_n} in "{fname}"', lin_num
 
-    # this is the name    
+    # this is the name
     name = sline[1]
     if name != name.upper():
         return '', f'Error - Subroutine name is not UPPERCASE on line {lin_num+1} of subroutine "{name}" in "{fname}"', lin_num
-       
-    # now work on the parameters       
+
+    # now work on the parameters
     params = ()
 
     # for each parameter
     for p_num, param in enumerate(sline[2:]):
         mods = ''                   # No modifiers yet
-        var = param                 # so everything else is the variable name 
-        
+        var = param                 # so everything else is the variable name
+
         # first find leading modifiers
         for c in param:
             if not variables.valid_var_name('A'+c):
                 mods += c
-                var = var[1:] 
+                var = var[1:]
             else:
                 break
-                
+
         # next look for anything after a "+"
         p = var.find('+')
         if p >= 0:
             mods += var[p+1:]
-            var = var[:p]  
+            var = var[:p]
         elif not variables.valid_var_name(var): # if there's no '+', look for trailing modifiers without one
             l = len(var)
             while l > 1:
@@ -177,65 +177,65 @@ def Get_Name_And_Params(lines, sub_n, fname):
                 l -= 1
 
         if var == '' or not variables.valid_var_name(var):
-            return name, f'Error - Parameter "{var}" is not a valid name on line {lin_num+1} of subroutine "{name}" in "{fname}"', lin_num 
-           
+            return name, f'Error - Parameter "{var}" is not a valid name on line {lin_num+1} of subroutine "{name}" in "{fname}"', lin_num
+
         # Standardise modifiers
         mods = mods.upper().translate(MOD_TRANS)
 
-        # Consolidate the modifiers        
+        # Consolidate the modifiers
         modc = mods.translate(MOD_CONSOLIDATE)
         modcs = set(modc)
-        
+
         if modcs > VALID_CONSOLIDATED:
             e = modcs - VALID_CONSOLIDATED
             return name, f'Error - Invalid modifier {modcs - VALID_CONSOLIDATED} specified on line {lin_num+1} of subroutine "{name}" in "{fname}"', lin_num
-        
+
         # check for duplicate modifiers
         if len(modc) != len(set(modc)):
             return name, f'Error - Duplicate modifiers specified on line {lin_num+1} of subroutine "{name}" in "{fname}"', lin_num
-        
-        #      Desc Opt    Var      type    p1_val p2_val            
+
+        #      Desc Opt    Var      type    p1_val p2_val
         prm = [var, False, AVV_YES, PT_INT, None,  None]
-        
+
         if mods.find('O') >= 0:
             prm[1] = True             # parameter is optional
-            
+
         if mods.find('R') >= 0:
             prm[2] = AVV_REQD         # pass by reference is a required variable
-            
+
         if mods.find('F') >= 0:
             prm[3] = PT_FLOAT         # parameter is a float
         elif mods.find('S') >= 0:
-            prm[3] = PT_STR           # parameter is a string   
+            prm[3] = PT_STR           # parameter is a string
         elif mods.find('K') >= 0:
-            prm[3] = PT_KEY           # parameter is a key 
+            prm[3] = PT_KEY           # parameter is a key
             prm[2] = AVV_NO           # must be a constant
             if mods.find('R') >= 0:
                 return name, f'Error - Key cannot be passed by reference on line {lin_num+1} of subroutine "{name}" in "{fname}"', lin_num
         elif mods.find('B') >= 0:
-            prm[3] = PT_BOOL          # parameter is a boolean   
+            prm[3] = PT_BOOL          # parameter is a boolean
 
         params += (tuple(prm),)       # add a new parameter
-        
+
     return name, params, lin_num+1    # return the subroutine name, valid list of parameters, and the next line number
-    
-    
+
+
 def Add_Function(lines, sub_n, fname):
-    # This function is passed a list of lines.  The first non-comment line must define the header 
-    
+    # This function is passed a list of lines.  The first non-comment line must define the header
+
     # first let's parse out the header to get the name and the parameters
     name, params, lin = Get_Name_And_Params(lines, sub_n, fname)
     if isinstance(params, str):
-        return False, name, params 
+        return False, name, params
 
     NewCommand = Subroutine(name, params, lines)                # Create a new command object for this subroutine
-    
+
     if NewCommand:
         if NewCommand.name in scripts.VALID_COMMANDS:           # does this command already exist?
             old_cmd = scripts.VALID_COMMANDS[NewCommand.name]   # get the command we will be replacing
         else:
             old_cmd = None                                      # if not, nothing to replace
-            
+
         try:
             scripts.Add_command(NewCommand)                     # Add the command before we parse (to allow recursion)
             script_validation = NewCommand.btn.Validate_script()# and validate with the internal btn held in the command.
@@ -249,6 +249,5 @@ def Add_Function(lines, sub_n, fname):
             pass # @@@ there must be more to do! :-) This is the error return
         else:
             pass # @@@ this is the success return.  There must be more to do!
-                
-    return True, NewCommand.name, params    
-                
+
+    return True, NewCommand.name, params

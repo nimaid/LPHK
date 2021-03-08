@@ -50,11 +50,11 @@ def load_layout_json(name, printing=True):
     if printing:
         print("[files] Loaded layout " + name)
     return layout
-  
+
 def load_layout_legacy(name, printing=True):
     layout = dict()
     layout["version"] = "LEGACY"
-    
+
     layout["buttons"] = []
     with open(name, "r") as f:
         l = f.readlines()
@@ -64,7 +64,7 @@ def load_layout_legacy(name, printing=True):
             line = l[x][:-1].split(":LPHK_BUTTON_SEP:")
             for y in range(9):
                 info = line[y].split(":LPHK_ENTRY_SEP:")
-                
+
                 color = None
                 if not info[0].isdigit():
                     split = info[0].split(",")
@@ -72,7 +72,7 @@ def load_layout_legacy(name, printing=True):
                 else:
                     color = lp_colors.code_to_RGB(int(info[0]))
                 script_text = info[1].replace(":LPHK_NEWLINE_REP:", "\n")
-                
+
                 layout["buttons"][-1].append({"color": color, "text": script_text})
     if printing:
         print("[files] Loaded legacy layout " + name)
@@ -82,12 +82,12 @@ def load_layout(name, popups=True, save_converted=True, printing=True):
     basename_list = os.path.basename(name).split(os.path.extsep)
     ext = basename_list[-1]
     title = os.path.extsep.join(basename_list[:-1])
-    
+
     if "." + ext == LEGACY_LAYOUT_EXT:
         # TODO: Error checking on resultant JSON
         layout = load_layout_legacy(name, printing=printing)
-        
-       
+
+
         if save_converted:
             name = os.path.dirname(name) + os.path.sep + title + LAYOUT_EXT
             if popups:
@@ -104,54 +104,54 @@ def load_layout(name, popups=True, save_converted=True, printing=True):
             if popups:
                 window.app.popup(window.app, "Error loading file!", window.app.info_image, "The layout is not in valid JSON format (the new .lpl extention).\n\nIf this was renamed from a .LPHKlayout file, please change\nthe extention back to .LPHKlayout and try loading again.", "OK")
             raise
-    
+
     return layout
 
 def save_lp_to_layout(name):
     layout = dict()
-    
+
     has_subs = False
-    
+
     layout["buttons"] = []
     for x in range(9):
         layout["buttons"].append([])
         for y in range(9):
             color = lp_colors.curr_colors[x][y]
             script_text = scripts.buttons[x][y].script_str
-            
+
             layout["buttons"][-1].append({"color": color, "text": script_text})
-            
+
     for x in scripts.VALID_COMMANDS:               # for all the commands that exist
         if x.startswith(SUBROUTINE_PREFIX):        # if this command is a subroutine
             if not has_subs:
                 layout["subroutines"] = []         # only add the key if required
                 has_subs = True
             cmd = scripts.VALID_COMMANDS[x]        # get the command
-            layout["subroutines"] += [cmd.routine] # add the command to the list (name is embedded in the subroutine)                               
+            layout["subroutines"] += [cmd.routine] # add the command to the list (name is embedded in the subroutine)
 
-    if has_subs:                                   # file version depends on the existance of subroutines 
+    if has_subs:                                   # file version depends on the existance of subroutines
         layout["version"] = FILE_VERSION_SUBS
     else:
         layout["version"] = FILE_VERSION
-    
+
     save_layout(layout=layout, name=name)
 
 def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
     global curr_layout
     global in_error
     global layout_changed_since_load
-    
+
     converted_to_rg = False
-    
+
     scripts.Unbind_all()
     scripts.Unload_all()                         # remove all existing subroutines when you load a new layout
     window.app.draw_canvas()
-    
+
     if preload == None:
         layout = load_layout(name, popups=popups, save_converted=save_converted)
     else:
         layout = preload
-        
+
     # load subroutines before buttons so you don't get errors on buttons using them
     if "subroutines" in layout:                  # were subroutines saved?
         for sub in layout["subroutines"]:        # for all the subroutines that were saved
@@ -162,12 +162,12 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
             button = layout["buttons"][x][y]
             color = button["color"]
             script_text = button["text"]
-        
+
             if window.lp_mode == "Mk1":
                 if color[2] != 0:
                     color = lp_colors.RGB_to_RG(color)
                     converted_to_rg = True
-            
+
             if script_text != "":
                 script_validation = None
                 try:
@@ -193,7 +193,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
 
     lp_colors.update_all()
     window.app.draw_canvas()
-        
+
     curr_layout = name
     if converted_to_rg:
         if popups:
@@ -208,7 +208,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
 def load_subroutines_to_lp(name, popups=True, preload=None):
     with open(name, 'r') as in_subs:
        subs = in_subs.read().split('\n===\n')
-       
+
     for i, sub in enumerate(subs):
         load_subroutine(sub.splitlines(), i+1, name)
 
@@ -216,7 +216,7 @@ def load_subroutines_to_lp(name, popups=True, preload=None):
 def load_subroutine(sub, sub_n, fname):
     import commands_subroutines
     ok, name, params = commands_subroutines.Add_Function(sub, sub_n, fname) # Attempt to load the command
-    
+
     if ok:
         pass # @@@ there must be more to do! :-)
     else:
