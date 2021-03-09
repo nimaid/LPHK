@@ -58,7 +58,7 @@ def get(name, l_vbls, g_vbls, default=param_convs._None):
 
 def put(name, val, vbls):
     # store a value in a named variable in a specific variable list
-    print(name, val) #@@@
+    print("NV", name, val) #@@@
     vbls[name.lower()] = val
 
 

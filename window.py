@@ -112,7 +112,7 @@ class Main_Window(tk.Frame):
         self.scare_image = ImageTk.PhotoImage(Image.open(PATH + "/resources/scare.png"))
         self.grid_drawn = False
         self.grid_rects = [[None for y in range(9)] for x in range(9)]
-        self.button_mode = "edit"
+        self.button_mode = global_vars.ARGS['mode']
         self.last_clicked = None
         self.outline_box = None
 
@@ -165,10 +165,10 @@ class Main_Window(tk.Frame):
 
         c_size = (BUTTON_SIZE * 9) + (c_gap * 9)
         self.c = tk.Canvas(self, width=c_size, height=c_size)
-        self.c.bind("<Button-1>", self.click)
+        self.c.bind("<ButtonRelease-1>", self.click)
         self.c.grid(row=0, column=0, padx=round(c_gap/2), pady=round(c_gap/2))
 
-        self.stat = tk.Label(self, text="No Launchpad Connected 1", bg=STAT_INACTIVE_COLOR, fg="#fff") #@@@
+        self.stat = tk.Label(self, text="No Launchpad Connected", bg=STAT_INACTIVE_COLOR, fg="#fff")
         self.stat.grid(row=1, column=0, sticky=tk.EW)
         self.stat.config(font=("Courier", BUTTON_SIZE // 3, "bold"))
 
@@ -217,26 +217,10 @@ then click 'Redetect Now'.""",
                               )
             return
 
-        if IsStandalone():
-            self.popup_choice(self, "LPHK Standalone mode", self.error_image,
-                              """LPHK has been started in standalone mode and
-will not try to connect to a Launchpad.  Execute
-buttons by right clicking on them.""",
-                              [["OK", None]]
-                              )
-
         if lpcon().connect(lp):
             lp_connected = True
             lp_object = lp
             lp_mode = lpcon().get_mode(lp)
-
-            if lp_mode is LP_PRO:
-                self.popup(self, "Connect to Launchpad Pro", self.error_image,
-                           """This is a BETA feature! The Pro is not fully supported yet,as the bottom and left rows are not mappable currently.
-I (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)
-You must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the
-upper left corner, then release the 'Setup' key. Please only continue once this step is completed.""",
-                           "I am in Live mode.")
 
             lp_object.ButtonFlush()
 
@@ -250,6 +234,21 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             self.enable_menu(MENU_SUBROUTINES)
             self.stat["text"] = f"Connected to {lpcon().get_display_name(lp)}"
             self.stat["bg"] = STAT_ACTIVE_COLOR
+
+            if IsStandalone():
+                self.popup_choice(self, "LPHK Standalone mode", self.error_image,
+                                  """LPHK has been started in standalone mode and
+will not try to connect to a Launchpad.  Execute
+buttons by right clicking on them.""",
+                                  [["OK", None]]
+                                  )
+            elif lp_mode is LP_PRO:
+                self.popup(self, "Connect to Launchpad Pro", self.error_image,
+                           """This is a BETA feature! The Pro is not fully supported yet,as the bottom and left rows are not mappable currently.
+I (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)
+You must first put your Launchpad Pro in Live (Session) mode. To do this, press and holde the 'Setup' key, press the green pad in the
+upper left corner, then release the 'Setup' key. Please only continue once this step is completed.""",
+                           "I am in Live mode.")
 
     # load a layout on startup
     def load_initial_layout(self):
@@ -274,7 +273,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
         self.disable_menu(MENU_LAYOUT)
         self.disable_menu(MENU_SUBROUTINES)
 
-        self.stat["text"] = "No Launchpad Connected 2" # @@@
+        self.stat["text"] = "No Launchpad Connected"
         self.stat["bg"] = STAT_INACTIVE_COLOR
 
     def redetect_lp(self):
@@ -305,7 +304,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                                           title="Load subroutines",
                                           filetypes=load_subroutine_filetypes) # get the filename
         if name:
-            files.load_subroutines_to_lp(name)                                  # and load routines if a file was selected
+            files.load_subroutines_to_lp(name)                                 # and load routines if a file was selected
 
     # user requests clearing all subroutines
     def clear_subroutines(self):
@@ -332,29 +331,43 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
     def click(self, event):
         gap = int(BUTTON_SIZE // 4)
 
-
         column = min(8, int(event.x // (BUTTON_SIZE + gap)))
         row = min(8, int(event.y // (BUTTON_SIZE + gap)))
 
+        # ignore button clicks outside the button.
+        if event.x < (gap/2 + column * (BUTTON_SIZE + gap)) or event.x > (column+1) * (BUTTON_SIZE + gap) - gap/2 - 1:
+            return
+        if event.y < (gap/2 + row * (BUTTON_SIZE + gap)) or event.y > (row+1) * (BUTTON_SIZE + gap) - gap/2 - 1:
+            return
+
         if self.grid_drawn:
             if(column, row) == (8, 0):
-            #mode change
+                #mode change
                 self.last_clicked = None
-                if self.button_mode == "edit":
-                    self.button_mode = "move"
-                elif self.button_mode == "move":
-                    self.button_mode = "swap"
-                elif self.button_mode == "swap":
-                    self.button_mode = "copy"
+                if self.button_mode == LM_EDIT:
+                    self.button_mode = LM_MOVE
+                elif self.button_mode == LM_MOVE:
+                    self.button_mode = LM_SWAP
+                elif self.button_mode == LM_SWAP:
+                    self.button_mode = LM_COPY
+                elif self.button_mode == LM_COPY:
+                    self.button_mode = LM_RUN
                 else:
-                    self.button_mode = "edit"
+                    self.button_mode = LM_EDIT
                 self.draw_canvas()
             else:
-                if self.button_mode == "edit":
+                if self.button_mode == LM_EDIT:
                     self.last_clicked = (column, row)
                     self.draw_canvas()
                     self.script_entry_window(column, row)
                     self.last_clicked = None
+                elif self.button_mode == LM_RUN:
+                    # queue up a button press & release
+                    if IsStandalone():
+                        from launchpad_fake import AddEvent
+                        AddEvent([column, row, True])
+                        AddEvent([column, row, False])
+                    pass
                 else:
                     if self.last_clicked == None:
                         self.last_clicked = (column, row)
@@ -363,17 +376,17 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                         swap_func = partial(scripts.swap, self.last_clicked[0], self.last_clicked[1], column, row)
                         copy_func = partial(scripts.copy, self.last_clicked[0], self.last_clicked[1], column, row)
 
-                        if self.button_mode == "move":
+                        if self.button_mode == LM_MOVE:
                             if scripts.Is_bound(column, row) and ((self.last_clicked) != (column, row)):
                                 self.popup_choice(self, "Button Already Bound", self.warning_image, "You are attempting to move a button to an already\nbound button. What would you like to do?", [["Overwrite", move_func], ["Swap", swap_func], ["Cancel", None]])
                             else:
                                 move_func()
-                        elif self.button_mode == "copy":
+                        elif self.button_mode == LM_COPY:
                             if scripts.Is_bound(column, row) and ((self.last_clicked) != (column, row)):
                                 self.popup_choice(self, "Button Already Bound", self.warning_image, "You are attempting to copy a button to an already\nbound button. What would you like to do?", [["Overwrite", copy_func], ["Swap", swap_func], ["Cancel", None]])
                             else:
                                 copy_func()
-                        elif self.button_mode == "swap":
+                        elif self.button_mode == LM_SWAP:
                             swap_func()
                         self.last_clicked = None
                 self.draw_canvas()

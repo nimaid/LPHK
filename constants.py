@@ -97,6 +97,13 @@ DELAY_EXIT_CHECK = 0.025
 SUBROUTINE_PREFIX = "CALL:"
 
 # Launchpad constants
-
 LP_MK1 = "Mk1"
+LP_MK2 = "Mk2"
 LP_PRO = "Pro"
+LP_MINI = "Mini"
+
+LM_EDIT = "edit"
+LM_MOVE = "move"
+LM_SWAP = "swap"
+LM_COPY = "copy"
+LM_RUN = "run"

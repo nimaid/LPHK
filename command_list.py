@@ -15,6 +15,12 @@ import \
   commands_external, \
   commands_subroutines
 
+# @@@ a test command set for testing things!  Will be removed for production
+try:
+    import commands_test
+except:
+    pass
+
 # This library could be considered optional, but is not platform specific
 try:
     import commands_rpncalc

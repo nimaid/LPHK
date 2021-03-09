@@ -2,6 +2,16 @@
 
 import global_vars
 
+FAKE_EVENT_QUEUE = []
+
+def AddEvent(x):
+   FAKE_EVENT_QUEUE.append(x)
+
+def Pop():
+   if FAKE_EVENT_QUEUE == []:
+       return []
+   else:
+      return FAKE_EVENT_QUEUE.pop(0)
 
 class Launchpad():
     def __init__(self):
@@ -14,18 +24,18 @@ class Launchpad():
         pass
 
     def ButtonStateXY(self):
-        return []
-        
+        return Pop()
+
     def LedCtrlXYByRGB(self, x, y, z):
         pass
-        
+
     def LedCtrlXY(self, x, y, z, t):
         pass
-        
+
     def LedCtrlXYByCode(self, x, y, z):
         pass
-      
-      
+
+
 launchpad = Launchpad()
 
 
@@ -39,7 +49,7 @@ class Launchpad_Fake_Connector():
 
     def connect(self, lp):
         return True
-        
+
     def get_mode(self, lp):
         return global_vars.ARGS['standalone']
 

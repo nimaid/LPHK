@@ -109,7 +109,10 @@ def init():
         help = "Start the application minimised", action="store_true")
     ap.add_argument(                                           # option to start without connecting to a Launchpad
         "-s", "--standalone",
-        help = "Operate without connection to Launchpad", type=str, choices=['Mk1', "Mk2", "Mini", "Pro"])
+        help = "Operate without connection to Launchpad", type=str, choices=[LP_MK1, LP_MK2, LP_MINI, LP_PRO])
+    ap.add_argument(                                           # option to start with launchpad window in a particular mode
+        "-M", "--mode",
+        help = "Launchpad mode", type=str, choices=[LM_EDIT, LM_MOVE, LM_SWAP, LM_COPY, LM_RUN], default=LM_EDIT)
 
     global_vars.ARGS = vars(ap.parse_args())                   # store the arguments in a place anything can get to
 
@@ -120,7 +123,7 @@ def init():
 
     files.init(USER_PATH)
     sound.init(USER_PATH)
-    
+
     global LP
     LP = Launchpad()
 

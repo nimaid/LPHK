@@ -496,24 +496,24 @@ class Command_Basic:
 
             if pass_no == 1:
                 v = split_line[n]
-                print(v) #@@@
+                print("V1", v) #@@@
 
                 if av[AV_VAR_OK] == AVV_YES:                                               # if a variable is allowed
-                    if valid_var_name(v):                                                  # if it's a variable
+                    if variables.valid_var_name(v):                                        # if it's a variable
                         v = variables.get_value(split_line[n], btn.symbols)                # get the value
-                        print(v) #@@@
+                        print("V2", v) #@@@
 
                 if av[AV_VAR_OK] != AVV_REQD:                                              # if it's not required (i.e. the variable name is not to be passed through)
                     if av[AV_TYPE] and av[AV_TYPE][AVT_CONV]:                              # if there is a type
                         v = av[AV_TYPE][AVT_CONV](v)                                       # convert the variable to that type
-                        print(v) #@@@
+                        print("V2", v) #@@@
 
                 return v
             elif pass_no == 2:
                 ok = ret
 
                 if av[AV_P1_VALIDATION]:
-                    print(btn.symbols[SYM_PARAMS][n], idx, self.name, av[AV_DESCRIPTION], n, split_line[n]) #@@@
+                    print("S", btn.symbols[SYM_PARAMS][n], idx, self.name, av[AV_DESCRIPTION], n, split_line[n]) #@@@
                     ok = av[AV_P1_VALIDATION](btn.symbols[SYM_PARAMS][n], idx, self.name, av[AV_DESCRIPTION], n, split_line[n])
                     if ok != True:
                         print("[" + self.lib + "] " + btn.coords + "  " + ok)
@@ -522,15 +522,18 @@ class Command_Basic:
         return ret
 
 
-    # Is there a parameter n?
-    def Has_param(self, btn, n):
-        val = btn.symbols[SYM_PARAMS][n]
-        return not (val is None)
-
-
     # How many parameters do we have?
     def Param_count(self, btn):
         return btn.symbols[SYM_PARAM_CNT]
+
+
+    # Is there a parameter n?
+    def Has_param(self, btn, n):
+        if self.Param_count(btn) < n:
+            return False
+
+        val = btn.symbols[SYM_PARAMS][n]
+        return not (val is None)
 
 
     # gets the value of the nth parameter (button is required for context).  Other is default value if param does not exist
@@ -538,30 +541,42 @@ class Command_Basic:
         # handle the repeating last parameter
         avl = len(self.auto_validate)
         m = min(n, avl)
-        val = self.auto_validate[m-1]
+        av = self.auto_validate[m-1]
 
-        param = btn.symbols[SYM_PARAMS][n]
-        print(param) #@@@
+        if self.Param_count(btn) > n:
+           param = None
+           print("P-none", self.Param_count(btn), n)
+        else:
+           param = btn.symbols[SYM_PARAMS][n]
+           print("P-n", n)
+        print("P", param) #@@@
         if param == None:
             ret = other
         else:
-            if val[AV_VAR_OK] == AVV_REQD:
+            if av[AV_VAR_OK] == AVV_REQD:
+                print("RQ") #@@@
                 ret = variables.get(param, btn.symbols[SYM_LOCAL], btn.symbols[SYM_GLOBAL][1])
             else:
-                if type(param) == str and val[AV_TYPE][AVT_DESC] in {PT_STR[AVT_DESC], PT_STRS[AVT_DESC]} and param[0:1] == '"':
+                print("NRQ") #@@@
+                if type(param) == str and av[AV_TYPE][AVT_DESC] in {PT_STR[AVT_DESC], PT_STRS[AVT_DESC]} and param[0:1] == '"':
                     ret = param[1:]
                 else:
                     ret = param
 
-        return ret
+        return av[AV_TYPE][AVT_CONV](ret)
 
 
     # sets the value of the nth parameter (if it is a variable)
     def Set_param(self, btn, n, val):
+        if self.Param_count(btn) < n:
+            return
+
         param = btn.symbols[SYM_PARAMS][n]
-        av = self.auto_validate[n-1]
+        avl = len(self.auto_validate)
+        m = min(n, avl)
+        av = self.auto_validate[m-1]
         if av[AV_VAR_OK] == AVV_REQD:
-            print(btn.symbols[SYM_PARAMS][n], val, btn.symbols) #@@@
+            print("SP", btn.symbols[SYM_PARAMS][n], val, btn.symbols) #@@@
             variables.Auto_store(btn.symbols[SYM_PARAMS][n], val, btn.symbols) # return result in variable
 
 
