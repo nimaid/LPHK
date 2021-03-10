@@ -123,6 +123,7 @@ class Rpn_Eval(command_base.Command_Basic):
                         i = i + o_ret
                 except:
                     print("Error in evaluation: '" + str(sys.exc_info()[1]) + "' at operator #" + str(i) + " on Line:" + str(idx+1) + " '" + cmd + "'")
+                    raise #@@@
                     break
             else:                   # if invalid, report it
                print("Line:" + str(idx+1) + " - invalid operator #" + str(i) + " '" + cmd + "'")
@@ -504,7 +505,7 @@ class Rpn_Eval(command_base.Command_Basic):
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
         with symbols[SYM_GLOBAL][0]:                                               # lock the globals while we do this
-            a = variables.get(v, symbols[SYM_LOCAL], symbols[SYM_GLOBAL][1], _int) # as an integer
+            a = variables.get(v, symbols[SYM_LOCAL], symbols[SYM_GLOBAL][1], param_convs._any) # as an integer
         variables.push(symbols, a)
 
         return ret
@@ -514,7 +515,7 @@ class Rpn_Eval(command_base.Command_Basic):
         # recalls a local variable (not overly useful, but avoids ambiguity)
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
-        a = variables.get(v, symbols[SYM_LOCAL], None, _int)                    # as an integer
+        a = variables.get(v, symbols[SYM_LOCAL], None, param_convs._any)        # as an integer
         variables.push(symbols, a)
 
         return ret
@@ -525,7 +526,7 @@ class Rpn_Eval(command_base.Command_Basic):
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
         with symbols[SYM_GLOBAL][0]:                                            # lock the globals while we do this
-            a = variables.get(v, None, symbols[SYM_GLOBAL][1], _int)            # grab the value from the global vars as an integer
+            a = variables.get(v, None, symbols[SYM_GLOBAL][1], param_convs._any)# grab the value from the global vars as an integer
         variables.push(symbols, a)                                              # and push onto the stack
 
         return ret

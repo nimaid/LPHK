@@ -236,12 +236,13 @@ then click 'Redetect Now'.""",
             self.stat["bg"] = STAT_ACTIVE_COLOR
 
             if IsStandalone():
-                self.popup_choice(self, "LPHK Standalone mode", self.error_image,
-                                  """LPHK has been started in standalone mode and
+                if not global_vars.ARGS['quiet']:
+                    self.popup_choice(self, "LPHK Standalone mode", self.error_image,
+                                      """LPHK has been started in standalone mode and
 will not try to connect to a Launchpad.  Execute
 buttons by right clicking on them.""",
-                                  [["OK", None]]
-                                  )
+                                      [["OK", None]]
+                                      )
             elif lp_mode is LP_PRO:
                 self.popup(self, "Connect to Launchpad Pro", self.error_image,
                            """This is a BETA feature! The Pro is not fully supported yet,as the bottom and left rows are not mappable currently.

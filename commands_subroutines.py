@@ -1,4 +1,4 @@
-import command_base, commands_header, scripts, variables
+import command_base, commands_header, scripts, variables, param_convs
 from constants import *
 
 LIB = "cmds_subr" # name of this library (for logging)
@@ -87,6 +87,7 @@ class Subroutine(command_base.Command_Basic):
         variables.Local_store('sub__np', self.Param_count(btn), sub_btn.symbols) # number of parameters passed
 
         d = variables.Local_recall('sub__d',btn.symbols)         # get current call depth
+        d = param_convs._int(d)                                  # create an integer from it
         variables.Local_store('sub__d', d+1, sub_btn.symbols)    # and pass that + 1
 
         #@@@ will fail with multiple parameters at the end!

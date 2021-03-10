@@ -524,6 +524,31 @@ scripts.Add_command(Control_Reset_Repeats())  # register the command
 
 
 # ##################################################
+# ### CLASS Control_Return                        ###
+# ##################################################
+
+# class that defines the RETURN command
+#
+# This differs from END and ABORT (that will abort the execution of a button) in that will returnfrom a 
+# subroutine without exiting
+class Control_Return(command_base.Command_Text_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("RETURN",  # the name of the command as you have to enter it in the code
+            LIB,
+            "SCRIPT RETURNS" )
+
+
+    def Process(self, btn, idx, split_line):
+        return -1
+
+
+scripts.Add_command(Control_Return())  # register the command
+
+
+# ##################################################
 # ### CLASS Control_End                          ###
 # ##################################################
 
@@ -532,17 +557,19 @@ scripts.Add_command(Control_Reset_Repeats())  # register the command
 # This command simply ends the current script.  I'm going to be working on subroutines, so this is a good
 # start.  The parameters to this command are simply the message it will print.
 # This is really like a comment that returns the next line as -1
-class Control_End(command_base.Command_Text_Basic):
+class Control_End(Control_Return):
     def __init__(
         self,
         ):
 
-        super().__init__("END",  # the name of the command as you have to enter it in the code
-            LIB,
-            "SCRIPT ENDED" )
+        super().__init__()
+
+        self.name = "END"
+        self.info_msg = "SCRIPT ENDED"
 
 
     def Process(self, btn, idx, split_line):
+        btn.root.thread.kill.set()
         return -1
 
 

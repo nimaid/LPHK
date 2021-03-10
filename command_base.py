@@ -229,7 +229,9 @@ class Command_Basic:
 
         # If you need more temporary data, you can override this, call the ancestor, and
         # create what you need.
+        #print(f"run_step_init '{split_line}', {self.Param_validation_count(len(split_line)-1)}")#@@@
         btn.symbols[SYM_PARAMS] = [self.name] + [None] * self.Param_validation_count(len(split_line)-1)
+        #print(btn.symbols[SYM_PARAMS])#@@@
         btn.symbols[SYM_PARAM_CNT] = 0
 
         return ret
@@ -363,11 +365,24 @@ class Command_Basic:
         # This routine determines how many parameters to check.  In cases where there are unlimited parameters,
         # it will only recommend checking the number that exist.  Otherwise, all parameters will be checked.
         # This function improves efficiency.
-        vmp = self.valid_max_params
-        if (vmp == None) or (vmp < n_passed):
+        #print(f"vmp = {self.valid_max_params}, vnp = {self.valid_num_params}, n = {n_passed}")#@@@
+        vmp = self.valid_max_params                     # what is the max number of parameters
+        if vmp == None:
+           vnp = self.valid_num_params                  # if there isn't a max, use the number of parameters
+           if vnp[0] == None:                           # if we really don't know
+               v = 0                                    # assume 0
+           elif vnp[-1] == None:                        # if there is an unlimited maximum
+               v = vnp[-2]                              # use the max that we know
+           else:
+               return vnp[-1]                           # use the actual maximum
+        else:
+            v = vmp                                     # vmp is preferred though
+            
+        #print(f"vmp = {vmp}, v = {v}, n = {n_passed}")#@@@
+        if (v == None) or (v < n_passed):
             return n_passed
         else:
-            return vmp
+            return v
 
 
     def Validate_params(self, ret, btn, idx, split_line, val_validation):
@@ -496,24 +511,25 @@ class Command_Basic:
 
             if pass_no == 1:
                 v = split_line[n]
-                print("V1", v) #@@@
+                #print("V1", v) #@@@
 
                 if av[AV_VAR_OK] == AVV_YES:                                               # if a variable is allowed
                     if variables.valid_var_name(v):                                        # if it's a variable
                         v = variables.get_value(split_line[n], btn.symbols)                # get the value
-                        print("V2", v) #@@@
+                        #print("V2a", v) #@@@
 
                 if av[AV_VAR_OK] != AVV_REQD:                                              # if it's not required (i.e. the variable name is not to be passed through)
                     if av[AV_TYPE] and av[AV_TYPE][AVT_CONV]:                              # if there is a type
+                        #print("V2ba", v, type(v), av[AV_TYPE][AVT_CONV]) #@@@
                         v = av[AV_TYPE][AVT_CONV](v)                                       # convert the variable to that type
-                        print("V2", v) #@@@
+                        #print("V2bb", v) #@@@
 
                 return v
             elif pass_no == 2:
                 ok = ret
 
                 if av[AV_P1_VALIDATION]:
-                    print("S", btn.symbols[SYM_PARAMS][n], idx, self.name, av[AV_DESCRIPTION], n, split_line[n]) #@@@
+                    #print("S", btn.symbols[SYM_PARAMS][n], idx, self.name, av[AV_DESCRIPTION], n, split_line[n]) #@@@
                     ok = av[AV_P1_VALIDATION](btn.symbols[SYM_PARAMS][n], idx, self.name, av[AV_DESCRIPTION], n, split_line[n])
                     if ok != True:
                         print("[" + self.lib + "] " + btn.coords + "  " + ok)
@@ -545,24 +561,29 @@ class Command_Basic:
 
         if self.Param_count(btn) > n:
            param = None
-           print("P-none", self.Param_count(btn), n)
+           #print("P-none", self.Param_count(btn), n)#@@@
         else:
+           #print("P-n", self.Param_count(btn), n)#@@@
            param = btn.symbols[SYM_PARAMS][n]
-           print("P-n", n)
-        print("P", param) #@@@
+        #print("P", param) #@@@
         if param == None:
             ret = other
+            #print(f"ret- {ret}") #@@@
         else:
             if av[AV_VAR_OK] == AVV_REQD:
-                print("RQ") #@@@
+                #print("RQ") #@@@
                 ret = variables.get(param, btn.symbols[SYM_LOCAL], btn.symbols[SYM_GLOBAL][1])
+                #print(f"ret0 {ret}") #@@@
             else:
-                print("NRQ") #@@@
+                #print("NRQ") #@@@
                 if type(param) == str and av[AV_TYPE][AVT_DESC] in {PT_STR[AVT_DESC], PT_STRS[AVT_DESC]} and param[0:1] == '"':
                     ret = param[1:]
+                    #print(f"ret1 {ret}") #@@@
                 else:
                     ret = param
+                    #print(f"ret2 {ret}") #@@@
 
+        #print(f"get_param '{ret}', {type(ret)} --> '{av[AV_TYPE][AVT_CONV](ret)}', {type(av[AV_TYPE][AVT_CONV](ret))}using '{av[AV_TYPE][AVT_CONV]}'") #@@@
         return av[AV_TYPE][AVT_CONV](ret)
 
 
@@ -576,7 +597,7 @@ class Command_Basic:
         m = min(n, avl)
         av = self.auto_validate[m-1]
         if av[AV_VAR_OK] == AVV_REQD:
-            print("SP", btn.symbols[SYM_PARAMS][n], val, btn.symbols) #@@@
+            #print("SP", btn.symbols[SYM_PARAMS][n], val, btn.symbols) #@@@
             variables.Auto_store(btn.symbols[SYM_PARAMS][n], val, btn.symbols) # return result in variable
 
 
