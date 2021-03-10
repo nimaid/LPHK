@@ -19,6 +19,7 @@ import \
 try:
     import commands_test
 except:
+    traceback.print_exc()
     pass
 
 # This library could be considered optional, but is not platform specific

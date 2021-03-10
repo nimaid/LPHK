@@ -369,7 +369,7 @@ class Command_Basic:
         vmp = self.valid_max_params                     # what is the max number of parameters
         if vmp == None:
            vnp = self.valid_num_params                  # if there isn't a max, use the number of parameters
-           if vnp[0] == None:                           # if we really don't know
+           if vnp == None or vnp[0] == None:            # if we really don't know
                v = 0                                    # assume 0
            elif vnp[-1] == None:                        # if there is an unlimited maximum
                v = vnp[-2]                              # use the max that we know

@@ -240,7 +240,7 @@ then click 'Redetect Now'.""",
                     self.popup_choice(self, "LPHK Standalone mode", self.error_image,
                                       """LPHK has been started in standalone mode and
 will not try to connect to a Launchpad.  Execute
-buttons by right clicking on them.""",
+buttons by clicking on them in 'Run' mode.""",
                                       [["OK", None]]
                                       )
             elif lp_mode is LP_PRO:

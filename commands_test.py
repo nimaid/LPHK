@@ -295,3 +295,28 @@ class Test_24(Test_XX):
 
 
 scripts.Add_command(Test_24())  # register the command
+
+
+# class that defines the Delay command (a target of GOTO's etc)
+class Test_Dialog(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("TEST_DIALOG",  # the name of the command as you have to enter it in the code
+            LIB,
+            (
+            # Desc            Opt    Var      type     p1_val p2_val
+            ),
+            (                          # How to log runtime execution
+            # num params, format string                           (trailing comma is important)
+            (0,           "    Dialog Test"),
+            ) )
+
+
+    def Process(self, btn, idx, split_line):
+        import dialog
+        dialog.CommentBox(btn, "this is a test")
+
+
+scripts.Add_command(Test_Dialog())  # register the command
