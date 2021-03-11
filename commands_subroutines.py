@@ -12,30 +12,15 @@ LIB = "cmds_subr" # name of this library (for logging)
 # ### CLASS Header_Subroutine                    ###
 # ##################################################
 
-# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
-# but is ignored in the normal running of commands
+# This forms the basis of the subroutine headers.  It should not be instansiated by itself!
 class Header_Subroutine(command_base.Command_Header):
     def __init__(
         self,
+        name
         ):
 
-        super().__init__("@SUB",              # the name of the header as you have to enter it in the code
-            False)                            # You also define if the header causes the script to be asynchronous
-
-
-    # Dummy validate routine.  Simply says all is OK (unless you try to do it in a real button!)
-    def Validate(
-        self,
-        btn,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
-        ):
-
-        if btn.is_button == True:
-            return ("Line:" + str(idx+1) + " - The header '" + split_line[0] + "' is not permitted in a button.", btn.Line(idx))
-
-        return True
+        super().__init__(name,
+            False)              # subroutines are not async!
 
 
     # Dummy run routine.  Simply passes execution to the next line
@@ -49,7 +34,136 @@ class Header_Subroutine(command_base.Command_Header):
         return idx+1
 
 
-scripts.Add_command(Header_Subroutine())  # register the header
+# ##################################################
+# ### CLASS Header_Sub_Name                      ###
+# ##################################################
+
+# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
+# but is ignored in the normal running of commands
+class Header_Sub_Name(Header_Subroutine):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("@SUB, Defines a subroutine name and parameters")
+
+
+    # Dummy validate routine.  Simply says all is OK (unless you try to do it in a real button!)
+    def Validate(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
+        ):
+
+        if pass_no == 1:
+            if btn.is_button:
+                return ("Line:" + str(idx+1) + " - The header '" + split_line[0] + "' is only permitted in a subroutine.", btn.Line(idx))
+
+        return True
+
+
+scripts.Add_command(Header_Sub_Name())  # register the header
+
+
+# ##################################################
+# ### CLASS Header_Sub_Desc                      ###
+# ##################################################
+
+# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
+# but is ignored in the normal running of commands
+class Header_Sub_Desc(Header_Subroutine):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("@DESC, Defines a subroutine description")
+
+
+    # Dummy validate routine.  Simply says all is OK (without a validation routine, an error is reported (but not printed)
+    def Validate(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
+        ):
+
+        if pass_no == 1:
+            btn.desc = ' '.join(split_line[1:])
+
+        return True
+
+
+scripts.Add_command(Header_Sub_Desc())  # register the header
+
+
+# ##################################################
+# ### CLASS Header_Sub_Name                      ###
+# ##################################################
+
+# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
+# but is ignored in the normal running of commands
+class Header_Sub_Name(Header_Subroutine):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("@NAME, (re)names a subroutine description")
+
+
+    # Dummy validate routine.  Simply says all is OK (unless you try to do it in a real button!)
+    def Validate(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
+        ):
+
+        if pass_no == 1:
+            if btn.is_button:
+                btn.Set_name(' '.join(split_line[1:]))
+            else:
+                return ("Line:" + str(idx+1) + " - The header '" + split_line[0] + "' is only permitted in a button.", btn.Line(idx))
+
+        return True
+
+
+scripts.Add_command(Header_Sub_Name())  # register the header
+
+
+# ##################################################
+# ### CLASS Header_Sub_Doc                       ###
+# ##################################################
+
+# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
+# but is ignored in the normal running of commands
+class Header_Sub_Doc(Header_Subroutine):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("@DOC, Adds a line to the subroutine documentation")
+
+
+    # Dummy validate routine.  Simply says all is OK (without a validation routine, an error is reported (but not printed)
+    def Validate(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
+        ):
+
+        if pass_no == 1:
+            btn.doc += [' '.join(split_line[1:])]
+
+        return True
+
+
+scripts.Add_command(Header_Sub_Doc())  # register the header
 
 
 # ##################################################
@@ -75,18 +189,18 @@ class Subroutine(command_base.Command_Basic):
             ) )
 
         self.routine = Lines           # the routine to execute
-        self.btn = scripts.Button(-1, -1, self.routine) # we retain this so we only have to validate it once.  executions use a deep-ish copy
+        self.btn = scripts.Button(-1, -1, self.routine, None, Name) # we retain this so we only have to validate it once.  executions use a deep-ish copy
 
 
     # process for a subroutine handles parameter passing and then passes off the process to the script in a "dummy" button
     def Process(self, btn, idx, split_line):
-        sub_btn = scripts.Button(-1, -1, self.routine, btn.root) # create a new button and pass the script to it
+        sub_btn = scripts.Button(-1, -1, self.routine, btn.root, self.name) # create a new button and pass the script to it
 
         self.btn.Copy_parsed(sub_btn, self.name)                 # copy the info created when parsed
 
         variables.Local_store('sub__np', self.Param_count(btn), sub_btn.symbols) # number of parameters passed
 
-        d = variables.Local_recall('sub__d',btn.symbols)         # get current call depth
+        d = variables.Local_recall('sub__d', btn.symbols)        # get current call depth
         d = param_convs._int(d)                                  # create an integer from it
         variables.Local_store('sub__d', d+1, sub_btn.symbols)    # and pass that + 1
 
@@ -105,10 +219,10 @@ class Subroutine(command_base.Command_Basic):
                 self.Set_param(btn, n+1, pn)                     # and store it
 
 
-    # This is not the parse routine called for validation!
+    # This is not the parse routine called for validation!  @@@ not used???
     def Parse_Sub(self):
         try:
-            script_validate = self.btn.Parse_script()
+            script_validate = self.btn.Parse_script() #@@@ does not raise an error
         except:
             self.popup(w, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK")
             raise

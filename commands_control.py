@@ -15,7 +15,7 @@ class Control_Comment(command_base.Command_Text_Basic):
         self,
         ):
 
-        super().__init__("-",  # the name of the command as you have to enter it in the code
+        super().__init__("-, Comment",
             LIB,
             "-" )
 
@@ -34,7 +34,7 @@ class Control_Label(command_base.Command_Basic):
         ):
 
         super().__init__(
-            "LABEL",  # the name of the command as you have to enter it in the code
+            "LABEL, Target for jumps (goto, loops, etc)",
             LIB,
             (
             # Desc         Opt    Var     type       p1_val  p2_val
@@ -186,7 +186,7 @@ class Control_Goto_Label(Control_Flow_Basic):
         ):
 
         super().__init__(
-            "GOTO_LABEL",   # the name of the command as you have to enter it in the code
+            "GOTO_LABEL, Unconditional jump to label",
             LIB,
             (
             # Desc         Opt    Var     type      p1_val  p2_val
@@ -212,7 +212,7 @@ class Control_If_Pressed_Goto_Label(Control_Flow_Basic):
         ):
 
         super().__init__(
-            "IF_PRESSED_GOTO_LABEL",  # the name of the command as you have to enter it in the code
+            "IF_PRESSED_GOTO_LABEL, Jump to label if initiating button still pressed",
             LIB,
             (
             # desc         opt    var     type      p1_val                      p2_val
@@ -241,7 +241,7 @@ class Control_If_Unpressed_Goto_Label(Control_Flow_Basic):
         ):
 
         super().__init__(
-            "IF_UNPRESSED_GOTO_LABEL",  # the name of the command as you have to enter it in the code
+            "IF_UNPRESSED_GOTO_LABEL, Jump to label if initiating button is NOT pressed",
             LIB,
             (
             # desc         opt    var     type      p1_val                      p2_val
@@ -270,7 +270,7 @@ class Control_Repeat_Label(Control_Flow_Basic):
         ):
 
         super().__init__(
-            "REPEAT_LABEL",  # the name of the command as you have to enter it in the code
+            "REPEAT_LABEL, Jump to label a fixed number of times",
             LIB,
             (
             # desc         opt    var     type      p1_val                      p2_val
@@ -307,7 +307,7 @@ class Control_Repeat(Control_Flow_Basic):
         ):
 
         super().__init__(
-            "REPEAT",  # the name of the command as you have to enter it in the code
+            "REPEAT, Repeat a block of code a fixed number of times (auto reset -- can be nested)",
             LIB,
             (
             # desc         opt    var     type      p1_val                      p2_val
@@ -342,7 +342,7 @@ class Control_If_Pressed_Repeat_Label(Control_Flow_Basic):
         ):
 
         super().__init__(
-            "IF_PRESSED_REPEAT_LABEL",  # the name of the command as you have to enter it in the code
+            "IF_PRESSED_REPEAT_LABEL, Jump to a label a fixed number of times IF initiating button still pressed",
             LIB,
             (
             # desc         opt    var     type      p1_val                      p2_val
@@ -379,7 +379,7 @@ class Control_If_Pressed_Repeat(Control_Flow_Basic):
         ):
 
         super().__init__(
-            "IF_PRESSED_REPEAT_LABEL",  # the name of the command as you have to enter it in the code
+            "IF_PRESSED_REPEAT, Repeat a block of code a fixed number of times IF originating button still pressed (auto reset -- can be nested)",
             LIB,
             (
             # desc         opt    var     type      p1_val                      p2_val
@@ -414,7 +414,7 @@ class Control_If_Unpressed_Repeat_Label(Control_Flow_Basic):
         ):
 
         super().__init__(
-            "IF_UNPRESSED_REPEAT_LABEL",  # the name of the command as you have to enter it in the code
+            "IF_UNPRESSED_REPEAT_LABEL, Jump to a label a fixed number of times IF initiating button released",
             LIB,
             (
             # desc         opt    var     type      p1_val                      p2_val
@@ -451,7 +451,7 @@ class Control_If_Unpressed_Repeat(Control_Flow_Basic):
         ):
 
         super().__init__(
-            "IF_UNPRESSED_REPEAT",  # the name of the command as you have to enter it in the code
+            "IF_UNPRESSED_REPEAT, Repeat a block of code a fixed number of times IF originating button is released (auto reset -- can be nested)",
             LIB,
             (
             # desc         opt    var     type      p1_val                      p2_val
@@ -488,7 +488,7 @@ class Control_Reset_Repeats(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("RESET_REPEATS")  # the name of the command as you have to enter it in the code
+        super().__init__("RESET_REPEATS, Resets all repeats to their initial values")
 
 
     def Validate(
@@ -536,7 +536,7 @@ class Control_Return(command_base.Command_Text_Basic):
         self,
         ):
 
-        super().__init__("RETURN",  # the name of the command as you have to enter it in the code
+        super().__init__("RETURN, Returns from a subroutine or exits a script",
             LIB,
             "SCRIPT RETURNS" )
 
@@ -565,6 +565,7 @@ class Control_End(Control_Return):
         super().__init__()
 
         self.name = "END"
+        self.desc = "Ends an execution unconditionally (including if called from a subroutine)"
         self.info_msg = "SCRIPT ENDED"
 
 
@@ -591,6 +592,7 @@ class Control_Abort(Control_End):
         super().__init__()
 
         self.name = "ABORT"
+        self.desc = "Aborts an execution unconditionally (including if called from a subroutine)"
         self.info_msg = "SCRIPT ABORTED"
 
 

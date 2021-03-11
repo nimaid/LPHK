@@ -13,7 +13,7 @@ class Mouse_Move(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_MOVE",     # the name of the command as you have to enter it in the code
+        super().__init__("M_MOVE, Relative mouse movement",
             LIB,                       # the name of this module
             (                          # description of parameters
             # Desc      Opt    Var    type      p1_val p2_val  (trailing comma is important)
@@ -46,7 +46,7 @@ class Mouse_Set(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_SET",   # the name of the command as you have to enter it in the code
+        super().__init__("M_SET, Set mouse position",
             LIB,
             (
             # Desc      Opt    Var      type     p1_val                      p2_val
@@ -79,7 +79,7 @@ class Mouse_Scroll(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_SCROLL",  # the name of the command as you have to enter it in the code
+        super().__init__("M_SCROLL, Scroll using mouse",
             LIB,
             (
             # Desc            Opt    Var      type     p1_val p2_val
@@ -113,7 +113,7 @@ class Mouse_Line(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_LINE",   # the name of the command as you have to enter it in the code
+        super().__init__("M_LINE, Move the mouse along a line",
             LIB,
             (
             # Desc         Opt    Var      type     p1_val                      p2_val
@@ -169,7 +169,7 @@ class Mouse_Line_Move(command_base.Command_Basic):
         self,
          ):
 
-        super().__init__("M_LINE_MOVE",  # the name of the command as you have to enter it in the code
+        super().__init__("M_LINE_MOVE, Relative mouse movement",
             LIB,
             (
             # Desc         Opt    Var      type     p1_val                      p2_val
@@ -222,7 +222,7 @@ class Mouse_Line_Set(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_LINE_SET",   # the name of the command as you have to enter it in the code
+        super().__init__("M_LINE_SET, Absolute mouse movement",
             LIB,
             (
             # Desc         Opt    Var      type     p1_val                      p2_val
@@ -271,7 +271,7 @@ class Mouse_Recall_Line(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_RECALL_LINE",   # the name of the command as you have to enter it in the code
+        super().__init__("M_RECALL_LINE, Return the mouse to the stored position",
             LIB,
             (
             # Desc         Opt    Var      type     p1_val                      p2_val
@@ -328,7 +328,7 @@ class Mouse_Store(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_STORE",  # the name of the command as you have to enter it in the code
+        super().__init__("M_STORE, Store the mouse position",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -365,7 +365,7 @@ class Mouse_Recall(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_RECALL",   # the name of the command as you have to enter it in the code
+        super().__init__("M_RECALL, Return the mouse to the stored position",
             (
             # no variables defined, so none are allowed
             ),

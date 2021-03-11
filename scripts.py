@@ -11,53 +11,170 @@ from constants import *
 VALID_COMMANDS = dict()
 
 
-# HEADERS is likewise empty until added (all headers, not just async ones)
-
-HEADERS = dict()
-
-
 # GLOBALS is likewise empty until global variables get created
 
 GLOBALS = dict()                  # the globals themselvs
 GLOBAL_LOCK = threading.Lock()    # a lock for the globals to prevent simultaneous access
 
 
-
-
 # Add a new command.  This removes any existing command of the same name from the VALID_COMMANDS
 # and returns it as the result
 
 def Add_command(
-    a_command: command_base.Command_Basic  # the command to add
+    a_command: command_base.Command_Basic            # the command or header to add
     ):
 
-    if a_command.name in HEADERS:              # if this was previously a header, now it isn't
-        HEADERS.pop(a_command.name)
+    if a_command.name in VALID_COMMANDS:             # or if it was a command
+        p = VALID_COMMANDS.pop(a_command.name)       # pop that too
+    else:                                            # otherwise
+        p = None                                     # the return value will be None (we're not replacing anything)
 
-    if a_command.name in VALID_COMMANDS:       # if it already exists
-        p = VALID_COMMANDS[a_command.name]     # get it
-    else:                                      # otherwise
-        p = None                               # the return value will be None
+    VALID_COMMANDS[a_command.name] = a_command       # add the new command
 
-    VALID_COMMANDS[a_command.name] = a_command # add the new command
-
-    if a_command is command_base.Command_Header:     # is this a header?
-        HEADERS[a_command.name] = a_command.is_async # add it
-
-    return p                                   # return any replaced command
+    return p                                         # return any replaced command
 
 
-# Remove a command.  This could be useful in handling subroutines (@@@ UNTESTED)
+# Remove a command.  This could be useful in handling subroutines
 
 def Remove_command(
     command_name  # the command to remove
     ):
 
-    if command_name in HEADERS:                # if this was previously a header
-        HEADERS.pop(command_name)              # remove the header
+    if command_name in VALID_COMMANDS:         # check command
+        p = VALID_COMMANDS.pop(command_name)   # remove the command
+    else:
+        p = None                               # nothing to remove
 
-    if command_name in VALID_COMMANDS:         # if it already exists
-        VALID_COMMANDS.pop(command_name)       # remove the command
+    return p                                   # the thing we removed
+
+
+# display info on all commands and headers
+
+def Dump_commands(debug=False):
+    def get_name(c):
+        if isinstance(c, command_base.Command_Basic):
+            return c.name
+        elif isinstance(c, Button):
+            return c.coords
+        else:
+            return "ERROR"
+
+    def get_desc(c):
+        ret = ''
+        if isinstance(c, command_base.Command_Basic):
+            if hasattr(c, 'desc') and not callable(c.desc):
+                ret = c.desc
+            if hasattr(c, 'btn') and not callable(c.btn) and c.btn:
+                if c.btn.desc != "":
+                    ret = c.btn.desc
+        elif isinstance(c, Button):
+            ret = c.desc
+        else:
+            ret = "ERROR"
+
+        return ret
+
+    def dump_name(c_type, c):
+        print(f"    {c_type} \"{get_name(c)}\"", end="")
+        desc = get_desc(c)
+        if desc == "":
+            print()
+        else:
+            print(f" - {desc}")
+
+    def get_doc(c):
+        ret = []
+        if isinstance(c, command_base.Command_Basic):
+            if hasattr(c, 'doc') and not callable(c.doc):
+                ret = c.doc
+            if hasattr(c, 'btn') and not callable(c.btn) and c.btn:
+                if c.btn.doc != []:
+                    ret = c.btn.doc
+        elif isinstance(c, Button):
+            ret = c.doc
+        else:
+            ret = ["ERROR"]
+
+        return ret
+
+    def dump_doc(c):
+        doc = get_doc(c)
+        if doc != []:
+            print("        Notes")
+            for n in doc:
+                print(f"            {n}")
+
+    def dump_ancestory(c):
+        print("        Ancestory")
+        print(f"            {type(c)}")
+        a = type(c).__bases__[0]
+        while a != object:
+            print(f"            {a}")
+            a = a.__bases__[0]
+
+    def dump_params(c):
+        if isinstance(c, command_base.Command_Basic):
+            print("        Parameters")
+            if c.auto_validate == None:
+                print("            Parameters undocumented (Auto-validation is not defined)")
+            elif len(c.auto_validate) == 0:
+                print("            No parameters")
+            else:
+                for v in c.auto_validate:
+                    print(f"            {v[AV_DESCRIPTION]} - {v[AV_TYPE][AVT_DESC]}", end="")
+
+                    if v[AV_OPTIONAL]:
+                        print(" (opt),", end="")
+                    else:
+                        print(" (reqd),", end="")
+
+                    if v[AV_VAR_OK] == AVV_NO:
+                        print(" constant only")
+                    elif v[AV_VAR_OK] == AVV_YES:
+                        print(" variable permitted")
+                    elif v[AV_VAR_OK] == AVV_REQD:
+                        print(" variable required (possible return value)")
+                    else:
+                        print(" UNKNOWN VALUE")
+    
+    def dump(c_type, c, debug):
+        dump_name(c_type, c)
+        dump_doc(c)
+        if debug:
+            dump_ancestory(c)
+        dump_params(c)
+
+        print()
+
+    import commands_subroutines
+
+    print("HEADERS")
+    print()
+    for cmd in VALID_COMMANDS:
+        if isinstance(VALID_COMMANDS[cmd], command_base.Command_Header):
+            dump("Header", VALID_COMMANDS[cmd], debug)
+
+    print("COMMANDS")
+    print()
+    for cmd in VALID_COMMANDS:
+        if not (isinstance(VALID_COMMANDS[cmd], commands_subroutines.Subroutine) or \
+            isinstance(VALID_COMMANDS[cmd], command_base.Command_Header)):
+            dump("Command", VALID_COMMANDS[cmd], debug)
+
+    print("SUBROUTINES")
+    print()
+    for cmd in VALID_COMMANDS:
+        if isinstance(VALID_COMMANDS[cmd], commands_subroutines.Subroutine):
+            dump("Subroutine", VALID_COMMANDS[cmd], debug)
+
+    print("BUTTONS")
+    print()
+    global buttons
+    for x in range(8):
+        for y in range(1, 9):
+            btn = buttons[x][y]
+            if btn.script_str != "":
+                dump("Button", btn, debug)
 
 
 # Create a new symbol table.  This contains information required for the script to run
@@ -91,23 +208,25 @@ class Button():
         x,                                   # The button column
         y,                                   # The button row
         script_str,                          # The Script
-        root = None                          # Who called us
+        root = None,                         # Who called us
+        name = ''                            # name of this button (subroutine)
         ):
 
         self.x = x
         self.y = y
         self.is_button = x >= 0 and y >= 0   # It's a button if it has valid (non-negative) coordinates, otherwise it must be a subroutine
         self.script_str = script_str         # The script
+
+        self.Set_name(name)                  # only for subroutines at present, but useful to print a caption for a button?
+        self.desc = ""
+        self.doc = []
+
         self.validated = False               # Has the script been validated?
         self.symbols = None                  # The symbol table for the button
         self.script_lines = None             # the lines of the script
         self.thread = None                   # the thread associated with this button
         self.running = False                 # is the script running?
         self.is_async = False                # async execution flag
-        if self.is_button:
-            self.coords = "(" + str(self.x) + ", " + str(self.y) + ")" # let's just do this the once eh?
-        else:
-            self.coords = "(SUB)"            # subroutines don't have coordinates
 
         # The "root" is the button that is scheduled.  This allows subroutines to check if the
         # initiating button has been killed.
@@ -117,6 +236,17 @@ class Button():
             self.root = root                 # the caller is the root
 
 
+    # let us set/change the name of a button
+    def Set_name(self, name):
+        self.name = name
+        self.coords = ''
+        
+        if self.is_button:
+            self.coords += "(" + str(self.x+1) + ',' + str(self.y+1) + ")" # let's just do this the once eh?
+        if name:
+            self.coords = " ".join([self.name, self.coords])               # subroutines don't have coordinates
+    
+    
     #  Do what is required to parse the script.  Parsing does not output any information unless it is an error
     def Parse_script(self):
         if self.validated:                           # we don't want to repeat validation over and over
@@ -165,7 +295,10 @@ class Button():
                     errors += 1                      # and 1 more error
 
             if err != True:
-                print('Pass ' + str(pass_no) + ' complete for button (' + str(self.x+1) + ',' + str(self.y+1) + ').  ' + str(errors) + ' errors detected.')
+                if self.is_button:
+                    print('Pass ' + str(pass_no) + ' complete for button ' + self.coords + '.  ' + str(errors) + ' errors detected.')
+                else:
+                    print('Pass ' + str(pass_no) + ' complete for subroutine ' + self.coords +'.  ' + str(errors) + ' errors detected.')
                 break                                # errors prevent next pass
 
         return err                                   # success or failure
@@ -538,7 +671,9 @@ class Button():
 
             if len(self.script_lines) > 0:               # look for async header and set flag
                 cmd_txt = self.Split_cmd_text(self.script_lines[0])
-                self.is_async = cmd_txt in HEADERS and HEADERS[cmd_txt].is_async
+                self.is_async = cmd_txt in VALID_COMMANDS and \
+                    isinstance(VALID_COMMANDS[cmd_txt], command_base.Command_Header) and \
+                    VALID_COMMANDS[cmd_txt].is_async
         else:
             self.symbols = None                          # otherwise destroy symbol table
 

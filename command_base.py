@@ -20,7 +20,14 @@ class Command_Basic:
         # and we rely on the parameters to the methods to contain things
         # unique to each one!  Local variables are fine, self.anything is BAD
 
-        self.name = name                      # the literal name of our command
+        p = name.find(',')                    # is there a comma in the name?
+        if p > 0:                             # yes!  must have a description
+            self.name = name[:p].strip()      # extract the name part
+            self.desc = name[p+1:].strip()    # and the description part
+        else:
+            self.name = name                  # the literal name of our command
+            self.desc = ''                    # no description
+
         self.lib = lib                        # the library we're part of
         self.auto_validate = auto_validate    # any auto-validation, if defined
         self.auto_message = auto_message      # format for any messages we need
@@ -377,7 +384,7 @@ class Command_Basic:
                return vnp[-1]                           # use the actual maximum
         else:
             v = vmp                                     # vmp is preferred though
-            
+
         #print(f"vmp = {vmp}, v = {v}, n = {n_passed}")#@@@
         if (v == None) or (v < n_passed):
             return n_passed
@@ -615,7 +622,10 @@ class Command_Text_Basic(Command_Basic):
 
         super().__init__(name,      # the name of the command as you have to enter it in the code
             lib,
-            (),
+            (
+            # Desc         Opt    Var      type       p1_val                        p2_val
+            ("Param",      False, AVV_NO,  PT_TEXT,   None,                         None),
+            ),
             () )
 
         # this command does not have a standard list of fields, so we need to do some stuff manually
@@ -658,8 +668,8 @@ class Command_Header(Command_Basic):
         pass_no
         ):
 
-        if idx != 0:
-           return ("ERROR on line " + btn.Line(idx) + ". " + self.name + " must only appear on line 1.", -1)
+        #if idx != 0:  
+        #   return ("ERROR on line " + btn.Line(idx) + ". " + self.name + " must only appear on line 1.", -1)
 
         return (None, 0)
 
