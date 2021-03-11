@@ -189,7 +189,7 @@ class Scrape_Fingerprint_Distance(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("S_FDIST",  # the name of the command as you have to enter it in the code
+        super().__init__("S_FDIST, Calculate the distance between 2 fingerprints",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -201,6 +201,10 @@ class Scrape_Fingerprint_Distance(command_base.Command_Basic):
             # num params, format string                           (trailing comma is important)
             (3,           "    Return the hamming distance between fingerprints {1} and {2} into {3}"),
             ) )
+
+        self.doc = ["This command calculates the hamming distance between 2 fingerprints.", \
+                    "This can be used to determine how similar 2 images are.  The larger", \
+                    "the hamming distance, the more different the images are."]
 
 
     def Process(self, btn, idx, split_line):

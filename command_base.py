@@ -27,6 +27,7 @@ class Command_Basic:
         else:
             self.name = name                  # the literal name of our command
             self.desc = ''                    # no description
+        self.doc = []                         # no multi-line documentation
 
         self.lib = lib                        # the library we're part of
         self.auto_validate = auto_validate    # any auto-validation, if defined
@@ -668,7 +669,7 @@ class Command_Header(Command_Basic):
         pass_no
         ):
 
-        #if idx != 0:  
+        #if idx != 0:
         #   return ("ERROR on line " + btn.Line(idx) + ". " + self.name + " must only appear on line 1.", -1)
 
         return (None, 0)

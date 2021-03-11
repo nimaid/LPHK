@@ -364,7 +364,7 @@ class Test_Dump_Debug(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        scripts.Dump_commands(True)
+        scripts.Dump_commands(DS_NORMAL + [D_DEBUG])
 
 
 scripts.Add_command(Test_Dump_Debug())  # register the command

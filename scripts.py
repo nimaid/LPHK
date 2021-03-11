@@ -50,7 +50,7 @@ def Remove_command(
 
 # display info on all commands and headers
 
-def Dump_commands(debug=False):
+def Dump_commands(style=DS_NORMAL):
     def get_name(c):
         if isinstance(c, command_base.Command_Basic):
             return c.name
@@ -136,11 +136,11 @@ def Dump_commands(debug=False):
                         print(" variable required (possible return value)")
                     else:
                         print(" UNKNOWN VALUE")
-    
-    def dump(c_type, c, debug):
+
+    def dump(c_type, c, style):
         dump_name(c_type, c)
         dump_doc(c)
-        if debug:
+        if D_DEBUG in style:
             dump_ancestory(c)
         dump_params(c)
 
@@ -148,33 +148,37 @@ def Dump_commands(debug=False):
 
     import commands_subroutines
 
-    print("HEADERS")
-    print()
-    for cmd in VALID_COMMANDS:
-        if isinstance(VALID_COMMANDS[cmd], command_base.Command_Header):
-            dump("Header", VALID_COMMANDS[cmd], debug)
+    if D_HEADERS in style:
+        print("HEADERS")
+        print()
+        for cmd in VALID_COMMANDS:
+            if isinstance(VALID_COMMANDS[cmd], command_base.Command_Header):
+                dump("Header", VALID_COMMANDS[cmd], style)
 
-    print("COMMANDS")
-    print()
-    for cmd in VALID_COMMANDS:
-        if not (isinstance(VALID_COMMANDS[cmd], commands_subroutines.Subroutine) or \
-            isinstance(VALID_COMMANDS[cmd], command_base.Command_Header)):
-            dump("Command", VALID_COMMANDS[cmd], debug)
+    if D_COMMANDS in style:
+        print("COMMANDS")
+        print()
+        for cmd in VALID_COMMANDS:
+            if not (isinstance(VALID_COMMANDS[cmd], commands_subroutines.Subroutine) or \
+                isinstance(VALID_COMMANDS[cmd], command_base.Command_Header)):
+                dump("Command", VALID_COMMANDS[cmd], style)
 
-    print("SUBROUTINES")
-    print()
-    for cmd in VALID_COMMANDS:
-        if isinstance(VALID_COMMANDS[cmd], commands_subroutines.Subroutine):
-            dump("Subroutine", VALID_COMMANDS[cmd], debug)
+    if D_SUBROUTINES in style:
+        print("SUBROUTINES")
+        print()
+        for cmd in VALID_COMMANDS:
+            if isinstance(VALID_COMMANDS[cmd], commands_subroutines.Subroutine):
+                dump("Subroutine", VALID_COMMANDS[cmd], style)
 
-    print("BUTTONS")
-    print()
-    global buttons
-    for x in range(8):
-        for y in range(1, 9):
-            btn = buttons[x][y]
-            if btn.script_str != "":
-                dump("Button", btn, debug)
+    if D_BUTTONS in style:
+        print("BUTTONS")
+        print()
+        global buttons
+        for x in range(8):
+            for y in range(1, 9):
+                btn = buttons[x][y]
+                if btn.script_str != "":
+                    dump("Button", btn, style)
 
 
 # Create a new symbol table.  This contains information required for the script to run
@@ -240,13 +244,13 @@ class Button():
     def Set_name(self, name):
         self.name = name
         self.coords = ''
-        
+
         if self.is_button:
             self.coords += "(" + str(self.x+1) + ',' + str(self.y+1) + ")" # let's just do this the once eh?
         if name:
             self.coords = " ".join([self.name, self.coords])               # subroutines don't have coordinates
-    
-    
+
+
     #  Do what is required to parse the script.  Parsing does not output any information unless it is an error
     def Parse_script(self):
         if self.validated:                           # we don't want to repeat validation over and over

@@ -107,3 +107,12 @@ LM_MOVE = "move"
 LM_SWAP = "swap"
 LM_COPY = "copy"
 LM_RUN = "run"
+
+# Dump constants
+D_HEADERS = 1
+D_COMMANDS = 2
+D_SUBROUTINES = 3
+D_BUTTONS = 4
+D_DEBUG = 5
+
+DS_NORMAL = [D_HEADERS, D_COMMANDS, D_SUBROUTINES, D_BUTTONS]
