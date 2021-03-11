@@ -14,3 +14,7 @@ dependencies:
     - https://github.com/pyinstaller/pyinstaller/archive/develop.zip
     - py-getch
     - pyautogui
+    - pywin32
+    - pytesseract
+    - imagehash
+    - dhash

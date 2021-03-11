@@ -1,0 +1,14 @@
+- This demonstrates the use of local and global variables
+-
+- Assign this script to a pair of buttons.  Watch how the global variable is shared
+- and the local variable isn't
+-
+- clear the stack
+RPN_EVAL clst 
+- Now get the global variable a and increment it
+RPN_EVAL <G a 1 + >G a 
+- Now get the local variable b and increment it
+RPN_EVAL <L b 1 + > b
+- look at the local and global variables
+RPN_EVAL view_l view_g
+

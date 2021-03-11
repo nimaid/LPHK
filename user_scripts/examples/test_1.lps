@@ -1,0 +1,15 @@
+- A test script to test as much as I can
+STRING Test 1
+TAP enter
+GOTO_LABEL skip
+STRING Fail in GOTO command
+LABEL skip
+- in the loop
+REPEAT skip 3
+WEB_NEW http://www.google.com
+WEB http:/bing.com
+M_STORE
+M_MOVE 99999999 99999999
+TAP mouse_left
+M_RECALL
+SOUND examples/airhorn.wav

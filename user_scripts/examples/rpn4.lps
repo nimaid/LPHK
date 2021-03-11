@@ -1,0 +1,4 @@
+- this demostrates that the stack is retained across executions of the script
+- every time it is run, you will see the stack grow
+RPN_EVAL dup 1 +
+RPN_EVAL view_s

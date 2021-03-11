@@ -1,27 +1,16 @@
-import sys, os, subprocess
+import sys, os, subprocess, argparse, global_vars
 from datetime import datetime
+from constants import *
 
 print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!\n")
 
 LOG_TITLE = "LPHK.log"
 
-# Get platform information
-PLATFORMS = [   {"search_string": "win", "name_string": "windows"},
-                {"search_string": "linux", "name_string": "linux"},
-                {"search_string": "darwin", "name_string": "macintosh"} ]
-PLATFORM = None
-for plat in PLATFORMS:
-    if sys.platform.startswith(plat["search_string"]):
-        PLATFORM = plat["name_string"]
-        break
-if PLATFORM == None:
-    PLATFORM = "other"
-
 # Test if this is a PyInstaller executable or a .py file
 if getattr(sys, 'frozen', False):
     IS_EXE = True
     PROG_FILE = sys.executable
-    PROG_PATH = os.path.dirname(PROG_FILE) 
+    PROG_PATH = os.path.dirname(PROG_FILE)
     PATH = sys._MEIPASS
 else:
     IS_EXE = False
@@ -76,10 +65,10 @@ print("Log file (this file):", LOG_PATH, end="\n\n")
 
 # Try to import launchpad.py
 try:
-    import launchpad_py as launchpad
+    import launchpad_py as launchpad_real
 except ImportError:
     try:
-        import launchpad
+        import launchpad as launchpad_real
     except ImportError:
         sys.exit("[LPHK] Error loading launchpad.py")
 print("")
@@ -87,50 +76,93 @@ print("")
 import lp_events, scripts, kb, files, sound, window
 from utils import launchpad_connector
 
-lp = launchpad.Launchpad()
+# just import the control modules to automatically integrate them
+import command_list
+
+
+# create a launchpad object, either real or fake
+def Launchpad():
+    if window.IsStandalone():
+        import launchpad_fake
+        return launchpad_fake.launchpad
+    else:
+        return launchpad_real.Launchpad()
+
+
+LP = None
 
 EXIT_ON_WINDOW_CLOSE = True
 
-
 def init():
     global EXIT_ON_WINDOW_CLOSE
-    if len(sys.argv) > 1:
-        if ("--debug" in sys.argv) or ("-d" in sys.argv):
-            EXIT_ON_WINDOW_CLOSE = False
-            print("[LPHK] Debugging mode active! Will not shut down on window close.")
-            print("[LPHK] Run shutdown() to manually close the program correctly.")
 
-        else:
-            print("[LPHK] Invalid argument: " + sys.argv[1] + ". Ignoring...")
-    
+    ap = argparse.ArgumentParser()                             # argparse makes argument processing easy
+    ap.add_argument(                                           # reimnplementation of debug (-d or --debug)
+        "-d", "--debug",
+        help = "Turn on debugging mode", action="store_true")
+    ap.add_argument(                                           # option to automatically load a layout
+        "-l", "--layout",
+        help = "Load an initial layout",
+        type=argparse.FileType('r'))
+    ap.add_argument(                                           # option to start minimised
+        "-m", "--minimised",
+        help = "Start the application minimised", action="store_true")
+    ap.add_argument(                                           # option to start without connecting to a Launchpad
+        "-s", "--standalone",
+        help = "Operate without connection to Launchpad", type=str, choices=[LP_MK1, LP_MK2, LP_MINI, LP_PRO])
+    ap.add_argument(                                           # option to start with launchpad window in a particular mode
+        "-M", "--mode",
+        help = "Launchpad mode", type=str, choices=[LM_EDIT, LM_MOVE, LM_SWAP, LM_COPY, LM_RUN], default=LM_EDIT)
+    ap.add_argument(                                           # reimnplementation of debug (-d or --debug)
+        "-q", "--quiet",
+        help = "Disable information popups", action="store_true")
+
+    global_vars.ARGS = vars(ap.parse_args())                   # store the arguments in a place anything can get to
+
+    if global_vars.ARGS['debug']:
+        EXIT_ON_WINDOW_CLOSE = False
+        print("[LPHK] Debugging mode active! Will not shut down on window close.")
+        print("[LPHK] Run shutdown() to manually close the program correctly.")
+
     files.init(USER_PATH)
     sound.init(USER_PATH)
 
+    global LP
+    LP = Launchpad()
+
 def shutdown():
-    if lp_events.timer != None:
+    if lp_events.timer != None:                          # cancel any outstanding events
         lp_events.timer.cancel()
-    scripts.to_run = []
+
+    scripts.to_run = []                                  # remove anything from the list of scripts scheduled to run
+
     for x in range(9):
         for y in range(9):
-            if scripts.threads[x][y] != None:
-                scripts.threads[x][y].kill.set()
+            if scripts.buttons[x][y].thread != None:
+                scripts.buttons[x][y].thread.kill.set()  # request to kill any running threads
+
     if window.lp_connected:
-        scripts.unbind_all()
-        lp_events.timer.cancel()
-        launchpad_connector.disconnect(lp)
+        scripts.Unbind_all()                             # unbind all the buttons
+        lp_events.timer.cancel()                         # cancel all the timers
+        if LP != None and LP != -1:
+            launchpad_connector.disconnect(LP)           # disconnect from the launchpad
         window.lp_connected = False
-    logger.stop()
+
+    logger.stop()                                        # stop logging
+
     if window.restart:
+        window.restart = False                           # don't do this forever
         if IS_EXE:
             os.startfile(sys.argv[0])
         else:
             os.execv(sys.executable, ["\"" + sys.executable + "\""] + sys.argv)
+
     sys.exit("[LPHK] Shutting down...")
 
 
 def main():
     init()
-    window.init(lp, launchpad, PATH, PROG_PATH, USER_PATH, VERSION, PLATFORM)
+    window.init(LP, PATH, PROG_PATH, USER_PATH, VERSION, PLATFORM)
     if EXIT_ON_WINDOW_CLOSE:
         shutdown()
 
