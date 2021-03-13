@@ -529,7 +529,7 @@ scripts.Add_command(Control_Reset_Repeats())  # register the command
 
 # class that defines the RETURN command
 #
-# This differs from END and ABORT (that will abort the execution of a button) in that will returnfrom a 
+# This differs from END and ABORT (that will abort the execution of a button) in that will returnfrom a
 # subroutine without exiting
 class Control_Return(command_base.Command_Text_Basic):
     def __init__(

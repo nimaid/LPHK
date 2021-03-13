@@ -123,7 +123,6 @@ class Rpn_Eval(command_base.Command_Basic):
                         i = i + o_ret
                 except:
                     print("Error in evaluation: '" + str(sys.exc_info()[1]) + "' at operator #" + str(i) + " on Line:" + str(idx+1) + " '" + cmd + "'")
-                    raise #@@@
                     break
             else:                   # if invalid, report it
                print("Line:" + str(idx+1) + " - invalid operator #" + str(i) + " '" + cmd + "'")

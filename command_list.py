@@ -13,7 +13,8 @@ import \
   commands_mouse, \
   commands_pause, \
   commands_external, \
-  commands_subroutines
+  commands_subroutines, \
+  commands_dialog
 
 # @@@ a test command set for testing things!  Will be removed for production
 try:

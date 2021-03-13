@@ -94,7 +94,9 @@ COLOR_FUNC_KEYS_PRIMED = 9 #amber
 EXIT_UPDATE_DELAY = 0.1
 DELAY_EXIT_CHECK = 0.025
 
+# subroutine related
 SUBROUTINE_PREFIX = "CALL:"
+SUBROUTINE_HEADER = "@SUB"
 
 # Launchpad constants
 LP_MK1 = "Mk1"
@@ -107,3 +109,20 @@ LM_MOVE = "move"
 LM_SWAP = "swap"
 LM_COPY = "copy"
 LM_RUN = "run"
+
+# Dump constants
+D_HEADERS = 1
+D_COMMANDS = 2
+D_SUBROUTINES = 3
+D_BUTTONS = 4
+D_DEBUG = 5
+
+DS_NORMAL = [D_HEADERS, D_COMMANDS, D_SUBROUTINES, D_BUTTONS]
+
+# dialog constants
+DR_ABORT = -1   # returned when aborted for any reason
+DR_CANCEL = 0   # Cancel return
+DR_OK = 1       # OK return
+
+DLG_INFO = 1       # a simple titled box with OK
+DLG_OK_CANCEL = 2  # a simple titled box with OK and Cancel

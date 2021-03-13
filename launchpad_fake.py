@@ -35,6 +35,9 @@ class Launchpad():
     def LedCtrlXYByCode(self, x, y, z):
         pass
 
+    def Close(self):
+        pass
+
 
 launchpad = Launchpad()
 

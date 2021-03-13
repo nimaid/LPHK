@@ -137,11 +137,26 @@ I have specifically chosen to do my best to develop this using as many cross pla
   * `.desktop` shortcuts are coming soon!
 
 ## How do I use it? (Post-Install) [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-* Before starting the program, make sure your Launchpad Classic/Mini/S or MkII is connected to the computer.
+* Command line options
+  * usage: lphk.py [-h] [-d] [-l LAYOUT] [-m] [-s {Mk1,Mk2,Mini,Pro}] [-M {edit,move,swap,copy,run}] [-q]
+  * -h, --help
+    * Show this help message and exit
+  * -d, --debug 
+    * Turn on debugging mode
+  * -l LAYOUT, --layout 
+    * LAYOUT Load an initial layout
+  * -m, --minimised 
+    * Start the application minimised
+  * -s {Mk1,Mk2,Mini,Pro}, --standalone {Mk1,Mk2,Mini,Pro} 
+    * Operate without connection to Launchpad
+  * -M {edit,move,swap,copy,run}, --mode {edit,move,swap,copy,run} 
+    * Launchpad mode
+  * -q, --quiet 
+    * Disable information popups* Click `Launchpad > Connect to Launchpad...`.
+* Before starting the program, if you are planning to use a Launchpad, ensure it (Launchpad Classic/Mini/S or MkII) is connected to the computer.
   * If you have a Launchpad Pro, there is currently beta support for it. Please put it in `Live` mode by following the instructions in the pop-up when trying to connect in the next step. For more info, see the [User Manual](https://d2xhy469pqj8rc.cloudfront.net/sites/default/files/novation/downloads/10581/launchpad-pro-gsg-en.pdf).
-* Click `Launchpad > Connect to Launchpad...`.
   * If the connection is successful, the grid will appear, and the status bar at the bottom will turn green.
-* The current mode is displayed in the upper right, in the gap between the circular buttons. Clicking this text will change the mode. There are four modes:
+* The current mode is displayed in the upper right, in the gap between the circular buttons. Clicking this text will change the mode. There are five modes:
     * "Edit" mode: Click on a button to open the Script Edit window for that button.
       * All scripts are saved in the `.lpl` (LaunchPad Layout) files, but the editor also has the ability to import/export single `.lps` (LaunchPad Script) files.
         * For examples, you can click `Import Script` and look through the `user_scripts/examples/` folder.
@@ -158,6 +173,10 @@ I have specifically chosen to do my best to develop this using as many cross pla
       * The selected button will remain unchanged.
       * The second button will have the selected button's old script and color bound to it.
         * If the second button is already bound, you will get a dialog box with options.
+    * "Run" mode: Click on a button to execute it.
+      * The button is executes when you release the mouse button.
+      * A release of the button is queued immediately after the button press.
+      * This is currentl;y only functional with an emulated launchpad
 * Go to `Layout > Save layout as...` to save your current layout for future use, colors and all.
 * Go to `Layout > Load layout...` to load an existing layout. Examples are in `user_layouts/examples/`.
 
@@ -190,16 +209,52 @@ RELEASE (argument 1)
 ```
 If this is used, all other lines in the file must either be blank lines or comments.
 
+#### The `@LOAD_LAYOUT` Header [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+This is a method of loading a new layout.  The header is followed by the name of the layout.
+```
+@LOAD_LAYOUT c:\layouts\newlayout.lpl
+```
+#### The `@SUB` Header [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+This defines a subroutine name and parameters.
+```
+@SUB SUB1 a% b% @result%
+```
+This defines a subroutine that will be called using CALL:SUB1.  It requires 3 parameters.  The first 2 can be either integer constants or variables.  The last must be a variable because a result can be returned in it.
+Within the subroutine, refer to the parameters as `a`, `b`, and `result`.
+If a parameter name is preceeded with `@`, the parameter is passed by reference and a variable MUST be specified in the calling code
+If a parameter name is preceeded with `-`, the parameter is optional
+If a parameter name is followed with `%`, the parameter is integer
+If a parameter name is followed with `#`, the parameter is floating point
+If a parameter name is followed with `$`, the parameter is a string
+If a parameter name is followed with `!`, the parameter is a boolean
+#### The `@DESC` Header  [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+This defines efines a one line description of a subroutine or button.
+```
+@DESC Starts the music
+```
+#### The "@NAME" Header [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+The sets the name of a button.  Currently this does nothing outside the automatically generated documentation, but could in the future be used to place a label, hint text, etc on the form showing the launchpad.
+```
+@NAME Fast Press
+```
+This sets the name to `Fast Press`.  Note that names are not limited to a single word, but in general should be terse.
+#### The "@DOC" Header [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
+This adds lines of documentation to a subroutine or button script.
+```
+@DOC This is the first line of documentation
+@DOC And this is the second line
+```
+This adds 2 lines of documentation that will appear in the automatically generated documentation
 ### Commands List [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text file with newlines separating commands.
 
 #### Utility [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * `ABORT`
-  * Terminates the script immediately, logging any message after the command.  This has the same functionality as END, however it carries with it the notion that the termination was abnormal.
+  * Terminates the script immediately, logging any message after the command.  This has the same functionality as END, however it carries with it the notion that the termination was abnormal.  This will stop execution of a script immediately, even if called from within a subroutine.
 * `DELAY`
   * Delays the script for (argument 1) seconds.
 * `END`
-  * Terminates the script immediately, logging any message after the command.  This has the same functionality as ABORT, however it indicates a normal termination.
+  * Terminates the script immediately, logging any message after the command.  This has the same functionality as ABORT, however it indicates a normal termination.    This will stop execution of a script immediately, even if called from within a subroutine.
 * `GOTO_LABEL`
   * Goto label (argument 1).
 * `IF_PRESSED_GOTO_LABEL`
@@ -224,6 +279,8 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * Works the same as the REPEAT_LABEL command, except the number of times the loop is executed is defined by argument 2.  In addition, the loop counter is reset automatically allowing loops to be nested.
 * `RESET_REPEATS`
   * Reset the counter on all repeats. (no arguments)
+* `RETURN`
+  * Returns from a subroutine.  If not in a subroutine, this will terminate the script.
 * `SOUND`
   * Play a sound named (argument 1) inside the `user_sounds/` folder.
     * Supports `.wav`, `.flac`, and `.ogg` only.

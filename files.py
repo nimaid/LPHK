@@ -145,7 +145,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
 
     scripts.Unbind_all()
     scripts.Unload_all()                         # remove all existing subroutines when you load a new layout
-    window.app.draw_canvas()
+    window.Redraw(True)
 
     if preload == None:
         layout = load_layout(name, popups=popups, save_converted=save_converted)
@@ -182,17 +182,17 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
                     raise
                 if script_validation != True:
                     lp_colors.update_all()
-                    window.app.draw_canvas()
+                    window.Redraw(True)
                     in_error = True
                     window.app.save_script(window.app, x, y, script_text, open_editor = True, color = color)
                     in_error = False
                 else:
-                    scripts.Bind(x, y, script_text, color)
+                    scripts.Bind(x, y, btn, color)
             else:
                 lp_colors.setXY(x, y, color)
 
     lp_colors.update_all()
-    window.app.draw_canvas()
+    window.Redraw(True)
 
     curr_layout = name
     if converted_to_rg:

@@ -11,7 +11,7 @@ class Header_Async(command_base.Command_Header):
         ):
 
         super().__init__("@ASYNC",      # the name of the header as you have to enter it in the code
-            True)                       # You also define if the header causes the script to be asynchronous
+            True)                       # This must be specified for async headers
 
     def Validate(
         self,
@@ -31,16 +31,6 @@ class Header_Async(command_base.Command_Header):
         return True
 
 
-    def Run(
-        self,
-        btn,
-        idx: int,              # The current line number
-        split_line             # The current line, split
-        ):
-
-        return idx+1
-
-
 scripts.Add_command(Header_Async())  # register the header
 
 
@@ -48,13 +38,12 @@ scripts.Add_command(Header_Async())  # register the header
 # ### CLASS Header_Simple                        ###
 # ##################################################
 
-class Header_Simple(command_base.Command_Header):
+class Header_Simple(command_base.Command_Header_Run):
     def __init__(
         self,
         ):
 
-        super().__init__("@SIMPLE",      # the name of the header as you have to enter it in the code
-            False)                       # You also define if the header causes the script to be asynchronous
+        super().__init__("@SIMPLE")      # the name of the header as you have to enter it in the code
 
     def Validate(
         self,
@@ -118,13 +107,12 @@ scripts.Add_command(Header_Simple())  # register the header
 # ##################################################
 
 # Loads a new layout.  @@@ This should probably be rewritten in the newest style
-class Header_Load_Layout(command_base.Command_Header):
+class Header_Load_Layout(command_base.Command_Header_Run):
     def __init__(
         self,
         ):
 
-        super().__init__("@LOAD_LAYOUT",      # the name of the header as you have to enter it in the code
-            False)                            # You also define if the header causes the script to be asynchronous
+        super().__init__("@LOAD_LAYOUT")      # the name of the header as you have to enter it in the code
 
 
     def Validate(
@@ -178,3 +166,100 @@ class Header_Load_Layout(command_base.Command_Header):
 scripts.Add_command(Header_Load_Layout())  # register the header
 
 
+# ##################################################
+# ### CLASS Header_Name                          ###
+# ##################################################
+
+# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
+# but is ignored in the normal running of commands
+class Header_Name(command_base.Command_Header):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("@NAME, Names a button")
+
+
+    # Dummy validate routine.  Simply says all is OK (unless you try to do it in a real button!)
+    def Validate(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
+        ):
+
+        if pass_no == 1:
+            if btn.is_button:
+                btn.Set_name(' '.join(split_line[1:]))
+            else:
+                return ("Line:" + str(idx+1) + " - The header '" + split_line[0] + "' is only permitted in a button.", btn.Line(idx))
+
+        return True
+
+
+scripts.Add_command(Header_Name())  # register the header
+
+
+# ##################################################
+# ### CLASS Header_Desc                          ###
+# ##################################################
+
+# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
+# but is ignored in the normal running of commands
+class Header_Desc(command_base.Command_Header):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("@DESC, Defines a description line")
+
+
+    # Dummy validate routine.  Simply says all is OK (without a validation routine, an error is reported (but not printed)
+    def Validate(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
+        ):
+
+        if pass_no == 1:
+            btn.desc = ' '.join(split_line[1:])
+
+        return True
+
+
+scripts.Add_command(Header_Desc())  # register the header
+
+
+# ##################################################
+# ### CLASS Header_Doc                           ###
+# ##################################################
+
+# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
+# but is ignored in the normal running of commands
+class Header_Doc(command_base.Command_Header):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("@DOC, Adds a line to the documentation text")
+
+
+    # Dummy validate routine.  Simply says all is OK (without a validation routine, an error is reported (but not printed)
+    def Validate(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
+        ):
+
+        if pass_no == 1:
+            btn.doc += [' '.join(split_line[1:])]
+
+        return True
+
+
+scripts.Add_command(Header_Doc())  # register the header

@@ -113,9 +113,12 @@ def init():
     ap.add_argument(                                           # option to start with launchpad window in a particular mode
         "-M", "--mode",
         help = "Launchpad mode", type=str, choices=[LM_EDIT, LM_MOVE, LM_SWAP, LM_COPY, LM_RUN], default=LM_EDIT)
-    ap.add_argument(                                           # reimnplementation of debug (-d or --debug)
+    ap.add_argument(                                           # turn of unnecessary verbosity
         "-q", "--quiet",
         help = "Disable information popups", action="store_true")
+    ap.add_argument(                                           # make button text variable in size (default is small)
+        "-f", "--fit",
+        help = "Make short button text fit the button", action="store_true")
 
     global_vars.ARGS = vars(ap.parse_args())                   # store the arguments in a place anything can get to
 
@@ -141,7 +144,7 @@ def shutdown():
             if scripts.buttons[x][y].thread != None:
                 scripts.buttons[x][y].thread.kill.set()  # request to kill any running threads
 
-    if window.lp_connected:
+    if window.lp_connected or window.IsStandalone:
         scripts.Unbind_all()                             # unbind all the buttons
         lp_events.timer.cancel()                         # cancel all the timers
         if LP != None and LP != -1:

@@ -11,11 +11,11 @@ from utils import launchpad_connector
 from launchpad_fake import launchpad_fake_connector
 from constants import *
 
-
 BUTTON_SIZE = 40
 HS_SIZE = 200
 V_WIDTH = 50
 STAT_ACTIVE_COLOR = "#080"
+STAT_RUN_COLOR = "#D00"
 STAT_INACTIVE_COLOR = "#444"
 SELECT_COLOR = "#f00"
 DEFAULT_COLOR = [0, 0, 255]
@@ -115,6 +115,7 @@ class Main_Window(tk.Frame):
         self.button_mode = global_vars.ARGS['mode']
         self.last_clicked = None
         self.outline_box = None
+        self._redraw = False
 
     def init_window(self):
         global root
@@ -172,6 +173,24 @@ class Main_Window(tk.Frame):
         self.stat.grid(row=1, column=0, sticky=tk.EW)
         self.stat.config(font=("Courier", BUTTON_SIZE // 3, "bold"))
 
+    def redraw(self, x, y):
+        if isinstance(x, bool):                      # if first parameter is a boolean
+            if x:
+                self.draw_canvas()                   # True means draw NOW!
+            self._redraw = not x                     # False means draw later (same as no parameters at all
+            return                                   # and that's all we do for a boolean
+
+        if self._redraw == True:                     # if _redraw is already True
+            return                                   # we can't do more than that
+
+        if x == None or y == None:                   # if either x or y are none (or not passed)
+            self._redraw = True                      # assume we want to redraw everything
+            return
+
+        if self._redraw == False:                    # if nothing is queued up
+            self._redraw = set()                     # create a set of buttons to update
+        self._redraw.add(complex(x, y))              # and add the requested button to the set
+
     def raise_above_all(self):
         self.master.attributes('-topmost', 1)
         self.master.attributes('-topmost', 0)
@@ -190,7 +209,7 @@ class Main_Window(tk.Frame):
 
         lp_connected = True
         lp_mode = "Dummy"
-        self.draw_canvas()
+        Redraw()
         self.enable_menu(MENU_LAYOUT)
         self.enable_menu(MENU_SUBROUTINES)
 
@@ -229,7 +248,7 @@ then click 'Redetect Now'.""",
                 lp_object.LedCtrlBpm(INDICATOR_BPM)
 
             lp_events.start(lp_object)
-            self.draw_canvas()
+            Redraw()
             self.enable_menu(MENU_LAYOUT)
             self.enable_menu(MENU_SUBROUTINES)
             self.stat["text"] = f"Connected to {lpcon().get_display_name(lp)}"
@@ -255,6 +274,29 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
     def load_initial_layout(self):
         if global_vars.ARGS['layout']:                                 # did the user pass the option to load an initial layout?
             files.load_layout_to_lp(global_vars.ARGS['layout'].name)   # Load it!
+
+    # process idle requests (dialogs and button redraws)
+    def idle(self):
+        from dialog import IdleProcess
+        try:
+            IdleProcess(self)
+        except:
+            pass
+
+        try:
+            if self._redraw == True:
+                self._redraw = False
+                app.draw_canvas()
+            elif self._redraw != False:
+                r = self._redraw
+                self._redraw = False
+                for xy in r:
+                    app.draw_canvas(xy.real,xy.imag)
+
+        except:
+            pass
+
+        app.after(20, app.idle)
 
     def disconnect_lp(self):
         global lp_connected
@@ -287,7 +329,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             self.modified_layout_save_prompt()
         scripts.Unbind_all()
         files.curr_layout = None
-        self.draw_canvas()
+        Redraw()
 
     def load_layout(self):
         self.modified_layout_save_prompt()
@@ -355,11 +397,9 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                     self.button_mode = LM_RUN
                 else:
                     self.button_mode = LM_EDIT
-                self.draw_canvas()
             else:
                 if self.button_mode == LM_EDIT:
                     self.last_clicked = (column, row)
-                    self.draw_canvas()
                     self.script_entry_window(column, row)
                     self.last_clicked = None
                 elif self.button_mode == LM_RUN:
@@ -373,9 +413,9 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                     if self.last_clicked == None:
                         self.last_clicked = (column, row)
                     else:
-                        move_func = partial(scripts.move, self.last_clicked[0], self.last_clicked[1], column, row)
-                        swap_func = partial(scripts.swap, self.last_clicked[0], self.last_clicked[1], column, row)
-                        copy_func = partial(scripts.copy, self.last_clicked[0], self.last_clicked[1], column, row)
+                        move_func = partial(scripts.Move, self.last_clicked[0], self.last_clicked[1], column, row)
+                        swap_func = partial(scripts.Swap, self.last_clicked[0], self.last_clicked[1], column, row)
+                        copy_func = partial(scripts.Copy, self.last_clicked[0], self.last_clicked[1], column, row)
 
                         if self.button_mode == LM_MOVE:
                             if scripts.Is_bound(column, row) and ((self.last_clicked) != (column, row)):
@@ -390,7 +430,8 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                         elif self.button_mode == LM_SWAP:
                             swap_func()
                         self.last_clicked = None
-                self.draw_canvas()
+
+            Redraw(column, row)
 
     def draw_button(self, column, row, color="#000000", shape="square"):
         gap = int(BUTTON_SIZE // 4)
@@ -406,11 +447,76 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             shrink = BUTTON_SIZE / 10
             return self.c.create_oval(x_start + shrink, y_start + shrink, x_end - shrink, y_end - shrink, fill=color, outline="")
 
-    def draw_canvas(self):
+    def draw_canvas(self, bx=None, by=None):
+        def get_colour(x, y):
+           if scripts.buttons[x][y].running():               # if the button is running
+               return "#FF0000"                              # make the button red
+           return lp_colors.getXY_RGB(x, y)                  # otherwise, the normal colour
+
+        def txt_col(x, y):
+            cn = get_colour(x, y)                            # get the colour of the button
+            c = self.winfo_rgb(cn)                           # convert to RGB value
+            b = 0.2126*c[0] + 0.587*c[1] + 0.0722*c[2]       # calculate perceptual brightness
+            if b > 20000:                                    # if it's fairly bright
+                return 'black'                               # text can be black
+            else:
+                return 'white'                               # otherwise it should be white
+
+        def txt_font(x, y):
+            if global_vars.ARGS['fit']:                          # only do this of we're fitting text
+                t = scripts.buttons[x][y].name                   # get the text
+                l = len(t)                                       # and its length
+                if l < 5 and l > 0:                              # if it's a reasonable size
+                    return ("Courier", BUTTON_SIZE // l, "bold") # then make it fit
+            return ("Courier", BUTTON_SIZE // 5, "bold") # otherwise use the standard size
+
+
+        gap = int(BUTTON_SIZE // 4)
+
+        def text_x(x):
+            return round((BUTTON_SIZE * x) + (gap * x) + (BUTTON_SIZE / 2) + (gap / 2))
+
+        def text_y(y):
+            return round((BUTTON_SIZE * y) + (gap * y) + (BUTTON_SIZE / 2) + (gap / 2))
+
+        def fmt(x, y):
+            t = scripts.buttons[x][y].name                   # get the text
+
+            if len(t) <= 5:                                  # if name is less than 5 characters
+                return t                                     # return it unchanged
+
+            tl = t.split()                                   # more complex stuff needs to be split and processed
+
+            n = 0                                            # split up any word > 5 characters
+            while n < len(tl):
+                if len(tl[n]) > 5:
+                    tl = tl[:n] + [tl[n][:5]] + [tl[n][5:]] + tl[n+1:]
+                n += 1
+
+            n = 0                                            # combine ajacent short words
+            while n+1 < len(tl):
+                if len(tl[n]) + len(tl[n+1]) < 5:
+                    tl[n] = tl[n] + ' ' + tl[n+1]
+                    del tl[n+1]
+                else:
+                    n += 1
+
+            tl = tl[0:3]                                     # limit to 3 lines
+
+            m = 0                                            # find the longest line
+            for x in tl:
+                m = max(m, len(x))
+
+            for i in range(len(tl)):                         # then add left padding to help formatting
+                l = len(tl[i])
+                if l < m:
+                    tl[i] = ' '*((m - l)//2) + tl[i]
+
+            return "\n".join(tl)                             # and return them with line separations between them
+
+
         if self.last_clicked != None:
             if self.outline_box == None:
-                gap = int(BUTTON_SIZE // 4)
-
                 x_start = round((BUTTON_SIZE * self.last_clicked[0]) + (gap * self.last_clicked[0]))
                 y_start = round((BUTTON_SIZE * self.last_clicked[1]) + (gap * self.last_clicked[1]))
                 x_end = round(x_start + BUTTON_SIZE + gap)
@@ -427,36 +533,64 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                 self.outline_box = None
 
         if self.grid_drawn:
-            for x in range(8):
-                y = 0
-                self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
+            if by == None or (by == 0):
+                for x in range(8):
+                    if bx == None or (bx == x):
+                        y = 0
+                        self.c.itemconfig(self.grid_rects[x][y], fill=get_colour(x, y))
 
-            for y in range(1, 9):
-                x = 8
-                self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
-
-            for x in range(8):
+            if bx == None or (bx == 8):
                 for y in range(1, 9):
-                    self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
+                    if bx == None or (by == y):
+                        x = 8
+                        self.c.itemconfig(self.grid_rects[x][y], fill=get_colour(x, y))
 
-            self.c.itemconfig(self.grid_rects[8][0], text=self.button_mode.capitalize())
+            for x in range(8):
+                if bx == None or (bx == x):
+                    for y in range(1, 9):
+                        if by == None or (by == y):
+                            self.c.itemconfig(self.grid_rects[x][y][0], fill=get_colour(x, y))
+                            self.c.itemconfig(self.grid_rects[x][y][1], text=fmt(x, y), fill=txt_col(x, y), font=txt_font(x, y))
+
+            global lp_object
+            if self.button_mode == LM_RUN:
+                self.c.itemconfig(self.grid_rects[8][0][0], fill="red")
+                self.c.itemconfig(self.grid_rects[8][0][1], fill="yellow", text=self.button_mode.capitalize())
+                if lp_connected:
+                    app.stat["text"] = f"Running as {lpcon().get_display_name(lp_object)}"
+                    app.stat["bg"] = STAT_RUN_COLOR
+            else:
+                self.c.itemconfig(self.grid_rects[8][0][0], fill=self.c["background"])
+                self.c.itemconfig(self.grid_rects[8][0][1], fill="black", text=self.button_mode.capitalize())
+                if lp_connected:
+                    app.stat["text"] = f"Connected to {lpcon().get_display_name(lp_object)}"
+                    app.stat["bg"] = STAT_ACTIVE_COLOR
         else:
             for x in range(8):
                 y = 0
-                self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y), shape="circle")
+                self.grid_rects[x][y] = self.draw_button(x, y, color=get_colour(x, y), shape="circle")
 
             for y in range(1, 9):
                 x = 8
-                self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y), shape="circle")
+                self.grid_rects[x][y] = self.draw_button(x, y, color=get_colour(x, y), shape="circle")
 
             for x in range(8):
                 for y in range(1, 9):
-                    self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y))
+                    self.grid_rects[x][y] = ( \
+                        self.draw_button(x, y, color=get_colour(x, y)), \
+                        self.c.create_text(text_x(x), text_y(y), fill="black", text=scripts.buttons[x][y].name, font=("Courier", BUTTON_SIZE // 5, "bold")) \
+                        )
 
-            gap = int(BUTTON_SIZE // 4)
-            text_x = round((BUTTON_SIZE * 8) + (gap * 8) + (BUTTON_SIZE / 2) + (gap / 2))
-            text_y = round((BUTTON_SIZE / 2) + (gap / 2))
-            self.grid_rects[8][0] = self.c.create_text(text_x, text_y, text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold"))
+            if self.button_mode == LM_RUN:
+                self.grid_rects[8][0] = ( \
+                    self.draw_button(8, 0, color="red"), \
+                    self.c.create_text(text_x(8), text_y(0), fill="yellow", text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold")) \
+                    )
+            else:
+                self.grid_rects[8][0] = ( \
+                    self.draw_button(8, 0, color=self.c["background"]), \
+                    self.c.create_text(text_x(8), text_y(0), fill="black", text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold")) \
+                    )
 
             self.grid_drawn = True
 
@@ -662,7 +796,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
 
     def unbind_destroy(self, x, y, window):
         scripts.Unbind(x, y)
-        self.draw_canvas()
+        Redraw(True)
         window.destroy()
 
     def save_script(self, window, x, y, script_text, open_editor = False, color=None):
@@ -685,7 +819,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             if script_text != "":
                 script_text = files.strip_lines(script_text)
                 scripts.Bind(x, y, script_text, colors_to_set[x][y])
-                self.draw_canvas()
+                Redraw(x, y)
                 lp_colors.updateXY(x, y)
                 window.destroy()
             else:
@@ -782,6 +916,15 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             if not layout_empty:
                 self.popup_choice(self, "Save Changes?", self.warning_image, "You have made changes to this layout.\nWould you like to save this layout before exiting?", [["Save", self.save_layout], ["Save As...", self.save_layout_as], ["Discard", None]])
 
+# queues up a redraw if the application exists
+def Redraw(x=None, y=None):
+    global app
+    try:
+        if app != None:
+            app.redraw(x, y)
+    except:
+        raise
+
 def make():
     global root
     global app
@@ -806,6 +949,7 @@ def make():
 
     app.after(100, app.connect_lp)
     app.after(110, app.load_initial_layout)   # Load the initial layout if you have specified one
+    app.after(120, app.idle)
 
     app.mainloop()
 
