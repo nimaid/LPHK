@@ -3,6 +3,7 @@ from time import sleep
 from functools import partial
 import lp_events, lp_colors, kb, sound, ms, files, command_base, variables
 from constants import *
+from window import Redraw
 
 
 # VALID_COMMAND is a dictionary of all commands available.
@@ -221,7 +222,7 @@ class Button():
         self.is_button = x >= 0 and y >= 0   # It's a button if it has valid (non-negative) coordinates, otherwise it must be a subroutine
         self.script_str = script_str         # The script
 
-        self.name = ""
+        self.name = None
         self.Set_name(name)                  # only for subroutines at present, but useful to print a caption for a button?
         self.desc = ""
         self.doc = []
@@ -242,22 +243,25 @@ class Button():
 
 
     # let us set/change the name of a button
-    def Set_name(self, name):        
-        self.name = name
-        self.coords = ''
+    def Set_name(self, name):
+        update = self.name != None                             # it is initialisation if the original contents is None
+        self.name = name                                       # update the name
 
-        if self.is_button:
+        self.coords = ''                                       # Start the process of updating the coords
+
+        if self.is_button:                                     # include actual coords if it is actually a button
             self.coords += "(" + str(self.x+1) + ',' + str(self.y+1) + ")" # let's just do this the once eh?
-        if name != "":
-            self.coords = " ".join([self.name, self.coords])               # subroutines don't have coordinates
-            print(self.coords)#@@@
+        if self.name != "":                                    # If it has a name, let's include that too
+            self.coords = " ".join([self.name, self.coords])   # remember that subroutines don't have coordinates
+
+        if update and self.is_button:                          # no need to update the window on initialisation
+            Redraw(self.x, self.y)                             # and we only need to update this button
 
 
     def running(self, set_to=None):
         if type(set_to) == bool and set_to != self._running:
             self._running = set_to
-            from window import app
-            app.draw_canvas()                                              # redraw the canvas when the button run status is changed
+            Redraw(self.x, self.y)                             # redraw the canvas when the button run status is changed
 
         return self._running
 
@@ -700,12 +704,23 @@ buttons = [[Button(x, y, "") for y in range(9)] for x in range(9)]
 to_run = []
 
 
-# bind a button
+# bind a button (Note that you can pass a validated button as script_str too)
 def Bind(x, y, script_str, color):
     global to_run
     global buttons
 
-    btn = Button(x, y, script_str)
+    if isinstance(script_str, Button):       # if a button was passed
+        btn = script_str                     # then we can skipp the button creation
+        btn.x = x
+        btn.y = y
+        btn.Set_name(btn.name)               # force recalc of coords
+    else:
+        btn = Button(x, y, script_str)
+        try:
+            btn.Validate_script()
+        except:
+            pass
+       
     buttons[x][y] = btn
 
     if (x, y) in [l[1:] for l in to_run]:    # If this button is scheduled to run...
@@ -718,6 +733,7 @@ def Bind(x, y, script_str, color):
 
     lp_events.bind_func_with_colors(x, y, schedule_script_bindable, color)
     files.layout_changed_since_load = True   # Mark the layout as changed
+    Redraw(x, y)
 
 
 # unbind a button
@@ -742,6 +758,7 @@ def Unbind(x, y):
     buttons[x][y] = btn                      # Clear the button script
 
     files.layout_changed_since_load = True   # Mark the layout as changed
+    Redraw(x, y)
 
 
 # swap details for two buttons
@@ -751,17 +768,17 @@ def Swap(x1, y1, x2, y2):
     color_1 = lp_colors.curr_colors[x1][y1]  # Colour for btn #1
     color_2 = lp_colors.curr_colors[x2][y2]  # Colour for btn #2
 
-    script_1 = buttons[x1][y1].script_str    # Script for btn #1
-    script_2 = buttons[x2][y2].script_str    # Script for btn #2
+    btn_1 = buttons[x1][y1]                  # btn #1
+    btn_2 = buttons[x2][y2]                  # btn #2
 
     Unbind(x1, y1)                           # Unbind #1
-    if script_2 != "":                       # If there is a script #2...
-        Bind(x1, y1, script_2, color_2)      # ...bind it to #1
+    if btn_2.script != "":                   # If there is a script #2...
+        Bind(x1, y1, btn_2, color_2)         # ...bind it to #1
     lp_colors.updateXY(x1, y1)               # Update the colours for btn #1
 
     Unbind(x2, y2)                           # Do the reverse for #2
-    if script_1 != "":
-        Bind(x2, y2, script_1, color_1)
+    if btn_1.script != "":
+        Bind(x2, y2, btn_1, color_1)
     lp_colors.updateXY(x2, y2)
 
     files.layout_changed_since_load = True   # Flag that the layout has changed
@@ -786,16 +803,18 @@ def Copy(x1, y1, x2, y2):
 # move a button
 def Move(x1, y1, x2, y2):
     global buttons
+    if (x1, y1) == (x2, y2):
+        return
 
     color_1 = lp_colors.curr_colors[x1][y1]  # Get source button colour
 
-    script_1 = buttons[x1][y1].script_str    # Get source button script
+    btn_1 = buttons[x1][y1]                  # Get source button script
 
     Unbind(x1, y1)                           # Unbind *both* buttons
     Unbind(x2, y2)
 
-    if script_1 != "":                       # If the source had a script...
-        Bind(x2, y2, script_1, color_1)      # ...bind it to the destination
+    if btn_1.script != "":                   # If the source had a script...
+        Bind(x2, y2, btn_1, color_1)         # ...bind it to the destination
     lp_colors.updateXY(x2, y2)               # Update the destination colours
 
     files.layout_changed_since_load = True   # And flag the layout as changed

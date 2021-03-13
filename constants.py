@@ -94,7 +94,9 @@ COLOR_FUNC_KEYS_PRIMED = 9 #amber
 EXIT_UPDATE_DELAY = 0.1
 DELAY_EXIT_CHECK = 0.025
 
+# subroutine related
 SUBROUTINE_PREFIX = "CALL:"
+SUBROUTINE_HEADER = "@SUB"
 
 # Launchpad constants
 LP_MK1 = "Mk1"

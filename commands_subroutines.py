@@ -9,43 +9,17 @@ LIB = "cmds_subr" # name of this library (for logging)
 # subroutine that is loaded.
 
 # ##################################################
-# ### CLASS Header_Subroutine                    ###
-# ##################################################
-
-# This forms the basis of the subroutine headers.  It should not be instansiated by itself!
-class Header_Subroutine(command_base.Command_Header):
-    def __init__(
-        self,
-        name
-        ):
-
-        super().__init__(name,
-            False)              # subroutines are not async!
-
-
-    # Dummy run routine.  Simply passes execution to the next line
-    def Run(
-        self,
-        btn,
-        idx: int,              # The current line number
-        split_line             # The current line, split
-        ):
-
-        return idx+1
-
-
-# ##################################################
 # ### CLASS Header_Sub_Name                      ###
 # ##################################################
 
 # This is a dummy header.  It is interpreted for real when a subroutine is loaded,
 # but is ignored in the normal running of commands
-class Header_Sub_Name(Header_Subroutine):
+class Header_Sub_Name(command_base.Command_Header):
     def __init__(
         self,
         ):
 
-        super().__init__("@SUB, Defines a subroutine name and parameters")
+        super().__init__(SUBROUTINE_HEADER + ", Defines a subroutine name and parameters")
 
 
     # Dummy validate routine.  Simply says all is OK (unless you try to do it in a real button!)
@@ -63,107 +37,7 @@ class Header_Sub_Name(Header_Subroutine):
 
         return True
 
-
 scripts.Add_command(Header_Sub_Name())  # register the header
-
-
-# ##################################################
-# ### CLASS Header_Sub_Desc                      ###
-# ##################################################
-
-# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
-# but is ignored in the normal running of commands
-class Header_Sub_Desc(Header_Subroutine):
-    def __init__(
-        self,
-        ):
-
-        super().__init__("@DESC, Defines a subroutine description")
-
-
-    # Dummy validate routine.  Simply says all is OK (without a validation routine, an error is reported (but not printed)
-    def Validate(
-        self,
-        btn,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
-        ):
-
-        if pass_no == 1:
-            btn.desc = ' '.join(split_line[1:])
-
-        return True
-
-
-scripts.Add_command(Header_Sub_Desc())  # register the header
-
-
-# ##################################################
-# ### CLASS Header_Sub_Name                      ###
-# ##################################################
-
-# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
-# but is ignored in the normal running of commands
-class Header_Sub_Name(Header_Subroutine):
-    def __init__(
-        self,
-        ):
-
-        super().__init__("@NAME, (re)names a subroutine description")
-
-
-    # Dummy validate routine.  Simply says all is OK (unless you try to do it in a real button!)
-    def Validate(
-        self,
-        btn,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
-        ):
-
-        if pass_no == 1:
-            if btn.is_button:
-                btn.Set_name(' '.join(split_line[1:]))
-            else:
-                return ("Line:" + str(idx+1) + " - The header '" + split_line[0] + "' is only permitted in a button.", btn.Line(idx))
-
-        return True
-
-
-scripts.Add_command(Header_Sub_Name())  # register the header
-
-
-# ##################################################
-# ### CLASS Header_Sub_Doc                       ###
-# ##################################################
-
-# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
-# but is ignored in the normal running of commands
-class Header_Sub_Doc(Header_Subroutine):
-    def __init__(
-        self,
-        ):
-
-        super().__init__("@DOC, Adds a line to the subroutine documentation")
-
-
-    # Dummy validate routine.  Simply says all is OK (without a validation routine, an error is reported (but not printed)
-    def Validate(
-        self,
-        btn,
-        idx: int,              # The current line number
-        split_line,            # The current line, split
-        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
-        ):
-
-        if pass_no == 1:
-            btn.doc += [' '.join(split_line[1:])]
-
-        return True
-
-
-scripts.Add_command(Header_Sub_Doc())  # register the header
 
 
 # ##################################################
@@ -241,8 +115,8 @@ def Get_Name_And_Params(lines, sub_n, fname):
         line = line.strip()
         if line == '' or line[0] == '-':
             pass                            # ignore blank lines and comments
-        elif line.split()[0] != '@SUB':
-            return '', f'Error - Subroutine does not start with an @SUB header on line {lin_num+1} of subroutine {sub_n} in "{fname}"', lin_num
+        elif line.split()[0] != SUBROUTINE_HEADER:
+            return '', f'Error - Subroutine does not start with an {SUBROUTINE_HEADER} header on line {lin_num+1} of subroutine {sub_n} in "{fname}"', lin_num
         else:
             found = True
             break

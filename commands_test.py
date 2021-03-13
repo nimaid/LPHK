@@ -343,7 +343,6 @@ class Test_Dialog(command_base.Command_Basic):
     def Process(self, btn, idx, split_line):
         import dialog
         ret = dialog.CommentBox(btn, "this is a test")
-        #print(ret)#@@@
 
 
 scripts.Add_command(Test_Dialog())  # register the command

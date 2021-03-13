@@ -237,9 +237,7 @@ class Command_Basic:
 
         # If you need more temporary data, you can override this, call the ancestor, and
         # create what you need.
-        #print(f"run_step_init '{split_line}', {self.Param_validation_count(len(split_line)-1)}")#@@@
         btn.symbols[SYM_PARAMS] = [self.name] + [None] * self.Param_validation_count(len(split_line)-1)
-        #print(btn.symbols[SYM_PARAMS])#@@@
         btn.symbols[SYM_PARAM_CNT] = 0
 
         return ret
@@ -373,7 +371,6 @@ class Command_Basic:
         # This routine determines how many parameters to check.  In cases where there are unlimited parameters,
         # it will only recommend checking the number that exist.  Otherwise, all parameters will be checked.
         # This function improves efficiency.
-        #print(f"vmp = {self.valid_max_params}, vnp = {self.valid_num_params}, n = {n_passed}")#@@@
         vmp = self.valid_max_params                     # what is the max number of parameters
         if vmp == None:
            vnp = self.valid_num_params                  # if there isn't a max, use the number of parameters
@@ -386,7 +383,6 @@ class Command_Basic:
         else:
             v = vmp                                     # vmp is preferred though
 
-        #print(f"vmp = {vmp}, v = {v}, n = {n_passed}")#@@@
         if (v == None) or (v < n_passed):
             return n_passed
         else:
@@ -519,25 +515,20 @@ class Command_Basic:
 
             if pass_no == 1:
                 v = split_line[n]
-                #print("V1", v) #@@@
 
                 if av[AV_VAR_OK] == AVV_YES:                                               # if a variable is allowed
                     if variables.valid_var_name(v):                                        # if it's a variable
                         v = variables.get_value(split_line[n], btn.symbols)                # get the value
-                        #print("V2a", v) #@@@
 
                 if av[AV_VAR_OK] != AVV_REQD:                                              # if it's not required (i.e. the variable name is not to be passed through)
                     if av[AV_TYPE] and av[AV_TYPE][AVT_CONV]:                              # if there is a type
-                        #print("V2ba", v, type(v), av[AV_TYPE][AVT_CONV]) #@@@
                         v = av[AV_TYPE][AVT_CONV](v)                                       # convert the variable to that type
-                        #print("V2bb", v) #@@@
 
                 return v
             elif pass_no == 2:
                 ok = ret
 
                 if av[AV_P1_VALIDATION]:
-                    #print("S", btn.symbols[SYM_PARAMS][n], idx, self.name, av[AV_DESCRIPTION], n, split_line[n]) #@@@
                     ok = av[AV_P1_VALIDATION](btn.symbols[SYM_PARAMS][n], idx, self.name, av[AV_DESCRIPTION], n, split_line[n])
                     if ok != True:
                         print("[" + self.lib + "] " + btn.coords + "  " + ok)
@@ -633,16 +624,17 @@ class Command_Text_Basic(Command_Basic):
 
 
 # ##################################################
-# ### CLASS Command_Header                       ###
+# ### CLASS Command_Header_Run                   ###
 # ##################################################
 
-# Command_Header is a class specifically defining a header command
-class Command_Header(Command_Basic):
+# Command_Header_Run is a class specifically defining a header command
+# that has some action at runtime
+class Command_Header_Run(Command_Basic):
 
     def __init__(
         self,
         name: str,           # The name of the command (what you put in the script)
-        is_async: bool,      # is this async?
+        is_async=False,      # is this async?
         lib="LIB_UNSET",
         auto_validate=None
         ):
@@ -662,5 +654,25 @@ class Command_Header(Command_Basic):
         #   return ("ERROR on line " + btn.Line(idx) + ". " + self.name + " must only appear on line 1.", -1)
 
         return (None, 0)
+
+
+# ##################################################
+# ### CLASS Command_Header                       ###
+# ##################################################
+
+# Command_Header is a class specifically defining a a more typical header command
+# that has no action at runtime
+class Command_Header(Command_Header_Run):
+
+    # Dummy run routine.  Simply passes execution to the next line
+    def Run(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line             # The current line, split
+        ):
+
+        return idx+1
+
 
 
