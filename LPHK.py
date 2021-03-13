@@ -141,7 +141,7 @@ def shutdown():
             if scripts.buttons[x][y].thread != None:
                 scripts.buttons[x][y].thread.kill.set()  # request to kill any running threads
 
-    if window.lp_connected:
+    if window.lp_connected or window.IsStandalone:
         scripts.Unbind_all()                             # unbind all the buttons
         lp_events.timer.cancel()                         # cancel all the timers
         if LP != None and LP != -1:

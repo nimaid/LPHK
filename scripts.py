@@ -221,6 +221,7 @@ class Button():
         self.is_button = x >= 0 and y >= 0   # It's a button if it has valid (non-negative) coordinates, otherwise it must be a subroutine
         self.script_str = script_str         # The script
 
+        self.name = ""
         self.Set_name(name)                  # only for subroutines at present, but useful to print a caption for a button?
         self.desc = ""
         self.doc = []
@@ -229,7 +230,7 @@ class Button():
         self.symbols = None                  # The symbol table for the button
         self.script_lines = None             # the lines of the script
         self.thread = None                   # the thread associated with this button
-        self.running = False                 # is the script running?
+        self._running = False                # is the script running?
         self.is_async = False                # async execution flag
 
         # The "root" is the button that is scheduled.  This allows subroutines to check if the
@@ -241,14 +242,24 @@ class Button():
 
 
     # let us set/change the name of a button
-    def Set_name(self, name):
+    def Set_name(self, name):        
         self.name = name
         self.coords = ''
 
         if self.is_button:
             self.coords += "(" + str(self.x+1) + ',' + str(self.y+1) + ")" # let's just do this the once eh?
-        if name:
+        if name != "":
             self.coords = " ".join([self.name, self.coords])               # subroutines don't have coordinates
+            print(self.coords)#@@@
+
+
+    def running(self, set_to=None):
+        if type(set_to) == bool and set_to != self._running:
+            self._running = set_to
+            from window import app
+            app.draw_canvas()                                              # redraw the canvas when the button run status is changed
+
+        return self._running
 
 
     #  Do what is required to parse the script.  Parsing does not output any information unless it is an error
@@ -329,9 +340,9 @@ class Button():
 
         if self.thread.kill.is_set():
             print("[scripts] " + self.coords + " Recieved exit flag, script exiting...")
-            self.thread.kill.clear()
+            #self.thread.kill.clear()
             if not self.is_async:
-                self.running = False
+                self.running(False)
             if killfunc:
                 killfunc()
             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (self.x, self.y)).start()
@@ -398,7 +409,7 @@ class Button():
             self.thread = threading.Thread(target=Run_script, args=())
             self.thread.kill = threading.Event()
             self.thread.start()
-        elif not self.running:
+        elif not self.running():
             print("[scripts] " + self.coords + " No script running, starting script in background...")
             self.thread = threading.Thread(target=self.Run_script_and_run_next, args=())
             self.thread.kill = threading.Event()
@@ -548,7 +559,7 @@ class Button():
 
         print("[scripts] " + self.coords + " Now running script...")
 
-        self.running = not self.is_async
+        self.running(not self.is_async)
 
         cmd_txt = "RESET_REPEATS"                                         # before we run, we want to rest loop counters
         if cmd_txt in VALID_COMMANDS:
@@ -556,7 +567,7 @@ class Button():
             command.Run(self, -1, [cmd_txt])
 
         if len(self.script_lines) > 0:
-            self.running = True
+            self.running(True)
 
             def Main_logic(idx):                                          # the main logic to run a line of a script
                 if self.Check_kill():                                     # first check to see if we've been asked to die
@@ -595,7 +606,7 @@ class Button():
                     run = False                                           # then we're not going to keep running!
 
             if not self.is_async:                                         # async commands don't just end
-                self.running = False                                      # they have to say they're not running
+                self.running(False)                                       # they have to say they're not running
 
             threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (self.x, self.y)).start() # queue up a request to update the button colours
 
@@ -611,7 +622,7 @@ class Button():
 
         print("[scripts] " + self.coords + " Now running subroutine ...")
 
-        self.running = not self.is_async                                  # @@@ not sure a async subroutine makes sense
+        self.running(not self.is_async)                                   # @@@ not sure a async subroutine makes sense
 
         cmd_txt = "RESET_REPEATS"                                         # before we run, we want to rest loop counters
         if cmd_txt in VALID_COMMANDS:
@@ -619,7 +630,7 @@ class Button():
             command.Run(self, -1, [cmd_txt])
 
         if len(self.script_lines) > 0:
-            self.running = True
+            self.running(True)
 
             def Main_logic(idx):                                          # the main logic to run a line of a script
                 if self.Check_kill():                                     # first check on our death notification
@@ -658,7 +669,7 @@ class Button():
                     run = False                                           # then we're not going to keep running!
 
             if not self.is_async:                                         # async commands don't just end @@@ again, not sure this makes sense for subroutines
-                self.running = False                                      # they have to say they're not running
+                self.running(False)                                       # they have to say they're not running
 
         print("[scripts] " + self.coords + " Subroutine ended.")          # and print (log?) that the script is complete
 
@@ -723,10 +734,10 @@ def Unbind(x, y):
         for index in indexes[::-1]:          # and for each of them (in reverse order)
             temp = to_run.pop(index)         # Remove them from the list
         buttons[x][y] = btn                  # Clear the button script
-        return # WHY do we return here?
+        #return # WHY do we return here?
 
-    if thread[x][y] != None:                 # If the button is actially executing
-        thread[x][y].kill.set()              # then kill it
+    if btn.thread != None:                   # If the button is actially executing
+        thread.kill.set()                    # then kill it
 
     buttons[x][y] = btn                      # Clear the button script
 
@@ -740,8 +751,8 @@ def Swap(x1, y1, x2, y2):
     color_1 = lp_colors.curr_colors[x1][y1]  # Colour for btn #1
     color_2 = lp_colors.curr_colors[x2][y2]  # Colour for btn #2
 
-    script_1 = buttons[x1, y1].script_str    # Script for btn #1
-    script_2 = buttons[x2, y2].script_str    # Script for btn #2
+    script_1 = buttons[x1][y1].script_str    # Script for btn #1
+    script_2 = buttons[x2][y2].script_str    # Script for btn #2
 
     Unbind(x1, y1)                           # Unbind #1
     if script_2 != "":                       # If there is a script #2...
@@ -778,7 +789,7 @@ def Move(x1, y1, x2, y2):
 
     color_1 = lp_colors.curr_colors[x1][y1]  # Get source button colour
 
-    script_1 = buttons[x1, y1].script_str    # Get source button script
+    script_1 = buttons[x1][y1].script_str    # Get source button script
 
     Unbind(x1, y1)                           # Unbind *both* buttons
     Unbind(x2, y2)

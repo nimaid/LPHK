@@ -1,9 +1,62 @@
 # a routine that allows a single script at a time to access dialogs
-import threading
+import threading, tkinter as tk
 from constants import *
 
+DR_ABORT = -1   # returned when aborted for any reason
+DR_CANCEL = 0   # Cancel return
+DR_OK = 1       # OK return
 
-DLG_INFO = 1                   # a simple info box
+DLG_INFO = 1    # a simple titled box with OK
+
+M_REF = 0       # reference number of message
+M_REQ = 1       # request of message
+
+R_TYPE = 0      # dialog type requested
+R_BUTTON = 1    # button that called dialog
+R_CALLBACK = 2  # callback function
+R_TITLE = 3     # dialog title
+
+class Dialog(tk.Toplevel):
+
+    def __init__(self, parent, title = None):
+        tk.Toplevel.__init__(self, parent)
+        self.transient(parent)
+        if title:
+            self.title(title)
+        self.parent = parent
+        self.result = None
+        body = tk.Frame(self)
+        
+        b1 = tk.Button(self, text="OK", command=self.btn_OK)
+        b1.place(x=0, y=0)
+        b2 = tk.Button(self, text="Cancel", command=self.btn_Cancel)
+        b2.place(x=100, y=0)
+        #register validators
+        #self.validatePosInt = (body.register(self.OnValidatePosInt),
+        #        '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+
+        #self.initial_focus = self.body(body)   #this calls the body function which is overridden, and which draws the dialog
+        #body.grid()
+        #self.buttonbox()
+        #self.grab_set()
+        #if not self.initial_focus:
+        #    self.initial_focus = self
+        #self.protocol("WM_DELETE_WINDOW", self.cancel)
+        self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
+                                  parent.winfo_rooty()+50))
+        #self.initial_focus.focus_set()
+
+
+    def btn_OK(self):
+        global DIALOG_RETURN
+        DIALOG_RETURN = DR_OK
+        self.destroy()
+
+
+    def btn_Cancel(self):
+        global DIALOG_RETURN
+        DIALOG_RETURN = DR_CANCEL
+        self.destroy()
 
 
 class SyncQueue():
@@ -55,7 +108,7 @@ class SyncQueue():
 
     # pop a value off the queue.  If a button is passed, do it in a way that
     # doesn't stall things
-    def pop(self, x, btn=None):
+    def pop(self, btn=None):
         ok = self.acquire(btn)                                 # try to get a lock
 
         if not ok:                                             # error return for death notification
@@ -64,7 +117,7 @@ class SyncQueue():
         try:
             if len(self.queue) == 0:                           # if the queue is empty
                 return (True, None)                            # return success, but a value of None
-            return (True, self.queue.pop(x))                   # otherwise return the head of the queue
+            return (True, self.queue.pop())                    # otherwise return the head of the queue
 
         except:
             return (False, None)                               # unlikely, but something bad happened
@@ -135,15 +188,27 @@ DIALOG_LOCK = threading.Lock() # lock to be used to access dialog variables
 DIALOG_ACTIVE = False          # true if we're showing (or preparing to show) a dialog
 DIALOG_BUTTON = None           # the button object in charge of the dialog
 DIALOG_REQUEST = None          # information about the request
+DIALOG_OBJECT = None           # the dialog
+DIALOG_RETURN = DR_ABORT       # return from the dialog
+
 
 # routine that must be called periodically to initiate and kill dialogs
-def IdleProcess():
+def IdleProcess(parent):
     global DIALOG_LOCK
     global DIALOG_ACTIVE
     global DIALOG_BUTTON
+    global DIALOG_OBJECT
 
     if DIALOG_LOCK.acquire(False):                             # try to acquire a lock
         try:                                                   # then do what we need to do
+            # Determine if dialog has closed
+            if DIALOG_ACTIVE:
+                try:
+                    DIALOG_OBJECT.state()                      # Raises an exception if the window is closed
+                except:
+                    DIALOG_ACTIVE = False
+                    CloseDialog()                              # act to close the dialog
+
             if DIALOG_ACTIVE:                                  # if there is a dialog
 
                 if DIALOG_BUTTON.root.thread.kill.is_set():    # has the controlling button been killed?
@@ -151,12 +216,12 @@ def IdleProcess():
 
             else:                                              # there is no dialog open
 
-                ok, request = DIALOG_QUEUE.pop()               # pop a request off the queue
-                if ok:                                         # if there is a request
-                    OpenDialog(request)                        # open the dialog
+                ok, msg = DIALOG_QUEUE.pop()                   # pop a request off the queue
+                if ok and msg != None:                         # if there is a request
+                    OpenDialog(parent, msg[M_REQ])             # open the dialog
 
         finally:
-           DIALOG_LOCK.release()                                # ensure lock is released before exiting
+           DIALOG_LOCK.release()                               # ensure lock is released before exiting
 
 
 # Close any open dialog
@@ -164,22 +229,33 @@ def CloseDialog():
     global DIALOG_ACTIVE
     global DIALOG_BUTTON
     global DIALOG_REQUEST
-    
+    global DIALOG_OBJECT
+    global DIALOG_RETURN
+
     # do what is required to close the window
+    if DIALOG_OBJECT:
+        DIALOG_OBJECT.destroy()
+    DIALOG_REQUEST[R_CALLBACK]((True, DIALOG_RETURN))          # and return success, and the return info from the dialog
     
+    DIALOG_OBJECT = None
     DIALOG_ACTIVE = False                                      # no dialog open
     DIALOG_BUTTON = None                                       # no button
-    DIALOG_REQUEST[2]((False, None))                           # and return failure, and no information as return info
+    DIALOG_REQUEST = None                                      # no request
 
 
 # Open a new dialog
-def OpenDialog(request):
+def OpenDialog(parent, request):
     global DIALOG_ACTIVE
     global DIALOG_BUTTON
     global DIALOG_REQUEST
+    global DIALOG_OBJECT
+    global DIALOG_RETURN
 
     DIALOG_ACTIVE = True                                       # a dialog is open
-    DIALOG_BUTTON = request[1]                                 # it's for this button
-    DIALOG_REQUEST = request[0]                                # and this is the request
+    DIALOG_BUTTON = request[R_BUTTON]                          # it's for this button
+    DIALOG_REQUEST = request                                   # and this is the request
+    DIALOG_RETURN = None                                       # the default return
 
-    # do what is needed to actually open the window    
+    # do what is needed to actually open the window
+    DIALOG_OBJECT = Dialog(parent, request[3])
+

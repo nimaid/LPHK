@@ -19,6 +19,9 @@ class Test_XX(command_base.Command_Basic):
         print("=", f"Symbols before = {before}")
         a = self.Get_param(btn, 1)
         print("=", f"Param = '{a}', {type(a)}")
+        for i in range(2,self.Param_count(btn)+1):
+            _a = self.Get_param(btn, i)
+            print("=", f"Param = '{_a}', {type(_a)}")
         if a != None:
             print("=", f"adding = '{self.one}', {type(self.one)}")
             a += self.one
@@ -297,6 +300,29 @@ class Test_24(Test_XX):
 scripts.Add_command(Test_24())  # register the command
 
 
+class Test_101(Test_XX):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("TEST_101, Test for single required string followed by an optional integer",
+            LIB,
+            (
+            # Desc            Opt    Var      type      p1_val p2_val
+            ("Param_1",       False, AVV_YES, PT_STR,   None,  None),
+            ("Param_2",       True,  AVV_REQD,PT_INT,   None,  None),
+            ),
+            (                          # How to log runtime execution
+            # num params, format string                           (trailing comma is important)
+            (1,           "    Param {1}"),
+            ) )
+
+        self.one = "1"
+
+
+scripts.Add_command(Test_101())  # register the command
+
+
 # class that defines the Delay command (a target of GOTO's etc)
 class Test_Dialog(command_base.Command_Basic):
     def __init__(
@@ -316,7 +342,8 @@ class Test_Dialog(command_base.Command_Basic):
 
     def Process(self, btn, idx, split_line):
         import dialog
-        dialog.CommentBox(btn, "this is a test")
+        ret = dialog.CommentBox(btn, "this is a test")
+        #print(ret)#@@@
 
 
 scripts.Add_command(Test_Dialog())  # register the command

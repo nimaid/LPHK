@@ -567,31 +567,21 @@ class Command_Basic:
         m = min(n, avl)
         av = self.auto_validate[m-1]
 
-        if self.Param_count(btn) > n:
+        if self.Param_count(btn) < n:
            param = None
-           #print("P-none", self.Param_count(btn), n)#@@@
         else:
-           #print("P-n", self.Param_count(btn), n)#@@@
            param = btn.symbols[SYM_PARAMS][n]
-        #print("P", param) #@@@
         if param == None:
             ret = other
-            #print(f"ret- {ret}") #@@@
         else:
             if av[AV_VAR_OK] == AVV_REQD:
-                #print("RQ") #@@@
                 ret = variables.get(param, btn.symbols[SYM_LOCAL], btn.symbols[SYM_GLOBAL][1])
-                #print(f"ret0 {ret}") #@@@
             else:
-                #print("NRQ") #@@@
                 if type(param) == str and av[AV_TYPE][AVT_DESC] in {PT_STR[AVT_DESC], PT_STRS[AVT_DESC]} and param[0:1] == '"':
                     ret = param[1:]
-                    #print(f"ret1 {ret}") #@@@
                 else:
                     ret = param
-                    #print(f"ret2 {ret}") #@@@
 
-        #print(f"get_param '{ret}', {type(ret)} --> '{av[AV_TYPE][AVT_CONV](ret)}', {type(av[AV_TYPE][AVT_CONV](ret))}using '{av[AV_TYPE][AVT_CONV]}'") #@@@
         return av[AV_TYPE][AVT_CONV](ret)
 
 
@@ -605,7 +595,6 @@ class Command_Basic:
         m = min(n, avl)
         av = self.auto_validate[m-1]
         if av[AV_VAR_OK] == AVV_REQD:
-            #print("SP", btn.symbols[SYM_PARAMS][n], val, btn.symbols) #@@@
             variables.Auto_store(btn.symbols[SYM_PARAMS][n], val, btn.symbols) # return result in variable
 
 

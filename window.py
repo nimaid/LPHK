@@ -256,6 +256,16 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
         if global_vars.ARGS['layout']:                                 # did the user pass the option to load an initial layout?
             files.load_layout_to_lp(global_vars.ARGS['layout'].name)   # Load it!
 
+    # load a layout on startup
+    def idle(self):
+        from dialog import IdleProcess
+        try:
+            IdleProcess(self)
+        finally:
+            pass
+            
+        app.after(20, app.idle) 
+
     def disconnect_lp(self):
         global lp_connected
         try:
@@ -373,9 +383,9 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                     if self.last_clicked == None:
                         self.last_clicked = (column, row)
                     else:
-                        move_func = partial(scripts.move, self.last_clicked[0], self.last_clicked[1], column, row)
-                        swap_func = partial(scripts.swap, self.last_clicked[0], self.last_clicked[1], column, row)
-                        copy_func = partial(scripts.copy, self.last_clicked[0], self.last_clicked[1], column, row)
+                        move_func = partial(scripts.Move, self.last_clicked[0], self.last_clicked[1], column, row)
+                        swap_func = partial(scripts.Swap, self.last_clicked[0], self.last_clicked[1], column, row)
+                        copy_func = partial(scripts.Copy, self.last_clicked[0], self.last_clicked[1], column, row)
 
                         if self.button_mode == LM_MOVE:
                             if scripts.Is_bound(column, row) and ((self.last_clicked) != (column, row)):
@@ -407,10 +417,22 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             return self.c.create_oval(x_start + shrink, y_start + shrink, x_end - shrink, y_end - shrink, fill=color, outline="")
 
     def draw_canvas(self):
+        def get_colour(x, y):
+           if scripts.buttons[x][y].running():
+               return "#FF0000"
+           return lp_colors.getXY_RGB(x, y)
+           
+        gap = int(BUTTON_SIZE // 4)
+
+        def text_x(x):
+            return round((BUTTON_SIZE * x) + (gap * x) + (BUTTON_SIZE / 2) + (gap / 2))
+
+        def text_y(y):
+            return round((BUTTON_SIZE * y) + (gap * y) + (BUTTON_SIZE / 2) + (gap / 2))
+        
+           
         if self.last_clicked != None:
             if self.outline_box == None:
-                gap = int(BUTTON_SIZE // 4)
-
                 x_start = round((BUTTON_SIZE * self.last_clicked[0]) + (gap * self.last_clicked[0]))
                 y_start = round((BUTTON_SIZE * self.last_clicked[1]) + (gap * self.last_clicked[1]))
                 x_end = round(x_start + BUTTON_SIZE + gap)
@@ -429,34 +451,51 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
         if self.grid_drawn:
             for x in range(8):
                 y = 0
-                self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
+                self.c.itemconfig(self.grid_rects[x][y], fill=get_colour(x, y))
 
             for y in range(1, 9):
                 x = 8
-                self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
+                self.c.itemconfig(self.grid_rects[x][y], fill=get_colour(x, y))
 
             for x in range(8):
                 for y in range(1, 9):
-                    self.c.itemconfig(self.grid_rects[x][y], fill=lp_colors.getXY_RGB(x, y))
+                    self.c.itemconfig(self.grid_rects[x][y][0], fill=get_colour(x, y))
+                    self.c.itemconfig(self.grid_rects[x][y][1], text=scripts.buttons[x][y].name)
+                    if scripts.buttons[x][y].name != "": #@@@
+                        print(x, y, scripts.buttons[x][y].name)#@@@
 
-            self.c.itemconfig(self.grid_rects[8][0], text=self.button_mode.capitalize())
+            if self.button_mode == LM_RUN:
+                self.c.itemconfig(self.grid_rects[8][0][0], fill="red")
+                self.c.itemconfig(self.grid_rects[8][0][1], fill="yellow", text=self.button_mode.capitalize())
+            else:
+                self.c.itemconfig(self.grid_rects[8][0][0], fill=self.c["background"])
+                self.c.itemconfig(self.grid_rects[8][0][1], fill="black", text=self.button_mode.capitalize())
         else:
             for x in range(8):
                 y = 0
-                self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y), shape="circle")
+                self.grid_rects[x][y] = self.draw_button(x, y, color=get_colour(x, y), shape="circle")
 
             for y in range(1, 9):
                 x = 8
-                self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y), shape="circle")
+                self.grid_rects[x][y] = self.draw_button(x, y, color=get_colour(x, y), shape="circle")
 
             for x in range(8):
                 for y in range(1, 9):
-                    self.grid_rects[x][y] = self.draw_button(x, y, color=lp_colors.getXY_RGB(x, y))
+                    self.grid_rects[x][y] = ( \
+                        self.draw_button(x, y, color=get_colour(x, y)), \
+                        self.c.create_text(text_x(x), text_y(y), fill="black", text=scripts.buttons[x][y].name, font=("Courier", BUTTON_SIZE // 5, "normal")) \
+                        )
 
-            gap = int(BUTTON_SIZE // 4)
-            text_x = round((BUTTON_SIZE * 8) + (gap * 8) + (BUTTON_SIZE / 2) + (gap / 2))
-            text_y = round((BUTTON_SIZE / 2) + (gap / 2))
-            self.grid_rects[8][0] = self.c.create_text(text_x, text_y, text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold"))
+            if self.button_mode == LM_RUN:
+                self.grid_rects[8][0] = ( \
+                    self.draw_button(8, 0, color="red"), \
+                    self.c.create_text(text_x(8), text_y(0), fill="yellow", text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold")) \
+                    )
+            else:
+                self.grid_rects[8][0] = ( \
+                    self.draw_button(8, 0, color=self.c["background"]), \
+                    self.c.create_text(text_x(8), text_y(0), fill="black", text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold")) \
+                    )
 
             self.grid_drawn = True
 
@@ -806,7 +845,8 @@ def make():
 
     app.after(100, app.connect_lp)
     app.after(110, app.load_initial_layout)   # Load the initial layout if you have specified one
-
+    app.after(120, app.idle)
+	
     app.mainloop()
 
 
