@@ -1,0 +1,698 @@
+{
+  "buttons": [
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "- Find the Logbook\n@NAME Find Note pad\nW_FIND_HWND \"Untitled - Notepad\" ml_hwnd n 1\nRPN_EVAL view_l"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "@NAME Norm Dlg\n@DESC Displays a dialog, then prints the returned value\nRPN_EVAL < a view\nDIALOG_INFO \"Information message\" \"Don't look behind you, there might be a clown!\"\nRPN_EVAL < a view\nDIALOG_OK_CANCEL \"Do you accept?\" \"You do not have any clowns standing behind you\" a\nRPN_EVAL < a view"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "@NAME To"
+      },
+      {
+        "color": [
+          0,
+          170,
+          0
+        ],
+        "text": "@NAME to"
+      },
+      {
+        "color": [
+          0,
+          85,
+          0
+        ],
+        "text": "@NAME the"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "@NAME Test\n@DESC Run a series of tests to prove parameter passing is working\n@DOC This test is intended as a regression tool to be used after modifying\n@DOC the parameter handling code.  This series of tests passes almost every\n@DOC combination of parameters to test routines.  The output can be difficult\n@DOC to make sense of, but the critical thing is that none of the lines of\n@DOC output between START and END should change.  Changes indicate a new\n@DOC type of bad behaviour that needs to be rectified.\n@DOC\n@DOC I test this by having a reference testlog-base.log and running LPHK\n@DOC with the output redirected to testlog.log.  I then use Beyond Compare\n@DOC to evaluate differences.\n@DOC\n@DOC Also note that this script requires the command_test.py module that is\n@DOC not intended to be included in production releases.\n\nRPN_EVAL 1 > a 1.25 > aa clst\n\nTEST_01\nTEST_01 1\nTEST_11\nTEST_11 1\nTEST_11 a\nTEST_11 aa\nTEST_11 b\nTEST_21\nTEST_21 a\nTEST_21 aa\nTEST_21 c\n\nRPN_EVAL 1 > a 1.25 > aa clst\n\nTEST_02\nTEST_02 1\nTEST_02 1.25\nTEST_12\nTEST_12 1\nTEST_12 1.25\nTEST_12 a\nTEST_12 aa\nTEST_12 d\nTEST_22\nTEST_22 a\nTEST_22 aa\nTEST_22 e\n\nRPN_EVAL 1 > a 1.25 > aa clst\n\nTEST_03\nTEST_03 \"1\"\nTEST_03 \"1.25\"\nTEST_13\nTEST_13 \"1\"\nTEST_13 \"1.25\"\nTEST_13 a\nTEST_13 aa\nTEST_13 f\nTEST_23\nTEST_23 a\nTEST_23 aa\nTEST_23 g\n\nRPN_EVAL 1 > a 1.25 > aa clst\n\nTEST_04\nTEST_04 \"1\"\nTEST_04 \"1.25\"\nTEST_14\nTEST_14 \"1\"\nTEST_14 \"1.25\"\nTEST_14 a\nTEST_14 aa\nTEST_14 h\nTEST_24\nTEST_24 a\nTEST_24 aa\nTEST_24 i\n\nTEST_11 g\nTEST_11 aa\nTEST_12 g\nTEST_12 aa\n\nTEST_101 \"ABC\"\nTEST_101 \"ABC\" a\nTEST_101 b a"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          85,
+          255,
+          0
+        ],
+        "text": "@NAME be"
+      },
+      {
+        "color": [
+          85,
+          170,
+          0
+        ],
+        "text": "@NAME be,"
+      },
+      {
+        "color": [
+          85,
+          85,
+          0
+        ],
+        "text": "@NAME question."
+      },
+      {
+        "color": [
+          85,
+          0,
+          0
+        ],
+        "text": "@NAME Yorick"
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "TEST_101 \"ABC\"\nTEST_101 \"ABC\" a\nTEST_101 b a"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          170,
+          255,
+          0
+        ],
+        "text": "@NAME or"
+      },
+      {
+        "color": [
+          170,
+          170,
+          0
+        ],
+        "text": "@NAME that"
+      },
+      {
+        "color": [
+          170,
+          85,
+          0
+        ],
+        "text": "@NAME Alas"
+      },
+      {
+        "color": [
+          170,
+          0,
+          0
+        ],
+        "text": "@NAME I"
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "DELAY 5"
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "@NAME Test Dlg 1\n@DESC Tests a useless dialog\nDIALOG_INFO \"Title 1\" \"Message 1\""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          255,
+          255,
+          0
+        ],
+        "text": "@NAME not"
+      },
+      {
+        "color": [
+          255,
+          170,
+          0
+        ],
+        "text": "@NAME is"
+      },
+      {
+        "color": [
+          255,
+          85,
+          0
+        ],
+        "text": "@NAME poor"
+      },
+      {
+        "color": [
+          255,
+          0,
+          0
+        ],
+        "text": "@NAME knew him well"
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "DELAY 4"
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "@NAME Test Dlg 2\n@DESC Also Tests a useless dialog\n-@DOC Press this button and the other similar button.  This should result in\n-@DOC only one dialog appearing at a time.  Cancelling the button should\n-@DOC close an open dialog, or prevent a queued dialog from showing.\n-@DOC OK, Cancel, and closing the dialog produce unique return results.\nDIALOG_INFO \"Title 2\" \"Message 2\""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "ABORT\nEND"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "DELAY 3"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "CALL:RETURN_ONE a\nRPN_EVAL view_l"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "DELAY 2"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "CALL:END_ONE a\nRPN_EVAL view_l"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          255,
+          85,
+          0
+        ],
+        "text": "- test\nDIALOG_OK_CANCEL \"Continue this LPHK script?\" \"Press OK to continue or Cancel to abort right now.\" a"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "@NAME A 1\nCALL:ABORT_ONE a\nRPN_EVAL view_l"
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          255,
+          0
+        ],
+        "text": "@NAME Dump\n@DESC Dump all commands\n@DOC Lists all the heaqers, commands, subroutines, and buttons\n@DOC with whatever we can figure out about them\nTEST_DUMP_DEBUG"
+      }
+    ],
+    [
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      },
+      {
+        "color": [
+          0,
+          0,
+          0
+        ],
+        "text": ""
+      }
+    ]
+  ],
+  "subroutines": [
+    [
+      "@SUB RETURN_ONE @a%",
+      "RPN_EVAL view_l < a 1 + > a view_l",
+      "RETURN",
+      "RPN_EVAL view_l < a 1 + > a view_l"
+    ],
+    [
+      "@SUB ABORT_ONE @a%",
+      "RPN_EVAL view_l < a 1 + > a view_l",
+      "ABORT",
+      "RPN_EVAL view_l < a 1 + > a view_l"
+    ],
+    [
+      "@SUB END_ONE @a%",
+      "RPN_EVAL view_l < a 1 + > a view_l",
+      "END",
+      "RPN_EVAL view_l < a 1 + > a view_l"
+    ],
+    [
+      "@SUB ADD_ONE @a%",
+      "@DESC Adds 1 to the integer parameter passed",
+      "@DOC Line 1 of documentation",
+      "@DOC Line 2 of documentation",
+      "RPN_EVAL view_l < a 1 + > a view_l"
+    ]
+  ],
+  "version": "0.2"
+}
