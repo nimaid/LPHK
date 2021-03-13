@@ -118,3 +118,11 @@ D_BUTTONS = 4
 D_DEBUG = 5
 
 DS_NORMAL = [D_HEADERS, D_COMMANDS, D_SUBROUTINES, D_BUTTONS]
+
+# dialog constants
+DR_ABORT = -1   # returned when aborted for any reason
+DR_CANCEL = 0   # Cancel return
+DR_OK = 1       # OK return
+
+DLG_INFO = 1       # a simple titled box with OK
+DLG_OK_CANCEL = 2  # a simple titled box with OK and Cancel

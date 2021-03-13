@@ -2,49 +2,48 @@
 import threading, tkinter as tk
 from constants import *
 
-DR_ABORT = -1   # returned when aborted for any reason
-DR_CANCEL = 0   # Cancel return
-DR_OK = 1       # OK return
-
-DLG_INFO = 1    # a simple titled box with OK
-
 M_REF = 0       # reference number of message
 M_REQ = 1       # request of message
 
 R_TYPE = 0      # dialog type requested
 R_BUTTON = 1    # button that called dialog
 R_CALLBACK = 2  # callback function
-R_TITLE = 3     # dialog title
+R_PARAM = 3     # dialog parameters (title, message)
+
 
 class Dialog(tk.Toplevel):
 
-    def __init__(self, parent, title = None):
+    def __init__(self, parent, title=None, message=None, ok=False, cancel=False):
+    
         tk.Toplevel.__init__(self, parent)
+        
         self.transient(parent)
+        
         if title:
             self.title(title)
+            
         self.parent = parent
         self.result = None
-        body = tk.Frame(self)
         
-        b1 = tk.Button(self, text="OK", command=self.btn_OK)
-        b1.place(x=0, y=0)
-        b2 = tk.Button(self, text="Cancel", command=self.btn_Cancel)
-        b2.place(x=100, y=0)
-        #register validators
-        #self.validatePosInt = (body.register(self.OnValidatePosInt),
-        #        '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+        body = tk.Frame(self)
+        body.pack(ipadx=2, ipady=2)
+        
+        if message:
+            msg = tk.Label(body, text=message, wraplength=350, justify="center")
+            msg.pack(padx=8, pady=8)
 
-        #self.initial_focus = self.body(body)   #this calls the body function which is overridden, and which draws the dialog
-        #body.grid()
-        #self.buttonbox()
-        #self.grab_set()
-        #if not self.initial_focus:
-        #    self.initial_focus = self
-        #self.protocol("WM_DELETE_WINDOW", self.cancel)
+        foot = tk.Frame(body)
+        foot.pack(padx=4, pady=4)
+        
+        if ok:
+            b1 = tk.Button(foot, text="OK", width=8, command=self.btn_OK)
+            b1.pack(side='left', padx=5)
+        if cancel:
+            b2 = tk.Button(foot, text="Cancel", width=8, command=self.btn_Cancel)
+            b2.pack(side='left', padx=5)
+        #b1.focus_set()
         self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
                                   parent.winfo_rooty()+50))
-        #self.initial_focus.focus_set()
 
 
     def btn_OK(self):
@@ -180,8 +179,8 @@ def Sync_Request(btn, m_type, args):
 
 
 # request a simple comment box
-def CommentBox(btn, message):
-    return Sync_Request(btn, DLG_INFO, message)                # the arguments are simply the message
+def QueuedDialog(btn, dlg_type, message):
+    return Sync_Request(btn, dlg_type, message)                # the arguments are simply the message
 
 
 DIALOG_LOCK = threading.Lock() # lock to be used to access dialog variables
@@ -257,5 +256,8 @@ def OpenDialog(parent, request):
     DIALOG_RETURN = None                                       # the default return
 
     # do what is needed to actually open the window
-    DIALOG_OBJECT = Dialog(parent, request[3])
+    if request[R_TYPE] == DLG_INFO:
+        DIALOG_OBJECT = Dialog(parent, request[R_PARAM][0], request[R_PARAM][1], ok=True)
+    elif request[R_TYPE] == DLG_OK_CANCEL:
+        DIALOG_OBJECT = Dialog(parent, request[R_PARAM][0], request[R_PARAM][1], ok=True, cancel=True)
 
