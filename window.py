@@ -449,9 +449,27 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
 
     def draw_canvas(self, bx=None, by=None):
         def get_colour(x, y):
-           if scripts.buttons[x][y].running():
-               return "#FF0000"
-           return lp_colors.getXY_RGB(x, y)
+           if scripts.buttons[x][y].running():               # if the button is running
+               return "#FF0000"                              # make the button red
+           return lp_colors.getXY_RGB(x, y)                  # otherwise, the normal colour
+
+        def txt_col(x, y):
+            cn = get_colour(x, y)                            # get the colour of the button
+            c = self.winfo_rgb(cn)                           # convert to RGB value
+            b = 0.2126*c[0] + 0.587*c[1] + 0.0722*c[2]       # calculate perceptual brightness
+            if b > 20000:                                    # if it's fairly bright
+                return 'black'                               # text can be black
+            else:
+                return 'white'                               # otherwise it should be white
+
+        def txt_font(x, y):
+            if global_vars.ARGS['fit']:                          # only do this of we're fitting text
+                t = scripts.buttons[x][y].name                   # get the text
+                l = len(t)                                       # and its length
+                if l < 5 and l > 0:                              # if it's a reasonable size
+                    return ("Courier", BUTTON_SIZE // l, "bold") # then make it fit
+            return ("Courier", BUTTON_SIZE // 5, "bold") # otherwise use the standard size
+
 
         gap = int(BUTTON_SIZE // 4)
 
@@ -461,7 +479,9 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
         def text_y(y):
             return round((BUTTON_SIZE * y) + (gap * y) + (BUTTON_SIZE / 2) + (gap / 2))
 
-        def fmt(t):
+        def fmt(x, y):
+            t = scripts.buttons[x][y].name                   # get the text
+
             if len(t) <= 5:                                  # if name is less than 5 characters
                 return t                                     # return it unchanged
 
@@ -491,7 +511,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                 l = len(tl[i])
                 if l < m:
                     tl[i] = ' '*((m - l)//2) + tl[i]
-                    
+
             return "\n".join(tl)                             # and return them with line separations between them
 
 
@@ -530,7 +550,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                     for y in range(1, 9):
                         if by == None or (by == y):
                             self.c.itemconfig(self.grid_rects[x][y][0], fill=get_colour(x, y))
-                            self.c.itemconfig(self.grid_rects[x][y][1], text=fmt(scripts.buttons[x][y].name))
+                            self.c.itemconfig(self.grid_rects[x][y][1], text=fmt(x, y), fill=txt_col(x, y), font=txt_font(x, y))
 
             global lp_object
             if self.button_mode == LM_RUN:
@@ -558,7 +578,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                 for y in range(1, 9):
                     self.grid_rects[x][y] = ( \
                         self.draw_button(x, y, color=get_colour(x, y)), \
-                        self.c.create_text(text_x(x), text_y(y), fill="black", text=scripts.buttons[x][y].name, font=("Courier", BUTTON_SIZE // 5, "normal")) \
+                        self.c.create_text(text_x(x), text_y(y), fill="black", text=scripts.buttons[x][y].name, font=("Courier", BUTTON_SIZE // 5, "bold")) \
                         )
 
             if self.button_mode == LM_RUN:
