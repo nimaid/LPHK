@@ -3,11 +3,11 @@
     [
       {
         "color": [
-          0,
+          170,
           0,
           0
         ],
-        "text": ""
+        "text": "@NAME T"
       },
       {
         "color": [
@@ -77,11 +77,11 @@
     [
       {
         "color": [
-          0,
+          170,
           0,
           0
         ],
-        "text": ""
+        "text": "@NAME E"
       },
       {
         "color": [
@@ -151,11 +151,11 @@
     [
       {
         "color": [
-          0,
+          170,
           0,
           0
         ],
-        "text": ""
+        "text": "@NAME S"
       },
       {
         "color": [
@@ -225,11 +225,11 @@
     [
       {
         "color": [
-          0,
+          170,
           0,
           0
         ],
-        "text": ""
+        "text": "@NAME T"
       },
       {
         "color": [
@@ -299,11 +299,11 @@
     [
       {
         "color": [
-          0,
+          170,
           0,
           0
         ],
-        "text": ""
+        "text": "@NAME I"
       },
       {
         "color": [
@@ -373,11 +373,11 @@
     [
       {
         "color": [
-          0,
+          170,
           0,
           0
         ],
-        "text": ""
+        "text": "@NAME N"
       },
       {
         "color": [
@@ -447,11 +447,11 @@
     [
       {
         "color": [
-          0,
+          170,
           0,
           0
         ],
-        "text": ""
+        "text": "@NAME G"
       },
       {
         "color": [
@@ -521,11 +521,11 @@
     [
       {
         "color": [
-          0,
+          170,
           0,
           0
         ],
-        "text": ""
+        "text": "@NAME !"
       },
       {
         "color": [
@@ -604,66 +604,66 @@
       {
         "color": [
           0,
-          0,
+          255,
           0
         ],
-        "text": ""
+        "text": "@NAME W"
       },
       {
         "color": [
           0,
-          0,
+          255,
           0
         ],
-        "text": ""
+        "text": "@NAME WW"
       },
       {
         "color": [
           0,
-          0,
+          255,
           0
         ],
-        "text": ""
+        "text": "@NAME WWW"
       },
       {
         "color": [
           0,
-          0,
+          255,
           0
         ],
-        "text": ""
+        "text": "@NAME WW WW WW WW WW"
       },
       {
         "color": [
           0,
-          0,
+          255,
           0
         ],
-        "text": ""
+        "text": "@NAME WW WW"
       },
       {
         "color": [
           0,
-          0,
+          255,
           0
         ],
-        "text": ""
+        "text": "@NAME W W"
       },
       {
         "color": [
           0,
-          0,
+          255,
           0
         ],
-        "text": ""
+        "text": "@NAME WW WW"
       },
       {
         "color": [
           0,
-          0,
+          255,
           0
         ],
-        "text": ""
+        "text": "@NAME WWW WWW"
       }
     ]
   ],

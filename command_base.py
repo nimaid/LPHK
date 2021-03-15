@@ -157,7 +157,7 @@ class Command_Basic:
             return True
 
         if ret == None or ((type(ret) == bool) and not ret) or len(ret) != 2:
-            ret = ("SYSTEM ERROR PARSING LINE " + str(idx) + ". '" + line + "' on pass " + str(pass_no), btn.Line(idx))
+            ret = ("SYSTEM ERROR PARSING LINE " + str(idx) + ". '" + btn.Line(idx) + "' on pass " + str(pass_no), btn.Line(idx))
 
         if ret[0]:
             print(ret[0])
@@ -449,7 +449,7 @@ class Command_Basic:
                     if val[AV_TYPE] == PT_TARGET:                    # targets (label definitions) have pass 1 validation only
                         # check for duplicate label
                         if split_line[n] in btn.symbols[SYM_LABELS]: # Does the label already exist (that's bad)?
-                            return ("Duplicate LABEL", btn.Line(idx))
+                            return ("Duplicate LABEL " + split_line[n], btn.Line(idx))
 
                         # add label to symbol table                  # Add the new label to the labels in the symbol table
                         btn.symbols[SYM_LABELS][split_line[n]] = idx # key is label, data is line number

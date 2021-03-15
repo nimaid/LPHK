@@ -126,3 +126,4 @@ DR_OK = 1       # OK return
 
 DLG_INFO = 1       # a simple titled box with OK
 DLG_OK_CANCEL = 2  # a simple titled box with OK and Cancel
+DLG_ERROR = 3      # a simple titled box with Cancel

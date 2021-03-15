@@ -29,6 +29,7 @@ class Dialog(tk.Toplevel):
         body.pack(ipadx=2, ipady=2)
         
         if message:
+            message = message.replace("\\n", "\n")    # allow the manual splitting of lines.
             msg = tk.Label(body, text=message, wraplength=350, justify="center")
             msg.pack(padx=8, pady=8)
 
@@ -260,4 +261,6 @@ def OpenDialog(parent, request):
         DIALOG_OBJECT = Dialog(parent, request[R_PARAM][0], request[R_PARAM][1], ok=True)
     elif request[R_TYPE] == DLG_OK_CANCEL:
         DIALOG_OBJECT = Dialog(parent, request[R_PARAM][0], request[R_PARAM][1], ok=True, cancel=True)
+    elif request[R_TYPE] == DLG_ERROR:
+        DIALOG_OBJECT = Dialog(parent, request[R_PARAM][0], request[R_PARAM][1], cancel=True)
 

@@ -462,13 +462,16 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             else:
                 return 'white'                               # otherwise it should be white
 
-        def txt_font(x, y):
+        def txt_font(x, y, round=False):
             if global_vars.ARGS['fit']:                          # only do this of we're fitting text
                 t = scripts.buttons[x][y].name                   # get the text
                 l = len(t)                                       # and its length
                 if l < 5 and l > 0:                              # if it's a reasonable size
-                    return ("Courier", BUTTON_SIZE // l, "bold") # then make it fit
-            return ("Courier", BUTTON_SIZE // 5, "bold") # otherwise use the standard size
+                    if round:
+                        return ("Courier", int(0.75 * BUTTON_SIZE / l), "bold") # round buttons need smaller text
+                    else:
+                        return ("Courier", BUTTON_SIZE // l, "bold")            # then make it fit
+            return ("Courier", BUTTON_SIZE // 5, "bold")         # otherwise use the standard size
 
 
         gap = int(BUTTON_SIZE // 4)
@@ -479,29 +482,29 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
         def text_y(y):
             return round((BUTTON_SIZE * y) + (gap * y) + (BUTTON_SIZE / 2) + (gap / 2))
 
-        def fmt(x, y):
+        def fmt(x, y, lines=3, cols=5):
             t = scripts.buttons[x][y].name                   # get the text
 
-            if len(t) <= 5:                                  # if name is less than 5 characters
+            if len(t) <= cols:                               # if name is less than 5 characters
                 return t                                     # return it unchanged
 
             tl = t.split()                                   # more complex stuff needs to be split and processed
 
             n = 0                                            # split up any word > 5 characters
             while n < len(tl):
-                if len(tl[n]) > 5:
-                    tl = tl[:n] + [tl[n][:5]] + [tl[n][5:]] + tl[n+1:]
+                if len(tl[n]) > cols:
+                    tl = tl[:n] + [tl[n][:cols]] + [tl[n][cols:]] + tl[n+1:]
                 n += 1
 
             n = 0                                            # combine ajacent short words
             while n+1 < len(tl):
-                if len(tl[n]) + len(tl[n+1]) < 5:
+                if len(tl[n]) + len(tl[n+1]) < cols:
                     tl[n] = tl[n] + ' ' + tl[n+1]
                     del tl[n+1]
                 else:
                     n += 1
 
-            tl = tl[0:3]                                     # limit to 3 lines
+            tl = tl[0:lines]                                 # limit to 3 lines
 
             m = 0                                            # find the longest line
             for x in tl:
@@ -537,13 +540,15 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                 for x in range(8):
                     if bx == None or (bx == x):
                         y = 0
-                        self.c.itemconfig(self.grid_rects[x][y], fill=get_colour(x, y))
+                        self.c.itemconfig(self.grid_rects[x][y][0], fill=get_colour(x, y))
+                        self.c.itemconfig(self.grid_rects[x][y][1], text=fmt(x, y, 2, 3), fill=txt_col(x, y), font=txt_font(x, y, True))
 
             if bx == None or (bx == 8):
                 for y in range(1, 9):
                     if bx == None or (by == y):
                         x = 8
-                        self.c.itemconfig(self.grid_rects[x][y], fill=get_colour(x, y))
+                        self.c.itemconfig(self.grid_rects[x][y][0], fill=get_colour(x, y))
+                        self.c.itemconfig(self.grid_rects[x][y][1], text=fmt(x, y, 2, 3), fill=txt_col(x, y), font=txt_font(x, y, True))
 
             for x in range(8):
                 if bx == None or (bx == x):
@@ -568,17 +573,23 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
         else:
             for x in range(8):
                 y = 0
-                self.grid_rects[x][y] = self.draw_button(x, y, color=get_colour(x, y), shape="circle")
+                self.grid_rects[x][y] = ( \
+                    self.draw_button(x, y, color=get_colour(x, y), shape="circle"),
+                    self.c.create_text(text_x(x), text_y(y), text=fmt(x, y, 2, 3), fill=txt_col(x, y), font=txt_font(x, y, True)) \
+                    )
 
             for y in range(1, 9):
                 x = 8
-                self.grid_rects[x][y] = self.draw_button(x, y, color=get_colour(x, y), shape="circle")
+                self.grid_rects[x][y] = ( \
+                    self.draw_button(x, y, color=get_colour(x, y), shape="circle"),
+                    self.c.create_text(text_x(x), text_y(y), text=fmt(x, y, 2, 3), fill=txt_col(x, y), font=txt_font(x, y, True)) \
+                    )
 
             for x in range(8):
                 for y in range(1, 9):
                     self.grid_rects[x][y] = ( \
                         self.draw_button(x, y, color=get_colour(x, y)), \
-                        self.c.create_text(text_x(x), text_y(y), fill="black", text=scripts.buttons[x][y].name, font=("Courier", BUTTON_SIZE // 5, "bold")) \
+                        self.c.create_text(text_x(x), text_y(y), text=fmt(x, y), fill=txt_col(x, y), font=txt_font(x, y)) \
                         )
 
             if self.button_mode == LM_RUN:
