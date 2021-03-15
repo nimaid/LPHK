@@ -175,8 +175,8 @@ def Dump_commands(style=DS_NORMAL):
         print("BUTTONS")
         print()
         global buttons
-        for x in range(8):
-            for y in range(1, 9):
+        for x in range(9):
+            for y in range(9):
                 btn = buttons[x][y]
                 if btn.script_str != "":
                     dump("Button", btn, style)
@@ -772,12 +772,12 @@ def Swap(x1, y1, x2, y2):
     btn_2 = buttons[x2][y2]                  # btn #2
 
     Unbind(x1, y1)                           # Unbind #1
-    if btn_2.script != "":                   # If there is a script #2...
+    if btn_2.script_str != "":               # If there is a script #2...
         Bind(x1, y1, btn_2, color_2)         # ...bind it to #1
     lp_colors.updateXY(x1, y1)               # Update the colours for btn #1
 
     Unbind(x2, y2)                           # Do the reverse for #2
-    if btn_1.script != "":
+    if btn_1.script_str != "":
         Bind(x2, y2, btn_1, color_1)
     lp_colors.updateXY(x2, y2)
 
@@ -813,7 +813,7 @@ def Move(x1, y1, x2, y2):
     Unbind(x1, y1)                           # Unbind *both* buttons
     Unbind(x2, y2)
 
-    if btn_1.script != "":                   # If the source had a script...
+    if btn_1.script_str != "":               # If the source had a script...
         Bind(x2, y2, btn_1, color_1)         # ...bind it to the destination
     lp_colors.updateXY(x2, y2)               # Update the destination colours
 

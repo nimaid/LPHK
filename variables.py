@@ -41,6 +41,14 @@ def is_defined(name, vbls):
     return vbls and str(name).lower() in vbls
 
 
+def undef(name, vbls):
+    # remove a variable from the symbol library (existing or not)
+    try:
+        del vbls[str(name).lower()]
+    except:
+        pass
+
+
 # gets a variable using the default conversion of None if the variable is undefined.
 def get(name, l_vbls, g_vbls, default=param_convs._None):
     # get a variable.  look in one symbol table, then the next.

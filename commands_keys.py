@@ -217,3 +217,36 @@ class Keys_String(command_base.Command_Text_Basic):
 
 
 scripts.Add_command(Keys_String())  # register the command
+
+
+# ##################################################
+# ### CLASS Keys_Type                            ###
+# ##################################################
+
+# class that defines the TYPE command (type a string)
+class Keys_Type(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("TYPE, type the text that is the concatenation of all variables passed",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("Value",      False, AVV_YES,  PT_STRS, None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (1,           "    Type {1}"),
+            ) )
+
+
+    def Process(self, btn, idx, split_line):
+        val = ''
+        for i in range(1, self.Param_count(btn)+1): # for each parameter (after the first)
+            val += str(self.Get_param(btn, i))      # append all the values (force to string)
+        kb.write(val)
+
+
+scripts.Add_command(Keys_Type())  # register the command
+

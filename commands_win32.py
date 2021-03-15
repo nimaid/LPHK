@@ -28,6 +28,10 @@ class Command_Win32(command_base.Command_Basic):
 
         return place[1], old_hwnd, hwnd                          # useful if you want to minimise it again
 
+    # minimise a window
+    def minimise_window(self, hwnd, fg = False):
+        win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)          # minimise it
+
     # resets windows to what they were before the restore
     def reset_window(self, old_state):
         state, old_hwnd, hwnd = old_state
@@ -50,6 +54,7 @@ class Command_Win32(command_base.Command_Basic):
 
         hwnds = []
         win32gui.EnumWindows (callback, hwnds)
+        hwnds.sort()
         return hwnds
 
 
@@ -267,7 +272,7 @@ class Win32_Find_Hwnd(Command_Win32):
         self,
         ):
 
-        super().__init__("W_FIND_HWND",  # the name of the command as you have to enter it in the code
+        super().__init__("W_FIND_HWND, Returns the handle of the nth exactly matching window",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -280,6 +285,11 @@ class Win32_Find_Hwnd(Command_Win32):
             # num params, format string                           (trailing comma is important)
             (4,           "    Find {4}th window titled '{1}', returning handle in {2}.  Report {3} total matches"),
             ) )
+
+        self.doc = ["Searches for an exactly matching window `Title`.  If multiple are found,",
+                    "the windows are sorted by process id.  The number of matching windows is",
+                    "returned in `M`.  If `N` or more are found, the nth window handle is",
+                    "returned in `HWND`.  -1 is returned if there is an error."]
 
     def Process(self, btn, idx, split_line):
 
@@ -310,6 +320,150 @@ class Win32_Find_Hwnd(Command_Win32):
 
 
 scripts.Add_command(Win32_Find_Hwnd())  # register the command
+
+
+# ##################################################
+# ### CLASS W_SIMILAR_HWND                       ###
+# ##################################################
+
+# class that defines the W_SIMILAR_HWND command - returns the nth matching window handle
+class Win32_Similar_Hwnd(Command_Win32):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("W_SIMILAR_HWND, Returns the handle of the nth similar window",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("Title",      False, AVV_NO,   PT_STR,  None,                       None),   # name to search for
+            ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
+            ("M",          False, AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
+            ("N",          False, AVV_YES,  PT_INT,  variables.Validate_gt_zero, None),   # number of match desired
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (4,           "    Find {4}th window titled '{1}', returning handle in {2}.  Report {3} total matches"),
+            ) )
+
+        self.doc = ["Searches for windows with titles starting with `Title`.  If multiple",
+                    "are found, the windows are sorted by process id.  The number of",
+                    "matching windows is returned in `M`.  If `N` or more are found, the",
+                    "nth window handle is returned in `HWND`.  -1 is returned if there is",
+                    "an error."]
+
+    def Process(self, btn, idx, split_line):
+
+        def CheckWindow(hwnd, data):
+            # callback function to receive enumerated window handles
+            if win32gui.GetWindowText(hwnd)[:len(data['title'])] == data['title']:  # does the beginning of the title match?
+                data['hwnds'] += [hwnd]                        # add to list
+
+        hwnds = []                                             # reset the list of window handles
+        title = self.Get_param(btn, 1)                         # get the title we're searching for
+
+        data = {'title':title, 'hwnds':hwnds}                  # data structure to be used by the callback routine
+        win32gui.EnumWindows(CheckWindow, data)                # enumerate windows
+        
+        hwnds = data['hwnds']                                  # this is now probably in front to back order
+        hwnds.sort()                                           # helps to ensure we get the windows in the same order.  (creation?)
+
+        m = len(hwnds)                                         # how many did we get?
+        self.Set_param(btn, 3, m)                              # pass this back
+
+        n = self.Get_param(btn, 4)                             # which one did we want?
+        if n <= m:                                             # do we have it
+            hwnd = hwnds[n-1]                                  # get it
+        else:
+            hwnd = -1                                          # otherwise return -1
+
+        self.Set_param(btn, 2, hwnd)                           # return the window handle in parameter 2
+
+
+scripts.Add_command(Win32_Similar_Hwnd())  # register the command
+
+
+# ##################################################
+# ### CLASS W_MINIMISE_HWND                      ###
+# ##################################################
+
+# class that defines the W_MINIMISE_HWND command - minimises windows
+class Win32_Minimise_Hwnd(Command_Win32):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("W_MINIMISE_HWND, Minimises specified window or all",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("HWND",       True,  AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (0,           "    Minimise all windows except LPHK"),
+            (1,           "    Minimise specified window {1}"),
+            ) )
+
+        self.doc = ["If no parameter is passed, this command will minimise all windows except LPHK.",
+                    "If a parmeter is passed, the window with this handle is minimised.  This also",
+                    "allows LPHK to be minimised."]
+
+
+    def Process(self, btn, idx, split_line):
+        SENTINEL = -32767
+
+        def CheckWindow(hwnd, data):
+            # callback function to receive enumerated window handles
+            if win32gui.IsWindowVisible(hwnd) and win32gui.GetWindowText(hwnd) != '':
+                if data[1] == SENTINEL:                        # if no window specified
+                    if hwnd != data[0]:                        # is it not LPHK?
+                        print(' 2', hwnd, data[0], win32gui.GetWindowText(hwnd))#@@@
+                        self.minimise_window(hwnd)
+                else:
+                    if hwnd == data[1]:                        # does it match?
+                        self.minimise_window(hwnd)
+
+        hwnd = self.Get_param(btn, 1, SENTINEL)                # get the window handle
+
+        from os import getpid
+        data = [self.get_hwnds_for_pid(getpid())[0], hwnd]
+
+        win32gui.EnumWindows(CheckWindow, data)                # enumerate windows
+
+
+scripts.Add_command(Win32_Minimise_Hwnd())  # register the command
+
+
+# ##################################################
+# ### CLASS W_RESTORE_HWND                       ###
+# ##################################################
+
+# class that defines the W_RESTORE_HWND command - restores a window
+class Win32_Restore_Hwnd(Command_Win32):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("W_RESTORE_HWND, Restores (un-minimises) specified window",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (1,           "    Restores specified window {1}"),
+            ) )
+
+        self.doc = ["The parmeter is passed identifies the window to be restored"]
+
+    def Process(self, btn, idx, split_line):
+        hwnd = self.Get_param(btn, 1, -1)                      # get the window handle
+        self.restore_window(hwnd)                              # and restore it to its former beauty
+
+
+scripts.Add_command(Win32_Restore_Hwnd())  # register the command
 
 
 # ##################################################

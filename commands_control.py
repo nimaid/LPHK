@@ -175,6 +175,78 @@ class Control_Flow_Basic(command_base.Command_Basic):
         self.Reset(btn, idx)
 
 
+    def a_eq_b(self, btn):
+        a = self.Get_param(btn, 2)
+        b = self.Get_param(btn, 3)
+
+        try:
+            if a == b:
+                return True
+
+        except:
+            return False
+
+
+    def a_ne_b(self, btn):
+        a = self.Get_param(btn, 2)
+        b = self.Get_param(btn, 3)
+
+        try:
+            if a != b:
+                return True
+
+        except:
+            return True                  # this is an exception.  If we can't compare they can't be equal!
+
+
+    def a_gt_b(self, btn):
+        a = self.Get_param(btn, 2)
+        b = self.Get_param(btn, 3)
+
+        try:
+            if a > b:
+                return True
+
+        except:
+            return False
+
+
+    def a_lt_b(self, btn):
+        a = self.Get_param(btn, 2)
+        b = self.Get_param(btn, 3)
+
+        try:
+            if a < b:
+                return True
+
+        except:
+            return False
+
+
+    def a_ge_b(self, btn):
+        a = self.Get_param(btn, 2)
+        b = self.Get_param(btn, 3)
+
+        try:
+            if a >= b:
+                return True
+
+        except:
+            return False
+
+
+    def a_le_b(self, btn):
+        a = self.Get_param(btn, 2)
+        b = self.Get_param(btn, 3)
+
+        try:
+            if a <= b:
+                return True
+
+        except:
+            return False
+
+
 # ##################################################
 # ### CLASS Control_Goto_Label                   ###
 # ##################################################
@@ -199,6 +271,192 @@ class Control_Goto_Label(Control_Flow_Basic):
 
 
 scripts.Add_command(Control_Goto_Label())  # register the command
+
+
+# ##################################################
+# ### CLASS IF_EQ_GOTO                           ###
+# ##################################################
+
+# class that defines the IF_EQ_GOTO command
+class Control_If_Eq_Goto(Control_Flow_Basic):
+    def __init__(
+        self
+        ):
+
+        super().__init__(
+            "IF_EQ_GOTO, Goto label, if parameters 2 and 3 are equal",
+            LIB,
+            (
+            # Desc         Opt    Var     type      p1_val  p2_val
+            ("Label",      False, AVV_NO, PT_LABEL, None,   None),
+            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
+            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (3,           "    if {2} == {3} Goto {1}"),
+            ),
+            "a == b",
+            self.a_eq_b
+            )
+
+
+scripts.Add_command(Control_If_Eq_Goto())  # register the command
+
+
+# ##################################################
+# ### CLASS IF_NE_GOTO                           ###
+# ##################################################
+
+# class that defines the IF_NE_GOTO command
+class Control_If_Ne_Goto(Control_Flow_Basic):
+    def __init__(
+        self
+        ):
+
+        super().__init__(
+            "IF_NE_GOTO, Goto label, if parameters 2 and 3 are not equal",
+            LIB,
+            (
+            # Desc         Opt    Var     type      p1_val  p2_val
+            ("Label",      False, AVV_NO, PT_LABEL, None,   None),
+            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
+            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (3,           "    if {2} != {3} Goto {1}"),
+            ),
+            "a != b",
+            self.a_ne_b
+            )
+
+
+scripts.Add_command(Control_If_Ne_Goto())  # register the command
+
+
+# ##################################################
+# ### CLASS IF_GT_GOTO                           ###
+# ##################################################
+
+# class that defines the IF_GT_GOTO command
+class Control_If_Gt_Goto(Control_Flow_Basic):
+    def __init__(
+        self
+        ):
+
+        super().__init__(
+            "IF_GT_GOTO, Goto label, if parameters 2 is greater than parameter 3",
+            LIB,
+            (
+            # Desc         Opt    Var     type      p1_val  p2_val
+            ("Label",      False, AVV_NO, PT_LABEL, None,   None),
+            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
+            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (3,           "    if {2} > {3} Goto {1}"),
+            ),
+            "a > b",
+            self.a_gt_b
+            )
+
+
+scripts.Add_command(Control_If_Gt_Goto())  # register the command
+
+
+# ##################################################
+# ### CLASS IF_GE_GOTO                           ###
+# ##################################################
+
+# class that defines the IF_GE_GOTO command
+class Control_If_Ge_Goto(Control_Flow_Basic):
+    def __init__(
+        self
+        ):
+
+        super().__init__(
+            "IF_GE_GOTO, Goto label, if parameters 2 is greater than or equal to parameter 3",
+            LIB,
+            (
+            # Desc         Opt    Var     type      p1_val  p2_val
+            ("Label",      False, AVV_NO, PT_LABEL, None,   None),
+            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
+            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (3,           "    if {2} >= {3} Goto {1}"),
+            ),
+            "a >= b",
+            self.a_gt_b
+            )
+
+
+scripts.Add_command(Control_If_Ge_Goto())  # register the command
+
+
+# ##################################################
+# ### CLASS IF_LT_GOTO                           ###
+# ##################################################
+
+# class that defines the IF_LT_GOTO command
+class Control_If_Lt_Goto(Control_Flow_Basic):
+    def __init__(
+        self
+        ):
+
+        super().__init__(
+            "IF_LT_GOTO, Goto label, if parameters 2 is less than parameter 3",
+            LIB,
+            (
+            # Desc         Opt    Var     type      p1_val  p2_val
+            ("Label",      False, AVV_NO, PT_LABEL, None,   None),
+            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
+            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (3,           "    if {2} < {3} Goto {1}"),
+            ),
+            "a < b",
+            self.a_lt_b
+            )
+
+
+scripts.Add_command(Control_If_Lt_Goto())  # register the command
+
+
+# ##################################################
+# ### CLASS IF_LE_GOTO                           ###
+# ##################################################
+
+# class that defines the IF_LE_GOTO command
+class Control_If_Le_Goto(Control_Flow_Basic):
+    def __init__(
+        self
+        ):
+
+        super().__init__(
+            "IF_LE_GOTO, Goto label, if parameters 2 is less than or equal to parameter 3",
+            LIB,
+            (
+            # Desc         Opt    Var     type      p1_val  p2_val
+            ("Label",      False, AVV_NO, PT_LABEL, None,   None),
+            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
+            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (3,           "    if {2} <= {3} Goto {1}"),
+            ),
+            "a <= b",
+            self.a_le_b
+            )
+
+
+scripts.Add_command(Control_If_Le_Goto())  # register the command
 
 
 # ##################################################

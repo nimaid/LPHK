@@ -177,7 +177,7 @@ class Rpn_Eval(command_base.Command_Basic):
         self.operators["!?L"]    = (self.is_local_not_def,  1) # is local var not defined
         self.operators["?G"]     = (self.is_global_def,     1) # is global var defined
         self.operators["!?G"]    = (self.is_global_not_def, 1) # is global var not defined
-        self.operators["ABORT"]  = (self.abort_script,      0) # abort the script (not just the rpn calc
+        self.operators["ABORT"]  = (self.abort_script,      0) # abort the script (not just the rpn calc)
 
 
     def add(self,
@@ -676,7 +676,7 @@ class Rpn_Set(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("RPN_SET",  # the name of the command as you have to enter it in the code
+        super().__init__("RPN_SET, Sets a string to the concatenation of all the variables passed to it",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -697,3 +697,59 @@ class Rpn_Set(command_base.Command_Basic):
 
 
 scripts.Add_command(Rpn_Set())  # register the command
+
+
+# ##################################################
+# ### CLASS RPN_CLEAR                            ###
+# ##################################################
+
+# class that defines the RPN_CLEAR command -- clears variables @@@ needs validation!!!
+class Rpn_Clear(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("RPN_CLEAR, Clear variables or stack",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("Function",   False, AVV_NO,   PT_STR,  None,                       None),
+            ("Variable",   True,  AVV_REQD, PT_STRS, None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (1,           "    Clear {1}"),
+            (2,           "    Clear {1}: {2}"),
+            ) )
+        
+        self.doc= ["If parameter 1 is:",
+                   "     'GLOBALS'                All the global variables are cleared",
+                   "     'LOCALS'                 All the local variables are cleared",
+                   "     'VARS'                   All variables are cleared",
+                   "     'STACK'                  The stack is cleared",
+                   "     'ALL'                    All variables and the stack are cleared",
+                   "     'GLOBAL' v1 [v2 [v3...]] Named global variables v1... are deleted",
+                   "     'LOCAL' v1 [v2 [v3...]]  Named local variables v1... are deleted",
+                   "     'VAR' v1 [v2 [v3...]]    Named variables v1... are deleted"]
+
+
+    def Process(self, btn, idx, split_line):
+        f = (self.Get_param(btn, 1)).upper()
+
+        if f in ["GLOBALS", "VARS", "ALL"]:
+            with btn.symbols[SYM_GLOBAL][0]:
+                btn.symbols[SYM_GLOBAL][1].clear()    # clear all global variables
+        if f in ["LOCALS", "VARS", "ALL"]:
+            btn.symbols[SYM_LOCAL].clear()            # clear all local variables
+        if f in ["STACK", "ALL"]:
+            btn.symbols[SYM_STACK].clear()            # clear the stack
+        if f in ["GLOBAL", "VAR"]:
+            for i in range(2, self.Param_count(btn)+1):
+                with btn.symbols[SYM_GLOBAL][0]:
+                    variables.undef(split_line[i], btn.symbols[SYM_GLOBAL][1])
+        if f in ["LOCAL", "VAR"]:
+            for i in range(2, self.Param_count(btn)+1):
+                variables.undef(split_line[i], btn.symbols[SYM_LOCAL])
+
+
+scripts.Add_command(Rpn_Clear())  # register the command
