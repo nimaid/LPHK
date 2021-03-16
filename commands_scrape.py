@@ -157,6 +157,10 @@ class Scrape_Get_Clipboard(Command_Scrape):
 scripts.Add_command(Scrape_Get_Clipboard())  # register the command
 
 
+# ##################################################
+# ### CLASS SCRAPE_OCR                           ###
+# ##################################################
+
 # class that defines the S_OCR command -- OCR on an image
 class Scrape_OCR(Command_Scrape):
     def __init__(
