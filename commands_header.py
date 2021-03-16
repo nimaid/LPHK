@@ -178,6 +178,42 @@ class Header_Name(command_base.Command_Header):
         ):
 
         super().__init__("@NAME, Names a button")
+        
+        self.doc = ["The @NAME header defines a name for a script.  This name is also",
+                    "displayed on the LPHK form as annotation for the button the script",
+                    "is assigned to.",
+                    "",
+                    "A simple example is as follows:",
+                    "",
+                    "      @NAME Boo!",
+                    "",
+                    "This will cause the script to be named `Boo!`, and for this text to",
+                    "appear on the assigned button and in internally generated documentation.",
+                    "",
+                    "The space on buttons is limited.  For the larger square buttons,",
+                    "three lines of five characters can be displayed.  For the smaller",
+                    "round buttons, only two lines of three characters will fit.",
+                    "",
+                    "LPHK attempts to display the name as best it can.  Firstly, it breaks",
+                    "long words into shorter fragments, then it tries to pack those fragments",
+                    "together.  The previous example `Boo!` is less than 5 characters, so",
+                    "it fits completely on one line.  The name `Pieces of text to display`",
+                    "would first be broken up into `Piece` `s` `of` `text` `to` `displ` ay`,",
+                    "then joined back up as `Piece` `s of` `text`,  The remainder can't be",
+                    "fitted, and is dropped off.  The button would contain the text:",
+                    "",
+                    "      Piece",
+                    "      a of",
+                    "      text",
+                    "",
+                    "Shorter text strings are are displayed using larger fonts for greater"
+                    "reasability if the option -f or --fit is specified on the command",
+                    "line.",
+                    "",
+                    "Only a single name header is permitted in a script.",
+                    "",
+                    "This is not permitted in a subroutine because the subroutine is named",
+                    "using the `@SUB` header."]
 
 
     # Dummy validate routine.  Simply says all is OK (unless you try to do it in a real button!)
@@ -214,6 +250,17 @@ class Header_Desc(command_base.Command_Header):
 
         super().__init__("@DESC, Defines a description line")
 
+        self.doc = ["The @DESC header defines a short description for a script or subroutine.",
+                    "",
+                    "A simple example is as follows:",
+                    "",
+                    "      @DESC Do really amazing things",
+                    "",
+                    "This will cause the script or subroutine to be described as `Do really",
+                    "amazing things`, in internally generated documentation.",
+                    "",
+                    "Only a single description header is permitted in a script or subroutine."]
+
 
     # Dummy validate routine.  Simply says all is OK (without a validation routine, an error is reported (but not printed)
     def Validate(
@@ -245,6 +292,17 @@ class Header_Doc(command_base.Command_Header):
         ):
 
         super().__init__("@DOC, Adds a line to the documentation text")
+
+        self.doc = ["The `@DOC` header allows multiple line documentation to be written for a script",
+                    "or subroutine.  Each `@DOC` line is appended to the documentation.",
+                    "",
+                    "A simple example is as follows:",
+                    "",
+                    "      @DOC This is the first line of the documentation...",
+                    "      @DOC ...and this is the second.",
+                    "",
+                    "When the internal documentation is produced for the script or subroutine, this",
+                    "text will appear."]
 
 
     # Dummy validate routine.  Simply says all is OK (without a validation routine, an error is reported (but not printed)

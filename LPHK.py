@@ -112,7 +112,7 @@ def init():
         help = "Operate without connection to Launchpad", type=str, choices=[LP_MK1, LP_MK2, LP_MINI, LP_PRO])
     ap.add_argument(                                           # option to start with launchpad window in a particular mode
         "-M", "--mode",
-        help = "Launchpad mode", type=str, choices=[LM_EDIT, LM_MOVE, LM_SWAP, LM_COPY, LM_RUN], default=LM_EDIT)
+        help = "Launchpad mode", type=str, choices=[LM_EDIT, LM_MOVE, LM_SWAP, LM_COPY, LM_DEL, LM_RUN], default=LM_EDIT)
     ap.add_argument(                                           # turn of unnecessary verbosity
         "-q", "--quiet",
         help = "Disable information popups", action="store_true")

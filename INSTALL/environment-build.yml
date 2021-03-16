@@ -18,3 +18,5 @@ dependencies:
     - pytesseract
     - imagehash
     - dhash
+    - selenium
+    - pyperclip

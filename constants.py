@@ -59,6 +59,7 @@ AVVS_ALL = {AVV_NO, AVV_YES, AVV_REQD}  # allow any option
 AVVS_NO =  {AVV_NO}                     # only allow literals
 AVVS_YES = {AVV_YES, AVV_REQD}          # AVV_YES is potentially ambiguous!
 AVVS_AMB = {AVV_NO, AVV_REQD}           # These are not ambiguous
+AVVS_REQ = {AVV_REQD}                   # ONLY variables
 
 AV_P1_VALIDATION  = 4
 AV_P2_VALIDATION  = 5
@@ -70,11 +71,15 @@ PT_FLOAT    = ("float",  param_convs._float, False,  False, AVVS_ALL)
 PT_STR      = ("str",    param_convs._str,   True,   False, AVVS_ALL)        # a quoted string
 PT_STRS     = ("strs",   param_convs._str,   True,   True,  AVVS_ALL)        # 1 or more quoted strings
 PT_LINE     = ("line",   param_convs._str,   True,   True,  AVVS_NO)         # the rest of the line following first preceeding whitespace
-PT_TEXT     = ("text",   param_convs._str,   False,  False, AVVS_AMB)        # a string without whitespace @@@ DEPRECATED
+PT_TEXT     = ("text",   param_convs._str,   False,  False, AVVS_AMB)        # a string without whitespace @@@ DEPRECATED (Not necessarily...)
 PT_LABEL    = ("label",  param_convs._str,   True,   False, AVVS_NO)         # Note that this is for a reference to a label, not the definition of a label!
 PT_TARGET   = ("target", param_convs._str,   True,   False, AVVS_NO)         # Note that this is for the definition of a target (e.g. creating a label)
 PT_KEY      = ("key",    param_convs._str,   True,   False, AVVS_NO)         # This is a key literal
 PT_BOOL     = ("bool",   param_convs._str,   True,   False, AVVS_ALL)        # True/False, Yes/No, Y/N, nonzero/zero <-- for variables
+PT_WORD     = ("word",   param_convs._str,   False,  False, AVVS_NO)         # a parameter not in quotes
+PT_WORDS    = ("word",   param_convs._str,   False,  True,  AVVS_NO)         # a parameter not in quotes
+PT_OBJ      = ("object", param_convs._None,  False,  False, AVVS_REQ)        # an object type
+PT_ANY      = ("any",    param_convs._None,  False,  False, AVVS_ALL)        # allow any type of parameter@@@@@
 
 # constants for auto_message
 AM_COUNT  = 0
@@ -108,6 +113,7 @@ LM_EDIT = "edit"
 LM_MOVE = "move"
 LM_SWAP = "swap"
 LM_COPY = "copy"
+LM_DEL = "del"
 LM_RUN = "run"
 
 # Dump constants

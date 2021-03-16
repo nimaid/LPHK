@@ -54,7 +54,7 @@ class Subroutine(command_base.Command_Basic):
         Lines              # The text of the subroutine/function
         ):
 
-        super().__init__(SUBROUTINE_PREFIX + Name,  # the name of the command as you have to enter it in the code
+        super().__init__(SUBROUTINE_PREFIX + Name + ", Define a subroutine that can be called with named parameters", 
             LIB,
             Params,
             (
@@ -64,7 +64,123 @@ class Subroutine(command_base.Command_Basic):
 
         self.routine = Lines           # the routine to execute
         self.btn = scripts.Button(-1, -1, self.routine, None, Name) # we retain this so we only have to validate it once.  executions use a deep-ish copy
-
+        
+        self.doc = ["This header is used to define a subroutine.  Subroutines are loaded",
+                    "separately from button scripts and can be saved in layouts.",
+                    "",
+                    "A subroutine header consists of the the text `@SUB` followed by the",
+                    "name of the subroutine, and then the parameters for the subroutine",
+                    "",
+                    "A simple subtoutine `DO_STUFF` that is called without patameters would",
+                    "be defined as follows:",
+                    "",
+                    "      @SUB DO_STUFF",
+                    "",
+                    "This would be followed by a script to so whatever the subroutine needs",
+                    "to do.",
+                    "",
+                    "A calling script would call this subroutine using:",
+                    "",
+                    "      CALL:DO_STUFF",
+                    "",
+                    "After completion of the subroutine, control would pass to the statement",
+                    "following the call unless an END or ABORT statement was reached, or",
+                    "the operator cancelled the routine by pressing the Launchpad button",
+                    "a second time."
+                    "",
+                    "Subroutines have their own stacks and local variables as well as access",
+                    "to global variables.  For access to information within the calling",
+                    "script, and to return information back to the calling script either",
+                    "global variables or parameters can be used.",
+                    "",
+                    "Parameters are defined by placing legal variable names following the",
+                    "subroutine name on the @SUB line.  An example is:",
+                    "",
+                    "      @SUB DO_STUFF a b",
+                    "",
+                    "This defines a subroutine that takes 2 positional parameters.  By",
+                    "default they are integers, and they are passed by value (that is",
+                    "any changes to their values are not passed back to the calling",
+                    "routine.",
+                    "",
+                    "This subroutine cound be called using a script as follows:",
+                    "",
+                    "      CALL:DO_IT 42 var2",
+                    "",
+                    "Because the the parameters are passed by value, constants or variables",
+                    "can be used in the call.  In this case, in the subroutine, the local",
+                    "variable `a` would have the value 42, and the local variable `b`",
+                    "would be set to the value of the variable `var2` from the calling",
+                    "script.",
+                    "",
+                    "Parameters can also be defined with special modifiers that change this",
+                    "default behaviour.  One way of applying these modifiers to parameters",
+                    "is by following the parameter name with a `+` followed by the modifiers.",
+                    "",
+                    "The modifiers are:",
+                    "      `%` or `I` - defines the variable as an integer number",
+                    "      `#` or `F` - defines the variable as a float or real number",
+                    "      `$` or `S` - defines the variable as a string",
+                    "      `!` or `B` - defines the variable as a boolean (not fully implemented)",
+                    "      `K`        - defines the variable as a key (not fully implemented)",
+                    "      `-` or `O` - defines the variable as optional",
+                    "      `@` or `R` - defines the variable as call by reference (more later)",
+                    "",
+                    "An example using these modifiers is as follows:",
+                    "",
+                    "      @SUB DO_MORE a+I b+FO c+R$",
+                    "",
+                    "These parameters are:",
+                    "",
+                    "      a+I        - the parameter `a` that is an integer (and required)",
+                    "      b+FO       - the parameter `b` that is an optional floating point",
+                    "      c+R$       - a required call-by reference string variable `c`",
+                    "",
+                    "Valid calls to this subroutine are as follows:",
+                    "",
+                    "      CALL:DO_MORE 12",
+                    "      CALL:DO_MORE x 12.5 line",
+                    "",
+                    "The first call passes the required first parameter, but not the second",
+                    "optional parameter.  Because the second parameter was not passed, no",
+                    "more paramters are required.  The subroutine would see the variable `a`",
+                    "have the value 12, the variable `b`, 0.0, and the variable `c` would be",
+                    "a blank string.  Attempts to change the value of `c` would succeed, but",
+                    "no variable in the calling routine would be affected.",
+                    "",
+                    "The second call passes the required first parameter (a variable this",
+                    "time), a value of 12.5 for the second parameter, and the variable",
+                    "`line` as the final required parameter.  Because the second (optional)",
+                    "parameter was passed, the next parameter (being required) was mandatory.",
+                    "Within the subroutine, `a` would have the value of `x` in the calling",
+                    "routine, `b` would have the value of 12.5, and `c` would have the value",
+                    "of the variable `line` in the calling routine.  Changing the value of",
+                    "`c` will also change the value of `line` in the calling routine.",
+                    "",
+                    "This method of applying modifiers to variables can be simplified for all",
+                    "modifiers that are not permitted in variable names.  These can also be",
+                    "placed before or after the parameter name the following functionally",
+                    "identical subroutine definition:",
+                    "",
+                    "      @SUB DO_MORE a% -b# @c$",
+                    "",
+                    "Subroutines are placed in text files and loaded using the Subroutine|Load",
+                    "menu option.  Note that multiple subroutines can be placed in a single",
+                    "file.  In this case they must be separated by a line consisting of `===`.",
+                    "",
+                    "Subroutines can call other subroutines and can probably be called",
+                    "recursively.  A script will fail to load if it depends on a subroutine",
+                    "that is not present.  Similarly, subroutines that depend on other",
+                    "subroutines will fail to load if those subroutines are not available.",
+                    "",
+                    "During execution of a subroutine the command RETURN will immediately",
+                    "return control to the calling script or subroutine.  The commands END",
+                    "and ABORT will stop execution immediately without returning to the caller.",
+                    "",
+                    "Parameter names follow the same rules as variable names.  They must satart",
+                    "with an alpha character, and may then be followed by any number of",
+                    "alpha-numeric characters and underscores (`_`)."]
+                     
 
     # process for a subroutine handles parameter passing and then passes off the process to the script in a "dummy" button
     def Process(self, btn, idx, split_line):
@@ -156,12 +272,14 @@ def Get_Name_And_Params(lines, sub_n, fname):
         if p >= 0:
             mods += var[p+1:]
             var = var[:p]
-        elif not variables.valid_var_name(var): # if there's no '+', look for trailing modifiers without one
+        
+        if not variables.valid_var_name(var): # if there's no '+', look for trailing modifiers without one
             l = len(var)
             while l > 1:
-                if variables.valid_var_name(var[:l-1]):
-                    mods += var[l:]
-                    var = var[:l-1]
+                if not variables.valid_var_name(var):
+                    mods += var[-1]
+                    var = var[:-1]
+                else:
                     break
                 l -= 1
 

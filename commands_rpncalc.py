@@ -699,6 +699,24 @@ class Rpn_Set(command_base.Command_Basic):
 scripts.Add_command(Rpn_Set())  # register the command
 
 
+# constants for RPN_CLEAR
+RC_GLOBALS = "GLOBALS"
+RC_LOCALS = "LOCALS"
+RC_GLOBAL = "GLOBAL"
+RC_LOCAL = "LOCAL"
+RC_STACK = "STACK"
+RC_VARS = "VARS"
+RC_VAR = "VAR"
+RC_ALL = "ALL"
+
+RCG_GLOBAL = [RC_GLOBALS, RC_VARS, RC_ALL]
+RCG_LOCAL = [RC_LOCALS, RC_VARS, RC_ALL]
+RCG_STACK = [RC_STACK, RC_ALL]
+RCG_G_VAR = [RC_GLOBAL, RC_VAR]
+RCG_L_VAR = [RC_LOCAL, RC_VAR]
+RCG_ANY_VAR = [RC_GLOBAL, RC_LOCAL, RC_VAR]
+RCG_ALL = [RC_ALL, RC_VARS, RC_GLOBALS, RC_LOCALS, RC_VAR, RC_GLOBAL, RC_LOCAL, RC_STACK]
+
 # ##################################################
 # ### CLASS RPN_CLEAR                            ###
 # ##################################################
@@ -712,9 +730,9 @@ class Rpn_Clear(command_base.Command_Basic):
         super().__init__("RPN_CLEAR, Clear variables or stack",
             LIB,
             (
-            # Desc         Opt    Var       type     p1_val                      p2_val
-            ("Function",   False, AVV_NO,   PT_STR,  None,                       None),
-            ("Variable",   True,  AVV_REQD, PT_STRS, None,                       None),
+            # Desc         Opt    Var       type      p1_val                      p2_val
+            ("Function",   False, AVV_NO,   PT_WORD,  None,                       None),
+            ("Variable",   True,  AVV_NO,   PT_WORDS, None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -723,33 +741,44 @@ class Rpn_Clear(command_base.Command_Basic):
             ) )
         
         self.doc= ["If parameter 1 is:",
-                   "     'GLOBALS'                All the global variables are cleared",
-                   "     'LOCALS'                 All the local variables are cleared",
-                   "     'VARS'                   All variables are cleared",
-                   "     'STACK'                  The stack is cleared",
-                   "     'ALL'                    All variables and the stack are cleared",
-                   "     'GLOBAL' v1 [v2 [v3...]] Named global variables v1... are deleted",
-                   "     'LOCAL' v1 [v2 [v3...]]  Named local variables v1... are deleted",
-                   "     'VAR' v1 [v2 [v3...]]    Named variables v1... are deleted"]
+                   f"     '{RC_GLOBALS}'                All the global variables are cleared",
+                   f"     '{RC_LOCALS}'                 All the local variables are cleared",
+                   f"     '{RC_VARS}'                   All variables are cleared",
+                   f"     '{RC_STACK}'                  The stack is cleared",
+                   f"     '{RC_ALL}'                    All variables and the stack are cleared",
+                   f"     '{RC_GLOBAL}' v1 [v2 [v3...]] Named global variables v1... are deleted",
+                   f"     '{RC_LOCAL}' v1 [v2 [v3...]]  Named local variables v1... are deleted",
+                   f"     '{RC_VAR}' v1 [v2 [v3...]]    Named variables v1... are deleted"]
 
 
     def Process(self, btn, idx, split_line):
         f = (self.Get_param(btn, 1)).upper()
 
-        if f in ["GLOBALS", "VARS", "ALL"]:
+        if f in RCG_GLOBAL:
             with btn.symbols[SYM_GLOBAL][0]:
                 btn.symbols[SYM_GLOBAL][1].clear()    # clear all global variables
-        if f in ["LOCALS", "VARS", "ALL"]:
+        if f in RCG_LOCAL:
             btn.symbols[SYM_LOCAL].clear()            # clear all local variables
-        if f in ["STACK", "ALL"]:
+        if f in RCG_STACK:
             btn.symbols[SYM_STACK].clear()            # clear the stack
-        if f in ["GLOBAL", "VAR"]:
+        if f in RCG_G_VAR:
             for i in range(2, self.Param_count(btn)+1):
                 with btn.symbols[SYM_GLOBAL][0]:
-                    variables.undef(split_line[i], btn.symbols[SYM_GLOBAL][1])
-        if f in ["LOCAL", "VAR"]:
+                    variables.undef(self.Get_param(btn, i), btn.symbols[SYM_GLOBAL][1])
+        if f in RCG_L_VAR:
             for i in range(2, self.Param_count(btn)+1):
-                variables.undef(split_line[i], btn.symbols[SYM_LOCAL])
+                variables.undef(self.Get_param(btn, i), btn.symbols[SYM_LOCAL])
+
+
+    def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
+        ret = super().Partial_validate_step_pass_1(ret, btn, idx, split_line)     # perform the original pass 1 validation
+
+        if ret == None or ((type(ret) == bool) and ret):                          # if the original validation hasn't raised an error
+            if not split_line[1] in RCG_ALL:                                      # invalid subcommand 
+                c_ok = ', '.join(RCG_ALL[:-1]) + ', or ' + RCG_ALL[-1]
+                s_err = f"Invalid subcommand {split_line[1]} when expecting {c_ok}."
+                return (s_err, btn.Line(idx))
+        return ret
 
 
 scripts.Add_command(Rpn_Clear())  # register the command

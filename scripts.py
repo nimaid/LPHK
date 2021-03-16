@@ -800,6 +800,19 @@ def Copy(x1, y1, x2, y2):
     files.layout_changed_since_load = True   # Flag the layout as changed
 
 
+# Delete a button
+def Del(x1, y1, x2, y2):
+    global buttons
+    
+    if x1 != x2 or y1 != y2:
+        return
+
+    Unbind(x2, y2)                           # Unbind the destination
+    lp_colors.updateXY(x2, y2)               # Update the colours
+
+    files.layout_changed_since_load = True   # Flag the layout as changed
+
+
 # move a button
 def Move(x1, y1, x2, y2):
     global buttons

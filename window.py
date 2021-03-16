@@ -394,6 +394,8 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                 elif self.button_mode == LM_SWAP:
                     self.button_mode = LM_COPY
                 elif self.button_mode == LM_COPY:
+                    self.button_mode = LM_DEL
+                elif self.button_mode == LM_DEL:
                     self.button_mode = LM_RUN
                 else:
                     self.button_mode = LM_EDIT
@@ -416,6 +418,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                         move_func = partial(scripts.Move, self.last_clicked[0], self.last_clicked[1], column, row)
                         swap_func = partial(scripts.Swap, self.last_clicked[0], self.last_clicked[1], column, row)
                         copy_func = partial(scripts.Copy, self.last_clicked[0], self.last_clicked[1], column, row)
+                        del_func = partial(scripts.Del, self.last_clicked[0], self.last_clicked[1], column, row)
 
                         if self.button_mode == LM_MOVE:
                             if scripts.Is_bound(column, row) and ((self.last_clicked) != (column, row)):
@@ -427,6 +430,11 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                                 self.popup_choice(self, "Button Already Bound", self.warning_image, "You are attempting to copy a button to an already\nbound button. What would you like to do?", [["Overwrite", copy_func], ["Swap", swap_func], ["Cancel", None]])
                             else:
                                 copy_func()
+                        elif self.button_mode == LM_DEL:
+                            if ((self.last_clicked) != (column, row)):
+                                self.popup_choice(self, "Please confirm to delete", self.warning_image, "You must click twice on the same button to delete it.", [["OK", None]])
+                            elif scripts.Is_bound(column, row):
+                                self.popup_choice(self, "Last chance!", self.warning_image, "Do you really want to delete this button.", [["No", None], ["Yes", del_func()]])
                         elif self.button_mode == LM_SWAP:
                             swap_func()
                         self.last_clicked = None
@@ -564,6 +572,12 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                 if lp_connected:
                     app.stat["text"] = f"Running as {lpcon().get_display_name(lp_object)}"
                     app.stat["bg"] = STAT_RUN_COLOR
+            elif self.button_mode == LM_DEL:
+                self.c.itemconfig(self.grid_rects[8][0][0], fill="yellow")
+                self.c.itemconfig(self.grid_rects[8][0][1], fill="red", text=self.button_mode.capitalize())
+                if lp_connected:
+                    app.stat["text"] = f"Running as {lpcon().get_display_name(lp_object)}"
+                    app.stat["bg"] = STAT_ACTIVE_COLOR
             else:
                 self.c.itemconfig(self.grid_rects[8][0][0], fill=self.c["background"])
                 self.c.itemconfig(self.grid_rects[8][0][1], fill="black", text=self.button_mode.capitalize())

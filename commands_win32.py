@@ -364,7 +364,7 @@ class Win32_Similar_Hwnd(Command_Win32):
 
         data = {'title':title, 'hwnds':hwnds}                  # data structure to be used by the callback routine
         win32gui.EnumWindows(CheckWindow, data)                # enumerate windows
-        
+
         hwnds = data['hwnds']                                  # this is now probably in front to back order
         hwnds.sort()                                           # helps to ensure we get the windows in the same order.  (creation?)
 
@@ -418,7 +418,6 @@ class Win32_Minimise_Hwnd(Command_Win32):
             if win32gui.IsWindowVisible(hwnd) and win32gui.GetWindowText(hwnd) != '':
                 if data[1] == SENTINEL:                        # if no window specified
                     if hwnd != data[0]:                        # is it not LPHK?
-                        print(' 2', hwnd, data[0], win32gui.GetWindowText(hwnd))#@@@
                         self.minimise_window(hwnd)
                 else:
                     if hwnd == data[1]:                        # does it match?
@@ -489,14 +488,16 @@ class Win32_Copy(Command_Win32):
             ) )
 
     def Process(self, btn, idx, split_line):
-
         hwnd = win32gui.GetForegroundWindow()                  # get the current window
 
         try:                                                   # clear the clipboard
             win32clipboard.OpenClipboard(hwnd)
             win32clipboard.EmptyClipboard()
         finally:
-            win32clipboard.CloseClipboard()
+            try:
+                win32clipboard.CloseClipboard()
+            except:
+                pass                                           # we don't care if the clipboard wasn't opened!
 
         try:                                                   # do the keyboard stuff for copy (sending a WM_COPY message does not always work)
             kb.press(kb.sp('ctrl'))
@@ -504,13 +505,18 @@ class Win32_Copy(Command_Win32):
         finally:
             kb.release(kb.sp('ctrl'))
 
+        import pyperclip                                       # pyperclip is cross-platform (better than using windows specific code)
+
+        w = 0
+        t = ''
+        while t == '' and w < 1:                               # we often have to wait for the text to appear in the clipboard
+            btn.Safe_sleep(DELAY_EXIT_CHECK)
+            w += DELAY_EXIT_CHECK
+            t = pyperclip.paste()
+
         if self.Param_count(btn) > 0:                          # save to variable if required
-            try:
-                win32clipboard.OpenClipboard(hwnd)
-                t = win32clipboard.GetClipboardData(win32con.CF_TEXT)
-                self.Set_param(btn, 1, t)
-            finally:
-                win32clipboard.CloseClipboard()
+            t = t.rstrip('\r\n')                               # remove any line terminators
+            self.Set_param(btn, 1, t)
 
 
 scripts.Add_command(Win32_Copy())  # register the command
