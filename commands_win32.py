@@ -526,7 +526,7 @@ scripts.Add_command(Win32_Copy())  # register the command
 # ### CLASS W_PASTE                              ###
 # ##################################################
 
-# class that defines the W_Paste command - copies and places (optionally) text into variable
+# class that defines the W_Paste command - paste from a variable or clipboard
 class Win32_Paste(Command_Win32):
     def __init__(
         self,
@@ -551,10 +551,12 @@ class Win32_Paste(Command_Win32):
 
             c = self.Get_param(btn, 1)                         # get the value
             try:
-                win32clipboard.OpenClipboard(hwnd)
+                win32clipboard.OpenClipboard()
                 win32clipboard.EmptyClipboard()                # clear the clipboard first (because that makes it work)
                 win32clipboard.SetClipboardText(str(c))        # and put the string in the clipboard
             finally:
+                import traceback
+                traceback.print_exc()
                 win32clipboard.CloseClipboard()
 
         # win32api.SendMessage(hwnd, win32con.WM_PASTE, 0, 0)  # do a paste

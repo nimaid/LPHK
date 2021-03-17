@@ -174,10 +174,61 @@ class Control_Flow_Basic(command_base.Command_Basic):
         btn.symbols[SYM_ORIGINAL][idx] = int(split_line[2])-1
         self.Reset(btn, idx)
 
+    # do our best to make a and b comparable
+    def Comparable(self, a, b):
+
+        def either_is(a, b, c_type):
+            return type(a) == c_type or type(b) == c_type
+
+        if isinstance(a, type(b)) or isinstance(b, type(a)):           # probably comparable
+            return a, b
+
+        if either_is(a, b, str):
+            if either_is(a, b, int):
+                try:
+                    return int(a), int(b)
+                except:
+                    None
+
+                try:
+                    return float(a), float(b)
+                except:
+                    None
+
+                try:
+                    return str(a), str(b)
+                except:
+                    None
+            elif either_is(a, b, float):
+                try:
+                    return float(a), float(b)
+                except:
+                    None
+
+                try:
+                    return str(a), str(b)
+                except:
+                    None
+        elif either_is(a, b, float):
+            if either_is(a, b, int):
+                pass
+            else:
+                try:
+                    return float(a), float(b)
+                except:
+                    None
+
+                try:
+                    return str(a), str(b)
+                except:
+                    None
+        return a, b
 
     def a_eq_b(self, btn):
         a = self.Get_param(btn, 2)
         b = self.Get_param(btn, 3)
+
+        a, b = self.Comparable(a, b)   # try our best to make a and b comparable
 
         try:
             if a == b:
@@ -191,6 +242,8 @@ class Control_Flow_Basic(command_base.Command_Basic):
         a = self.Get_param(btn, 2)
         b = self.Get_param(btn, 3)
 
+        a, b = self.Comparable(a, b)   # try our best to make a and b comparable
+
         try:
             if a != b:
                 return True
@@ -202,6 +255,8 @@ class Control_Flow_Basic(command_base.Command_Basic):
     def a_gt_b(self, btn):
         a = self.Get_param(btn, 2)
         b = self.Get_param(btn, 3)
+
+        a, b = self.Comparable(a, b)   # try our best to make a and b comparable
 
         try:
             if a > b:
@@ -215,6 +270,8 @@ class Control_Flow_Basic(command_base.Command_Basic):
         a = self.Get_param(btn, 2)
         b = self.Get_param(btn, 3)
 
+        a, b = self.Comparable(a, b)   # try our best to make a and b comparable
+
         try:
             if a < b:
                 return True
@@ -227,6 +284,8 @@ class Control_Flow_Basic(command_base.Command_Basic):
         a = self.Get_param(btn, 2)
         b = self.Get_param(btn, 3)
 
+        a, b = self.Comparable(a, b)   # try our best to make a and b comparable
+
         try:
             if a >= b:
                 return True
@@ -238,6 +297,8 @@ class Control_Flow_Basic(command_base.Command_Basic):
     def a_le_b(self, btn):
         a = self.Get_param(btn, 2)
         b = self.Get_param(btn, 3)
+
+        a, b = self.Comparable(a, b)   # try our best to make a and b comparable
 
         try:
             if a <= b:
@@ -289,8 +350,8 @@ class Control_If_Eq_Goto(Control_Flow_Basic):
             (
             # Desc         Opt    Var     type      p1_val  p2_val
             ("Label",      False, AVV_NO, PT_LABEL, None,   None),
-            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
-            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ("A",          False, AVV_YES,PT_ANY,   None,   None), # a and b can be anything!
+            ("B",          False, AVV_YES,PT_ANY,   None,   None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -320,8 +381,8 @@ class Control_If_Ne_Goto(Control_Flow_Basic):
             (
             # Desc         Opt    Var     type      p1_val  p2_val
             ("Label",      False, AVV_NO, PT_LABEL, None,   None),
-            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
-            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ("A",          False, AVV_YES,PT_ANY,   None,   None),
+            ("B",          False, AVV_YES,PT_ANY,   None,   None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -351,8 +412,8 @@ class Control_If_Gt_Goto(Control_Flow_Basic):
             (
             # Desc         Opt    Var     type      p1_val  p2_val
             ("Label",      False, AVV_NO, PT_LABEL, None,   None),
-            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
-            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ("A",          False, AVV_YES,PT_ANY,   None,   None),
+            ("B",          False, AVV_YES,PT_ANY,   None,   None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -382,8 +443,8 @@ class Control_If_Ge_Goto(Control_Flow_Basic):
             (
             # Desc         Opt    Var     type      p1_val  p2_val
             ("Label",      False, AVV_NO, PT_LABEL, None,   None),
-            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
-            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ("A",          False, AVV_YES,PT_ANY,   None,   None), #@@@ this splits strings!!!!! (it shouldn't)
+            ("B",          False, AVV_YES,PT_ANY,   None,   None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -413,8 +474,8 @@ class Control_If_Lt_Goto(Control_Flow_Basic):
             (
             # Desc         Opt    Var     type      p1_val  p2_val
             ("Label",      False, AVV_NO, PT_LABEL, None,   None),
-            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
-            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ("A",          False, AVV_YES,PT_ANY,   None,   None),
+            ("B",          False, AVV_YES,PT_ANY,   None,   None),
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -444,8 +505,8 @@ class Control_If_Le_Goto(Control_Flow_Basic):
             (
             # Desc         Opt    Var     type      p1_val  p2_val
             ("Label",      False, AVV_NO, PT_LABEL, None,   None),
-            ("A",          False, AVV_YES,PT_FLOAT, None,   None), #@@@ I want to define a PT_ANY that will accept any variable type
-            ("B",          False, AVV_YES,PT_FLOAT, None,   None),
+            ("A",          False, AVV_YES,PT_ANY,   None,   None),
+            ("B",          False, AVV_YES,PT_ANY,   None,   None),
             ),
             (
             # num params, format string                           (trailing comma is important)

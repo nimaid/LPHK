@@ -343,13 +343,14 @@ class Button():
            return False
 
         if self.thread.kill.is_set():
-            print("[scripts] " + self.coords + " Recieved exit flag, script exiting...")
-            #self.thread.kill.clear()
-            if not self.is_async:
-                self.running(False)
-            if killfunc:
-                killfunc()
-            threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (self.x, self.y)).start()
+            if self.running():                 # now we don't clear this, we need to ignore multiple reports
+                print("[scripts] " + self.coords + " Recieved exit flag, script exiting...")
+                #self.thread.kill.clear()
+                if not self.is_async:
+                    self.running(False)
+                if killfunc:
+                    killfunc()
+                threading.Timer(EXIT_UPDATE_DELAY, lp_colors.updateXY, (self.x, self.y)).start()
             return True
         else:
             return False
@@ -516,7 +517,8 @@ class Button():
 
                         desc = av[AV_TYPE][AVT_DESC]      # get the description of the parameter type (not the description of the parameter!)
 
-                        if (desc == PT_STR[AVT_DESC]) or (desc == PT_STRS[AVT_DESC]):   # Is this one that wants quoted strings?
+                        if (desc == PT_STR[AVT_DESC]) or (desc == PT_STRS[AVT_DESC]) or \
+                           (desc == PT_ANY[AVT_DESC]):                                  # Is this one that wants quoted strings?
                             if pline[0] in ['"', "'", '`']:                             # if so, does it start with an acceptable quote?
                                if av[AV_VAR_OK] == AVV_REQD:                            # it's a problem if a variable is required
                                    return ('Error, quoted string not permitted for param #' + str(n+1), line) # literal not expected
@@ -531,7 +533,11 @@ class Button():
                                     param = pline.split()[0]                            # then that's OK, just strip off an un-quoted string
                                     pline = pline[len(param):].strip()                  # and clean up the line (@@@ why not use strip1()??)
                                     if not variables.valid_var_name(param):             # but check it's a valid variable name
-                                        return ('Error in variable for param #' + str(n+1), line) # if it's not a string and not a variable...
+                                        if desc == PT_ANY[AVT_DESC]:                    # PT_ANY will accept non-variables as strings
+                                            sline += [param]                            # we'll add it as the parameter value.  Note we don't add a leading " 
+                                                                                        # because we can try to interpret it as numeric later on
+                                        else:
+                                            return ('Error in variable for param #' + str(n+1), line) # if it's not a string and not a variable...
                                     else:
                                         sline += [param]                                # add it to the list of parameters if it's OK
                                 else:

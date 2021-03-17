@@ -14,20 +14,19 @@ R_PARAM = 3     # dialog parameters (title, message)
 class Dialog(tk.Toplevel):
 
     def __init__(self, parent, title=None, message=None, ok=False, cancel=False):
-    
         tk.Toplevel.__init__(self, parent)
-        
+
         self.transient(parent)
-        
+
         if title:
             self.title(title)
-            
+
         self.parent = parent
         self.result = None
-        
+
         body = tk.Frame(self)
         body.pack(ipadx=2, ipady=2)
-        
+
         if message:
             message = message.replace("\\n", "\n")    # allow the manual splitting of lines.
             msg = tk.Label(body, text=message, wraplength=350, justify="center")
@@ -35,14 +34,14 @@ class Dialog(tk.Toplevel):
 
         foot = tk.Frame(body)
         foot.pack(padx=4, pady=4)
-        
+
         if ok:
             b1 = tk.Button(foot, text="OK", width=8, command=self.btn_OK)
             b1.pack(side='left', padx=5)
         if cancel:
             b2 = tk.Button(foot, text="Cancel", width=8, command=self.btn_Cancel)
             b2.pack(side='left', padx=5)
-        #b1.focus_set()
+
         self.geometry("+%d+%d" % (parent.winfo_rootx()+50,
                                   parent.winfo_rooty()+50))
 
@@ -207,12 +206,13 @@ def IdleProcess(parent):
                     DIALOG_OBJECT.state()                      # Raises an exception if the window is closed
                 except:
                     DIALOG_ACTIVE = False
-                    CloseDialog()                              # act to close the dialog
+                    CloseDialog(parent)                        # act to close the dialog
+
 
             if DIALOG_ACTIVE:                                  # if there is a dialog
 
                 if DIALOG_BUTTON.root.thread.kill.is_set():    # has the controlling button been killed?
-                    CloseDialog()                              # act to close the dialog
+                    CloseDialog(parent)                        # act to close the dialog
 
             else:                                              # there is no dialog open
 
@@ -225,7 +225,7 @@ def IdleProcess(parent):
 
 
 # Close any open dialog
-def CloseDialog():
+def CloseDialog(parent):
     global DIALOG_ACTIVE
     global DIALOG_BUTTON
     global DIALOG_REQUEST
@@ -236,7 +236,9 @@ def CloseDialog():
     if DIALOG_OBJECT:
         DIALOG_OBJECT.destroy()
     DIALOG_REQUEST[R_CALLBACK]((True, DIALOG_RETURN))          # and return success, and the return info from the dialog
-    
+
+    parent.master.attributes("-topmost", False)                # No need to be topmost any more
+
     DIALOG_OBJECT = None
     DIALOG_ACTIVE = False                                      # no dialog open
     DIALOG_BUTTON = None                                       # no button
@@ -263,4 +265,7 @@ def OpenDialog(parent, request):
         DIALOG_OBJECT = Dialog(parent, request[R_PARAM][0], request[R_PARAM][1], ok=True, cancel=True)
     elif request[R_TYPE] == DLG_ERROR:
         DIALOG_OBJECT = Dialog(parent, request[R_PARAM][0], request[R_PARAM][1], cancel=True)
+        
+    parent.master.attributes("-topmost", True)                 # bring parent right to the top so we can see the dialog and so it's never obscured
+
 

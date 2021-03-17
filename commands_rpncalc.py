@@ -178,6 +178,7 @@ class Rpn_Eval(command_base.Command_Basic):
         self.operators["?G"]     = (self.is_global_def,     1) # is global var defined
         self.operators["!?G"]    = (self.is_global_not_def, 1) # is global var not defined
         self.operators["ABORT"]  = (self.abort_script,      0) # abort the script (not just the rpn calc)
+        self.operators["SUBSTR"] = (self.substr,            0) # x gets str(z)[x:y]
 
 
     def add(self,
@@ -663,6 +664,15 @@ class Rpn_Eval(command_base.Command_Basic):
         return False
 
 
+    def substr(self, symbols, cmd, cmds):
+        # does a substring
+        x = variables.pop(symbols)
+        y = variables.pop(symbols)
+        z = variables.pop(symbols)
+
+        variables.push(symbols, str(z)[x:y])
+
+
 scripts.Add_command(Rpn_Eval())  # register the command
 
 
@@ -721,7 +731,7 @@ RCG_ALL = [RC_ALL, RC_VARS, RC_GLOBALS, RC_LOCALS, RC_VAR, RC_GLOBAL, RC_LOCAL, 
 # ### CLASS RPN_CLEAR                            ###
 # ##################################################
 
-# class that defines the RPN_CLEAR command -- clears variables @@@ needs validation!!!
+# class that defines the RPN_CLEAR command -- clears variables
 class Rpn_Clear(command_base.Command_Basic):
     def __init__(
         self,
@@ -739,7 +749,7 @@ class Rpn_Clear(command_base.Command_Basic):
             (1,           "    Clear {1}"),
             (2,           "    Clear {1}: {2}"),
             ) )
-        
+
         self.doc= ["If parameter 1 is:",
                    f"     '{RC_GLOBALS}'                All the global variables are cleared",
                    f"     '{RC_LOCALS}'                 All the local variables are cleared",
@@ -774,7 +784,7 @@ class Rpn_Clear(command_base.Command_Basic):
         ret = super().Partial_validate_step_pass_1(ret, btn, idx, split_line)     # perform the original pass 1 validation
 
         if ret == None or ((type(ret) == bool) and ret):                          # if the original validation hasn't raised an error
-            if not split_line[1] in RCG_ALL:                                      # invalid subcommand 
+            if not split_line[1] in RCG_ALL:                                      # invalid subcommand
                 c_ok = ', '.join(RCG_ALL[:-1]) + ', or ' + RCG_ALL[-1]
                 s_err = f"Invalid subcommand {split_line[1]} when expecting {c_ok}."
                 return (s_err, btn.Line(idx))

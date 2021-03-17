@@ -60,7 +60,7 @@ def get(name, l_vbls, g_vbls, default=param_convs._None):
         return l_vbls[name]
     if is_defined(name, g_vbls):    # then the global one
         return g_vbls[name]
-    return default(None)                  # return default value (rather than always 0)
+    return default(None)            # return default value (rather than always 0)
     # raise Exception("Variable not found")
 
 

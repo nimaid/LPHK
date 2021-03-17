@@ -562,6 +562,7 @@ class Command_Basic:
            param = None
         else:
            param = btn.symbols[SYM_PARAMS][n]
+
         if param == None:
             ret = other
         else:

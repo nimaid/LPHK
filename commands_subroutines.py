@@ -118,13 +118,16 @@ class Subroutine(command_base.Command_Basic):
                     "is by following the parameter name with a `+` followed by the modifiers.",
                     "",
                     "The modifiers are:",
-                    "      `%` or `I` - defines the variable as an integer number",
+                    "      `%` or `I` - defines the variable as an integer number (default)",
                     "      `#` or `F` - defines the variable as a float or real number",
                     "      `$` or `S` - defines the variable as a string",
                     "      `!` or `B` - defines the variable as a boolean (not fully implemented)",
+                    "      `&` or `J` - defines the variable as an object",
                     "      `K`        - defines the variable as a key (not fully implemented)",
                     "      `-` or `O` - defines the variable as optional",
+                    "             `M` - defines the variable as mandatory (default)",
                     "      `@` or `R` - defines the variable as call by reference (more later)",
+                    "             `V` - defines the variable as call by value (default)",
                     "",
                     "An example using these modifiers is as follows:",
                     "",
@@ -218,9 +221,9 @@ class Subroutine(command_base.Command_Basic):
             raise
 
 
-MOD_TRANS = str.maketrans('-%#$!@', 'OIFSBR')            # standardise the modifiers
-MOD_CONSOLIDATE = str.maketrans('MOIFSBRV', 'MMIIIIVV')  # consoidate the modifiers
-VALID_CONSOLIDATED = {"M", "I", "V"}                     # set of all valid consolidate modifiers
+MOD_TRANS = str.maketrans('-%#$!&@', 'OIFSBJR')            # standardise the modifiers
+MOD_CONSOLIDATE = str.maketrans('MOIFSBJRV', 'MMIIIIIVV')  # consoidate the modifiers
+VALID_CONSOLIDATED = {"M", "I", "V"}                       # set of all valid consolidate modifiers
 
 
 def Get_Name_And_Params(lines, sub_n, fname):
@@ -321,6 +324,9 @@ def Get_Name_And_Params(lines, sub_n, fname):
                 return name, f'Error - Key cannot be passed by reference on line {lin_num+1} of subroutine "{name}" in "{fname}"', lin_num
         elif mods.find('B') >= 0:
             prm[3] = PT_BOOL          # parameter is a boolean
+        elif mods.find('J') >= 0:
+            prm[3] = PT_OBJ           # parameter is an object
+            prm[2] = AVV_REQD         # must be a variable
 
         params += (tuple(prm),)       # add a new parameter
 
