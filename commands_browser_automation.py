@@ -302,9 +302,9 @@ class Bauto_Get_Element(command_base.Command_Basic):
         ret = super().Partial_validate_step_pass_1(ret, btn, idx, split_line)     # perform the original pass 1 validation
 
         if ret == None or ((type(ret) == bool) and ret):                          # if the original validation hasn't raised an error
-            if not split_line[1] in BAGG_ALL:                                     # invalid subcommand
+            if not split_line[2] in BAGG_ALL:                                     # invalid subcommand
                 c_ok = ', '.join(BAGG_ALL[:-1]) + ', or ' + BAGG_ALL[-1]
-                s_err = f"Invalid subcommand {split_line[1]} when expecting {c_ok}."
+                s_err = f"Invalid subcommand {split_line[2]} when expecting {c_ok}."
                 return (s_err, btn.Line(idx))
         return ret
 
@@ -501,6 +501,12 @@ class Bauto_Click_Element(command_base.Command_Basic):
             (1,           "    Click on {1}"),
             ) )
 
+        self.doc = ["The first parameter `Element` is an element returned from a search.",
+                    "",
+                    "This method will click on that element.",
+                    "",
+                    "There is no return value."]
+
 
     def Process(self, btn, idx, split_line):
         element = self.Get_param(btn, 1)
@@ -510,12 +516,6 @@ class Bauto_Click_Element(command_base.Command_Basic):
 
         except:
             traceback.print_exc()
-
-        self.doc = ["The first parameter `Element` is an element returned from a search.",
-                    "",
-                    "This method will click on that element.",
-                    "",
-                    "There is no return value."]
 
 
 scripts.Add_command(Bauto_Click_Element())  # register the command
@@ -543,7 +543,13 @@ class Bauto_Send_Keys(command_base.Command_Basic):
             (1,           "    Click on {1}"),
             ) )
 
+        self.doc = ["The first parameter `Element` is an element returned from a search.",
+                    "",
+                    "This method will send text to that elementt.",
+                    "",
+                    "There is no return value."]
 
+                    
     def Process(self, btn, idx, split_line):
         element = self.Get_param(btn, 1)
         text = self.Get_param(btn, 2)
@@ -554,13 +560,52 @@ class Bauto_Send_Keys(command_base.Command_Basic):
         except:
             traceback.print_exc()
 
-        self.doc = ["The first parameter `Element` is an element returned from a search.",
-                    "",
-                    "This method will send text to that elementt.",
-                    "",
-                    "There is no return value."]
-
 
 scripts.Add_command(Bauto_Send_Keys())  # register the command
+
+
+# ##################################################
+# ### CLASS BAUTO_SHOW_ELEMENTS                  ###
+# ##################################################
+
+# class that defines the BA_SHOW_ELEMENTS command to dump elements inside the passed element
+class Bauto_ShowElements(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("BA_SHOW_ELEMENTS, Print the elements within the passed element",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("Element",    False, AVV_REQD, PT_OBJ,  None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (1,           "    Show elements in {1}"),
+            ) )
+
+
+    def Process(self, btn, idx, split_line):
+        element = self.Get_param(btn, 1)
+        text = self.Get_param(btn, 2)
+
+        try:
+            e = element
+            print(e)
+            try:
+                print(f"{0}:\n properties: {e.get_property('attributes')}\n text: {e.get_attribute('text')}\n content: {e.get_attribute('textContent')}")
+            except:
+                pass
+            es = element.find_elements(BAG_XPATH.lower().replace("_", " "), ".//*")
+            for i, e in enumerate(es):
+                print(f"{i+1}:\n properties: {e.get_property('attributes')}\n text: {e.get_attribute('text')}\n content: {e.get_attribute('textContent')}")
+            print(len(es))
+
+        except:
+            traceback.print_exc()
+
+
+scripts.Add_command(Bauto_ShowElements())  # register the command
 
 

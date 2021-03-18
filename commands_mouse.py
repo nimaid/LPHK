@@ -208,7 +208,6 @@ class Mouse_Line_Move(command_base.Command_Basic):
                     return -1
 
 
-
 scripts.Add_command(Mouse_Line_Move())  # register the command
 
 

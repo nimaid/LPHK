@@ -149,7 +149,7 @@ class External_Sound_Stop(command_base.Command_Basic):
         ):
 
         super().__init__(
-            "SOUND_STOP",   # the name of the command as you have to enter it in the code
+            "SOUND_STOP, Stop all sound",
             LIB,
             (
             # Desc         Opt    Var      type     p1_val                      p2_val
@@ -238,7 +238,7 @@ class External_Code_Nowait(command_base.Command_Basic):
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
             ("PID",        False, AVV_REQD, PT_INT,  None,                       None),   # variable to get PID of new process
-            ("Command",    False, AVV_NO,   PT_STRS, None,                       None),   # text of command
+            ("Command",    False, AVV_YES,  PT_STRS, None,                       None),   # text of command
             ),
             (
             # num params, format string                           (trailing comma is important)

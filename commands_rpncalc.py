@@ -670,7 +670,10 @@ class Rpn_Eval(command_base.Command_Basic):
         y = variables.pop(symbols)
         z = variables.pop(symbols)
 
-        variables.push(symbols, str(z)[x:y])
+        r = str(z)[y:x]
+        variables.push(symbols, r)
+
+        return 1
 
 
 scripts.Add_command(Rpn_Eval())  # register the command

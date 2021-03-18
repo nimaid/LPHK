@@ -15,7 +15,7 @@
           255,
           0
         ],
-        "text": "- Find the Logbook\n@NAME Find Note pad\nW_FIND_HWND \"Untitled - Notepad\" ml_hwnd n 1\nRPN_EVAL view_l"
+        "text": "- Find the Logbook\n@NAME Find Note pad\n@DESC this is an example of a description\nW_FIND_HWND \"Untitled - Notepad\" ml_hwnd n 1\nRPN_EVAL view_l"
       },
       {
         "color": [

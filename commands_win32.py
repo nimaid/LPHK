@@ -276,7 +276,7 @@ class Win32_Find_Hwnd(Command_Win32):
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
-            ("Title",      False, AVV_NO,   PT_STR,  None,                       None),   # name to search for
+            ("Title",      False, AVV_YES,  PT_STR,  None,                       None),   # name to search for
             ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
             ("M",          False, AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
             ("N",          False, AVV_YES,  PT_INT,  variables.Validate_gt_zero, None),   # number of match desired
@@ -336,10 +336,10 @@ class Win32_Similar_Hwnd(Command_Win32):
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
-            ("Title",      False, AVV_NO,   PT_STR,  None,                       None),   # name to search for
+            ("Title",      False, AVV_YES,  PT_STR,  None,                       None),   # name to search for
             ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
             ("M",          False, AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
-            ("N",          False, AVV_YES,  PT_INT,  variables.Validate_gt_zero, None),   # number of match desired
+            ("N",          False, AVV_YES,  PT_INT,  None, None),   # number of match desired  #@@@ variables.Validate_gt_zero make this work with variables!!!!!
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -491,7 +491,7 @@ class Win32_Copy(Command_Win32):
         hwnd = win32gui.GetForegroundWindow()                  # get the current window
 
         try:                                                   # clear the clipboard
-            win32clipboard.OpenClipboard(hwnd)
+            win32clipboard.OpenClipboard()
             win32clipboard.EmptyClipboard()
         finally:
             try:

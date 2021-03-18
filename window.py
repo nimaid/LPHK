@@ -116,6 +116,8 @@ class Main_Window(tk.Frame):
         self.last_clicked = None
         self.outline_box = None
         self._redraw = False
+        self.over_x = -1   # The button the user is over
+        self.over_y = -1
 
     def init_window(self):
         global root
@@ -165,12 +167,17 @@ class Main_Window(tk.Frame):
         c_gap = int(BUTTON_SIZE // 4)
 
         c_size = (BUTTON_SIZE * 9) + (c_gap * 9)
-        self.c = tk.Canvas(self, width=c_size, height=c_size)
+        self.c = tk.Canvas(self, width=c_size, height=c_size - c_gap//2)
+        self.c.bind("<Motion>", self.mouse_move)
         self.c.bind("<ButtonRelease-1>", self.click)
-        self.c.grid(row=0, column=0, padx=round(c_gap/2), pady=round(c_gap/2))
+        self.c.grid(row=0, column=0, padx=round(c_gap/2), pady=0)
+
+        self.desc = tk.Label(self, text="", fg="#000", height=2)
+        self.desc.grid(row=1, column=0, pady=0)
+        self.desc.config(font=("Courier", BUTTON_SIZE // 4, "bold"))
 
         self.stat = tk.Label(self, text="No Launchpad Connected", bg=STAT_INACTIVE_COLOR, fg="#fff")
-        self.stat.grid(row=1, column=0, sticky=tk.EW)
+        self.stat.grid(row=2, column=0, sticky=tk.EW, pady=0)
         self.stat.config(font=("Courier", BUTTON_SIZE // 3, "bold"))
 
     def redraw(self, x, y):
@@ -371,6 +378,26 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             files.save_lp_to_layout(files.curr_layout)
             files.load_layout_to_lp(files.curr_layout)
 
+    # the mouse has entered a button
+    def mouse_move(self, event):
+        gap = int(BUTTON_SIZE // 4)
+
+        x = min(8, int(event.x // (BUTTON_SIZE + gap)))
+        if event.x < (gap/2 + x * (BUTTON_SIZE + gap)) or event.x > (x+1) * (BUTTON_SIZE + gap) - gap/2 - 1:
+            x = -1 
+            y = -1
+        else:
+            y = min(8, int(event.y // (BUTTON_SIZE + gap)))
+            if event.y < (gap/2 + y * (BUTTON_SIZE + gap)) or event.y > (y+1) * (BUTTON_SIZE + gap) - gap/2 - 1:
+                y = -1
+                x = -1
+
+        #self.c.bind("<Motion>", self.mouse_move)
+        if x != self.over_x or y != self.over_y:
+            self.over_x = x
+            self.over_y = y
+            Redraw(x, y)
+
     def click(self, event):
         gap = int(BUTTON_SIZE // 4)
 
@@ -490,9 +517,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
         def text_y(y):
             return round((BUTTON_SIZE * y) + (gap * y) + (BUTTON_SIZE / 2) + (gap / 2))
 
-        def fmt(x, y, lines=3, cols=5):
-            t = scripts.buttons[x][y].name                   # get the text
-
+        def fmt_str(t, lines=2, cols=55):
             if len(t) <= cols:                               # if name is less than 5 characters
                 return t                                     # return it unchanged
 
@@ -521,9 +546,12 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             for i in range(len(tl)):                         # then add left padding to help formatting
                 l = len(tl[i])
                 if l < m:
-                    tl[i] = ' '*((m - l)//2) + tl[i]
+                    pass #tl[i] = ' '*((m - l)//2) + tl[i]
 
             return "\n".join(tl)                             # and return them with line separations between them
+
+        def fmt(x, y, lines=3, cols=5):
+            return fmt_str(scripts.buttons[x][y].name, lines, cols)
 
 
         if self.last_clicked != None:
@@ -564,6 +592,12 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                         if by == None or (by == y):
                             self.c.itemconfig(self.grid_rects[x][y][0], fill=get_colour(x, y))
                             self.c.itemconfig(self.grid_rects[x][y][1], text=fmt(x, y), fill=txt_col(x, y), font=txt_font(x, y))
+
+            if self.over_x != -1 and self.over_y != -1:
+                desc = fmt_str(scripts.buttons[self.over_x][self.over_y].desc)
+            else:
+                desc = ''
+            app.desc["text"] = desc
 
             global lp_object
             if self.button_mode == LM_RUN:

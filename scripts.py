@@ -796,7 +796,7 @@ def Copy(x1, y1, x2, y2):
 
     color_1 = lp_colors.curr_colors[x1][y1]  # Get colour of btn to be copied
 
-    script_1 = buttons[x1, y1].script_str    # Get script to be copied
+    script_1 = buttons[x1][y1].script_str    # Get script to be copied
 
     Unbind(x2, y2)                           # Unbind the destination
     if script_1 != "":                       # If we're copying a button with a script...
