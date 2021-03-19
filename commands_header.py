@@ -216,7 +216,7 @@ class Header_Name(command_base.Command_Header):
                     "using the `@SUB` header."]
 
 
-    # Dummy validate routine.  Simply says all is OK (unless you try to do it in a real button!)
+    # Dummy validate routine.  Simply says all is OK (unless you try to do it in a subroutine!)
     def Validate(
         self,
         btn,

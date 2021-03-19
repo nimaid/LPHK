@@ -181,13 +181,11 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
                         print("[files] Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.")
                     raise
                 if script_validation != True:
-                    lp_colors.update_all()
-                    window.Redraw(True)
-                    in_error = True
-                    window.app.save_script(window.app, x, y, script_text, open_editor = True, color = color)
-                    in_error = False
+                    btn.invalid_on_load = True
+                    color = [0, 0, 0]
                 else:
-                    scripts.Bind(x, y, btn, color)
+                    btn.invalid_on_load = False
+                scripts.Bind(x, y, btn, color)
             else:
                 lp_colors.setXY(x, y, color)
 
@@ -209,18 +207,76 @@ def load_subroutines_to_lp(name, popups=True, preload=None):
     with open(name, 'r') as in_subs:
        subs = in_subs.read().split('\n===\n')
 
+    loaded = []
+    not_loaded = []
+    s_tot = 0
+    s_ok = 0
+    s_fail = 0
     for i, sub in enumerate(subs):
-        load_subroutine(sub.splitlines(), i+1, name)
+        ok, name = load_subroutine(sub.splitlines(), i+1, name)
+        name = name[5:]
+        s_tot += 1
+        if ok:
+            s_ok += 1
+            loaded.append(name)
+        else:
+            s_fail += 1
+            not_loaded.append(name)
+
+    s_tot = len(loaded)
+    nl = '\n'
+
+    if s_fail > 0:
+        window.app.popup(window.app, "Subroutines loaded with errors", window.app.info_image, f"{s_fail} of {s_tot} subroutines not loaded due to errors:{nl}{nl}{nl.join(not_loaded)}", "OK")
+    elif s_ok > 0:
+        window.app.popup(window.app, "Subroutines loaded sucessfully", window.app.info_image, f"{s_tot} subroutines loaded sucessfully:{nl}{nl}{nl.join(loaded)}", "OK")
+    else:
+        window.app.popup(window.app, "Nothing to load", window.app.info_image, f"No subroutines found in file", "OK")
+
+    validate_all_buttons()
+    
+def validate_all_buttons():
+    b_tot = 0
+    b_ok = 0
+    b_fail = 0
+
+    for x in range(9):
+        for y in range(9):
+            btn = scripts.buttons[x][y]
+
+            if btn.script_str != "":
+                b_tot += 1
+                script_validation = None
+                try:
+                    script_validation = btn.Validate_script()
+                except:
+                    new_layout_func = lambda: window.app.unbind_lp(prompt_save = False)
+                    if popups:
+                        window.app.popup(window.app, "Script Validation Error", window.app.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK", end_command = new_layout_func)
+                    else:
+                        print("[files] Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.")
+                    raise
+                if script_validation != True:
+                    b_fail += 1
+                    btn.invalid_on_load = True
+                else:
+                    b_ok += 1
+                    btn.invalid_on_load = False
+
+    window.Redraw(True)
+
+    if b_fail > 0:
+        window.app.popup(window.app, "Buttons in disabled", window.app.info_image, f"{b_fail} of {b_tot} buttons disabled due to errors", "OK")
 
 # load a single subroutine
 def load_subroutine(sub, sub_n, fname):
     import commands_subroutines
-    ok, name, params = commands_subroutines.Add_Function(sub, sub_n, fname) # Attempt to load the command
+    ok, name, params, err = commands_subroutines.Add_Function(sub, sub_n, fname) # Attempt to load the command
 
-    if ok:
-        pass # @@@ there must be more to do! :-)
-    else:
-        pass # @@@ likewise
+    if err == None:
+        err = False
+
+    return err, name
 
 def import_script(name):
     with open(name, "r") as f:

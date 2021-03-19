@@ -101,7 +101,10 @@ def updateXY(x, y):
 
             #print("Update colors for (" + str(x) + ", " + str(y) + "), is_running = " + str(is_running))
 
-            if is_running:                                      # if the button is running
+            if btn.invalid_on_load:
+                set_color = scripts.COLOR_DISABLED              # disabled button due to script error
+                color_modes[x][y] = "solid"                 
+            elif is_running:                                    # if the button is running
                 set_color = scripts.COLOR_PRIMED                # set the desired colour
                 color_modes[x][y] = "flash"                     # and mode
             elif (x, y) in [l[1:] for l in scripts.to_run]:     # is it waiting to run?
@@ -136,7 +139,8 @@ def updateXY(x, y):
                     else:
                         lp_object.LedCtrlXYByCode(x, y, set_color)
     else:
-        print("[lp_colors] (" + str(x) + ", " + str(y) + ") Launchpad is disconnected, cannot update.")
+        pass
+        #print("[lp_colors] (" + str(x) + ", " + str(y) + ") Launchpad is disconnected, cannot update.")
 
 # update the colours of all buttons
 def update_all():

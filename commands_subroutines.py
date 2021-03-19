@@ -212,10 +212,10 @@ class Subroutine(command_base.Command_Basic):
                 self.Set_param(btn, n+1, pn)                     # and store it
 
 
-    # This is not the parse routine called for validation!  @@@ not used???
+    # This is not the parse routine called for validation! 
     def Parse_Sub(self):
         try:
-            script_validate = self.btn.Parse_script() #@@@ does not raise an error
+            return self.btn.Parse_script()                # return any error in validation
         except:
             self.popup(w, "Script Validation Error", self.error_image, "Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.", "OK")
             raise
@@ -335,11 +335,12 @@ def Get_Name_And_Params(lines, sub_n, fname):
 
 def Add_Function(lines, sub_n, fname):
     # This function is passed a list of lines.  The first non-comment line must define the header
+    err = None
 
     # first let's parse out the header to get the name and the parameters
     name, params, lin = Get_Name_And_Params(lines, sub_n, fname)
     if isinstance(params, str):
-        return False, name, params
+        return False, name, params, err
 
     NewCommand = Subroutine(name, params, lines)                # Create a new command object for this subroutine
 
@@ -356,11 +357,13 @@ def Add_Function(lines, sub_n, fname):
             print("[subroutines] Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.")
             raise
 
-        if script_validation != True:                           # if thre is an error in validation
-            if old_cmd:                                         # and there is a replaced command
-                scripts.Add_command(NewCommand)                 # put the old command back
-            pass # @@@ there must be more to do! :-) This is the error return
+        if isinstance(script_validation, bool) and script_validation:   # if validation is OK
+            err = True
         else:
-            pass # @@@ this is the success return.  There must be more to do!
+            if old_cmd:                                         # and there is a replaced command
+                scripts.Add_command(old_cmd)                    # put the old command back
+            else:
+                scripts.Remove_command(NewCommand.name)
+            err = False
 
-    return True, NewCommand.name, params
+    return True, NewCommand.name, params, err

@@ -461,7 +461,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                             if ((self.last_clicked) != (column, row)):
                                 self.popup_choice(self, "Please confirm to delete", self.warning_image, "You must click twice on the same button to delete it.", [["OK", None]])
                             elif scripts.Is_bound(column, row):
-                                self.popup_choice(self, "Last chance!", self.warning_image, "Do you really want to delete this button.", [["No", None], ["Yes", del_func()]])
+                                self.popup_choice(self, "Last chance!", self.warning_image, "Do you really want to delete this button.", [["No", None], ["Yes", del_func]])
                         elif self.button_mode == LM_SWAP:
                             swap_func()
                         self.last_clicked = None
@@ -484,7 +484,10 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
 
     def draw_canvas(self, bx=None, by=None):
         def get_colour(x, y):
-           if scripts.buttons[x][y].running():               # if the button is running
+           btn = scripts.buttons[x][y]
+           if btn.invalid_on_load:                           # invalid buttons
+               return "#000000"                              # black
+           if btn.running():                                 # if the button is running
                return "#FF0000"                              # make the button red
            return lp_colors.getXY_RGB(x, y)                  # otherwise, the normal colour
 
@@ -552,7 +555,28 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
 
         def fmt(x, y, lines=3, cols=5):
             return fmt_str(scripts.buttons[x][y].name, lines, cols)
+            
+        def mark_disabled(x, y):
+            if len(self.grid_rects[x][y]) != 4:                              # must have 4 values
+                return
+                
+            btn = scripts.buttons[x][y]                                      # get the button
+            
+            if not btn.invalid_on_load:                                      # is it valid?
+                if not self.grid_rects[x][y][2] == None:                     # if there's lines
+                    self.c.delete(self.grid_rects[x][y][2])                  # remove them
+                    self.c.delete(self.grid_rects[x][y][3])
+                    self.grid_rects[x][y][2] = None
+                    self.grid_rects[x][y][3] = None                    
+                return
+            elif self.grid_rects[x][y][2] == None:                           # otherwise, if no lines
+                x_start = round((BUTTON_SIZE * x) + (gap * x) + (gap / 2))   # calculate the end points and then draw them
+                y_start = round((BUTTON_SIZE * y) + (gap * y) + (gap / 2))
+                x_end = x_start + BUTTON_SIZE
+                y_end = y_start + BUTTON_SIZE
 
+                self.grid_rects[x][y][2] = self.c.create_line(x_start, y_start, x_end, y_end, width=3, fill='red')
+                self.grid_rects[x][y][3] = self.c.create_line(x_start, y_end, x_end, y_start, width=3, fill='red')
 
         if self.last_clicked != None:
             if self.outline_box == None:
@@ -578,6 +602,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                         y = 0
                         self.c.itemconfig(self.grid_rects[x][y][0], fill=get_colour(x, y))
                         self.c.itemconfig(self.grid_rects[x][y][1], text=fmt(x, y, 2, 3), fill=txt_col(x, y), font=txt_font(x, y, True))
+                        mark_disabled(x, y)
 
             if bx == None or (bx == 8):
                 for y in range(1, 9):
@@ -585,6 +610,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                         x = 8
                         self.c.itemconfig(self.grid_rects[x][y][0], fill=get_colour(x, y))
                         self.c.itemconfig(self.grid_rects[x][y][1], text=fmt(x, y, 2, 3), fill=txt_col(x, y), font=txt_font(x, y, True))
+                        mark_disabled(x, y)
 
             for x in range(8):
                 if bx == None or (bx == x):
@@ -592,6 +618,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                         if by == None or (by == y):
                             self.c.itemconfig(self.grid_rects[x][y][0], fill=get_colour(x, y))
                             self.c.itemconfig(self.grid_rects[x][y][1], text=fmt(x, y), fill=txt_col(x, y), font=txt_font(x, y))
+                            mark_disabled(x, y)
 
             if self.over_x != -1 and self.over_y != -1:
                 desc = fmt_str(scripts.buttons[self.over_x][self.over_y].desc)
@@ -621,35 +648,40 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
         else:
             for x in range(8):
                 y = 0
-                self.grid_rects[x][y] = ( \
+                self.grid_rects[x][y] = [ \
                     self.draw_button(x, y, color=get_colour(x, y), shape="circle"),
-                    self.c.create_text(text_x(x), text_y(y), text=fmt(x, y, 2, 3), fill=txt_col(x, y), font=txt_font(x, y, True)) \
-                    )
+                    self.c.create_text(text_x(x), text_y(y), text=fmt(x, y, 2, 3), fill=txt_col(x, y), font=txt_font(x, y, True)), \
+                    None, None
+                    ]
 
             for y in range(1, 9):
                 x = 8
-                self.grid_rects[x][y] = ( \
+                self.grid_rects[x][y] = [ \
                     self.draw_button(x, y, color=get_colour(x, y), shape="circle"),
-                    self.c.create_text(text_x(x), text_y(y), text=fmt(x, y, 2, 3), fill=txt_col(x, y), font=txt_font(x, y, True)) \
-                    )
+                    self.c.create_text(text_x(x), text_y(y), text=fmt(x, y, 2, 3), fill=txt_col(x, y), font=txt_font(x, y, True)), \
+                    None, None
+                    ]
 
             for x in range(8):
                 for y in range(1, 9):
-                    self.grid_rects[x][y] = ( \
+                    self.grid_rects[x][y] = [ \
                         self.draw_button(x, y, color=get_colour(x, y)), \
-                        self.c.create_text(text_x(x), text_y(y), text=fmt(x, y), fill=txt_col(x, y), font=txt_font(x, y)) \
-                        )
+                        self.c.create_text(text_x(x), text_y(y), text=fmt(x, y), fill=txt_col(x, y), font=txt_font(x, y)), \
+                        None, None
+                        ]
 
             if self.button_mode == LM_RUN:
-                self.grid_rects[8][0] = ( \
+                self.grid_rects[8][0] = [ \
                     self.draw_button(8, 0, color="red"), \
-                    self.c.create_text(text_x(8), text_y(0), fill="yellow", text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold")) \
-                    )
+                    self.c.create_text(text_x(8), text_y(0), fill="yellow", text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold")), \
+                    None, None
+                    ]
             else:
-                self.grid_rects[8][0] = ( \
+                self.grid_rects[8][0] = [ \
                     self.draw_button(8, 0, color=self.c["background"]), \
-                    self.c.create_text(text_x(8), text_y(0), fill="black", text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold")) \
-                    )
+                    self.c.create_text(text_x(8), text_y(0), fill="black", text=self.button_mode.capitalize(), font=("Courier", BUTTON_SIZE // 3, "bold")), \
+                    None, None
+                    ]
 
             self.grid_drawn = True
 
@@ -678,6 +710,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             text_string = t.get(1.0, tk.END)
             try:
                 btn = scripts.Button(x, y, text_string)
+                btn.invalid_on_load = True
                 script_validate = btn.Parse_script()
             except:
                 #self.save_script(w, x, y, text_string) # This will fail and throw a popup error
@@ -686,6 +719,7 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
             if script_validate != True and files.in_error:
                 self.save_script(w, x, y, text_string)
             else:
+                btn.invalid_on_load = False
                 w.destroy()
 
         w.protocol("WM_DELETE_WINDOW", validate_func)

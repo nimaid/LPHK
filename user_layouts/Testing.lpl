@@ -31,7 +31,7 @@
           255,
           0
         ],
-        "text": "@NAME Norm Dlg\n@DESC Displays a dialog, then prints the returned value\nRPN_EVAL < a view\nDIALOG_INFO \"Information message\" \"Don't look behind you, there might be a clown!\"\nRPN_EVAL < a view\nDIALOG_OK_CANCEL \"Do you accept?\" \"You do not have any clowns standing behind you\" a\nRPN_EVAL < a view"
+        "text": "@NAME Norm Dlg\n@DESC Displays a dialog, then prints the returned value\nxRPN_EVAL < a view\nDIALOG_INFO \"Information message\" \"Don't look behind you, there might be a clown!\"\nRPN_EVAL < a view\nDIALOG_OK_CANCEL \"Do you accept?\" \"You do not have any clowns standing behind you\" a\nRPN_EVAL < a view"
       },
       {
         "color": [

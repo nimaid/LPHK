@@ -234,6 +234,8 @@ class Button():
         self._running = False                # is the script running?
         self.is_async = False                # async execution flag
 
+        self.invalid_on_load = False         # flag for button found invalid on load from stored layout
+
         # The "root" is the button that is scheduled.  This allows subroutines to check if the
         # initiating button has been killed.
         if root == None:                     # if we are not being called
@@ -402,6 +404,9 @@ class Button():
                 self.thread.kill.set()
                 return
 
+        if self.invalid_on_load:  # don't schedule invalid code
+            return
+
         if (self.x, self.y) in [l[1:] for l in to_run]:
             print("[scripts] " + self.coords + " Script already scheduled, unscheduling...")
             indexes = [i for i, v in enumerate(to_run) if ((v[1] == self.x) and (v[2] == self.y))]
@@ -534,7 +539,7 @@ class Button():
                                     pline = pline[len(param):].strip()                  # and clean up the line (@@@ why not use strip1()??)
                                     if not variables.valid_var_name(param):             # but check it's a valid variable name
                                         if desc == PT_ANY[AVT_DESC]:                    # PT_ANY will accept non-variables as strings
-                                            sline += [param]                            # we'll add it as the parameter value.  Note we don't add a leading " 
+                                            sline += [param]                            # we'll add it as the parameter value.  Note we don't add a leading "
                                                                                         # because we can try to interpret it as numeric later on
                                         else:
                                             return ('Error in variable for param #' + str(n+1), line) # if it's not a string and not a variable...
@@ -691,7 +696,8 @@ class Button():
             self.validated = True
             return True                                  # ...validation succeeds!
 
-        if self.Parse_script():                          # If parsing is OK
+        validation = self.Parse_script()                 # parse the script
+        if validation == True:                           # If parsing is OK
             self.validated = True                        # Script is valid
 
             if len(self.script_lines) > 0:               # look for async header and set flag
@@ -701,6 +707,7 @@ class Button():
                     VALID_COMMANDS[cmd_txt].is_async
         else:
             self.symbols = None                          # otherwise destroy symbol table
+            return validation
 
         return self.validated                            # and tell us the result
 
@@ -726,7 +733,7 @@ def Bind(x, y, script_str, color):
             btn.Validate_script()
         except:
             pass
-       
+
     buttons[x][y] = btn
 
     if (x, y) in [l[1:] for l in to_run]:    # If this button is scheduled to run...
@@ -756,7 +763,8 @@ def Unbind(x, y):
         for index in indexes[::-1]:          # and for each of them (in reverse order)
             temp = to_run.pop(index)         # Remove them from the list
         buttons[x][y] = btn                  # Clear the button script
-        #return # WHY do we return here?
+        files.layout_changed_since_load = True   # Mark the layout as changed
+        return # WHY do we return here?
 
     if btn.thread != None:                   # If the button is actially executing
         thread.kill.set()                    # then kill it
@@ -809,7 +817,7 @@ def Copy(x1, y1, x2, y2):
 # Delete a button
 def Del(x1, y1, x2, y2):
     global buttons
-    
+
     if x1 != x2 or y1 != y2:
         return
 
@@ -867,7 +875,12 @@ def kill_all():
 # Unbind all keys.
 def Unbind_all():
     lp_events.unbind_all()                   # Unbind all events
-    text = [["" for y in range(9)] for x in range(9)] # Reienitialise all scripts to blank
+    
+    for x in range(9):
+        for y in range(9):
+            Unbind(x, y)
+        
+    #text = [["" for y in range(9)] ] # Reienitialise all scripts to blank
 
     kill_all()                               # stop everything running
 
@@ -888,5 +901,7 @@ def Unload_all():
         Remove_command(cmd)                  # remove it
 
     files.layout_changed_since_load = True   # mark layout as changed
+    
+    files.validate_all_buttons()                   # ensure buttons are valid
 
 
