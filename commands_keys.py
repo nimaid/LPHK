@@ -47,12 +47,12 @@ class Keys_Tap(command_base.Command_Basic):
         ):
 
         super().__init__(
-            "TAP",  # the name of the command as you have to enter it in the code
+            "TAP, Tap the named key",  # the name of the command as you have to enter it in the code
             LIB,
             (
             # Desc         Opt    Var      type       p1_val                        p2_val
             ("Key",        False, AVV_NO,  PT_KEY,    None,                         None),
-            ("Times",      True,  AVV_YES, PT_INT,    variables.Validate_gt_zero,   None),
+            ("Times",      True,  AVV_YES, PT_INT,    None, None), #@@@ this also doesn't work variables.Validate_gt_zero,   None),
             ("Duration",   True,  AVV_YES, PT_FLOAT,  variables.Validate_ge_zero,   None),
             ),
             (

@@ -336,6 +336,7 @@ class Button():
         new_btn.symbols[SYM_LABELS] = self.symbols[SYM_LABELS].copy()        # and the position of labels
 
         new_btn.is_async = self.is_async                                     # default is NOT async
+        new_btn.validated = self.validated                                   # Need to copy over the validation flag (it should be True at this point)
 
 
     # check "self" for death notification

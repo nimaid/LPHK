@@ -18,8 +18,8 @@ class Dialog_Ok_Cancel(command_base.Command_Basic):
             LIB,
             (
             # Desc            Opt    Var      type     p1_val p2_val
-            ("Title",         False, AVV_NO,  PT_STR,  None,  None),
-            ("Message",       False, AVV_NO,  PT_STR,  None,  None),
+            ("Title",         False, AVV_YES, PT_STR,  None,  None),
+            ("Message",       False, AVV_YES, PT_STR,  None,  None),
             ("Return",        True,  AVV_REQD,PT_INT,  None,  None),
             ),
             (                          # How to log runtime execution
@@ -68,8 +68,8 @@ class Dialog_Info(command_base.Command_Basic):
             LIB,
             (
             # Desc            Opt    Var      type     p1_val p2_val
-            ("Title",         False, AVV_NO,  PT_STR,  None,  None),
-            ("Message",       False, AVV_NO,  PT_STR,  None,  None),
+            ("Title",         False, AVV_YES, PT_STR,  None,  None),
+            ("Message",       False, AVV_YES, PT_STR,  None,  None),
             ),
             (                          # How to log runtime execution
             # num params, format string                           (trailing comma is important)
@@ -101,8 +101,8 @@ class Dialog_Error(command_base.Command_Basic):
             LIB,
             (
             # Desc            Opt    Var      type     p1_val p2_val
-            ("Title",         False, AVV_NO,  PT_STR,  None,  None),
-            ("Message",       False, AVV_NO,  PT_STR,  None,  None),
+            ("Title",         False, AVV_YES, PT_STR,  None,  None),
+            ("Message",       False, AVV_YES, PT_STR,  None,  None),
             ("Return",        True,  AVV_REQD,PT_INT,  None,  None),
             ),
             (                          # How to log runtime execution

@@ -17,7 +17,7 @@ class Command_Win32(command_base.Command_Basic):
         place = win32gui.GetWindowPlacement(hwnd)                # get info about the window
 
         if place[1] == win32con.SW_SHOWMAXIMIZED:                # if it is maximised
-            win32gui.ShowWindow(hwnd, win32con.SW_SHOWMAXIMISED) # then keep it maximised
+            win32gui.ShowWindow(hwnd, win32con.SW_SHOWMAXIMIZED) # then keep it maximised
         elif place[1] == win32con.SW_SHOWMINIMIZED:              # if minimised
             win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)       # then restore it
         else:
@@ -68,7 +68,7 @@ class Win32_Get_Caret(Command_Win32):
         self,
         ):
 
-        super().__init__("W_GET_CARET",  # the name of the command as you have to enter it in the code
+        super().__init__("W_GET_CARET, Return the position of the caret on the current window",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -117,7 +117,7 @@ class Win32_Get_Fg_Hwnd(Command_Win32):
         self,
         ):
 
-        super().__init__("W_GET_FG_HWND",  # the name of the command as you have to enter it in the code
+        super().__init__("W_GET_FG_HWND, Return the handle of the current foreground window",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -148,7 +148,7 @@ class Win32_Set_Fg_Hwnd(Command_Win32):
         self,
         ):
 
-        super().__init__("W_SET_FG_HWND",  # the name of the command as you have to enter it in the code
+        super().__init__("W_SET_FG_HWND, Make the specified window the current window",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -186,7 +186,7 @@ class Win32_Client_To_Screen(Command_Win32):
         self,
         ):
 
-        super().__init__("W_CLIENT_TO_SCREEN",  # the name of the command as you have to enter it in the code
+        super().__init__("W_CLIENT_TO_SCREEN, Convert a client-relative coordinate to a screen-absolute coordinate",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -229,7 +229,7 @@ class Win32_Screen_To_Client(Command_Win32):
         self,
         ):
 
-        super().__init__("W_SCREEN_TO_CLIENT",  # the name of the command as you have to enter it in the code
+        super().__init__("W_SCREEN_TO_CLIENT, Convert a screen(absolute) coordinate to a form-relative coordinate",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -464,6 +464,35 @@ class Win32_Restore_Hwnd(Command_Win32):
 
 scripts.Add_command(Win32_Restore_Hwnd())  # register the command
 
+def ClearClipboard():
+    for i in range(5):
+        x = True
+        try:                                                   # clear the clipboard
+            win32clipboard.OpenClipboard()
+            win32clipboard.EmptyClipboard()
+        except:
+            x = False
+        finally:
+            try:
+                win32clipboard.CloseClipboard()
+                if x: break
+            except:
+                pass                                           # we don't care if the clipboard wasn't opened!
+
+def SetClipboard(text):
+    for i in range(5):
+        x = True
+        try:
+            win32clipboard.OpenClipboard()
+            win32clipboard.SetClipboardText(text)        # and put the string in the clipboard
+        except:
+           x = False
+        finally:
+            try:
+                win32clipboard.CloseClipboard()
+                if x: break
+            except:
+                pass                                           # we don't care if the clipboard wasn't opened!
 
 # ##################################################
 # ### CLASS W_COPY                               ###
@@ -475,7 +504,7 @@ class Win32_Copy(Command_Win32):
         self,
         ):
 
-        super().__init__("W_COPY",  # the name of the command as you have to enter it in the code
+        super().__init__("W_COPY, Copy data from the current window",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -490,14 +519,7 @@ class Win32_Copy(Command_Win32):
     def Process(self, btn, idx, split_line):
         hwnd = win32gui.GetForegroundWindow()                  # get the current window
 
-        try:                                                   # clear the clipboard
-            win32clipboard.OpenClipboard()
-            win32clipboard.EmptyClipboard()
-        finally:
-            try:
-                win32clipboard.CloseClipboard()
-            except:
-                pass                                           # we don't care if the clipboard wasn't opened!
+        ClearClipboard()
 
         try:                                                   # do the keyboard stuff for copy (sending a WM_COPY message does not always work)
             kb.press(kb.sp('ctrl'))
@@ -532,11 +554,11 @@ class Win32_Paste(Command_Win32):
         self,
         ):
 
-        super().__init__("W_PASTE",  # the name of the command as you have to enter it in the code
+        super().__init__("W_PASTE, Paste data into the current window",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
-            ("Clipboard",  True,  AVV_REQD, PT_STR,  None,                       None),   # variable to contain item to paste
+            ("Clipboard",  True,  AVV_YES,  PT_STR,  None,                       None),   # variable to contain item to paste
             ),
             (
             # num params, format string                           (trailing comma is important)
@@ -550,21 +572,15 @@ class Win32_Paste(Command_Win32):
             hwnd = win32gui.GetForegroundWindow()              # get the current window
 
             c = self.Get_param(btn, 1)                         # get the value
+            ClearClipboard()
+            SetClipboard(str(c))
             try:
-                win32clipboard.OpenClipboard()
-                win32clipboard.EmptyClipboard()                # clear the clipboard first (because that makes it work)
-                win32clipboard.SetClipboardText(str(c))        # and put the string in the clipboard
+                kb.press(kb.sp('ctrl'))                            # do a ctrl v (because the message version isn't reliable)
+                kb.tap(kb.sp('v'))
             finally:
-                import traceback
-                traceback.print_exc()
-                win32clipboard.CloseClipboard()
+                kb.release(kb.sp('ctrl'))
 
-        # win32api.SendMessage(hwnd, win32con.WM_PASTE, 0, 0)  # do a paste
-        try:
-            kb.press(kb.sp('ctrl'))                            # do a ctrl v (because the message version isn't reliable)
-            kb.tap(kb.sp('v'))
-        finally:
-            kb.release(kb.sp('ctrl'))
+
 
 
 scripts.Add_command(Win32_Paste())  # register the command
@@ -580,7 +596,7 @@ class Win32_Wait(Command_Win32):
         self,
         ):
 
-        super().__init__("W_WAIT",  # the name of the command as you have to enter it in the code
+        super().__init__("W_WAIT, Pause until the process associated with a window handle is reasy for input",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -617,7 +633,7 @@ class Win32_Pid_To_Hwnd(Command_Win32):
         self,
         ):
 
-        super().__init__("W_PID_TO_HWND",  # the name of the command as you have to enter it in the code
+        super().__init__("W_PID_TO_HWND, Return the handle of a window associated with a PID",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val

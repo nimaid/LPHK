@@ -240,7 +240,7 @@ class Scrape_Clipboard_Colour(Command_Scrape):
         self,
         ):
 
-        super().__init__("S_COLOUR, determines the average R, G, and B values of a clipboard image",
+        super().__init__("S_COLOUR, determines the average R, G, and B values of an image",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
