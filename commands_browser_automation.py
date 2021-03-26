@@ -1,11 +1,15 @@
 # This module is VERY specific to Win32
 import command_base, scripts, traceback
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from constants import *
 
 LIB = "cmds_baut" # name of this library (for logging)
 
+# constants for characters we replace in strings (note that these are not standard)
+ESCAPE_CHARS  = ["\\n", "\\^", "\\h"]
+REPLACE_CHARS = ["\n", Keys.ARROW_UP, Keys.HOME]
 
 # constants for BA_START
 BAS_CHROME     = "CHROME"
@@ -228,14 +232,16 @@ scripts.Add_command(Bauto_Get_Url())  # register the command
 
 
 # constants for BA_GET_ELEMENT
-BAG_XPATH      = "XPATH"
-BAG_NAME       = "NAME"
-BAG_TAG_NAME   = "TAG_NAME"
-BAG_ID         = "ID"
-BAG_LINK_TEXT  = "LINK_TEXT"
-BAG_CLASS_NAME = "CLASS_NAME"
+BAG_XPATH        = "XPATH"
+BAG_NAME         = "NAME"
+BAG_TAG_NAME     = "TAG_NAME"
+BAG_ID           = "ID"
+BAG_LABEL        = "LABEL"
+BAG_LINK_TEXT    = "LINK_TEXT"
+BAG_CLASS_NAME   = "CLASS_NAME"
+BAG_CSS_SELECTOR = "CSS_SELECTOR"
 
-BAGG_ALL = [BAG_XPATH, BAG_NAME, BAG_TAG_NAME, BAG_ID, BAG_LINK_TEXT, BAG_CLASS_NAME]
+BAGG_ALL = [BAG_XPATH, BAG_NAME, BAG_TAG_NAME, BAG_ID, BAG_LABEL, BAG_LINK_TEXT, BAG_CLASS_NAME, BAG_CSS_SELECTOR]
 
 # ##################################################
 # ### CLASS BAUTO_GET_ELEMENT                    ###
@@ -522,11 +528,11 @@ scripts.Add_command(Bauto_Click_Element())  # register the command
 
 
 # ##################################################
-# ### CLASS BAUTO_SEND_KEYS                      ###
+# ### CLASS BAUTO_SEND_TEXT                      ###
 # ##################################################
 
 # class that defines the BA_SEND_TEXT command to send keys to an element
-class Bauto_Send_Keys(command_base.Command_Basic):
+class Bauto_Send_Text(command_base.Command_Basic):
     def __init__(
         self,
         ):
@@ -545,14 +551,21 @@ class Bauto_Send_Keys(command_base.Command_Basic):
 
         self.doc = ["The first parameter `Element` is an element returned from a search.",
                     "",
-                    "This method will send text to that elementt.",
+                    "This method will send text to that element.  Note that there are a few special",
+                    "escape characters:",
+                    "",
+                    "        `\n` - will be replaced with a newline,",
+                    "        `\h` - will be replaced with a press of the home key",
+                    "        `\^` - will be replaced with a press of the arrow up key",
                     "",
                     "There is no return value."]
 
-                    
+
     def Process(self, btn, idx, split_line):
         element = self.Get_param(btn, 1)
         text = self.Get_param(btn, 2)
+        for x, y in zip(ESCAPE_CHARS, REPLACE_CHARS):
+            text = text.replace(x, y)
 
         try:
             element.send_keys(text)
@@ -561,7 +574,7 @@ class Bauto_Send_Keys(command_base.Command_Basic):
             traceback.print_exc()
 
 
-scripts.Add_command(Bauto_Send_Keys())  # register the command
+scripts.Add_command(Bauto_Send_Text())  # register the command
 
 
 # ##################################################
@@ -607,5 +620,3 @@ class Bauto_ShowElements(command_base.Command_Basic):
 
 
 scripts.Add_command(Bauto_ShowElements())  # register the command
-
-

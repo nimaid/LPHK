@@ -570,10 +570,13 @@ class Win32_Paste(Command_Win32):
 
         if self.Param_count(btn) > 0:                          # place variable into clipboard if required
             hwnd = win32gui.GetForegroundWindow()              # get the current window
-
             c = self.Get_param(btn, 1)                         # get the value
+
             ClearClipboard()
+
             SetClipboard(str(c))
+
+            # win32api.SendMessage(hwnd, win32con.WM_PASTE, 0, 0)  # do a paste
             try:
                 kb.press(kb.sp('ctrl'))                            # do a ctrl v (because the message version isn't reliable)
                 kb.tap(kb.sp('v'))

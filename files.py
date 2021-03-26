@@ -266,7 +266,7 @@ def validate_all_buttons():
     window.Redraw(True)
 
     if b_fail > 0:
-        window.app.popup(window.app, "Buttons in disabled", window.app.info_image, f"{b_fail} of {b_tot} buttons disabled due to errors", "OK")
+        window.app.popup(window.app, "Buttons disabled", window.app.info_image, f"{b_fail} of {b_tot} buttons disabled due to errors", "OK")
 
 # load a single subroutine
 def load_subroutine(sub, sub_n, fname):

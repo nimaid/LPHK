@@ -118,11 +118,13 @@ LM_DEL = "del"
 LM_RUN = "run"
 
 # Dump constants
-D_HEADERS = 1
-D_COMMANDS = 2
-D_SUBROUTINES = 3
-D_BUTTONS = 4
-D_DEBUG = 5
+D_HEADERS = 1           # produce documentation for headers
+D_COMMANDS = 2          # produce documentation for commands
+D_SUBROUTINES = 3       # produce documentation for subroutines
+D_BUTTONS = 4           # produce documentation for buttons
+D_COMMAND_BASE = 5      # produce documentation for routines used in the creation of commands
+D_DEBUG = 6             # add debug info where available
+D_SOURCE = 7            # add source where available
 
 DS_NORMAL = [D_HEADERS, D_COMMANDS, D_SUBROUTINES, D_BUTTONS]
 

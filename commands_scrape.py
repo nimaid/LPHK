@@ -36,10 +36,18 @@ class Command_Scrape(commands_win32.Command_Win32):
 
 
     # scrapes an image from the clipboard
-    def get_copied_image(self):
-        image = PIL.ImageGrab.grabclipboard()                    # grab the image from he clipboard
-
-        return image                                             # return the image
+    def get_copied_image(self, btn):
+        tries = 5
+        while tries >= 0:
+            try:
+                image = PIL.ImageGrab.grabclipboard()            # grab the image from he clipboard
+                return image
+            except:
+                tries -= 1
+                btn.safe_sleep(0.5)
+                print("retry")
+                
+        return -1                                                # return the image
 
 
 # ##################################################
@@ -149,7 +157,7 @@ class Scrape_Get_Clipboard(Command_Scrape):
 
 
     def Process(self, btn, idx, split_line):
-        image = self.get_copied_image()                                 # get clipboard image
+        image = self.get_copied_image(btn)                              # get clipboard image
 
         self.Set_param(btn, 1, image)                                   # pass the text back
 
@@ -181,7 +189,7 @@ class Scrape_OCR(Command_Scrape):
 
 
     def Process(self, btn, idx, split_line):
-        image = self.get_copied_image()                               # get copied image
+        image = self.get_copied_image(btn)                            # get copied image
 
         txt = pytesseract.image_to_string(image)                      # OCR the image
 

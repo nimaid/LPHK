@@ -138,12 +138,24 @@ def Dump_commands(style=DS_NORMAL):
                     else:
                         print(" UNKNOWN VALUE")
 
+    def dump_source(c):
+        if isinstance(c, commands_subroutines.Subroutine):
+            print("        Source")
+            for line in c.routine:
+                print(f"            {line}")
+        elif isinstance(c, Button):
+            print("        Source")
+            for line in c.script_lines:
+                print(f"            {line}")
+
     def dump(c_type, c, style):
         dump_name(c_type, c)
         dump_doc(c)
         if D_DEBUG in style:
             dump_ancestory(c)
         dump_params(c)
+        if D_SOURCE in style:
+            dump_source(c)
 
         print()
 
@@ -169,7 +181,7 @@ def Dump_commands(style=DS_NORMAL):
         print()
         for cmd in VALID_COMMANDS:
             if isinstance(VALID_COMMANDS[cmd], commands_subroutines.Subroutine):
-                dump("Subroutine", VALID_COMMANDS[cmd], style)
+                dump("Subroutine", VALID_COMMANDS[cmd], style)                   
 
     if D_BUTTONS in style:
         print("BUTTONS")

@@ -16,7 +16,8 @@ import \
   commands_subroutines, \
   commands_dialog, \
   commands_browser_automation, \
-  commands_file
+  commands_file, \
+  commands_documentation
 
 # @@@ a test command set for testing things!  Will be removed for production
 try:
