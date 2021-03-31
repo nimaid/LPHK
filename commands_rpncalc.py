@@ -1,4 +1,5 @@
-import command_base, lp_events, scripts, variables, sys, param_convs
+import command_base, lp_events, scripts, variables, sys, param_convs, datetime
+from dateutil import parser
 from constants import *
 
 LIB = "cmds_rpnc" # name of this library (for logging)
@@ -179,6 +180,8 @@ class Rpn_Eval(command_base.Command_Basic):
         self.operators["!?G"]    = (self.is_global_not_def, 1) # is global var not defined
         self.operators["ABORT"]  = (self.abort_script,      0) # abort the script (not just the rpn calc)
         self.operators["SUBSTR"] = (self.substr,            0) # x gets str(z)[x:y]
+        self.operators["D>J"]    = (self.d_to_j,            0) # converts string date to julian (actually ordinal)
+        self.operators["J>D"]    = (self.j_to_d,            0) # converts a julian to a text date
 
 
     def add(self,
@@ -672,6 +675,30 @@ class Rpn_Eval(command_base.Command_Basic):
 
         r = str(z)[y:x]
         variables.push(symbols, r)
+
+        return 1
+
+
+    def d_to_j(self, symbols, cmd, cmds):
+        # converts a text date on the top of the stack to a julian date (integer)
+        d = variables.pop(symbols)
+        dt = parser.parse(d)
+
+        j = dt.toordinal()
+
+        variables.push(symbols, j)
+
+        return 1
+
+
+    def j_to_d(self, symbols, cmd, cmds):
+        # converts a julian date (integer) on the top of the stack to a text date
+        j = variables.pop(symbols)
+        dt = datetime.date.fromordinal(j)
+
+        d = dt.strftime("%d-%b-%Y")
+
+        variables.push(symbols, d)
 
         return 1
 

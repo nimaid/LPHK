@@ -44,7 +44,7 @@ class Command_Scrape(commands_win32.Command_Win32):
                 return image
             except:
                 tries -= 1
-                btn.safe_sleep(0.5)
+                btn.Safe_sleep(0.5)
                 print("retry")
                 
         return -1                                                # return the image
@@ -322,7 +322,7 @@ class Scrape_Image_Fingerprint(Command_Scrape):
 
         fingerprint = int(str(imagehash.dhash(image)),16)             # calculate an image fingerprint
 
-        self.Set_param(btn, 5, fingerprint)                           # pass the hash back
+        self.Set_param(btn, 2, fingerprint)                           # pass the hash back
 
 
 scripts.Add_command(Scrape_Image_Fingerprint())  # register the command

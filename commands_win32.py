@@ -1,5 +1,5 @@
 # This module is VERY specific to Win32
-import command_base, ms, kb, scripts, variables, win32gui, win32process, win32api, win32con, win32clipboard, win32event
+import command_base, ms, kb, scripts, variables, win32gui, win32process, win32api, win32con, win32clipboard, win32event, re
 from constants import *
 
 LIB = "cmds_wn32" # name of this library (for logging)
@@ -356,8 +356,11 @@ class Win32_Similar_Hwnd(Command_Win32):
 
         def CheckWindow(hwnd, data):
             # callback function to receive enumerated window handles
-            if win32gui.GetWindowText(hwnd)[:len(data['title'])] == data['title']:  # does the beginning of the title match?
-                data['hwnds'] += [hwnd]                        # add to list
+            try:
+                if win32gui.GetWindowText(hwnd)[:len(data['title'])] == data['title']:  # does the beginning of the title match?
+                    data['hwnds'] += [hwnd]                    # add to list
+            except:
+                pass                                           # ignore errors (probably a bad regular expression)
 
         hwnds = []                                             # reset the list of window handles
         title = self.Get_param(btn, 1)                         # get the title we're searching for
@@ -381,6 +384,67 @@ class Win32_Similar_Hwnd(Command_Win32):
 
 
 scripts.Add_command(Win32_Similar_Hwnd())  # register the command
+
+
+# ##################################################
+# ### CLASS W_REGEX_HWND                         ###
+# ##################################################
+
+# class that defines the W_REGEX_HWND command - returns the nth matching window handle
+class Win32_Regex_Hwnd(Command_Win32):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("W_REGEX_HWND, Returns the handle of the nth pattern-matched window",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("Regex",      False, AVV_YES,  PT_STR,  None,                       None),   # regular expression search for
+            ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
+            ("M",          False, AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
+            ("N",          False, AVV_YES,  PT_INT,  None, None),   # number of match desired  #@@@ variables.Validate_gt_zero make this work with variables!!!!!
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (4,           "    Find {4}th window titled '{1}', returning handle in {2}.  Report {3} total matches"),
+            ) )
+
+        self.doc = ["Searches for windows with titles described with the regular expression",
+                    "`Regex`.  If multiple are found, the windows are sorted by process id.",
+                    "The number of matching windows is returned in `M`.  If `N` or more are",
+                    "found, the nth window handle is returned in `HWND`.  -1 is returned if",
+                    "there is an error."]
+
+    def Process(self, btn, idx, split_line):
+
+        def CheckWindow(hwnd, data):
+            # callback function to receive enumerated window handles
+            if re.search(data['regex'], win32gui.GetWindowText(hwnd)):  # does the regex of the title match anything?
+                data['hwnds'] += [hwnd]                        # add to list
+
+        hwnds = []                                             # reset the list of window handles
+        regex = self.Get_param(btn, 1)                         # get the regular expression we're searching for
+
+        data = {'regex':regex, 'hwnds':hwnds}                  # data structure to be used by the callback routine
+        win32gui.EnumWindows(CheckWindow, data)                # enumerate windows
+
+        hwnds = data['hwnds']                                  # this is now probably in front to back order
+        hwnds.sort()                                           # helps to ensure we get the windows in the same order.  (creation?)
+
+        m = len(hwnds)                                         # how many did we get?
+        self.Set_param(btn, 3, m)                              # pass this back
+
+        n = self.Get_param(btn, 4)                             # which one did we want?
+        if n <= m:                                             # do we have it
+            hwnd = hwnds[n-1]                                  # get it
+        else:
+            hwnd = -1                                          # otherwise return -1
+
+        self.Set_param(btn, 2, hwnd)                           # return the window handle in parameter 2
+
+
+scripts.Add_command(Win32_Regex_Hwnd())  # register the command
 
 
 # ##################################################
@@ -659,3 +723,41 @@ class Win32_Pid_To_Hwnd(Command_Win32):
 
 
 scripts.Add_command(Win32_Pid_To_Hwnd())  # register the command
+
+
+# ##################################################
+# ### CLASS W_WINDOW_SIZE                        ###
+# ##################################################
+
+# class that defines the W_WINDOW_SIZE command - returns the size of a window
+class Win32_Window_Size(Command_Win32):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("W_WINDOW_SIZE, Return the size of a window",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("x",          False, AVV_REQD, PT_INT,  None,                       None),   # variable containing pid
+            ("y",          False, AVV_REQD, PT_INT,  None,                       None),   # variable containing pid
+            ("hwnd",       True,  AVV_REQD, PT_INT,  None,                       None),   # variable to contain hwnd
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (2,           "    return size of current window in ({1}, {2})"),
+            (3,           "    return size of window {3} in ({1}, {2})"),
+            ) )
+
+    def Process(self, btn, idx, split_line):
+
+        hwnd = win32gui.GetForegroundWindow()                 # get the current window
+        hwnd = self.Get_param(btn, 3, hwnd)                   # override with parameter if passed
+
+        _, _, x, y = GetWindowRect(hwnd)                      # get the size
+
+        self.Set_param(btn, 1, x)                             # return width and height of window
+        self.Set_param(btn, 2, y)
+
+
+scripts.Add_command(Win32_Window_Size())  # register the command
