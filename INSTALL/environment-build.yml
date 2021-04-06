@@ -20,4 +20,4 @@ dependencies:
     - dhash
     - selenium
     - pyperclip
-    - python-dateutils
+    - python-dateutil
