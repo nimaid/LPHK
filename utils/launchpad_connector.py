@@ -76,4 +76,9 @@ def connect(pad):
 
 
 def disconnect(pad):
+    mode = get_mode(pad)
+    
+    if mode == "Mk3":
+        pad.LedSetMode(0)
+    
     pad.Close()
