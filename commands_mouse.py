@@ -94,7 +94,7 @@ class Mouse_Scroll(command_base.Command_Basic):
 
 
     def Process(self, btn, idx, split_line):
-        s = self.Get_Param(btn, 1)
+        s = self.Get_param(btn, 1)
         x = self.Get_param(btn, 2, 0)
             
         ms.scroll(x, s)
