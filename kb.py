@@ -42,7 +42,7 @@ def release_all():
     for key in pressed.copy():     # for each key recorded as pressed (in no particular order)
         release(key)               # release the key
 
-        
+
 # tap a key
 def tap(key):
     if type(key) == str:           # if it's a str

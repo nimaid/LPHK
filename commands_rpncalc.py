@@ -1,10 +1,11 @@
-import command_base, lp_events, scripts, variables, sys
+import command_base, lp_events, scripts, variables, sys, param_convs, datetime
+from dateutil import parser
 from constants import *
 
 LIB = "cmds_rpnc" # name of this library (for logging)
 
 # note that if you don't like RPN and prefer to write algebraic expressions
-# all you need to do is create a command that converts algebraic commands to 
+# all you need to do is create a command that converts algebraic commands to
 # postfix (RPN) and you can use the RPN evaluator to process it.
 
 # ##################################################
@@ -13,18 +14,18 @@ LIB = "cmds_rpnc" # name of this library (for logging)
 
 # class that defines the RPN_EVAL command.
 # This command allows math to be performed on a simulated RPN calculator.
-# This is useful because as a stack model it also provides the framework for 
+# This is useful because as a stack model it also provides the framework for
 # passing parameters to and from other routines if the stack is preserved
 # in the symbol table.  In this version The output is to the log, but it
 # is easily extended.
 class Rpn_Eval(command_base.Command_Basic):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__("RPN_EVAL",  # the name of the command as you have to enter it in the code
         LIB)
-        
+
         # this command does not have a standard list of fields, so we need to do some stuff manually
         self.valid_max_params = 255        # There is no maximum, but this is a reasonable limit!
         self.valid_num_params = [1, None]  # one or more is OK
@@ -38,21 +39,21 @@ class Rpn_Eval(command_base.Command_Basic):
         # Now register the operators
         self.Register_operators()
 
-    
+
     # We can simply override the first pass validation
     def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
         # validate the number of parameters
-        ret = self.Validate_param_count(ret, btn, idx, split_line)        
+        ret = self.Validate_param_count(ret, btn, idx, split_line)
 
         if ((type(ret) == bool) and ret):
             c_len = len(split_line)     # Number of tokens
             i = 1
             while i < c_len:            # for each item of the line of tokens
                 cmd = split_line[i]     # get the current one
-                
+
                 n = None
                 try:
-                    n = float(cmd)      # we'll be happy with a float (since an int is a subset) 
+                    n = float(cmd)      # we'll be happy with a float (since an int is a subset)
                 except ValueError:
                     pass
                 else:
@@ -71,30 +72,30 @@ class Rpn_Eval(command_base.Command_Basic):
                                     return ("Line:" + str(idx+1) + " - parameter#" + str(p+1) + " '" + param + "' of operator #" + str(i) + " '" + cmd + " must start with alpha character in " + self.name, btn.Line(idx))
                         i = i + 1 + self.operators[opr][1]  # pull of additional parameters if required
                         if i > c_len:
-                            return ("Line:" + str(idx+1) + " - Insufficient parameters after operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.Line(idx))                         
+                            return ("Line:" + str(idx+1) + " - Insufficient parameters after operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.Line(idx))
                     else:               # if invalid, report it
-                        return ("Line:" + str(idx+1) + " - Invalid operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.Line(idx))                         
-        
-        return ret
-        
+                        return ("Line:" + str(idx+1) + " - Invalid operator #" + str(i) + " '" + cmd + "' in " + self.name, btn.Line(idx))
 
-    # define how to process.  We could override something at a lower level, but 
+        return ret
+
+
+    # define how to process.  We could override something at a lower level, but
     # this retains any initialisation and finalization and simplifies return
     # requirements
     def Process(self, btn, idx, split_line):
         print("[" + self.lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    " + self.name + ": ", split_line[1:]) # btn.coords is the text "(x, y)"
 
         i = 1                       # using a loop counter rather than an itterator because it's hard to pass iters as params
-      
+
         while i < len(split_line):  # for each item of the line of tokens
             cmd = split_line[i]     # get the current one
-            
+
             n = None                # what we get if it's not a number
             try:
-                n = int(cmd)        # is it an integer? 
+                n = int(cmd)        # is it an integer?
             except ValueError:
                 try:
-                    n = float(cmd)  # how about a float? 
+                    n = float(cmd)  # how about a float?
                 except ValueError:
                     pass
 
@@ -108,11 +109,11 @@ class Rpn_Eval(command_base.Command_Basic):
                 try:
                     # capture the return value from the operator
                     o_ret = self.operators[opr][0](btn.symbols, opr, split_line[i:]) # run it
-                    
+
                     # boolean returns are special
                     if type(o_ret) == bool:
                         if o_ret:
-                            # True just does a normal "go to next" 
+                            # True just does a normal "go to next"
                             i = i + self.operators[opr][1] + 1
                         else:
                             # but False aborts the execution of the RPN calc AND terminates the script
@@ -127,7 +128,7 @@ class Rpn_Eval(command_base.Command_Basic):
             else:                   # if invalid, report it
                print("Line:" + str(idx+1) + " - invalid operator #" + str(i) + " '" + cmd + "'")
                break
-        
+
         return idx+1                # Normal default exit to the next line
 
 
@@ -177,30 +178,33 @@ class Rpn_Eval(command_base.Command_Basic):
         self.operators["!?L"]    = (self.is_local_not_def,  1) # is local var not defined
         self.operators["?G"]     = (self.is_global_def,     1) # is global var defined
         self.operators["!?G"]    = (self.is_global_not_def, 1) # is global var not defined
-        self.operators["ABORT"]  = (self.abort_script,      0) # abort the script (not just the rpn calc
+        self.operators["ABORT"]  = (self.abort_script,      0) # abort the script (not just the rpn calc)
+        self.operators["SUBSTR"] = (self.substr,            0) # x gets str(z)[x:y]
+        self.operators["D>J"]    = (self.d_to_j,            0) # converts string date to julian (actually ordinal)
+        self.operators["J>D"]    = (self.j_to_d,            0) # converts a julian to a text date
 
 
-    def add(self, 
+    def add(self,
         symbols,                   # the symbol table (stack, global vars, etc.)
         cmd,                       # the current command
         cmds):                     # the rest of the commands on the command line
-        
-        ret = 1                    # always initialise ret to 1, because the default is to 
+
+        ret = 1                    # always initialise ret to 1, because the default is to
                                    # step token by token along the expression
-                                  
+
         a = variables.pop(symbols) # add requires 2 params, pop them off the stack...
-        b = variables.pop(symbols) # 
+        b = variables.pop(symbols) #
         symbols[SYM_LOCAL]['last x'] = a
 
         try:
             c = b+a                # RPN functions are defined as b (operator) a
         except:
             raise Exception("Error in addition: " + str(b) + " + " + str(a))  # error message in case of problem
-            
+
         variables.push(symbols, c) # the result is pushed back on the stack
 
         return ret                 # and we return the number of tokens to skip (normally 1)
-        
+
 
     def subtract(self, symbols, cmd, cmds):
         ret = 1
@@ -212,9 +216,9 @@ class Rpn_Eval(command_base.Command_Basic):
             c = b-a
         except:
             raise Exception("Error in subtraction: " + str(b) + " - " + str(a))
-            
+
         variables.push(symbols, c)
-        
+
         return ret
 
 
@@ -228,9 +232,9 @@ class Rpn_Eval(command_base.Command_Basic):
             c = b*a
         except:
             raise Exception("Error in multiplication: " + str(b) + " * " + str(a))
-            
+
         variables.push(symbols, c)
-        
+
         return ret
 
 
@@ -244,11 +248,11 @@ class Rpn_Eval(command_base.Command_Basic):
             c = b/a
         except:
             raise Exception("Error in division: " + str(b) + " / " + str(a))  # Errors are highly possible here
-            
+
         variables.push(symbols, c)
-        
+
         return ret
- 
+
 
     def i_div(self, symbols, cmd, cmds):
         ret = 1
@@ -260,11 +264,11 @@ class Rpn_Eval(command_base.Command_Basic):
             c = b//a
         except:
             raise Exception("Error in division: " + str(b) + " // " + str(a))  # Errors are highly possible here
-            
+
         variables.push(symbols, c)
-        
+
         return ret
- 
+
 
     def mod(self, symbols, cmd, cmds):
         ret = 1
@@ -276,17 +280,17 @@ class Rpn_Eval(command_base.Command_Basic):
             c = b%a
         except:
             raise Exception("Error in mod: " + str(b) + " % " + str(a))  # Errors are highly possible here
-            
+
         variables.push(symbols, c)
-        
+
         return ret
- 
+
 
     def view(self, symbols, cmd, cmds):
         # view the top of the stack (typically where results are)
         ret = 1
         print('Top of stack = ', variables.top(symbols, 1))       # we're going to peek at the top of the stack without popping
-        
+
         return ret
 
 
@@ -294,7 +298,7 @@ class Rpn_Eval(command_base.Command_Basic):
         # View the entire stack.  Probably a debugging tool.
         ret = 1
         print('Stack = ', symbols[SYM_STACK])                       # show the entire stack
-        
+
         return ret
 
 
@@ -302,7 +306,7 @@ class Rpn_Eval(command_base.Command_Basic):
         # View the local variables.  Probably a debugging tool.
         ret = 1
         print('Local = ', symbols[SYM_LOCAL])                      # show all local variables
-        
+
         return ret
 
 
@@ -311,7 +315,7 @@ class Rpn_Eval(command_base.Command_Basic):
         ret = 1
         with symbols[SYM_GLOBAL][0]:                                # lock the globals while we do this
             print('Global = ', symbols[SYM_GLOBAL][1])
-        
+
         return ret
 
 
@@ -324,9 +328,9 @@ class Rpn_Eval(command_base.Command_Basic):
             variables.push(symbols, 1/a)
         except:
             raise Exception("Error in 1/x: " + str(a))  # Errors are highly possible here
-            
+
         return ret
- 
+
 
     def int_x(self, symbols, cmd, cmds):
         # get the integer part of x
@@ -338,9 +342,9 @@ class Rpn_Eval(command_base.Command_Basic):
             variables.push(symbols, int(a))
         except:
             raise Exception("Error in '" + cmd + "' " + str(a))  # Errors are highly unlikely here
-            
+
         return ret
- 
+
 
     def frac_x(self, symbols, cmd, cmds):
         # get the fractionasl part of x
@@ -352,9 +356,9 @@ class Rpn_Eval(command_base.Command_Basic):
             variables.push(symbols, a - int(a))
         except:
             raise Exception("Error in '" + cmd + "' " + str(a))  # Errors are highly unlikely here
-            
+
         return ret
- 
+
 
     def chs(self, symbols, cmd, cmds):
         ret = 1
@@ -364,9 +368,9 @@ class Rpn_Eval(command_base.Command_Basic):
             variables.push(symbols, -a)
         except:
             raise Exception("Error in chs: " + str(a))  # Errors are highly improbable here
-            
+
         return ret
- 
+
 
     def sqr(self, symbols, cmd, cmds):
         # calculates the square
@@ -378,9 +382,9 @@ class Rpn_Eval(command_base.Command_Basic):
             c = a**2
         except:
             raise Exception("Error in squaring: " + str(a))
-            
+
         variables.push(symbols, c)
-        
+
         return ret
 
 
@@ -397,7 +401,7 @@ class Rpn_Eval(command_base.Command_Basic):
            raise Exception("Error raising: " + str(b) + " to the " + str(a) + "th power")  # Errors are highly possible here
 
         variables.push(symbols, c)
-        
+
         return ret
 
 
@@ -405,7 +409,7 @@ class Rpn_Eval(command_base.Command_Basic):
         # duplicates the value on the top of the stack
         ret = 1
         variables.push(symbols, variables.top(symbols, 1))
-        
+
         return ret
 
 
@@ -413,7 +417,7 @@ class Rpn_Eval(command_base.Command_Basic):
         # removes top item from the stack
         ret = 1
         variables.pop(symbols)
-        
+
         return ret
 
 
@@ -421,7 +425,7 @@ class Rpn_Eval(command_base.Command_Basic):
         # clears the stack
         ret = 1
         symbols[SYM_STACK].clear()
-        
+
         return ret
 
 
@@ -432,9 +436,9 @@ class Rpn_Eval(command_base.Command_Basic):
             a = symbols[SYM_LOCAL]['last x']      # attempt to get the last-x value
         except:
             a = 0                                # default is zero
-            
+
         variables.push(symbols, a)               # and push it onto the stack
-        
+
         return ret
 
 
@@ -442,7 +446,7 @@ class Rpn_Eval(command_base.Command_Basic):
         # clears the stack
         ret = 1
         symbols[SYM_LOCAL].clear()
-        
+
         return ret
 
 
@@ -450,7 +454,7 @@ class Rpn_Eval(command_base.Command_Basic):
         # returns stack length
         ret = 1
         variables.push(symbols, len(symbols[SYM_STACK]))
-        
+
         return ret
 
 
@@ -470,66 +474,66 @@ class Rpn_Eval(command_base.Command_Basic):
     def sto(self, symbols, cmd, cmds):
         # stores the value in local var if it exists, otherwise global var.  If neither, creates local
         ret = 1
-        ret, v = variables.next_cmd(ret, cmds)                      # what's the name of the variable?   
+        ret, v = variables.next_cmd(ret, cmds)                      # what's the name of the variable?
         a = variables.top(symbols, 1)                               # will be stored from the top of the stack
 
         variables.Auto_store(v, a, symbols)                          # "auto store" the value
-        
+
         return ret
-        
-        
+
+
     def sto_g(self, symbols, cmd, cmds):
         # stores the value on the top of the stack into the global variable named by the next token
         ret = 1
-        ret, v = variables.next_cmd(ret, cmds)                      # what's the name of the variable?     
+        ret, v = variables.next_cmd(ret, cmds)                      # what's the name of the variable?
         a = variables.top(symbols, 1)                               # will be stored from the top of the stack
         with symbols[SYM_GLOBAL][0]:                                # lock the globals
            variables.put(v, a, symbols[SYM_GLOBAL][1])              # and store it there
-        
+
         return ret
-        
-        
+
+
     def sto_l(self, symbols, cmd, cmds):
         # stores the value on the top of the stack into the local variable named by the next token
         ret = 1
-        ret, v = variables.next_cmd(ret, cmds)   
+        ret, v = variables.next_cmd(ret, cmds)
         a = variables.top(symbols, 1)
         variables.put(v, a, symbols[SYM_LOCAL])
-        
+
         return ret
 
 
     def rcl(self, symbols, cmd, cmds):
         # recalls a variable.  Try local first, then global
         ret = 1
-        ret, v = variables.next_cmd(ret, cmds)   
-        with symbols[SYM_GLOBAL][0]:                                # lock the globals while we do this
-            a = variables.get(v, symbols[SYM_LOCAL], symbols[SYM_GLOBAL][1])
+        ret, v = variables.next_cmd(ret, cmds)
+        with symbols[SYM_GLOBAL][0]:                                               # lock the globals while we do this
+            a = variables.get(v, symbols[SYM_LOCAL], symbols[SYM_GLOBAL][1], param_convs._any) # as an integer
         variables.push(symbols, a)
-        
+
         return ret
 
 
     def rcl_l(self, symbols, cmd, cmds):
         # recalls a local variable (not overly useful, but avoids ambiguity)
         ret = 1
-        ret, v = variables.next_cmd(ret, cmds)   
-        a = variables.get(v, symbols[SYM_LOCAL], None)
+        ret, v = variables.next_cmd(ret, cmds)
+        a = variables.get(v, symbols[SYM_LOCAL], None, param_convs._any)        # as an integer
         variables.push(symbols, a)
-        
+
         return ret
-        
+
 
     def rcl_g(self, symbols, cmd, cmds):
         # recalls a global variable (useful if you define an identical local var)
         ret = 1
-        ret, v = variables.next_cmd(ret, cmds)   
-        with symbols[SYM_GLOBAL][0]:                                # lock the globals while we do this
-            a = variables.get(v, None, symbols[SYM_GLOBAL][1])      # grab the value from the global vars
-        variables.push(symbols, a)                                  # and push onto the stack
-        
+        ret, v = variables.next_cmd(ret, cmds)
+        with symbols[SYM_GLOBAL][0]:                                            # lock the globals while we do this
+            a = variables.get(v, None, symbols[SYM_GLOBAL][1], param_convs._any)# grab the value from the global vars as an integer
+        variables.push(symbols, a)                                              # and push onto the stack
+
         return ret
-        
+
     def x_eq_zero(self, symbols, cmd, cmds):
         # only continues eval if the top of the stack is 0
         if variables.top(symbols, 1) == 0:
@@ -663,6 +667,42 @@ class Rpn_Eval(command_base.Command_Basic):
         return False
 
 
+    def substr(self, symbols, cmd, cmds):
+        # does a substring
+        x = variables.pop(symbols)
+        y = variables.pop(symbols)
+        z = variables.pop(symbols)
+
+        r = str(z)[y:x]
+        variables.push(symbols, r)
+
+        return 1
+
+
+    def d_to_j(self, symbols, cmd, cmds):
+        # converts a text date on the top of the stack to a julian date (integer)
+        d = variables.pop(symbols)
+        dt = parser.parse(d)
+
+        j = dt.toordinal()
+
+        variables.push(symbols, j)
+
+        return 1
+
+
+    def j_to_d(self, symbols, cmd, cmds):
+        # converts a julian date (integer) on the top of the stack to a text date
+        j = variables.pop(symbols)
+        dt = datetime.date.fromordinal(j)
+
+        d = dt.strftime("%d-%b-%Y")
+
+        variables.push(symbols, d)
+
+        return 1
+
+
 scripts.Add_command(Rpn_Eval())  # register the command
 
 
@@ -676,16 +716,16 @@ class Rpn_Set(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("RPN_SET",  # the name of the command as you have to enter it in the code
+        super().__init__("RPN_SET, Sets a string to the concatenation of all the variables passed to it",
             LIB,
             (
-            # Desc         Opt    Var       type     p1_val                      p2_val 
+            # Desc         Opt    Var       type     p1_val                      p2_val
             ("Variable",   False, AVV_REQD, PT_STR,  None,                       None),
             ("Value",      False, AVV_YES,  PT_STRS, None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (2,           "    Assign '{2}' to variable {1}"), 
+            (2,           "    Assign '{2}' to variable {1}"),
             ) )
 
 
@@ -693,7 +733,92 @@ class Rpn_Set(command_base.Command_Basic):
         val = ''
         for i in range(2, self.Param_count(btn)+1): # for each parameter (after the first)
             val += str(self.Get_param(btn, i))      # append all the values (force to string)
-        self.Set_param(btn, 1, val)                 # pass the combined string back            
+        self.Set_param(btn, 1, val)                 # pass the combined string back
 
-        
+
 scripts.Add_command(Rpn_Set())  # register the command
+
+
+# constants for RPN_CLEAR
+RC_GLOBALS = "GLOBALS"
+RC_LOCALS = "LOCALS"
+RC_GLOBAL = "GLOBAL"
+RC_LOCAL = "LOCAL"
+RC_STACK = "STACK"
+RC_VARS = "VARS"
+RC_VAR = "VAR"
+RC_ALL = "ALL"
+
+RCG_GLOBAL = [RC_GLOBALS, RC_VARS, RC_ALL]
+RCG_LOCAL = [RC_LOCALS, RC_VARS, RC_ALL]
+RCG_STACK = [RC_STACK, RC_ALL]
+RCG_G_VAR = [RC_GLOBAL, RC_VAR]
+RCG_L_VAR = [RC_LOCAL, RC_VAR]
+RCG_ANY_VAR = [RC_GLOBAL, RC_LOCAL, RC_VAR]
+RCG_ALL = [RC_ALL, RC_VARS, RC_GLOBALS, RC_LOCALS, RC_VAR, RC_GLOBAL, RC_LOCAL, RC_STACK]
+
+# ##################################################
+# ### CLASS RPN_CLEAR                            ###
+# ##################################################
+
+# class that defines the RPN_CLEAR command -- clears variables
+class Rpn_Clear(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("RPN_CLEAR, Clear variables or stack",
+            LIB,
+            (
+            # Desc         Opt    Var       type      p1_val                      p2_val
+            ("Function",   False, AVV_NO,   PT_WORD,  None,                       None),
+            ("Variable",   True,  AVV_NO,   PT_WORDS, None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (1,           "    Clear {1}"),
+            (2,           "    Clear {1}: {2}"),
+            ) )
+
+        self.doc= ["If parameter 1 is:",
+                   f"     '{RC_GLOBALS}'                All the global variables are cleared",
+                   f"     '{RC_LOCALS}'                 All the local variables are cleared",
+                   f"     '{RC_VARS}'                   All variables are cleared",
+                   f"     '{RC_STACK}'                  The stack is cleared",
+                   f"     '{RC_ALL}'                    All variables and the stack are cleared",
+                   f"     '{RC_GLOBAL}' v1 [v2 [v3...]] Named global variables v1... are deleted",
+                   f"     '{RC_LOCAL}' v1 [v2 [v3...]]  Named local variables v1... are deleted",
+                   f"     '{RC_VAR}' v1 [v2 [v3...]]    Named variables v1... are deleted"]
+
+
+    def Process(self, btn, idx, split_line):
+        f = (self.Get_param(btn, 1)).upper()
+
+        if f in RCG_GLOBAL:
+            with btn.symbols[SYM_GLOBAL][0]:
+                btn.symbols[SYM_GLOBAL][1].clear()    # clear all global variables
+        if f in RCG_LOCAL:
+            btn.symbols[SYM_LOCAL].clear()            # clear all local variables
+        if f in RCG_STACK:
+            btn.symbols[SYM_STACK].clear()            # clear the stack
+        if f in RCG_G_VAR:
+            for i in range(2, self.Param_count(btn)+1):
+                with btn.symbols[SYM_GLOBAL][0]:
+                    variables.undef(self.Get_param(btn, i), btn.symbols[SYM_GLOBAL][1])
+        if f in RCG_L_VAR:
+            for i in range(2, self.Param_count(btn)+1):
+                variables.undef(self.Get_param(btn, i), btn.symbols[SYM_LOCAL])
+
+
+    def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
+        ret = super().Partial_validate_step_pass_1(ret, btn, idx, split_line)     # perform the original pass 1 validation
+
+        if ret == None or ((type(ret) == bool) and ret):                          # if the original validation hasn't raised an error
+            if not split_line[1] in RCG_ALL:                                      # invalid subcommand
+                c_ok = ', '.join(RCG_ALL[:-1]) + ', or ' + RCG_ALL[-1]
+                s_err = f"Invalid subcommand {split_line[1]} when expecting {c_ok}."
+                return (s_err, btn.Line(idx))
+        return ret
+
+
+scripts.Add_command(Rpn_Clear())  # register the command

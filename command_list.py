@@ -12,13 +12,25 @@ import \
   commands_keys, \
   commands_mouse, \
   commands_pause, \
-  commands_external
+  commands_external, \
+  commands_subroutines, \
+  commands_dialog, \
+  commands_browser_automation, \
+  commands_file, \
+  commands_documentation
+
+# @@@ a test command set for testing things!  Will be removed for production
+try:
+    import commands_test
+except:
+    traceback.print_exc()
+    pass
 
 # This library could be considered optional, but is not platform specific
 try:
     import commands_rpncalc
 except ImportError:
-    print("[LPHK] WARNING: RPN_EVAL command is not available")  
+    print("[LPHK] WARNING: RPN_EVAL command is not available")
     traceback.print_exc()
 
 # This library could be considered optional, and is also platform specific
@@ -26,20 +38,16 @@ if PLATFORM == "windows":
     try:
         import commands_win32
     except ImportError:
-        print("[LPHK] ERROR: Windows specific commands are not available") 
+        print("[LPHK] ERROR: Windows specific commands are not available")
         traceback.print_exc()
-else: 
-    print("[LPHK] WARNING: Windows specific commands can not be loaded") 
 
-# This library could be considered optional, and is also platform specific
-if PLATFORM == "windows":
     try:
         import commands_scrape
     except ImportError:
         print("[LPHK] ERROR: Screen scraping commands are not available")
         traceback.print_exc()
-else: 
-    print("[LPHK] WARNING: Screen scraping commands can not be loaded")
+else:
+    print("[LPHK] WARNING: Windows specific and screen scraping commands cannot be loaded")
 
 # Any that were not optional should set the error flag so we can exit
 if IMPORT_FATAL:  # Not using this at present

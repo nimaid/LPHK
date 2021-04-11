@@ -9,7 +9,7 @@ lib = "cmds_paus" # name of this library (for logging)
 # class that defines the Delay command (a target of GOTO's etc)
 class Pause_Delay(command_base.Command_Basic):
     def __init__(
-        self, 
+        self,
         ):
 
         super().__init__("DELAY")  # the name of the command as you have to enter it in the code

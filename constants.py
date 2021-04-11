@@ -1,5 +1,7 @@
 # Constants used all over the place.  An excuse to use "from constants import *"
 
+import param_convs
+
 # Get platform information
 PLATFORMS = [   {"search_string": "win", "name_string": "windows"},
                 {"search_string": "linux", "name_string": "linux"},
@@ -57,22 +59,27 @@ AVVS_ALL = {AVV_NO, AVV_YES, AVV_REQD}  # allow any option
 AVVS_NO =  {AVV_NO}                     # only allow literals
 AVVS_YES = {AVV_YES, AVV_REQD}          # AVV_YES is potentially ambiguous!
 AVVS_AMB = {AVV_NO, AVV_REQD}           # These are not ambiguous
+AVVS_REQ = {AVV_REQD}                   # ONLY variables
 
 AV_P1_VALIDATION  = 4
 AV_P2_VALIDATION  = 5
 
 # constants for parameter types
-#              desc      conv   special last  var (special means additional auto-validation, last means MUST be last, var is the max AV_VAR allowed)
-PT_INT      = ("int",    int,   False, False, AVVS_ALL)
-PT_FLOAT    = ("float",  float, False, False, AVVS_ALL)
-PT_STR      = ("str",    str,   True,  False, AVVS_ALL)        # a quoted string
-PT_STRS     = ("strs",   str,   True,  True,  AVVS_ALL)        # 1 or more quoted strings
-PT_LINE     = ("line",   str,   True,  True,  AVVS_NO)         # the rest of the line following first preceeding whitespace
-PT_TEXT     = ("text",   str,   False, False, AVVS_AMB)        # a string without whitespace @@@ DEPRECATED
-PT_LABEL    = ("label",  str,   True,  False, AVVS_NO)         # Note that this is for a reference to a label, not the definition of a label!
-PT_TARGET   = ("target", str,   True,  False, AVVS_NO)         # Note that this is for the definition of a target (e.g. creating a label)
-PT_KEY      = ("key",    str,   True,  False, AVVS_NO)         # This is a key literal
-PT_BOOL     = ("bool",   str,   True,  False, AVVS_ALL)        # True/False, Yes/No, Y/N, nonzero/zero <-- for variables
+#              desc      conv                special last   var (special means additional auto-validation, last means MUST be last, var is the max AV_VAR allowed)
+PT_INT      = ("int",    param_convs._int,   False,  False, AVVS_ALL)
+PT_FLOAT    = ("float",  param_convs._float, False,  False, AVVS_ALL)
+PT_STR      = ("str",    param_convs._str,   True,   False, AVVS_ALL)        # a quoted string
+PT_STRS     = ("strs",   param_convs._str,   True,   True,  AVVS_ALL)        # 1 or more quoted strings
+PT_LINE     = ("line",   param_convs._str,   True,   True,  AVVS_NO)         # the rest of the line following first preceeding whitespace
+PT_TEXT     = ("text",   param_convs._str,   False,  False, AVVS_AMB)        # a string without whitespace @@@ DEPRECATED (Not necessarily...)
+PT_LABEL    = ("label",  param_convs._str,   True,   False, AVVS_NO)         # Note that this is for a reference to a label, not the definition of a label!
+PT_TARGET   = ("target", param_convs._str,   True,   False, AVVS_NO)         # Note that this is for the definition of a target (e.g. creating a label)
+PT_KEY      = ("key",    param_convs._str,   True,   False, AVVS_NO)         # This is a key literal
+PT_BOOL     = ("bool",   param_convs._str,   True,   False, AVVS_ALL)        # True/False, Yes/No, Y/N, nonzero/zero <-- for variables
+PT_WORD     = ("word",   param_convs._str,   False,  False, AVVS_NO)         # a parameter not in quotes
+PT_WORDS    = ("word",   param_convs._str,   False,  True,  AVVS_NO)         # a parameter not in quotes
+PT_OBJ      = ("object", param_convs._None,  False,  False, AVVS_REQ)        # an object type
+PT_ANY      = ("any",    param_convs._None,  False,  False, AVVS_ALL)        # allow any type of parameter@@@@@
 
 # constants for auto_message
 AM_COUNT  = 0
@@ -87,7 +94,45 @@ VALID_BOOL_FALSE = ["FALSE", "NO"]
 VALID_BOOL       = VALID_BOOL_TRUE + VALID_BOOL_FALSE
 
 # Misc constants
+COLOR_DISABLED = 0 # black
 COLOR_PRIMED = 5 #red
 COLOR_FUNC_KEYS_PRIMED = 9 #amber
 EXIT_UPDATE_DELAY = 0.1
 DELAY_EXIT_CHECK = 0.025
+
+# subroutine related
+SUBROUTINE_PREFIX = "CALL:"
+SUBROUTINE_HEADER = "@SUB"
+
+# Launchpad constants
+LP_MK1 = "Mk1"
+LP_MK2 = "Mk2"
+LP_PRO = "Pro"
+LP_MINI = "Mini"
+
+LM_EDIT = "edit"
+LM_MOVE = "move"
+LM_SWAP = "swap"
+LM_COPY = "copy"
+LM_DEL = "del"
+LM_RUN = "run"
+
+# Dump constants
+D_HEADERS = 1           # produce documentation for headers
+D_COMMANDS = 2          # produce documentation for commands
+D_SUBROUTINES = 3       # produce documentation for subroutines
+D_BUTTONS = 4           # produce documentation for buttons
+D_COMMAND_BASE = 5      # produce documentation for routines used in the creation of commands
+D_DEBUG = 6             # add debug info where available
+D_SOURCE = 7            # add source where available
+
+DS_NORMAL = [D_HEADERS, D_COMMANDS, D_SUBROUTINES, D_BUTTONS]
+
+# dialog constants
+DR_ABORT = -1   # returned when aborted for any reason
+DR_CANCEL = 0   # Cancel return
+DR_OK = 1       # OK return
+
+DLG_INFO = 1       # a simple titled box with OK
+DLG_OK_CANCEL = 2  # a simple titled box with OK and Cancel
+DLG_ERROR = 3      # a simple titled box with Cancel

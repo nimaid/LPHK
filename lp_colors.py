@@ -3,6 +3,7 @@ color_modes = [["solid" for y in range(9)] for x in range(9)]
 
 import lp_events, scripts, window
 import colorsys
+from constants import *
 
 lp_object = None # another suspiciously non-threadsafe way of doing things :-(
 
@@ -84,7 +85,7 @@ def getXY_RGB(x, y):
     return color_string
 
 def luminance(r, g, b):
-	return ((0.299 * r) + (0.587 * g) + (0.114 * b)) / 255.0
+    return ((0.299 * r) + (0.587 * g) + (0.114 * b)) / 255.0
 
 # update the colour of a button
 def updateXY(x, y):
@@ -100,8 +101,11 @@ def updateXY(x, y):
 
             #print("Update colors for (" + str(x) + ", " + str(y) + "), is_running = " + str(is_running))
 
-            if is_running:                                      # if the button is running
-                set_color = scripts.COLOR_PRIMED                # set the desired colour 
+            if btn.invalid_on_load:
+                set_color = scripts.COLOR_DISABLED              # disabled button due to script error
+                color_modes[x][y] = "solid"                 
+            elif is_running:                                    # if the button is running
+                set_color = scripts.COLOR_PRIMED                # set the desired colour
                 color_modes[x][y] = "flash"                     # and mode
             elif (x, y) in [l[1:] for l in scripts.to_run]:     # is it waiting to run?
                 if is_func_key:
@@ -113,7 +117,7 @@ def updateXY(x, y):
                 set_color = curr_colors[x][y]                   # this button is not running (or not even asigned)
                 color_modes[x][y] = "solid"                     # set the mode alone
 
-            if window.lp_mode == "Mk1":                         # how to actually set the colours of Mk:1 launchpads
+            if window.lp_mode == LP_MK1:                         # how to actually set the colours of Mk:1 launchpads
                 if type(set_color) is int:
                     set_color = code_to_RGB(set_color)
                 lp_object.LedCtrlXY(x, y, set_color[0]//64, set_color[1]//64)
@@ -135,7 +139,8 @@ def updateXY(x, y):
                     else:
                         lp_object.LedCtrlXYByCode(x, y, set_color)
     else:
-        print("[lp_colors] (" + str(x) + ", " + str(y) + ") Launchpad is disconnected, cannot update.")
+        pass
+        #print("[lp_colors] (" + str(x) + ", " + str(y) + ") Launchpad is disconnected, cannot update.")
 
 # update the colours of all buttons
 def update_all():
@@ -149,7 +154,7 @@ def update_all():
 def raw_clear():
     for x in range(9):
         for y in range(9):
-            if window.lp_mode == "Mk1":
+            if window.lp_mode == LP_MK1:
                 lp_object.LedCtrlXY(x, y, 0, 0)
             else:
                 lp_object.LedCtrlXYByCode(x, y, 0)

@@ -55,7 +55,7 @@ This has a shorter list of requirements, but it's more coding, and requires more
  * Required basic understanding of stages of execution of a command 
 
 
-#### An example - Decoding an old version of the MOUSE_SCROLL command
+#### An example - Decoding S_FDIST command
 
 The `S_FDIST` command looks like this:
 ```python
@@ -69,7 +69,7 @@ class Scrape_Fingerprint_Distance(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("S_FDIST",  # the name of the command as you have to enter it in the code
+        super().__init__("S_FDIST, Calculate the distance between 2 fingerprints",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val 
@@ -81,6 +81,10 @@ class Scrape_Fingerprint_Distance(command_base.Command_Basic):
             # num params, format string                           (trailing comma is important)
             (3,           "    Return the hamming distance between fingerprints {1} and {2} into {3}"), 
             ) )
+
+        self.doc = ["This command calculates the hamming distance between 2 fingerprints.", \
+                    "This can be used to determine how similar 2 images are.  The larger", \
+                    "the hamming distance, the more different the images are."]
 
 
     def Process(self, btn, idx, split_line):
@@ -130,7 +134,7 @@ The initialization of a command class serves to define the name of the command. 
         self,
         ):
 
-        super().__init__("S_FDIST",  # the name of the command as you have to enter it in the code
+        super().__init__("S_FDIST, Calculate the distance between 2 fingerprints",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val 
@@ -142,9 +146,13 @@ The initialization of a command class serves to define the name of the command. 
             # num params, format string                           (trailing comma is important)
             (3,           "    Return the hamming distance between fingerprints {1} and {2} into {3}"), 
             ) )
+
+        self.doc = ["This command calculates the hamming distance between 2 fingerprints.", \
+                    "This can be used to determine how similar 2 images are.  The larger", \
+                    "the hamming distance, the more different the images are."]
 ```
 
-The 5th line defines the name of the command.  Note that command names are case sensitive, so the name should be in all uppercase to be consistent. 
+The 5th line defines the name of the command.  Note that command names are case sensitive, so the name should be in all uppercase to be consistent.  The name can be optionally followed by a comma and a description of the command.  This description is used as part of the auto-documentation of commands
 
 Line 6 passes the name of the current library (lib) to the the object.  The current library will be used to define where the command originates from in some of the low level reporting functions. 
 
@@ -644,7 +652,7 @@ Every command requires a validation.  If you do not provide validation code, the
 
             try:
                 temp = int(split_line[1])
-                if valid_var_name(temp):
+                if variables.valid_var_name(temp):
                 
                 if temp < 1:
                     return ("Line:" + str(idx+1) + " - '" + split_line[0] + " parameter 1 must be a positive number.", btn.line[idx])
