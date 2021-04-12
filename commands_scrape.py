@@ -351,8 +351,8 @@ class Scrape_Fingerprint_Distance(command_base.Command_Basic):
             (3,           "    Return the hamming distance between fingerprints {1} and {2} into {3}"),
             ) )
 
-        self.doc = ["This command calculates the hamming distance between 2 fingerprints.", \
-                    "This can be used to determine how similar 2 images are.  The larger", \
+        self.doc = ["This command calculates the hamming distance between 2 fingerprints. ",
+                    "This can be used to determine how similar 2 images are.  The larger ",
                     "the hamming distance, the more different the images are."]
 
 
@@ -395,8 +395,8 @@ class Scrape_Colour_Distance(command_base.Command_Basic):
             (7,           "    Return the hamming distance between colours ({1}, {2}, {3}) and ({4}, {5}, {6}) into {7}"),
             ) )
 
-        self.doc = ["This command calculates the hamming distance between 2 RGB values.", \
-                    "This can be used to determine how similar 2 colours are.  The larger", \
+        self.doc = ["This command calculates the hamming distance between 2 RGB values. ",
+                    "This can be used to determine how similar 2 colours are.  The larger ",
                     "the hamming distance, the more different the colours are."]
 
 

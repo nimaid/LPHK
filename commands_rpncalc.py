@@ -23,9 +23,27 @@ class Rpn_Eval(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("RPN_EVAL",  # the name of the command as you have to enter it in the code
+        super().__init__("RPN_EVAL, Evaluate an RPN expression",
         LIB)
 
+        self.doc = ["Evaluates a stack-based expression in a similar style to an old "
+                    "HP programmable calculator or FORTH.  RPN has the advantage of "
+                    "allowing expressions of arbitrary complexity without needing "
+                    "brackets or operator precidence.  It is also simple to extend "
+                    "with new commands and behaviour.",
+                    "",
+                    "The basic operation is that entries are either values that "
+                    "are pushed onto the stack, or operators that work on the stack.",
+                    "",
+                    "Traditionally the top 4 values on the stack are called X, Y, "
+                    "Z, and T.  Some operators (such as X<>Y - which swaps the values "
+                    "in the X and Y registers) explicitly mention these names.",
+                    "",
+                    "Many operators work by removing (popping) the top elements from "
+                    "the stack before pushing the result onto the top of the stack.  An "
+                    "example is the `+` command which popps the X and the Y values "
+                    "from the stack, and push the sum of these values back onto the "
+                    "top of the stack."]
         # this command does not have a standard list of fields, so we need to do some stuff manually
         self.valid_max_params = 255        # There is no maximum, but this is a reasonable limit!
         self.valid_num_params = [1, None]  # one or more is OK
@@ -38,6 +56,21 @@ class Rpn_Eval(command_base.Command_Basic):
 
         # Now register the operators
         self.Register_operators()
+
+        ml = 0
+        for o in self.operators:
+            ml = max(ml, len(o))
+        ml += 4
+
+        self.doc += ['', 'Operators:', '', f'~{ml+7}']
+        for o in self.operators:
+            op = self.operators[o]
+            if op[1] == 0:
+                c = o
+            else:
+                c = o + ' {v}'
+            self.doc += ["    " + c + " "*(ml - len(c)) +" - " + op[0].__doc__]
+        self.doc += ['~']
 
 
     # We can simply override the first pass validation
@@ -188,6 +221,7 @@ class Rpn_Eval(command_base.Command_Basic):
         symbols,                   # the symbol table (stack, global vars, etc.)
         cmd,                       # the current command
         cmds):                     # the rest of the commands on the command line
+        """Removes the top 2 values from the stack, replacing them with their sum, and placing the previous contents of the X register into LASTX"""
 
         ret = 1                    # always initialise ret to 1, because the default is to
                                    # step token by token along the expression
@@ -207,6 +241,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def subtract(self, symbols, cmd, cmds):
+        """Removes the top 2 values from the stack, replacing them with their difference (Y-X), and placing the previous contents of the X register into LASTX"""
+
         ret = 1
         a = variables.pop(symbols)
         b = variables.pop(symbols)
@@ -223,6 +259,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def multiply(self, symbols, cmd, cmds):
+        """Removes the top 2 values from the stack, replacing them with their product (Y-X), and placing the previous contents of the X register into LASTX"""
+
         ret = 1
         a = variables.pop(symbols)
         b = variables.pop(symbols)
@@ -239,6 +277,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def divide(self, symbols, cmd, cmds):
+        """Removes the top 2 values from the stack, replacing them with their quotient (Y/X), and placing the previous contents of the X register into LASTX"""
+
         ret = 1
         a = variables.pop(symbols)
         b = variables.pop(symbols)
@@ -255,6 +295,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def i_div(self, symbols, cmd, cmds):
+        """Removes the top 2 values from the stack, replacing them with the largest integer less than the quotient (Y/X), and placing the previous contents of the X register into LASTX"""
+
         ret = 1
         a = variables.pop(symbols)
         b = variables.pop(symbols)
@@ -271,6 +313,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def mod(self, symbols, cmd, cmds):
+        """Removes the top 2 values from the stack, replacing them with the remainder (or modulus), and placing the previous contents of the X register into LASTX"""
+
         ret = 1
         a = variables.pop(symbols)
         b = variables.pop(symbols)
@@ -287,6 +331,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def view(self, symbols, cmd, cmds):
+        """Displays the value of the X register"""
+
         # view the top of the stack (typically where results are)
         ret = 1
         print('Top of stack = ', variables.top(symbols, 1))       # we're going to peek at the top of the stack without popping
@@ -295,6 +341,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def view_s(self, symbols, cmd, cmds):
+        """Displays the current stack contents"""
+
         # View the entire stack.  Probably a debugging tool.
         ret = 1
         print('Stack = ', symbols[SYM_STACK])                       # show the entire stack
@@ -303,6 +351,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def view_l(self, symbols, cmd, cmds):
+        """Displays the current local variables"""
+
         # View the local variables.  Probably a debugging tool.
         ret = 1
         print('Local = ', symbols[SYM_LOCAL])                      # show all local variables
@@ -311,6 +361,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def view_g(self, symbols, cmd, cmds):
+        """Displays the current global variables"""
+
         # View the global variables.  Probably a debugging tool.
         ret = 1
         with symbols[SYM_GLOBAL][0]:                                # lock the globals while we do this
@@ -320,6 +372,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def one_on_x(self, symbols, cmd, cmds):
+        """Replaces the value on the top of the stack with its reciprocal.  The previous value of X is placed in LASTX"""
+
         ret = 1
         a = variables.pop(symbols)
         symbols[SYM_LOCAL]['last x'] = a
@@ -333,6 +387,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def int_x(self, symbols, cmd, cmds):
+        """Replaces the value on the top of the stack with the integer portion it.  The previous value of X is placed in LASTX"""
+
         # get the integer part of x
         ret = 1
         a = variables.pop(symbols)
@@ -347,6 +403,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def frac_x(self, symbols, cmd, cmds):
+        """Replaces the value on the top of the stack with the fractional portion it.  The previous value of X is placed in LASTX"""
+
         # get the fractionasl part of x
         ret = 1
         a = variables.pop(symbols)
@@ -361,6 +419,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def chs(self, symbols, cmd, cmds):
+        """Changes the sign of the value on the top of the stack.  LASTX is not modified."""
+
         ret = 1
         a = variables.pop(symbols)
 
@@ -373,6 +433,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def sqr(self, symbols, cmd, cmds):
+        """Replaces the value on the top of the stack its square.  The previous value of X is placed in LASTX"""
+
         # calculates the square
         ret = 1
         a = variables.pop(symbols)
@@ -389,6 +451,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def y_to_x(self, symbols, cmd, cmds):
+        """Replaces the top 2 values on the stack with the value Y^X.  The previous value of X is placed in LASTX"""
+
         # calculates the square
         ret = 1
         a = variables.pop(symbols)
@@ -406,6 +470,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def dup(self, symbols, cmd, cmds):
+        """Duplicates the top value on the stack.  Sometimes also known as `ENTER^`"""
+
         # duplicates the value on the top of the stack
         ret = 1
         variables.push(symbols, variables.top(symbols, 1))
@@ -414,6 +480,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def pop(self, symbols, cmd, cmds):
+        """Removes and discards the top element of the stack.  LASTX is not modified"""
+
         # removes top item from the stack
         ret = 1
         variables.pop(symbols)
@@ -422,6 +490,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def clst(self, symbols, cmd, cmds):
+        """Clears the entire stack.  LASTX is not modified"""
+
         # clears the stack
         ret = 1
         symbols[SYM_STACK].clear()
@@ -430,6 +500,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def last_x(self, symbols, cmd, cmds):
+        """Pushes the LASTX value onto the top of the stack.  LASTX is not modified"""
+
         # resurrects the last value of x that was "consumed" by an operation
         ret = 1
         try:
@@ -443,6 +515,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def cl_l(self, symbols, cmd, cmds):
+        """Clears all local variables"""
+
         # clears the stack
         ret = 1
         symbols[SYM_LOCAL].clear()
@@ -451,6 +525,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def stack_len(self, symbols, cmd, cmds):
+        """Pushes the length of the stack onto the stack.  Note that after a CLST the length of the stack is Zero."""
+
         # returns stack length
         ret = 1
         variables.push(symbols, len(symbols[SYM_STACK]))
@@ -459,6 +535,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def swap_x_y(self, symbols, cmd, cmds):
+        """Exchanges the top two values on the stack.  LASTX is not modified."""
+
         # exchanges top two values on the stack
         ret = 1
 
@@ -472,6 +550,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def sto(self, symbols, cmd, cmds):
+        """Stores the top value on the stack into a variable.  If a local variable of that name exists it will be used; otherwise if a global variable of that name exists, it will be used; finally if neither exist, a local variable will be created to contain the value.  Neither the stsack or LASTX is modified."""
+
         # stores the value in local var if it exists, otherwise global var.  If neither, creates local
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)                      # what's the name of the variable?
@@ -483,6 +563,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def sto_g(self, symbols, cmd, cmds):
+        """Stores the top value on the stack into a global variable.  If it does not exist, it will be created.  Neither the stsack or LASTX is modified."""
+
         # stores the value on the top of the stack into the global variable named by the next token
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)                      # what's the name of the variable?
@@ -494,6 +576,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def sto_l(self, symbols, cmd, cmds):
+        """Stores the top value on the stack into a local variable.  If it does not exist, it will be created.  Neither the stsack or LASTX is modified."""
+
         # stores the value on the top of the stack into the local variable named by the next token
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
@@ -504,6 +588,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def rcl(self, symbols, cmd, cmds):
+        """Recalls a value from a variable and pushes it onto the stack.  If a local variable of that name exists, it will be used; otherwise if a global variable of that name exists, it will be used; otherwise the value 0 will be placed on the stack."""
+
         # recalls a variable.  Try local first, then global
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
@@ -515,6 +601,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def rcl_l(self, symbols, cmd, cmds):
+        """Recalls a value from a local variable and pushes it onto the stack.  If a local variable of that name does not exist, the value 0 will be placed on the stack."""
+
         # recalls a local variable (not overly useful, but avoids ambiguity)
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
@@ -525,6 +613,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def rcl_g(self, symbols, cmd, cmds):
+        """Recalls a value from a global variable and pushes it onto the stack.  If a global variable of that name does not exist, the value 0 will be placed on the stack."""
+
         # recalls a global variable (useful if you define an identical local var)
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
@@ -535,6 +625,8 @@ class Rpn_Eval(command_base.Command_Basic):
         return ret
 
     def x_eq_zero(self, symbols, cmd, cmds):
+        """if X is equal to zero, the evaluation continues, otherwise it stops."""
+
         # only continues eval if the top of the stack is 0
         if variables.top(symbols, 1) == 0:
             return 1
@@ -543,6 +635,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def x_ne_zero(self, symbols, cmd, cmds):
+        """if X is not equal to zero, the evaluation continues, otherwise it stops."""
+
         # only continues eval if the top of the stack is not 0
         if variables.top(symbols, 1) != 0:
             return 1
@@ -551,6 +645,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def x_eq_y(self, symbols, cmd, cmds):
+        """if X is equal to Y, the evaluation continues, otherwise it stops."""
+
         # only continues eval if the two top values are equal
         if variables.top(symbols, 1) == variables.top(symbols, 2):
             return 1
@@ -559,6 +655,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def x_ne_y(self, symbols, cmd, cmds):
+        """if X is not equal to Y, the evaluation continues, otherwise it stops."""
+
         # only continues eval if the two top values are not equal
         if variables.top(symbols, 1) != variables.top(symbols, 2):
             return 1
@@ -567,6 +665,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def x_gt_y(self, symbols, cmd, cmds):
+        """if X is greater than Y, the evaluation continues, otherwise it stops."""
+
         # only continue if the top value > the second value on the stack
         if variables.top(symbols, 1) > variables.top(symbols, 2):
             return 1
@@ -575,6 +675,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def x_ge_y(self, symbols, cmd, cmds):
+        """if X is greater than or equal to Y, the evaluation continues, otherwise it stops."""
+
         # only continue if the top value >= the second value on the stack
         if variables.top(symbols, 1) >= variables.top(symbols, 2):
             return 1
@@ -583,6 +685,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def x_lt_y(self, symbols, cmd, cmds):
+        """if X is less than Y, the evaluation continues, otherwise it stops."""
+
         # only continue if the top value < the second value on the stack
         if variables.top(symbols, 1) < variables.top(symbols, 2):
             return 1
@@ -591,6 +695,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def x_le_y(self, symbols, cmd, cmds):
+        """if X is less than or equal to than Y, the evaluation continues, otherwise it stops."""
+
         # only continue if the top value <= the second value on the stack
         if variables.top(symbols, 1) <= variables.top(symbols, 2):
             return 1
@@ -599,6 +705,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def is_def(self, symbols, cmd, cmds):
+        """if the variable is defined (locally or globally) the evaluation continues, otherwise it stops."""
+
         # only continue if the variable is defined (locally or globally is OK)
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
@@ -610,6 +718,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def is_not_def(self, symbols, cmd, cmds):
+        """if the variable is not defined (locally or globally) the evaluation continues, otherwise it stops."""
+
         # only continue if the variable is not defined (either locally or globally)
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
@@ -621,6 +731,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def is_local_def(self, symbols, cmd, cmds):
+        """if the variable is defined locally the evaluation continues, otherwise it stops."""
+
         # only continue if the variable is defined locally
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
@@ -631,6 +743,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def is_local_not_def(self, symbols, cmd, cmds):
+        """if the variable is not defined locally the evaluation continues, otherwise it stops."""
+
         # only continue if the variable is not defined locally
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
@@ -641,6 +755,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def is_global_def(self, symbols, cmd, cmds):
+        """if the variable is defined globally the evaluation continues, otherwise it stops."""
+
         # only continue if the variable is defined globally
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
@@ -652,6 +768,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def is_global_not_def(self, symbols, cmd, cmds):
+        """if the variable is not defined globally the evaluation continues, otherwise it stops."""
+
         # only continue if the variable is not defined globally
         ret = 1
         ret, v = variables.next_cmd(ret, cmds)
@@ -663,11 +781,15 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def abort_script(self, symbols, cmd, cmds):
+        """Abort the script (not just the expression evaluation)."""
+
         # cause the script to be aborted
         return False
 
 
     def substr(self, symbols, cmd, cmds):
+        """Removes the top thee values from the stack, pushing the characters from Y to X-1 of Z onto the top of the stack."""
+
         # does a substring
         x = variables.pop(symbols)
         y = variables.pop(symbols)
@@ -680,6 +802,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def d_to_j(self, symbols, cmd, cmds):
+        """Converts a text date on the top of the stack to the days since Jan-1-1900."""
+
         # converts a text date on the top of the stack to a julian date (integer)
         d = variables.pop(symbols)
         dt = parser.parse(d)
@@ -692,6 +816,8 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def j_to_d(self, symbols, cmd, cmds):
+        """Converts the days since Jan-1-1900 in on the top of the stack to a text date."""
+
         # converts a julian date (integer) on the top of the stack to a text date
         j = variables.pop(symbols)
         dt = datetime.date.fromordinal(j)
@@ -781,6 +907,8 @@ class Rpn_Clear(command_base.Command_Basic):
             ) )
 
         self.doc= ["If parameter 1 is:",
+                   "",
+                   "~28",
                    f"     '{RC_GLOBALS}'                All the global variables are cleared",
                    f"     '{RC_LOCALS}'                 All the local variables are cleared",
                    f"     '{RC_VARS}'                   All variables are cleared",
@@ -788,7 +916,8 @@ class Rpn_Clear(command_base.Command_Basic):
                    f"     '{RC_ALL}'                    All variables and the stack are cleared",
                    f"     '{RC_GLOBAL}' v1 [v2 [v3...]] Named global variables v1... are deleted",
                    f"     '{RC_LOCAL}' v1 [v2 [v3...]]  Named local variables v1... are deleted",
-                   f"     '{RC_VAR}' v1 [v2 [v3...]]    Named variables v1... are deleted"]
+                   f"     '{RC_VAR}' v1 [v2 [v3...]]    Named variables v1... are deleted",
+                   "~"]
 
 
     def Process(self, btn, idx, split_line):

@@ -28,9 +28,9 @@ class Dialog_Ok_Cancel(command_base.Command_Basic):
             (3,           "    Dialog OK/Cancel '{1}'"),
             ) )
 
-        self.doc = ["A simple dialog with a title, message and OK/Cancel buttons.  Closing the", \
-                    "window is treated the same as cancel.  If a return variable is specified," \
-                    "contain 1 for OK, and 0 for cancel.  If no variable is passed for the "\
+        self.doc = ["A simple dialog with a title, message and OK/Cancel buttons.  Closing the "
+                    "window is treated the same as cancel.  If a return variable is specified, "
+                    "contain 1 for OK, and 0 for cancel.  If no variable is passed for the "
                     "return value, a cancel will result in a button abort."]
 
 
@@ -76,8 +76,8 @@ class Dialog_Info(command_base.Command_Basic):
             (2,           "    Info dialog '{1}'"),
             ) )
 
-        self.doc = ["A simple dialog with a title, message and OK button.  No return value" \
-                    "is required since the message only requires acknowledgement.  This" \
+        self.doc = ["A simple dialog with a title, message and OK button.  No return value "
+                    "is required since the message only requires acknowledgement.  This "
                     "will never cause an abort"]
 
 
@@ -111,9 +111,9 @@ class Dialog_Error(command_base.Command_Basic):
             (3,           "    Error dialog '{1}' returning {3}"),
             ) )
 
-        self.doc = ["A simple dialog with a title, message and Cancel button.  Typically" \
-                    "this should be called without a return variable to allow the script" \
-                    "to abort.  If a return value is specified, the script will continue" \
+        self.doc = ["A simple dialog with a title, message and Cancel button.  Typically "
+                    "this should be called without a return variable to allow the script "
+                    "to abort.  If a return value is specified, the script will continue "
                     "after the dialog is dismissed."]
 
 

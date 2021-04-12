@@ -57,9 +57,9 @@ class File_Delete(command_base.Command_Basic):
             (2,           "    Deletes {1}"),
             ) )
 
-        self.doc = ["Attempts to delete the file specified in parameter 2 (File) and returns 1", \
-                    "in parameter 1 (OK) if the delete suceeds, otherwise returns 0.  Note that", \
-                    "0 will be returned if the file did  not exist prior to attempted deletion"]
+        self.doc = ["Attempts to delete the file specified in parameter 2 (File) and returns 1 "
+                    "in parameter 1 (OK) if the delete suceeds, otherwise returns 0.  Note that "
+                    "0 will be returned if the file did not exist prior to attempted deletion"]
 
 
     def Process(self, btn, idx, split_line):
@@ -96,7 +96,7 @@ class File_File_Exists(command_base.Command_Basic):
             (2,           "    Returns 1 in {1} if {2} exists as a file, else returns 0"),
             ) )
 
-        self.doc = ["Returns 1 in parameter 1 (Exists) if the fully specified file (includes path)", \
+        self.doc = ["Returns 1 in parameter 1 (Exists) if the fully specified file (includes path) "
                     "passed in parameter 2 (File) exists AND is a file, otherwise returns 0."]
 
 
@@ -132,7 +132,7 @@ class File_Path_Exists(command_base.Command_Basic):
             (2,           "    Returns 1 in {1} if {2} exists as a path, else returns 0"),
             ) )
 
-        self.doc = ["Returns 1 in parameter 1 (Exists) if the path specified in parameter", \
+        self.doc = ["Returns 1 in parameter 1 (Exists) if the path specified in parameter "
                     "2 (Path) exists AND is a directory, otherwise returns 0."]
 
 
@@ -168,10 +168,10 @@ class File_Ensure_Path_Exists(command_base.Command_Basic):
             (2,           "    Returns 1 in {1} if {2} exists as a path (or could be created), else returns 0"),
             ) )
 
-        self.doc = ["Ensures the path passed exists by first checking for its existance, then", \
-                    "attempting to create the path if it does not exist.", \
-                    "", \
-                    "Returns 1 in the first parameter (OK) if the path existed or was", \
+        self.doc = ["Ensures the path passed exists by first checking for its existance, then "
+                    "attempting to create the path if it does not exist.",
+                    "",
+                    "Returns 1 in the first parameter (OK) if the path existed or was "
                     "sucessfully created, otherwise returns 0."]
 
 

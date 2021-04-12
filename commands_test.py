@@ -4,6 +4,7 @@ from constants import *
 LIB = "cmds_test" # name of this library (for logging)
 
 class Test_XX(command_base.Command_Basic):
+
     def clean(self, s): # remove stuff that changes (memory addresses)
         p = s.find(" at 0x")
         if p >=0:
@@ -53,7 +54,8 @@ class Test_01(Test_XX):
             ) )
 
         self.one = 1
-
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 scripts.Add_command(Test_01())  # register the command
 
@@ -75,6 +77,8 @@ class Test_02(Test_XX):
             ) )
 
         self.one = 1
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_02())  # register the command
@@ -97,6 +101,8 @@ class Test_03(Test_XX):
             ) )
 
         self.one = "1"
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_03())  # register the command
@@ -119,6 +125,8 @@ class Test_04(Test_XX):
             ) )
 
         self.one = "1"
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_04())  # register the command
@@ -141,6 +149,8 @@ class Test_11(Test_XX):
             ) )
 
         self.one = 1
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_11())  # register the command
@@ -163,6 +173,8 @@ class Test_12(Test_XX):
             ) )
 
         self.one = 1
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_12())  # register the command
@@ -185,6 +197,8 @@ class Test_13(Test_XX):
             ) )
 
         self.one = "1"
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_13())  # register the command
@@ -207,6 +221,8 @@ class Test_14(Test_XX):
             ) )
 
         self.one = "1"
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_14())  # register the command
@@ -229,6 +245,8 @@ class Test_21(Test_XX):
             ) )
 
         self.one = 1
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_21())  # register the command
@@ -251,6 +269,8 @@ class Test_22(Test_XX):
             ) )
 
         self.one = 1
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_22())  # register the command
@@ -273,6 +293,8 @@ class Test_23(Test_XX):
             ) )
 
         self.one = "1"
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_23())  # register the command
@@ -295,6 +317,8 @@ class Test_24(Test_XX):
             ) )
 
         self.one = "1"
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_24())  # register the command
@@ -318,6 +342,8 @@ class Test_101(Test_XX):
             ) )
 
         self.one = "1"
+        self.deprecated = True
+        self.deprecated_use = "This command exists for testing purposes and will not exist in the production version of LPHK."
 
 
 scripts.Add_command(Test_101())  # register the command
@@ -338,6 +364,9 @@ class Test_Dialog(command_base.Command_Basic):
             # num params, format string                           (trailing comma is important)
             (0,           "    Dialog Test"),
             ) )
+
+        self.deprecated = True
+        self.deprecated_use = "This command will not exist in the production version of LPHK.  Please use one of the `DIALOG_` commands."
 
 
     def Process(self, btn, idx, split_line):
@@ -364,6 +393,9 @@ class Test_Dump(command_base.Command_Basic):
             (0,           "    Dump headers and commands"),
             ) )
 
+        self.deprecated = True
+        self.deprecated_use = "This command will not exist in the production version of LPHK.  Please use the `DOCUMENT` command."
+
 
     def Process(self, btn, idx, split_line):
         scripts.Dump_commands()
@@ -387,6 +419,9 @@ class Test_Dump_Debug(command_base.Command_Basic):
             # num params, format string                           (trailing comma is important)
             (0,           "    Dump headers and commands"),
             ) )
+
+        self.deprecated = True
+        self.deprecated_use = "This command will not exist in the production version of LPHK.  Please use the `DOCUMENT` command."
 
 
     def Process(self, btn, idx, split_line):

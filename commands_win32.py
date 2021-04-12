@@ -286,9 +286,9 @@ class Win32_Find_Hwnd(Command_Win32):
             (4,           "    Find {4}th window titled '{1}', returning handle in {2}.  Report {3} total matches"),
             ) )
 
-        self.doc = ["Searches for an exactly matching window `Title`.  If multiple are found,",
-                    "the windows are sorted by process id.  The number of matching windows is",
-                    "returned in `M`.  If `N` or more are found, the nth window handle is",
+        self.doc = ["Searches for an exactly matching window `Title`.  If multiple are found, "
+                    "the windows are sorted by process id.  The number of matching windows is "
+                    "returned in `M`.  If `N` or more are found, the nth window handle is "
                     "returned in `HWND`.  -1 is returned if there is an error."]
 
     def Process(self, btn, idx, split_line):
@@ -346,10 +346,10 @@ class Win32_Similar_Hwnd(Command_Win32):
             (4,           "    Find {4}th window titled '{1}', returning handle in {2}.  Report {3} total matches"),
             ) )
 
-        self.doc = ["Searches for windows with titles starting with `Title`.  If multiple",
-                    "are found, the windows are sorted by process id.  The number of",
-                    "matching windows is returned in `M`.  If `N` or more are found, the",
-                    "nth window handle is returned in `HWND`.  -1 is returned if there is",
+        self.doc = ["Searches for windows with titles starting with `Title`.  If multiple "
+                    "are found, the windows are sorted by process id.  The number of "
+                    "matching windows is returned in `M`.  If `N` or more are found, the "
+                    "nth window handle is returned in `HWND`.  -1 is returned if there is "
                     "an error."]
 
     def Process(self, btn, idx, split_line):
@@ -410,10 +410,10 @@ class Win32_Regex_Hwnd(Command_Win32):
             (4,           "    Find {4}th window titled '{1}', returning handle in {2}.  Report {3} total matches"),
             ) )
 
-        self.doc = ["Searches for windows with titles described with the regular expression",
-                    "`Regex`.  If multiple are found, the windows are sorted by process id.",
-                    "The number of matching windows is returned in `M`.  If `N` or more are",
-                    "found, the nth window handle is returned in `HWND`.  -1 is returned if",
+        self.doc = ["Searches for windows with titles described with the regular expression "
+                    "`Regex`.  If multiple are found, the windows are sorted by process id. "
+                    "The number of matching windows is returned in `M`.  If `N` or more are "
+                    "found, the nth window handle is returned in `HWND`.  -1 is returned if "
                     "there is an error."]
 
     def Process(self, btn, idx, split_line):
@@ -469,8 +469,8 @@ class Win32_Minimise_Hwnd(Command_Win32):
             (1,           "    Minimise specified window {1}"),
             ) )
 
-        self.doc = ["If no parameter is passed, this command will minimise all windows except LPHK.",
-                    "If a parmeter is passed, the window with this handle is minimised.  This also",
+        self.doc = ["If no parameter is passed, this command will minimise all windows except LPHK. "
+                    "If a parmeter is passed, the window with this handle is minimised.  This also "
                     "allows LPHK to be minimised."]
 
 
@@ -572,12 +572,13 @@ class Win32_Copy(Command_Win32):
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
+            ("Success",    False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain success value
             ("Clipboard",  True,  AVV_REQD, PT_STR,  None,                       None),   # variable to contain cut item
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (0,           "    Copy into system clipboard"),
-            (1,           "    Copy into system clipboard and {1}"),
+            (1,           "    Copy into system clipboard returning success in {2}"),
+            (2,           "    Copy into system clipboard and {1}, returning success in {2}"),
             ) )
 
     def Process(self, btn, idx, split_line):
@@ -593,16 +594,33 @@ class Win32_Copy(Command_Win32):
 
         import pyperclip                                       # pyperclip is cross-platform (better than using windows specific code)
 
-        w = 0
-        t = ''
-        while t == '' and w < 1:                               # we often have to wait for the text to appear in the clipboard
-            btn.Safe_sleep(DELAY_EXIT_CHECK)
-            w += DELAY_EXIT_CHECK
+        success = False
+        r = 20
+        while r > 0:
+            r -= 1
+            try:
+                n = win32clipboard.CountClipboardFormats()
+                if n > 0:
+                    break
+            except:
+                n = -1
+                btn.Safe_sleep(0.05)
+
+        if (n <= 0):
+            self.Set_param(btn, 1, -1)
+        else:
             t = pyperclip.paste()
 
-        if self.Param_count(btn) > 0:                          # save to variable if required
+        if n <= 0:
+            print(f'fail {r}')
+            self.Set_param(btn, 2, None)
+            self.Set_param(btn, 1, -1)
+        else:
+            t = pyperclip.paste()                              # get it again
             t = t.rstrip('\r\n')                               # remove any line terminators
-            self.Set_param(btn, 1, t)
+            print(f"success {r} `{t}`")
+            self.Set_param(btn, 2, t)
+            self.Set_param(btn, 1, 0)
 
 
 scripts.Add_command(Win32_Copy())  # register the command
@@ -754,10 +772,47 @@ class Win32_Window_Size(Command_Win32):
         hwnd = win32gui.GetForegroundWindow()                 # get the current window
         hwnd = self.Get_param(btn, 3, hwnd)                   # override with parameter if passed
 
-        _, _, x, y = GetWindowRect(hwnd)                      # get the size
+        _, _, x, y = win32gui.GetWindowRect(hwnd)             # get the size
 
         self.Set_param(btn, 1, x)                             # return width and height of window
         self.Set_param(btn, 2, y)
 
 
 scripts.Add_command(Win32_Window_Size())  # register the command
+
+
+# ##################################################
+# ### CLASS W_LIST_HWND                          ###
+# ##################################################
+
+# class that defines the W_LIST_HWND command - lists window titles
+class Win32_List_Hwnd(Command_Win32):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("W_LIST_HWND, Lists all windows",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (0,           "    List window titles"),
+            ) )
+
+
+    def Process(self, btn, idx, split_line):
+
+        def CheckWindow(hwnd, data):
+            # callback function to receive enumerated window handles
+            print(f"`{win32gui.GetWindowText(hwnd)}`")
+
+        hwnds = []                                             # reset the list of window handles
+        title = ""                                             # get the title we're searching for
+
+        data = {'title':title, 'hwnds':hwnds}                  # data structure to be used by the callback routine
+        win32gui.EnumWindows(CheckWindow, data)                # enumerate windows
+
+
+scripts.Add_command(Win32_List_Hwnd())  # register the command

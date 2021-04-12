@@ -46,11 +46,11 @@ class Bauto_Start(command_base.Command_Basic):
             (2,           "    Open browser {1} for automation as {2}"),
             ) )
 
-        self.doc = ["Starts a browser using selinium for automated control.  The return will",
+        self.doc = ["Starts a browser using selinium for automated control.  The return will "
                     "be an object if the call suceeds, otherwise it will return -1.",
                     "",
-                    "NOTE 1: The first parameter should be used to select what browser you",
-                    "want to load.  This is implemented, but has only been tested with Chrome.",
+                    "NOTE 1: The first parameter should be used to select what browser you "
+                    "want to load.  This is implemented, but has only been tested with Chrome. "
                     "The values that can be used are:",
                     "",
                     "      {BAS_CHROME}",
@@ -63,8 +63,8 @@ class Bauto_Start(command_base.Command_Basic):
                     "      {BAS_WEBKITGTK}",
                     "      {BAS_REMOTE}",
                     "",
-                    "NOTE 2: This blocks while the browser loads, so it should use a",
-                    "similar technique to the dialog boxes to pass this processing off",
+                    "NOTE 2: This blocks while the browser loads, so it should use a "
+                    "similar technique to the dialog boxes to pass this processing off "
                     "to another thread."]
 
 
@@ -134,8 +134,8 @@ class Bauto_Navigate(command_base.Command_Basic):
 
         self.doc = ["Navigates an existing browser to a new URL.",
                     "",
-                    "NOTE 1: This blocks while the browser loads the page, so it should use",
-                    "a similar technique to the dialog boxes to pass this processing off to",
+                    "NOTE 1: This blocks while the browser loads the page, so it should use "
+                    "a similar technique to the dialog boxes to pass this processing off to "
                     "another thread."]
 
 
@@ -174,7 +174,7 @@ class Bauto_Stop(command_base.Command_Basic):
 
         self.doc = ["Closes an existing browser.",
                     "",
-                    "NOTE 1: You should probably clear the variable that held the browser",
+                    "NOTE 1: You should probably clear the variable that held the browser "
                     "object after you call this."]
 
 
@@ -213,7 +213,7 @@ class Bauto_Get_Url(command_base.Command_Basic):
 
         self.doc = ["Returns the URL the existing browser is displaying.",
                     "",
-                    "NOTE 1: This can fail (returning a blank string) if the browser is",
+                    "NOTE 1: This can fail (returning a blank string) if the browser is "
                     "still loading the page."]
 
 
@@ -267,26 +267,29 @@ class Bauto_Get_Element(command_base.Command_Basic):
             (4,           "    Return element {3} from {1} into {4} using method {2}"),
             ) )
 
-        self.doc = ["Returns an element at the location.  Often this will be used to extract"
+        self.doc = ["Returns an element at the location.  Often this will be used to extract "
                     "tables for further processing.",
-                    ""
-                    "The first parameter `Auto` is weither an browser object or an element",
+                    "",
+                    "The first parameter `Auto` is weither an browser object or an element "
                     "returned from a successful search.",
                     "",
                     "The `Method` can be:",
+                    "",
+                    "~19",
                     "      XPATH      - finds element by xpath",
                     "      NAME       - finds element by name",
                     "      TAG_NAME   - finds element by tag name",
                     "      ID         - finds element by its id",
                     "      LINK_TEXT  - finds element by its link text",
                     "      CLASS_NAME - finds element by class name",
+                    "~",
                     "",
                     "See selenium documentation for information about xpaths.",
                     "",
-                    "The third parameter `Search` is the search string.  Thhe format of this",
+                    "The third parameter `Search` is the search string.  Thhe format of this "
                     "depends on the search method.",
-                    ""
-                    "The final parameter `Element` is the element returned from the search.  If",
+                    "",
+                    "The final parameter `Element` is the element returned from the search.  If "
                     "The search fails, -1 will be returned."]
 
 
@@ -341,19 +344,20 @@ class Bauto_Get_Table_Size(command_base.Command_Basic):
             (3,           "    Return dimensions of table {1} into ({2}, {3})"),
             ) )
 
-        self.doc = ["Returns the number of rows and columns for a table.  This table should"
-                    "have previously been obtained by fetching a table element from a loaded"
+        self.doc = ["Returns the number of rows and columns for a table.  This table should "
+                    "have previously been obtained by fetching a table element from a loaded "
                     "page.",
                     "",
-                    "The first parameter `Table` is an element returned from a search.  it is",
+                    "The first parameter `Table` is an element returned from a search.  it is "
                     "unlikely that any object other than a table will produce sensible results.",
                     "",
-                    "The result `Rows` will be the number of rows in the table.  -1, will be",
+                    "The result `Rows` will be the number of rows in the table.  -1, will be "
                     "returned in case of error.",
                     "",
-                    "the result `Cols` will be the number of columns in the 0th row of the table.",
-                    "Note that because HTML tables can have a variable number of columns, it",
-                    "cannot be assumed that all rows will have this number of columns.  -1 will",
+                    "The result `Cols` will be the number of columns in the 0th row of the table.",
+                    "",
+                    "Note that because HTML tables can have a variable number of columns, it "
+                    "cannot be assumed that all rows will have this number of columns.  -1 will "
                     "be returned in case of error."]
 
 
@@ -402,14 +406,14 @@ class Bauto_Get_Table_Cell(command_base.Command_Basic):
             (4,           "    Return cell ({2}, {3}) from {1} into {4}"),
             ) )
 
-        self.doc = ["The first parameter `Table` is an element returned from a search.  it is",
+        self.doc = ["The first parameter `Table` is an element returned from a search.  it is "
                     "unlikely that any object other than a table will produce sensible results.",
                     "",
                     "The `Row` and `Col` parameters specify the 0-based offset in "
                     "have previously been obtained by fetching a table element from a loaded"
                     "page.",
                     "",
-                    "The parameter `Cell` will contain the cell from the table.  -1 will be",
+                    "The parameter `Cell` will contain the cell from the table.  -1 will be "
                     "returned in case of error."]
 
 
@@ -466,7 +470,7 @@ class Bauto_Get_Element_Text(command_base.Command_Basic):
 
         self.doc = ["The first parameter `Element` is an element returned from a search.",
                     "",
-                    "The `Text` parameters will be populated the text of the element.  -1"
+                    "The `Text` parameters will be populated the text of the element.  -1 "
                     "will be returned in case of error."]
 
 
@@ -551,12 +555,14 @@ class Bauto_Send_Text(command_base.Command_Basic):
 
         self.doc = ["The first parameter `Element` is an element returned from a search.",
                     "",
-                    "This method will send text to that element.  Note that there are a few special",
+                    "This method will send text to that element.  Note that there are a few special "
                     "escape characters:",
                     "",
-                    "        `\n` - will be replaced with a newline,",
+                    "~15",
+                    "        `\\n` - will be replaced with a newline,",
                     "        `\h` - will be replaced with a press of the home key",
                     "        `\^` - will be replaced with a press of the arrow up key",
+                    "~",
                     "",
                     "There is no return value."]
 

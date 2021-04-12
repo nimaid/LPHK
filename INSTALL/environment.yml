@@ -6,7 +6,6 @@ dependencies:
   - pip
   - tk
   - pip:
-    - git+git://github.com/FMMT666/launchpad.py.git@master
     - pillow
     - pygame
     - pynput
@@ -20,3 +19,5 @@ dependencies:
     - selenium
     - pyperclip
     - python-dateutil
+    - launchpad-py
+    - launchpad

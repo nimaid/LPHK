@@ -125,6 +125,7 @@ D_BUTTONS = 4           # produce documentation for buttons
 D_COMMAND_BASE = 5      # produce documentation for routines used in the creation of commands
 D_DEBUG = 6             # add debug info where available
 D_SOURCE = 7            # add source where available
+D_NO_SRC_DOC = 8        # hide irrelevant source documentation
 
 DS_NORMAL = [D_HEADERS, D_COMMANDS, D_SUBROUTINES, D_BUTTONS]
 

@@ -179,40 +179,40 @@ class Header_Name(command_base.Command_Header):
 
         super().__init__("@NAME, Names a button")
         
-        self.doc = ["The @NAME header defines a name for a script.  This name is also",
-                    "displayed on the LPHK form as annotation for the button the script",
+        self.doc = ["The @NAME header defines a name for a script.  This name is also "
+                    "displayed on the LPHK form as annotation for the button the script "
                     "is assigned to.",
                     "",
                     "A simple example is as follows:",
                     "",
                     "      @NAME Boo!",
                     "",
-                    "This will cause the script to be named `Boo!`, and for this text to",
+                    "This will cause the script to be named `Boo!`, and for this text to "
                     "appear on the assigned button and in internally generated documentation.",
                     "",
-                    "The space on buttons is limited.  For the larger square buttons,",
-                    "three lines of five characters can be displayed.  For the smaller",
+                    "The space on buttons is limited.  For the larger square buttons, "
+                    "three lines of five characters can be displayed.  For the smaller "
                     "round buttons, only two lines of three characters will fit.",
                     "",
-                    "LPHK attempts to display the name as best it can.  Firstly, it breaks",
-                    "long words into shorter fragments, then it tries to pack those fragments",
-                    "together.  The previous example `Boo!` is less than 5 characters, so",
-                    "it fits completely on one line.  The name `Pieces of text to display`",
-                    "would first be broken up into `Piece` `s` `of` `text` `to` `displ` ay`,",
-                    "then joined back up as `Piece` `s of` `text`,  The remainder can't be",
+                    "LPHK attempts to display the name as best it can.  Firstly, it breaks "
+                    "long words into shorter fragments, then it tries to pack those fragments "
+                    "together.  The previous example `Boo!` is less than 5 characters, so "
+                    "it fits completely on one line.  The name `Pieces of text to display` "
+                    "would first be broken up into `Piece` `s` `of` `text` `to` `displ` ay`, "
+                    "then joined back up as `Piece` `s of` `text`,  The remainder can't be "
                     "fitted, and is dropped off.  The button would contain the text:",
                     "",
                     "      Piece",
-                    "      a of",
+                    "      s of",
                     "      text",
                     "",
-                    "Shorter text strings are are displayed using larger fonts for greater"
-                    "reasability if the option -f or --fit is specified on the command",
+                    "Shorter text strings are are displayed using larger fonts for greater "
+                    "readability if the option -f or --fit is specified on the command",
                     "line.",
                     "",
                     "Only a single name header is permitted in a script.",
                     "",
-                    "This is not permitted in a subroutine because the subroutine is named",
+                    "This is not permitted in a subroutine because the subroutine is named "
                     "using the `@SUB` header."]
 
 
@@ -256,7 +256,7 @@ class Header_Desc(command_base.Command_Header):
                     "",
                     "      @DESC Do really amazing things",
                     "",
-                    "This will cause the script or subroutine to be described as `Do really",
+                    "This will cause the script or subroutine to be described as `Do really "
                     "amazing things`, in internally generated documentation.",
                     "",
                     "Only a single description header is permitted in a script or subroutine."]
@@ -293,7 +293,7 @@ class Header_Doc(command_base.Command_Header):
 
         super().__init__("@DOC, Adds a line to the documentation text")
 
-        self.doc = ["The `@DOC` header allows multiple line documentation to be written for a script",
+        self.doc = ["The `@DOC` header allows multiple line documentation to be written for a script "
                     "or subroutine.  Each `@DOC` line is appended to the documentation.",
                     "",
                     "A simple example is as follows:",
@@ -301,7 +301,7 @@ class Header_Doc(command_base.Command_Header):
                     "      @DOC This is the first line of the documentation...",
                     "      @DOC ...and this is the second.",
                     "",
-                    "When the internal documentation is produced for the script or subroutine, this",
+                    "When the internal documentation is produced for the script or subroutine, this "
                     "text will appear."]
 
 
@@ -316,6 +316,101 @@ class Header_Doc(command_base.Command_Header):
 
         if pass_no == 1:
             btn.doc += [' '.join(split_line[1:])]
+
+        return True
+
+
+scripts.Add_command(Header_Doc())  # register the header
+
+
+# ##################################################
+# ### CLASS Header_Doc_Add                       ###
+# ##################################################
+
+# This is a dummy header.  It is interpreted for real when a subroutine is loaded,
+# but is ignored in the normal running of commands
+class Header_Doc_Add(command_base.Command_Header):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("@DOC+, Extends a line of the documentation text")
+
+        self.doc = ["The `@DOC+` header allows a documentation line to be extended so that "
+                    "word wrapping works correctly",
+                    "",
+                    "A simple example is as follows:",
+                    "",
+                    "      @DOC This is the first line of the documentation...",
+                    "      @DOC+ ...and this is more of the 1st line.",
+                    "",
+                    "When the internal documentation is produced for the script or subroutine, this "
+                    "text will appear with the line wrapped as required."]
+
+
+    # Dummy validate routine.  Simply says all is OK (without a validation routine, an error is reported (but not printed)
+    def Validate(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
+        ):
+
+        if pass_no == 1:
+            add_part = split_line[1:]
+            last_part = btn.doc[-1:]
+            last_part += add_part
+            btn.doc[-1] = ' '.join(last_part)
+
+        return True
+
+
+scripts.Add_command(Header_Doc_Add())  # register the header
+
+
+# ##################################################
+# ### CLASS Header_Deprecated                    ###
+# ##################################################
+
+# The Deprecated header marks a routine as deprecated with any additional text
+# placed in the "use" description.
+class Header_Deprecated(command_base.Command_Header):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("@DEPRECATED, Marks the routine as deprecated")
+
+        self.doc = ["The `@DEPRECSTED` header allows a routine to be marked as Deprecated.",
+                    "",
+                    "Some simple examples follows",
+                    "",
+                    "      @DEPRECATED",
+                    "      @DEPRECATED Please use the XYZ command instead",
+                    "",
+                    "When the internal documentation is produced for the script or subroutine, it "
+                    "will be flagged as deprecated.  The optional message will be printed.",
+                    "",
+                    "A parameter may be available to either flag or prevent the use of deprecated "
+                    "commands..."]
+
+
+    # Validate routine.  Adds the deprecated information if the command is not already deprecated!
+    def Validate(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
+        ):
+
+        if pass_no == 1:
+            if self.deprecated: # don't want to deprecate twice!
+                return ("Line:" + str(idx+1) + " - The header '" + split_line[0] + "' is only permitted once.", btn.Line(idx))
+            else:
+                self.deprecated = True
+                self.deprecated_use = ' '.join(split_line[1:])
 
         return True
 

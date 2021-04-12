@@ -52,6 +52,32 @@ def Remove_command(
 # display info on all commands and headers
 
 def Dump_commands(style=DS_NORMAL):
+    def checkindent(line, oldindent, defaultindent):
+        skip = False
+        newindent = oldindent
+
+        if line[:1] == '~':
+            if line[1:] == '':
+                newindent = defaultindent
+                skip = True
+            else:
+                try:
+                    newindent = defaultindent + int(line[1:])
+                    skip = True
+                except:
+                    pass
+
+        return newindent, skip
+
+    def wrap_line(s, indent=0, wrap=80):
+        import textwrap
+
+        pre = s[:indent]
+        post = s[indent:]
+        wrapped = textwrap.wrap(post, width=wrap-indent)
+        sep = '\n' + ' '*indent
+        return pre + sep.join(wrapped)
+
     def get_name(c):
         if isinstance(c, command_base.Command_Basic):
             return c.name
@@ -76,12 +102,23 @@ def Dump_commands(style=DS_NORMAL):
         return ret
 
     def dump_name(c_type, c):
-        print(f"    {c_type} \"{get_name(c)}\"", end="")
+        l = f"    {c_type} \"{get_name(c)}\""
         desc = get_desc(c)
         if desc == "":
-            print()
+            print(l)
         else:
-            print(f" - {desc}")
+            l = l + ' - '
+            print(wrap_line(l + desc, len(l)))
+
+    def dump_deprecated(c_type, c):
+        ret = []
+        if isinstance(c, command_base.Command_Basic) or isinstance(c, Button):
+            if c.deprecated:
+                print("        Deprecated")
+                if c.deprecated_use != "":
+                    print(wrap_line(" "*12 + c.deprecated_use, 12))
+                else:
+                    print(wrap_line(" "*12 + "This command may not exist in future versions of LPHK.", 12))
 
     def get_doc(c):
         ret = []
@@ -102,8 +139,11 @@ def Dump_commands(style=DS_NORMAL):
         doc = get_doc(c)
         if doc != []:
             print("        Notes")
+            indent = 12
             for n in doc:
-                print(f"            {n}")
+                indent, skip = checkindent(n, indent, 12)
+                if not skip:
+                    print(wrap_line(" "*12 + n, indent))
 
     def dump_ancestory(c):
         print("        Ancestory")
@@ -138,24 +178,31 @@ def Dump_commands(style=DS_NORMAL):
                     else:
                         print(" UNKNOWN VALUE")
 
-    def dump_source(c):
+    def dump_source(c, hide_doc):
+    
+        def print_source(lines):
+            print("        Source")
+            for i, line in enumerate(lines):
+                if hide_doc and line.lstrip().split()[:1] in [['@DESC'], ['@DOC'], ['@DOC+']]:
+                    continue
+                l = f"            {i+1:3}: "
+                p = line.lstrip().find(" ") + len(line) - len(line.lstrip()) + 1
+                print(wrap_line(l+line, len(l)+p))
+
         if isinstance(c, commands_subroutines.Subroutine):
-            print("        Source")
-            for line in c.routine:
-                print(f"            {line}")
+            print_source(c.routine)
         elif isinstance(c, Button):
-            print("        Source")
-            for line in c.script_lines:
-                print(f"            {line}")
+            print_source(c.script_lines)
 
     def dump(c_type, c, style):
         dump_name(c_type, c)
+        dump_deprecated(c_type, c)
         dump_doc(c)
         if D_DEBUG in style:
             dump_ancestory(c)
         dump_params(c)
         if D_SOURCE in style:
-            dump_source(c)
+            dump_source(c, D_NO_SRC_DOC in style)
 
         print()
 
@@ -181,7 +228,7 @@ def Dump_commands(style=DS_NORMAL):
         print()
         for cmd in VALID_COMMANDS:
             if isinstance(VALID_COMMANDS[cmd], commands_subroutines.Subroutine):
-                dump("Subroutine", VALID_COMMANDS[cmd], style)                   
+                dump("Subroutine", VALID_COMMANDS[cmd], style)
 
     if D_BUTTONS in style:
         print("BUTTONS")
@@ -254,6 +301,9 @@ class Button():
             self.root = self                 # then we are the root
         else:                                # otherwise
             self.root = root                 # the caller is the root
+
+        self.deprecated = False              # by default, buttons (remember that subroutines are buttons!) are not deprecated
+        self.deprecated_use = ""             # allow text to specify a replacement
 
 
     # let us set/change the name of a button
@@ -888,11 +938,11 @@ def kill_all():
 # Unbind all keys.
 def Unbind_all():
     lp_events.unbind_all()                   # Unbind all events
-    
+
     for x in range(9):
         for y in range(9):
             Unbind(x, y)
-        
+
     #text = [["" for y in range(9)] ] # Reienitialise all scripts to blank
 
     kill_all()                               # stop everything running
@@ -914,7 +964,7 @@ def Unload_all():
         Remove_command(cmd)                  # remove it
 
     files.layout_changed_since_load = True   # mark layout as changed
-    
+
     files.validate_all_buttons()                   # ensure buttons are valid
 
 

@@ -224,9 +224,9 @@ class Control_Flow_Basic(command_base.Command_Basic):
                     None
         return a, b
 
-    def a_eq_b(self, btn):
-        a = self.Get_param(btn, 2)
-        b = self.Get_param(btn, 3)
+    def a_eq_b(self, btn, first=2, second=3):
+        a = self.Get_param(btn, first)
+        b = self.Get_param(btn, second)
 
         a, b = self.Comparable(a, b)   # try our best to make a and b comparable
 
@@ -238,9 +238,9 @@ class Control_Flow_Basic(command_base.Command_Basic):
             return False
 
 
-    def a_ne_b(self, btn):
-        a = self.Get_param(btn, 2)
-        b = self.Get_param(btn, 3)
+    def a_ne_b(self, btn, first=2, second=3):
+        a = self.Get_param(btn, first)
+        b = self.Get_param(btn, second)
 
         a, b = self.Comparable(a, b)   # try our best to make a and b comparable
 
@@ -252,9 +252,9 @@ class Control_Flow_Basic(command_base.Command_Basic):
             return True                  # this is an exception.  If we can't compare they can't be equal!
 
 
-    def a_gt_b(self, btn):
-        a = self.Get_param(btn, 2)
-        b = self.Get_param(btn, 3)
+    def a_gt_b(self, btn, first=2, second=3):
+        a = self.Get_param(btn, first)
+        b = self.Get_param(btn, second)
 
         a, b = self.Comparable(a, b)   # try our best to make a and b comparable
 
@@ -266,9 +266,9 @@ class Control_Flow_Basic(command_base.Command_Basic):
             return False
 
 
-    def a_lt_b(self, btn):
-        a = self.Get_param(btn, 2)
-        b = self.Get_param(btn, 3)
+    def a_lt_b(self, btn, first=2, second=3):
+        a = self.Get_param(btn, first)
+        b = self.Get_param(btn, second)
 
         a, b = self.Comparable(a, b)   # try our best to make a and b comparable
 
@@ -280,9 +280,9 @@ class Control_Flow_Basic(command_base.Command_Basic):
             return False
 
 
-    def a_ge_b(self, btn):
-        a = self.Get_param(btn, 2)
-        b = self.Get_param(btn, 3)
+    def a_ge_b(self, btn, first=2, second=3):
+        a = self.Get_param(btn, first)
+        b = self.Get_param(btn, second)
 
         a, b = self.Comparable(a, b)   # try our best to make a and b comparable
 
@@ -294,9 +294,9 @@ class Control_Flow_Basic(command_base.Command_Basic):
             return False
 
 
-    def a_le_b(self, btn):
-        a = self.Get_param(btn, 2)
-        b = self.Get_param(btn, 3)
+    def a_le_b(self, btn, first=2, second=3):
+        a = self.Get_param(btn, first)
+        b = self.Get_param(btn, second)
 
         a, b = self.Comparable(a, b)   # try our best to make a and b comparable
 
@@ -335,6 +335,189 @@ scripts.Add_command(Control_Goto_Label())  # register the command
 
 
 # ##################################################
+# ### CLASS IF                                   ###
+# ##################################################
+
+# constants for comparisons
+COMP_EQ     = ['EQ', '==', '=']
+COMP_NE     = ['NE', "!=", "<>"]
+COMP_GT     = ['GT', '>']
+COMP_GE     = ['GE', '>=']
+COMP_LT     = ['LT', '<']
+COMP_LE     = ['LE', '<=']
+
+COMPG_ALL = COMP_EQ + COMP_NE + COMP_GT + COMP_GE + COMP_LT + COMP_LE
+
+# constants for action
+ACT_GOTO    = ['GOTO']
+ACT_RETURN  = ['RETURN']
+ACT_END     = ['END']
+ACT_ABORT   = ['ABORT']
+
+ACTG_ALL = ACT_GOTO + ACT_RETURN + ACT_END + ACT_ABORT
+
+# class that defines the IF command
+class Control_If(Control_Flow_Basic):
+    def __init__(
+        self
+        ):
+
+        super().__init__(
+            "IF, IF x comp y GOTO label",
+            LIB,
+            (
+            # Desc         Opt    Var     type      p1_val  p2_val
+            ("A",          False, AVV_YES,PT_ANY,   None,   None), # a and b can be anything!
+            ("comp",       False, AVV_NO, PT_WORD,  None,   None), # comparison operator
+            ("B",          False, AVV_YES,PT_ANY,   None,   None), # a and b can be anything!
+            ("Action",     False, AVV_NO, PT_WORD,  None,   None), # GOTO, ABORT, RETURN, END
+            ("Label",      True,  AVV_NO, PT_LABEL, None,   None), # required for GOTO
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (4,           "    if {1} {2} {3} then {4}"),
+            (5,           "    if {1} {2} {3} then {4} {5}"),
+            ),
+            )
+
+
+    def Process(self, btn, idx, split_line):
+        comp = self.Get_param(btn, 2)
+
+        if comp in COMP_EQ:
+            comp_p = self.a_eq_b
+        elif comp in COMP_NE:
+            comp_p = self.a_ne_b
+        elif comp in COMP_GE:
+            comp_p = self.a_ge_b
+        elif comp in COMP_GT:
+            comp_p = self.a_gt_b
+        elif comp in COMP_LE:
+            comp_p = self.a_le_b
+        elif comp in COMP_LT:
+            comp_p = self.a_lt_b
+
+        res = comp_p(btn, 1)
+
+        if not res:
+            return idx+1
+
+        act = self.Get_param(btn, 4)
+
+        if act in ACT_RETURN:
+            return -1
+        elif act in ACT_END:
+            btn.root.thread.kill.set()
+            return -1
+        elif act in ACT_ABORT:
+            btn.root.thread.kill.set()
+            return -1
+        else:
+            # perform a goto
+            ret = btn.symbols[SYM_LABELS][btn.symbols[SYM_PARAMS][5]]
+            return ret
+
+
+    def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
+        ret = super().Partial_validate_step_pass_1(ret, btn, idx, split_line)     # perform the original pass 1 validation
+
+        if ret == None or ((type(ret) == bool) and ret):                          # if the original validation hasn't raised an error
+            if not split_line[2] in COMPG_ALL:                                    # invalid subcommand
+                c_ok = ', '.join(COMPG_ALL[:-1]) + ', or ' + COMPG_ALL[-1]
+                s_err = f"Invalid comparison operator {split_line[2]} when expecting {c_ok}."
+                return (s_err, btn.Line(idx))
+
+            if not split_line[4] in ACTG_ALL:                                    # invalid subcommand
+                c_ok = ', '.join(ACTG_ALL[:-1]) + ', or ' + ACTG_ALL[-1]
+                s_err = f"Invalid action {split_line[4]} when expecting {c_ok}."
+                return (s_err, btn.Line(idx))
+
+            if (split_line[4] in ACT_GOTO) and (len(split_line) < 6):
+                s_err = f"{split_line[4]} requires a label."
+                return (s_err, btn.Line(idx))
+
+            if not (split_line[4] in ACT_GOTO) and (len(split_line) >= 6):
+                s_err = f"{split_line[4]} can not have a label ({split_line[6]})."
+                return (s_err, btn.Line(idx))
+
+        return ret
+
+
+scripts.Add_command(Control_If())  # register the command
+
+
+# ##################################################
+# ### CLASS ASSERT                               ###
+# ##################################################
+
+# class that defines the ASSERT command
+class Control_Assert(Control_Flow_Basic):
+    def __init__(
+        self
+        ):
+
+        super().__init__(
+            "ASSERT, IF x comp y is not true, abort with message",
+            LIB,
+            (
+            # Desc         Opt    Var     type      p1_val  p2_val
+            ("A",          False, AVV_YES,PT_ANY,   None,   None), # a and b can be anything!
+            ("comp",       False, AVV_NO, PT_WORD,  None,   None), # comparison operator
+            ("B",          False, AVV_YES,PT_ANY,   None,   None), # a and b can be anything!
+            ("Message",    True,  AVV_NO, PT_STR,   None,   None), # abort message
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (3,           "    if {1} {2} {3} fails, then abort"),
+            (4,           "    if {1} {2} {3} fails, then abort with message {4}"),
+            ),
+            )
+
+
+    def Process(self, btn, idx, split_line):
+        comp = self.Get_param(btn, 2)
+
+        if comp in COMP_EQ:
+            comp_p = self.a_eq_b
+        elif comp in COMP_NE:
+            comp_p = self.a_ne_b
+        elif comp in COMP_GE:
+            comp_p = self.a_ge_b
+        elif comp in COMP_GT:
+            comp_p = self.a_gt_b
+        elif comp in COMP_LE:
+            comp_p = self.a_le_b
+        elif comp in COMP_LT:
+            comp_p = self.a_lt_b
+
+        res = comp_p(btn, 1)
+
+        if res:
+            return idx+1
+
+        message = self.Get_param(btn, 4)
+        print(f'ASSERT `{self.Get_param(btn, 1)}` {comp} `{self.Get_param(btn, 3)}` fails: {message}')
+
+        btn.root.thread.kill.set()
+        return -1
+
+
+    def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
+        ret = super().Partial_validate_step_pass_1(ret, btn, idx, split_line)     # perform the original pass 1 validation
+
+        if ret == None or ((type(ret) == bool) and ret):                          # if the original validation hasn't raised an error
+            if not split_line[2] in COMPG_ALL:                                    # invalid subcommand
+                c_ok = ', '.join(COMPG_ALL[:-1]) + ', or ' + COMPG_ALL[-1]
+                s_err = f"Invalid comparison operator {split_line[2]} when expecting {c_ok}."
+                return (s_err, btn.Line(idx))
+
+        return ret
+
+
+scripts.Add_command(Control_Assert())  # register the command
+
+
+# ##################################################
 # ### CLASS IF_EQ_GOTO                           ###
 # ##################################################
 
@@ -360,6 +543,9 @@ class Control_If_Eq_Goto(Control_Flow_Basic):
             "a == b",
             self.a_eq_b
             )
+
+        self.deprecated = True
+        self.deprecated_use = "This command is not recommended for new scripts.  Please use the more flexible `IF` command instead."
 
 
 scripts.Add_command(Control_If_Eq_Goto())  # register the command
@@ -392,6 +578,9 @@ class Control_If_Ne_Goto(Control_Flow_Basic):
             self.a_ne_b
             )
 
+        self.deprecated = True
+        self.deprecated_use = "This command is not recommended for new scripts.  Please use the more flexible `IF` command instead."
+
 
 scripts.Add_command(Control_If_Ne_Goto())  # register the command
 
@@ -422,6 +611,9 @@ class Control_If_Gt_Goto(Control_Flow_Basic):
             "a > b",
             self.a_gt_b
             )
+
+        self.deprecated = True
+        self.deprecated_use = "This command is not recommended for new scripts.  Please use the more flexible `IF` command instead."
 
 
 scripts.Add_command(Control_If_Gt_Goto())  # register the command
@@ -454,6 +646,9 @@ class Control_If_Ge_Goto(Control_Flow_Basic):
             self.a_gt_b
             )
 
+        self.deprecated = True
+        self.deprecated_use = "This command is not recommended for new scripts.  Please use the more flexible `IF` command instead."
+
 
 scripts.Add_command(Control_If_Ge_Goto())  # register the command
 
@@ -485,6 +680,9 @@ class Control_If_Lt_Goto(Control_Flow_Basic):
             self.a_lt_b
             )
 
+        self.deprecated = True
+        self.deprecated_use = "This command is not recommended for new scripts.  Please use the more flexible `IF` command instead."
+
 
 scripts.Add_command(Control_If_Lt_Goto())  # register the command
 
@@ -515,6 +713,9 @@ class Control_If_Le_Goto(Control_Flow_Basic):
             "a <= b",
             self.a_le_b
             )
+
+        self.deprecated = True
+        self.deprecated_use = "This command is not recommended for new scripts.  Please use the more flexible `IF` command instead."
 
 
 scripts.Add_command(Control_If_Le_Goto())  # register the command

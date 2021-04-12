@@ -227,14 +227,14 @@ class Main_Window(tk.Frame):
 
         lp = lpcon().get_launchpad()
 
-        if lp is -1:
+        if lp == -1:
             self.popup(self, "Connect to Unsupported Device", self.error_image,
                        """The device you are attempting to use is not currently supported by LPHK,
 and there are no plans to add support for it.
 Please voice your feature requests on the Discord or on GitHub.""",
                        "OK")
 
-        if lp is None:
+        if lp == None:
             self.popup_choice(self, "No Launchpad Detected...", self.error_image,
                               """Could not detect any connected Launchpads!
 Disconnect and reconnect your USB cable,

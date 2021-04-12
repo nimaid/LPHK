@@ -41,6 +41,9 @@ class Command_Basic:
         self.run_states = [RS_INIT, RS_GET, RS_INFO, RS_VALIDATE, RS_RUN, RS_FINAL]  # by default we'll do everything if you don't override
         self.validation_states = [VS_COUNT, VS_PASS_1, VS_PASS_2]                    # by default we'll do a count and both passes if you don't override
 
+        self.deprecated = False              # by default, commands are not deprecated
+        self.deprecated_use = ""             # allow text to specify a replacement
+
 
     def validate_init(self):
         # This helps validate the parameters passed to __init__.  It helps enforce the rules

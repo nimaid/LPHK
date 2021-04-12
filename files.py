@@ -271,6 +271,13 @@ def validate_all_buttons():
 # load a single subroutine
 def load_subroutine(sub, sub_n, fname):
     import commands_subroutines
+    
+    while sub[0].strip() == "":              # trim leading blank lines
+        sub = sub[1:]
+
+    while sub[-1].strip() == "":             # trim trailing blank lines
+        sub = sub[:-1]
+    
     ok, name, params, err = commands_subroutines.Add_Function(sub, sub_n, fname) # Attempt to load the command
 
     if err == None:

@@ -13,10 +13,12 @@ DD_COMMANDS      = "COMMANDS"
 DD_SUBROUTINES   = "SUBROUTINES"
 DD_BUTTONS       = "BUTTONS"
 DD_COMMAND_BASE  = "COMMAND_BASE"
+DD_ALL           = "ALL"
 DD_DEBUG         = "DEBUG"
 DD_SOURCE        = "SOURCE"
+DD_NO_SRC_DOC    = "NO_SRC_DOC"
 
-DDG_ALL = [DD_HEADERS, DD_COMMANDS, DD_SUBROUTINES, DD_BUTTONS, DD_COMMAND_BASE, DD_DEBUG, DD_SOURCE]
+DDG_ALL = [DD_HEADERS, DD_COMMANDS, DD_SUBROUTINES, DD_BUTTONS, DD_COMMAND_BASE, DD_ALL, DD_DEBUG, DD_SOURCE, DD_NO_SRC_DOC]
 DDG_DEFAULT = [DD_HEADERS, DD_COMMANDS, DD_SUBROUTINES, DD_BUTTONS]
 
 # class that defines more the DOCUMENT command that outputs documentation
@@ -39,25 +41,33 @@ class DOC_Document(command_base.Command_Basic):
 
         self.doc = ["Prints documentation about LPHK to standard output."
                     ""
-                    "Any number of valid parameters can be passed.  These can be a",
-                    "combination of 'category' parameters (that define the subset(s)",
-                    "of documentation to be printed, and 'modifier' parameters that",
+                    "Any number of valid parameters can be passed.  These can be a "
+                    "combination of 'category' parameters (that define the subset(s) "
+                    "of documentation to be printed, and 'modifier' parameters that "
                     "alter how the documentation is produced.",
                     "",
-                    "If no parameters are passed, a standard output is produced.  If",
-                    "the only parameters passed are 'modifier' parameters, they modify",
+                    "If no parameters are passed, a standard output is produced.  If "
+                    "the only parameters passed are 'modifier' parameters, they modify "
                     "the standard output.",
                     "",
                     "The `category` parameters cause documentation to be created for:",
+                    "",
+                    "~21",
                     "      HEADERS      - commands starting with '@' used in scripts.",
                     "      COMMANDS     - regular macro commands",
                     "      SUBROUTINES  - user-defined subroutines",
                     "      BUTTONS      - button scripts",
                     "      COMMAND_BASE - (not yet implemented) routines used when writing commands",
+                    "      ALL          - create all documentation (with all modifiers)",
+                    "~",
                     "",
                     "The `modifier` parameters change the way documentation is produced:",
+                    "",
+                    "~21",
                     "      DEBUG        - includes type ancestory for commands.",
                     "      SOURCE       - includes source for buttons and subroutines",
+                    "      NO_SRC_DOC   - hide source lines used for documentation generation",
+                    "~",
                     "",
                     "The default categories are HEADERS COMMANDS SUBROUTINES BUTTONS"]
 
@@ -70,22 +80,24 @@ class DOC_Document(command_base.Command_Basic):
 
             doc_set = []                             # start with nothing to request documentation on
 
-            if p == DD_HEADERS:                      # add requestsa as per the parameters
+            if p in [DD_HEADERS, DD_ALL]:            # add requestsa as per the parameters
                 doc_set += [D_HEADERS]
-            elif p == DD_COMMANDS:
+            if p in [DD_COMMANDS, DD_ALL]:
                 doc_set += [D_COMMANDS]
-            elif p == DD_SUBROUTINES:
+            if p in [DD_SUBROUTINES, DD_ALL]:
                 doc_set += [D_SUBROUTINES]
-            elif p == DD_BUTTONS:
+            if p in [DD_BUTTONS, DD_ALL]:
                 doc_set += [D_BUTTONS]
-            elif p == DD_COMMAND_BASE:
+            if p in [DD_COMMAND_BASE, DD_ALL]:
                 doc_set += [D_COMMAND_BASE]
-            elif p == DD_DEBUG:
+            if p in [DD_DEBUG, DD_ALL]:
                 doc_set += [D_DEBUG]
-            elif p == DD_SOURCE:
+            if p in [DD_SOURCE, DD_ALL]:
                 doc_set += [D_SOURCE]
+            if p in [DD_NO_SRC_DOC, DD_ALL]:
+                doc_set += [D_NO_SRC_DOC]
 
-        if (set(doc_set) - {D_DEBUG, D_SOURCE}) == set({}): # if only modifiers have been specified
+        if (set(doc_set) - {D_DEBUG, D_SOURCE, DD_NO_SRC_DOC}) == set({}): # if only modifiers have been specified
             doc_set = DS_NORMAL + doc_set            # add them to teh "normal" documentation
 
         scripts.Dump_commands(doc_set)               # print documentation
