@@ -93,7 +93,7 @@ def updateXY(x, y):
         if (x, y) != (8, 0):                                    # this is the "missing" button in the top right corner
             is_running = False                                  # assume it's not running
             if btn.thread != None:
-                if btn.thread.isAlive():
+                if btn.thread.is_alive():
                     is_running = True                           # unless it is
 
             is_func_key = ((y == 0) or (x == 8))                # top row or right column
