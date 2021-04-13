@@ -254,6 +254,12 @@ class Command_Basic:
         return ret
 
 
+    # when displaying variables, this will ensure string literals don't have their flag included
+    def strip_null(self, a):
+        if type(a) == str and a[:1] == "\0" :                          # remove leading null indicating literal
+            a = a[1:]
+        return a
+
     def Partial_run_step_info(self, ret, btn, idx, split_line):
         # This step matches the number of parameters passed with the definitions for messages,
         # printing the matching message, or a default message if no matching message can be found.
@@ -262,8 +268,10 @@ class Command_Basic:
         # for the same number of parameters then you're going to want to override this method.
         # If you're overriding the method, you will rarely want to call the ancestor method.
         msg = False
+        
+        params = [self.strip_null(param) for param in btn.symbols[SYM_PARAMS]] # hide the literal flag
+        
         if self.auto_message:
-            params = btn.symbols[SYM_PARAMS]
             param_cnt = btn.symbols[SYM_PARAM_CNT]
             for msg_def in self.auto_message:
                 if msg_def[AM_COUNT] == param_cnt:
@@ -572,7 +580,7 @@ class Command_Basic:
             if av[AV_VAR_OK] == AVV_REQD:
                 ret = variables.get(param, btn.symbols[SYM_LOCAL], btn.symbols[SYM_GLOBAL][1])
             else:
-                if type(param) == str and av[AV_TYPE][AVT_DESC] in {PT_STR[AVT_DESC], PT_STRS[AVT_DESC]} and param[0:1] == '"':
+                if type(param) == str and av[AV_TYPE][AVT_DESC] in {PT_STR[AVT_DESC], PT_STRS[AVT_DESC]} and param[0:1] == '\0':
                     ret = param[1:]
                 else:
                     ret = param

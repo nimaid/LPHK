@@ -179,11 +179,11 @@ def Dump_commands(style=DS_NORMAL):
                         print(" UNKNOWN VALUE")
 
     def dump_source(c, hide_doc):
-    
+
         def print_source(lines):
             print("        Source")
             for i, line in enumerate(lines):
-                if hide_doc and line.lstrip().split()[:1] in [['@DESC'], ['@DOC'], ['@DOC+']]:
+                if hide_doc and line.lstrip().split()[:1] in [['@NAME'], ['@DESC'], ['@DOC'], ['@DOC+']]:
                     continue
                 l = f"            {i+1:3}: "
                 p = line.lstrip().find(" ") + len(line) - len(line.lstrip()) + 1
@@ -593,7 +593,7 @@ class Button():
                                else:
                                    ok, param, pline = strip_quoted(pline)               # otherwise we can strip off a quoted string
                                    if ok:                                               # and if that suceeded
-                                       sline += ['"'+param]                             # we'll add it as the parameter value.  Note we add a leading " to distinguish it from a variable
+                                       sline += ['\0'+param]                            # we'll add it as the parameter value.  Note we add a leading null to distinguish it from a variable
                                    else:
                                        return ('Error in quoted string for param #' + str(n+1), line) # This is generally something to do with the closing quote
                             else:                                                       # if we want a quoted string, but value doesn't start with a quote

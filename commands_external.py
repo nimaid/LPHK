@@ -14,7 +14,7 @@ class External_Web(command_base.Command_Text_Basic):
         ):
 
         super().__init__(
-            "WEB",  # the name of the command as you have to enter it in the code
+            "WEB, Open a page in a web browser",
             LIB,
             "    Open website '{1}' in default browser"
             )
@@ -52,7 +52,8 @@ class External_Web_New(External_Web):
 
         super().__init__()
 
-        self.name = "WEB_NEW"  # the name of the command as you have to enter it in the code
+        self.name = "WEB_NEW"
+        self.desc = "Open a page in a new browser window"
         self.info_msg = "    Open website '{1}' in a new browser"
 
 
@@ -74,7 +75,7 @@ class External_Open(command_base.Command_Text_Basic):
         ):
 
         super().__init__(
-            "OPEN",  # the name of the command as you have to enter it in the code
+            "OPEN, Open a file or location",
             LIB,
             "    Open file or location '{1}'"
             )
@@ -99,7 +100,7 @@ class External_Sound(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("SOUND")  # the name of the command as you have to enter it in the code
+        super().__init__("SOUND, Play a sound file")
 
     def Validate(
         self,
@@ -184,7 +185,7 @@ class External_Code(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("CODE")  # the name of the command as you have to enter it in the code
+        super().__init__("CODE, Run a command")
 
 
     def Validate(
@@ -233,7 +234,7 @@ class External_Code_Nowait(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("CODE_NOWAIT",  # the name of the command as you have to enter it in the code
+        super().__init__("CODE_NOWAIT, Run a command but don't wait for it to finish",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val

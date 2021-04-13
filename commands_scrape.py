@@ -45,7 +45,6 @@ class Command_Scrape(commands_win32.Command_Win32):
             except:
                 tries -= 1
                 btn.Safe_sleep(0.5)
-                print("retry")
                 
         return -1                                                # return the image
 
@@ -76,8 +75,20 @@ class Scrape_OCR_Form_Text(Command_Scrape):
             (5,           "    captures current form from ({1}, {2}) to ({3}, {4}) into image {5}"),
             (6,           "    captures form {6} from ({1}, {2}) to ({3}, {4}) into image {5}"),
             ) )
+            
+        self.deprecated = True
+        self.deprecated_use = "This command will not exist in the production release.  " + \
+                              "Use S_GET_WIN instead. possibly in combination with the S_OCR command."
 
+        self.doc = ["Captures a part of the screen from (`X1`,`Y1`) to (`X2`,`Y2`), "
+                    "returning this in an image in `Image`.",
+                    "",
+                    "If a window handle (`HWND`) is passed, the coordinates are relative to "
+                    "that window, otherwise the coordinates are screen absolute.",
+                    ""
+                    "The returned image can be passed to other commands that require an image."]
 
+                    
     def Process(self, btn, idx, split_line):
         p_from = (self.Get_param(btn, 1), self.Get_param(btn, 2))     # Get the from coords
         p_to = (self.Get_param(btn, 3), self.Get_param(btn, 4))       # and the to coords
@@ -119,6 +130,14 @@ class Scrape_Get_Window(Command_Scrape):
             (6,           "    captures form {6} from ({1}, {2}) to ({3}, {4}) into image {5}"),
             ) )
 
+        self.doc = ["Captures a part of the screen from (`X1`,`Y1`) to (`X2`,`Y2`), "
+                    "returning this in an image in `Image`.",
+                    "",
+                    "If a window handle (`HWND`) is passed, the coordinates are relative to "
+                    "that window, otherwise the coordinates are screen absolute.",
+                    ""
+                    "The returned image can be passed to other commands that require an image."]
+
 
     def Process(self, btn, idx, split_line):
         p_from = (self.Get_param(btn, 1), self.Get_param(btn, 2))     # Get the from coords
@@ -155,6 +174,12 @@ class Scrape_Get_Clipboard(Command_Scrape):
             (1,           "    place clipboard image into image {1}"),
             ) )
 
+        self.doc = ["Captures an image from the clipboard.  This is typically an image of the "
+                    "most recent field where text has been copied, but it can be from any "
+                    "source.",
+                    "",
+                    "The returned image can be passed to other commands that require an image."]
+
 
     def Process(self, btn, idx, split_line):
         image = self.get_copied_image(btn)                              # get clipboard image
@@ -187,6 +212,11 @@ class Scrape_OCR(Command_Scrape):
             (2,           "    OCR image {1} to {2}"),
             ) )
 
+        self.doc = ["Performs OCR on an image, returning the text.",
+                    "",
+                    "The image typically comes from one of the other `S_...` commands, "
+                    "but could be sourced from elsewhere."]
+
 
     def Process(self, btn, idx, split_line):
         image = self.get_copied_image(btn)                            # get copied image
@@ -209,7 +239,7 @@ class Scrape_Image_Hash(Command_Scrape):
         self,
         ):
 
-        super().__init__("S_HASH",  # the name of the command as you have to enter it in the code
+        super().__init__("S_HASH, returns a hash value that (almost) uniquely identifies an image",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
@@ -220,6 +250,15 @@ class Scrape_Image_Hash(Command_Scrape):
             # num params, format string                           (trailing comma is important)
             (2,           "    Hash image {1} into {2}"),
             ) )
+
+        self.doc = ["Creates the hash of an image, returning a value that changes significantly "
+                    "even with small changes to the original image.",
+                    "",
+                    "The image typically comes from one of the other `S_...` commands, "
+                    "but could be sourced from elsewhere.",
+                    "",
+                    "This command is best used as part of a process to determine if 2 images "
+                    "are identical."]
 
 
     def Process(self, btn, idx, split_line):
@@ -261,6 +300,18 @@ class Scrape_Clipboard_Colour(Command_Scrape):
             # num params, format string                           (trailing comma is important)
             (4,           "    average colour of image {1} in ({2}, {3}, {4})"),
             ) )
+
+        self.doc = ["Creates an average colour representation of an `Image`, returning "
+                    "the `Red`, `Green`, and `Blue` values coresponding to that average."
+                    "even with small changes to the original image.",
+                    "",
+                    "The image typically comes from one of the other `S_...` commands, "
+                    "but could be sourced from elsewhere.",
+                    "",
+                    "This command is often used as part of a process to determine if a "
+                    "copied field is of a certain colour.  Note that because an average "
+                    "colour is created, the comparason is normally to a range of colours, "
+                    "using the S_CDIST command."]
 
 
     def Process(self, btn, idx, split_line):
@@ -315,6 +366,16 @@ class Scrape_Image_Fingerprint(Command_Scrape):
             # num params, format string                           (trailing comma is important)
             (2,           "    Fingerprint of image {1} into {2}"),
             ) )
+
+        self.doc = ["Creates a fingerprint of an image, returning a value that is "
+                    "similar for similar images, and relatively insensitive to "
+                    "small differences between images.",
+                    "",
+                    "The image typically comes from one of the other `S_...` commands, "
+                    "but could be sourced from elsewhere.",
+                    "",
+                    "This command is best used as part of a process to determine if 2 images "
+                    "are similar, often usinf the S+FDIST command."]
 
 
     def Process(self, btn, idx, split_line):

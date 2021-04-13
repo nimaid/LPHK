@@ -113,7 +113,7 @@ class Mouse_Line(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_LINE, Move the mouse along a line",
+        super().__init__("M_LINE, Move the mouse along a line from one position to another",
             LIB,
             (
             # Desc         Opt    Var      type     p1_val                      p2_val
@@ -169,7 +169,7 @@ class Mouse_Line_Move(command_base.Command_Basic):
         self,
          ):
 
-        super().__init__("M_LINE_MOVE, Relative mouse movement",
+        super().__init__("M_LINE_MOVE, Move the mouse along a line from the current position",
             LIB,
             (
             # Desc         Opt    Var      type     p1_val                      p2_val
@@ -221,7 +221,7 @@ class Mouse_Line_Set(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_LINE_SET, Absolute mouse movement",
+        super().__init__("M_LINE_SET, Absolute mouse movement, set the mouse position",
             LIB,
             (
             # Desc         Opt    Var      type     p1_val                      p2_val
@@ -327,7 +327,7 @@ class Mouse_Store(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("M_STORE, Store the mouse position",
+        super().__init__("M_STORE, Store the mouse position, optionally into named variables",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val

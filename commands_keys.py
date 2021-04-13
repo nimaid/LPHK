@@ -14,7 +14,7 @@ class Keys_Wait_Pressed(command_base.Command_Basic):
         ):
 
         super().__init__(
-            "WAIT_PRESSED",  # the name of the command as you have to enter it in the code
+            "WAIT_PRESSED, Wait until the key used to start the script is unpressed",
             LIB,
             (),
             () )
@@ -47,7 +47,7 @@ class Keys_Tap(command_base.Command_Basic):
         ):
 
         super().__init__(
-            "TAP, Tap the named key",  # the name of the command as you have to enter it in the code
+            "TAP, Tap (and release) a key",
             LIB,
             (
             # Desc         Opt    Var      type       p1_val                        p2_val
@@ -110,7 +110,7 @@ class Keys_Press(command_base.Command_Basic):
         ):
 
         super().__init__(
-            "PRESS",  # the name of the command as you have to enter it in the code
+            "PRESS, Press (and hold) a key",
             LIB,
             (
             # Desc         Opt    Var     type       p1_val              p2_val
@@ -141,7 +141,7 @@ class Keys_Release(command_base.Command_Basic):
         ):
 
         super().__init__(
-            "RELEASE",  # the name of the command as you have to enter it in the code
+            "RELEASE, Release a PRESSed key",
             LIB,
             (
             # Desc         Opt    Var     type       p1_val              p2_val
@@ -172,7 +172,7 @@ class Keys_Release_All(command_base.Command_Basic):
         ):
 
         super().__init__(
-            "RELEASE_ALL",  # the name of the command as you have to enter it in the code
+            "RELEASE_ALL, Release any/all keys that are currently PRESSed",
             LIB,
             (),
             (
@@ -197,7 +197,7 @@ class Keys_String(command_base.Command_Text_Basic):
     def __init__(
         self ):
 
-        super().__init__("STRING",      # the name of the command as you have to enter it in the code
+        super().__init__("STRING, Type a series of characters",
             LIB,
             "Type out string" )
 
@@ -229,7 +229,7 @@ class Keys_Type(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("TYPE, type the text that is the concatenation of all variables passed",
+        super().__init__("TYPE, Type the text that is the concatenation of all variables passed",
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val

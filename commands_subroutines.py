@@ -178,7 +178,7 @@ class Subroutine(command_base.Command_Basic):
         Lines              # The text of the subroutine/function
         ):
 
-        super().__init__(SUBROUTINE_PREFIX + Name + ", Define a subroutine that can be called with named parameters", 
+        super().__init__(SUBROUTINE_PREFIX + Name + ", A user-defined subroutine", 
             LIB,
             Params,
             (

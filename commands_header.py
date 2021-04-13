@@ -334,7 +334,7 @@ class Header_Doc_Add(command_base.Command_Header):
         self,
         ):
 
-        super().__init__("@DOC+, Extends a line of the documentation text")
+        super().__init__("@DOC+, Extends a line of the documentation text without adding a line break")
 
         self.doc = ["The `@DOC+` header allows a documentation line to be extended so that "
                     "word wrapping works correctly",

@@ -180,6 +180,9 @@ class Control_Flow_Basic(command_base.Command_Basic):
         def either_is(a, b, c_type):
             return type(a) == c_type or type(b) == c_type
 
+        a = self.strip_null(a)                                         # remove leading null indicating string literal
+        b = self.strip_null(b)
+
         if isinstance(a, type(b)) or isinstance(b, type(a)):           # probably comparable
             return a, b
 
@@ -222,6 +225,7 @@ class Control_Flow_Basic(command_base.Command_Basic):
                     return str(a), str(b)
                 except:
                     None
+
         return a, b
 
     def a_eq_b(self, btn, first=2, second=3):
@@ -363,12 +367,12 @@ class Control_If(Control_Flow_Basic):
         ):
 
         super().__init__(
-            "IF, IF x comp y GOTO label",
+            "IF, Tests a pair of values and takes an action if the result is True",
             LIB,
             (
             # Desc         Opt    Var     type      p1_val  p2_val
             ("A",          False, AVV_YES,PT_ANY,   None,   None), # a and b can be anything!
-            ("comp",       False, AVV_NO, PT_WORD,  None,   None), # comparison operator
+            ("Comp",       False, AVV_NO, PT_WORD,  None,   None), # comparison operator
             ("B",          False, AVV_YES,PT_ANY,   None,   None), # a and b can be anything!
             ("Action",     False, AVV_NO, PT_WORD,  None,   None), # GOTO, ABORT, RETURN, END
             ("Label",      True,  AVV_NO, PT_LABEL, None,   None), # required for GOTO
@@ -379,6 +383,31 @@ class Control_If(Control_Flow_Basic):
             (5,           "    if {1} {2} {3} then {4} {5}"),
             ),
             )
+
+        self.doc = ["Based on the result of a comparison of 2 values, jump to a label "
+                    "or RETURN/END/ABORT.",
+                    "",
+                    "The 2 values passed can be either constants or variables, and the "
+                    "comparison operators are:",
+                    "",
+                    "~19",
+                    "    EQ, =, or ==   Test the values for equality",
+                    "    NE, !=, or <>  Test the values for inequality",
+                    "    LE, or <=      Test if the first value is less than or equal to the second",
+                    "    LT, or <       Test if the first value is less than the second",
+                    "    GT, or >       Test if the first value is greater than the second",
+                    "    GE, or >=      Test if the first value is greater than or equal to the second",
+                    "~",
+                    "If the result of th test is True, the `Action` is performed.  The actions are:",
+                    ""
+                    "~19",
+                    "    GOTO `Label`   Transfer control to the label `Label`",
+                    "    RETURN         Return from a subroutine or end a button script",
+                    "    END            Stop execution of the script now (even from within a subroutine)",
+                    "    ABORT          As for `END` but with the implication of error",
+                    "~",
+                    "",
+                    "The `Label` parameter is required for `GOTO` action, and prohibited for other actions."]
 
 
     def Process(self, btn, idx, split_line):

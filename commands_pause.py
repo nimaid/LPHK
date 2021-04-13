@@ -12,7 +12,7 @@ class Pause_Delay(command_base.Command_Basic):
         self,
         ):
 
-        super().__init__("DELAY")  # the name of the command as you have to enter it in the code
+        super().__init__("DELAY, Pause the script")
 
     def Validate(
         self,
