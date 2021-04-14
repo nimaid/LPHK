@@ -501,15 +501,14 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                 return 'white'                               # otherwise it should be white
 
         def txt_font(x, y, round=False):
-            if global_vars.ARGS['fit']:                          # only do this of we're fitting text
-                t = scripts.buttons[x][y].name                   # get the text
-                l = len(t)                                       # and its length
-                if l < 5 and l > 0:                              # if it's a reasonable size
-                    if round:
-                        return ("Courier", int(0.75 * BUTTON_SIZE / l), "bold") # round buttons need smaller text
-                    else:
-                        return ("Courier", BUTTON_SIZE // l, "bold")            # then make it fit
-            return ("Courier", BUTTON_SIZE // 5, "bold")         # otherwise use the standard size
+            t = scripts.buttons[x][y].name                   # get the text
+            l = len(t)                                       # and its length
+            if l < 5 and l > 0:                              # if it's a reasonable size
+                if round:
+                    return ("Courier", int(0.75 * BUTTON_SIZE / l), "bold") # round buttons need smaller text
+                else:
+                    return ("Courier", BUTTON_SIZE // l, "bold")            # then make it fit
+            return ("Courier", BUTTON_SIZE // 5, "bold")     # otherwise use the standard size
 
 
         gap = int(BUTTON_SIZE // 4)

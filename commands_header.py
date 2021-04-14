@@ -207,8 +207,7 @@ class Header_Name(command_base.Command_Header):
                     "      text",
                     "",
                     "Shorter text strings are are displayed using larger fonts for greater "
-                    "readability if the option -f or --fit is specified on the command",
-                    "line.",
+                    "readability.",
                     "",
                     "Only a single name header is permitted in a script.",
                     "",

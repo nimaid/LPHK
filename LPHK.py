@@ -116,9 +116,6 @@ def init():
     ap.add_argument(                                           # turn of unnecessary verbosity
         "-q", "--quiet",
         help = "Disable information popups", action="store_true")
-    ap.add_argument(                                           # make button text variable in size (default is small)
-        "-f", "--fit",
-        help = "Make short button text fit the button", action="store_true")
 
     global_vars.ARGS = vars(ap.parse_args())                   # store the arguments in a place anything can get to
 
