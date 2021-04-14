@@ -1,14 +1,16 @@
 # This module is VERY specific to Win32
-import os, command_base, ms, kb, scripts, variables, win32gui, commands_win32, PIL, pytesseract, io, hashlib, imagehash, dhash
+import os, command_base, ms, kb, scripts, variables, win32gui, commands_win32, PIL, pytesseract, io, hashlib, imagehash, dhash, shutil
 from constants import *
 
 LIB = "cmds_sscr" # name of this library (for logging)
 
-T_PATH = os.getenv('LOCALAPPDATA') + '/Tesseract-OCR/tesseract.exe'
+T_PATH = shutil.which('tesseract')
 if not os.path.isfile(T_PATH):
-    T_PATH = os.getenv('PROGRAMFILES') + '/Tesseract-OCR/tesseract.exe'
+    T_PATH = os.getenv('LOCALAPPDATA') + '/Tesseract-OCR/tesseract.exe'
     if not os.path.isfile(T_PATH):
-        raise Exception("Tesseract OCR not installed or cannot be located")
+        T_PATH = os.getenv('PROGRAMFILES') + '/Tesseract-OCR/tesseract.exe'
+        if not os.path.isfile(T_PATH):
+            raise Exception("Tesseract OCR not installed or cannot be located")
 
 pytesseract.pytesseract.tesseract_cmd = T_PATH
 
