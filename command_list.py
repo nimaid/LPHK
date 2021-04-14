@@ -30,7 +30,7 @@ except:
 try:
     import commands_rpncalc
 except ImportError:
-    print("[LPHK] WARNING: RPN_EVAL command is not available")
+    print("[LPHK] INFO: RPN_EVAL command is not available")
     traceback.print_exc()
 
 # This library could be considered optional, and is also platform specific

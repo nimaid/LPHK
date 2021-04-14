@@ -5,7 +5,7 @@ from constants import *
 LIB = "cmds_sscr" # name of this library (for logging)
 
 T_PATH = shutil.which('tesseract')
-if not os.path.isfile(T_PATH):
+if T_PATH == None or not os.path.isfile(T_PATH):   # T_PATH will be None if tesseract is not on the path
     T_PATH = os.getenv('LOCALAPPDATA') + '/Tesseract-OCR/tesseract.exe'
     if not os.path.isfile(T_PATH):
         T_PATH = os.getenv('PROGRAMFILES') + '/Tesseract-OCR/tesseract.exe'

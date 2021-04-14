@@ -153,9 +153,10 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
         layout = preload
 
     # load subroutines before buttons so you don't get errors on buttons using them
-    if "subroutines" in layout:                  # were subroutines saved?
-        for sub in layout["subroutines"]:        # for all the subroutines that were saved
-            load_subroutine(sub, 0, 'LAYOUT')    # load the subroutine
+    if layout["version"] >= FILE_VERSION_SUBS:   # if it's a version that might have subroutines
+        if "subroutines" in layout:              # and it has subroutines
+            for sub in layout["subroutines"]:    # for all the subroutines that were saved
+                load_subroutine(sub, 0, 'LAYOUT')# load the subroutine
 
     for x in range(9):
         for y in range(9):
