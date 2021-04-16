@@ -114,6 +114,9 @@ class Header_Load_Layout(command_base.Command_Header_Run):
 
         super().__init__("@LOAD_LAYOUT")      # the name of the header as you have to enter it in the code
 
+        self.deprecated = True
+        self.deprecated_use = "This header should not be used in new scripts.  The LOAD_LAYOUT command" + \
+                              "serves the same function."
 
     def Validate(
         self,

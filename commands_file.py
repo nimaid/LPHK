@@ -191,3 +191,53 @@ class File_Ensure_Path_Exists(command_base.Command_Basic):
 scripts.Add_command(File_Ensure_Path_Exists())    # register the command
 
 
+# ##################################################
+# ### CLASS File_Load_Layout                     ###
+# ##################################################
+
+# Loads a new layout.  Command rather than header format (doesn't have the F_ prefix for historical reasons)
+class File_Load_Layout(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("LOAD_LAYOUT, Loads a new layout",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("Layout",     False, AVV_YES,  PT_STR,  None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (1,           "    loads layout {1}"),
+            ) )
+
+        self.doc = ["Replaces the current layout with a new one loaded from a layout file."]
+
+
+    def Process(self, btn, idx, split_line):
+        layout_name = self.Get_param(btn, 1)
+
+        layout_path = os.path.join(files.LAYOUT_PATH, layout_name)
+        if not os.path.isfile(layout_path):
+            print("[cmds_head] " + coords + "  Line:" + str(idx+1) + "        ERROR: Layout file does not exist.")
+            return -1
+
+        try:
+            layout = files.load_layout(layout_path, popups=False, save_converted=False)
+        except files.json.decoder.JSONDecodeError:
+            print("[cmds_head] " + coords + "  Line:" + str(idx+1) + "        ERROR: Layout is malformated.")
+            return -1
+
+        if files.layout_changed_since_load:
+            files.save_lp_to_layout(files.curr_layout)
+
+        files.load_layout_to_lp(layout_path, popups=False, save_converted=False, preload=layout)
+
+        return idx+1
+
+
+scripts.Add_command(File_Load_Layout())  # register the header
+
+
+
