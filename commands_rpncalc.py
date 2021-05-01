@@ -181,6 +181,7 @@ class Rpn_Eval(command_base.Command_Basic):
         self.operators["1/X"]    = (self.one_on_x,          0) # 1/x
         self.operators["INT"]    = (self.int_x,             0) # integer portion of x
         self.operators["FRAC"]   = (self.frac_x,            0) # fractional part of x
+        self.operators["ABS"]    = (self.abs,               0) # replace x with the absolute value of x
         self.operators["CHS"]    = (self.chs,               0) # change sign of top of stack
         self.operators["SQR"]    = (self.sqr,               0) # **2
         self.operators["Y^X"]    = (self.y_to_x,            0) # **
@@ -199,6 +200,7 @@ class Rpn_Eval(command_base.Command_Basic):
         self.operators["<G"]     = (self.rcl_g,             1) # recall global
         self.operators["X=0?"]   = (self.x_eq_zero,         0) # is x zero?
         self.operators["X!=0?"]  = (self.x_ne_zero,         0) # is x not zero?
+        self.operators["X<0?"]   = (self.x_lt_zero,         0) # is x less than zero?
         self.operators["X=Y?"]   = (self.x_eq_y,            0) # is x = y?
         self.operators["X!=Y?"]  = (self.x_ne_y,            0) # is x != y?
         self.operators["X>Y?"]   = (self.x_gt_y,            0) # is x > y?
@@ -215,6 +217,8 @@ class Rpn_Eval(command_base.Command_Basic):
         self.operators["SUBSTR"] = (self.substr,            0) # x gets str(z)[x:y]
         self.operators["D>J"]    = (self.d_to_j,            0) # converts string date to julian (actually ordinal)
         self.operators["J>D"]    = (self.j_to_d,            0) # converts a julian to a text date
+        self.operators[">A"]     = (self.to_alpha,          0) # converts X to alpha
+        self.operators["LEN"]    = (self.len,               0) # replaces x with length of string representation of x
 
 
     def add(self,
@@ -432,8 +436,23 @@ class Rpn_Eval(command_base.Command_Basic):
         return ret
 
 
+    def abs(self, symbols, cmd, cmds):
+        """Replace the value on the top of the stack with the absolute value.  The previous value of X is placed in LASTX."""
+
+        ret = 1
+        a = variables.pop(symbols)
+        symbols[SYM_LOCAL]['last x'] = a
+
+        try:
+            variables.push(symbols, abs(a))
+        except:
+            raise Exception("Error in abs: " + str(a))  # Errors are highly improbable here
+
+        return ret
+
+
     def sqr(self, symbols, cmd, cmds):
-        """Replaces the value on the top of the stack its square.  The previous value of X is placed in LASTX"""
+        """Replaces the value on the top of the stack its square.  The previous value of X is placed in LASTX."""
 
         # calculates the square
         ret = 1
@@ -470,7 +489,7 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def dup(self, symbols, cmd, cmds):
-        """Duplicates the top value on the stack.  Sometimes also known as `ENTER^`"""
+        """Duplicates the top value on the stack.  Sometimes also known as `ENTER^`.  LASTX is not modified."""
 
         # duplicates the value on the top of the stack
         ret = 1
@@ -515,7 +534,7 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def cl_l(self, symbols, cmd, cmds):
-        """Clears all local variables"""
+        """Clears all local variables, including LASTX"""
 
         # clears the stack
         ret = 1
@@ -525,7 +544,7 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def stack_len(self, symbols, cmd, cmds):
-        """Pushes the length of the stack onto the stack.  Note that after a CLST the length of the stack is Zero."""
+        """Pushes the length of the stack onto the stack.  Note that after a CLST the length of the stack is Zero.  LASTX is not modified."""
 
         # returns stack length
         ret = 1
@@ -550,7 +569,7 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def sto(self, symbols, cmd, cmds):
-        """Stores the top value on the stack into a variable.  If a local variable of that name exists it will be used; otherwise if a global variable of that name exists, it will be used; finally if neither exist, a local variable will be created to contain the value.  Neither the stsack or LASTX is modified."""
+        """Stores the top value on the stack into a variable.  If a local variable of that name exists it will be used; otherwise if a global variable of that name exists, it will be used; finally if neither exist, a local variable will be created to contain the value.  Neither the stack or LASTX is modified."""
 
         # stores the value in local var if it exists, otherwise global var.  If neither, creates local
         ret = 1
@@ -563,7 +582,7 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def sto_g(self, symbols, cmd, cmds):
-        """Stores the top value on the stack into a global variable.  If it does not exist, it will be created.  Neither the stsack or LASTX is modified."""
+        """Stores the top value on the stack into a global variable.  If it does not exist, it will be created.  Neither the stack or LASTX is modified."""
 
         # stores the value on the top of the stack into the global variable named by the next token
         ret = 1
@@ -576,7 +595,7 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def sto_l(self, symbols, cmd, cmds):
-        """Stores the top value on the stack into a local variable.  If it does not exist, it will be created.  Neither the stsack or LASTX is modified."""
+        """Stores the top value on the stack into a local variable.  If it does not exist, it will be created.  Neither the stack or LASTX is modified."""
 
         # stores the value on the top of the stack into the local variable named by the next token
         ret = 1
@@ -639,6 +658,16 @@ class Rpn_Eval(command_base.Command_Basic):
 
         # only continues eval if the top of the stack is not 0
         if variables.top(symbols, 1) != 0:
+            return 1
+        else:
+            return len(cmds)+1
+
+
+    def x_lt_zero(self, symbols, cmd, cmds):
+        """if X is less than zero, the evaluation continues, otherwise it stops."""
+
+        # only continues eval if the top of the stack is not 0
+        if variables.top(symbols, 1) < 0:
             return 1
         else:
             return len(cmds)+1
@@ -788,7 +817,7 @@ class Rpn_Eval(command_base.Command_Basic):
 
 
     def substr(self, symbols, cmd, cmds):
-        """Removes the top thee values from the stack, pushing the characters from Y to X-1 of Z onto the top of the stack."""
+        """Removes the top thee values from the stack, pushing the characters from Y to X-1 of Z onto the top of the stack.  The previous value of X is placed in LASTX"""
 
         # does a substring
         x = variables.pop(symbols)
@@ -797,12 +826,13 @@ class Rpn_Eval(command_base.Command_Basic):
 
         r = str(z)[y:x]
         variables.push(symbols, r)
+        symbols[SYM_LOCAL]['last x'] = x
 
         return 1
 
 
     def d_to_j(self, symbols, cmd, cmds):
-        """Converts a text date on the top of the stack to the days since Jan-1-1900."""
+        """Converts a text date on the top of the stack to the days since Jan-1-1900.  The previous value of X is placed in LASTX."""
 
         # converts a text date on the top of the stack to a julian date (integer)
         d = variables.pop(symbols)
@@ -811,12 +841,13 @@ class Rpn_Eval(command_base.Command_Basic):
         j = dt.toordinal()
 
         variables.push(symbols, j)
+        symbols[SYM_LOCAL]['last x'] = d
 
         return 1
 
 
     def j_to_d(self, symbols, cmd, cmds):
-        """Converts the days since Jan-1-1900 in on the top of the stack to a text date."""
+        """Converts the days since Jan-1-1900 in on the top of the stack to a text date.  The previous value of X is placed in LASTX."""
 
         # converts a julian date (integer) on the top of the stack to a text date
         j = variables.pop(symbols)
@@ -825,6 +856,31 @@ class Rpn_Eval(command_base.Command_Basic):
         d = dt.strftime("%d-%b-%Y")
 
         variables.push(symbols, d)
+        symbols[SYM_LOCAL]['last x'] = j
+
+        return 1
+
+
+    def to_alpha(self, symbols, cmd, cmds):
+        """Replaces the value in X with its string representation.  The previous value of X is placed in LASTX."""
+
+        x = variables.pop(symbols)
+        ax = str(x)
+
+        variables.push(symbols, ax)
+        symbols[SYM_LOCAL]['last x'] = x
+
+        return 1
+
+
+    def len(self, symbols, cmd, cmds):
+        """Replaces the value in X with the length of its string representation.  The previous value of X is placed in LASTX."""
+
+        x = variables.pop(symbols)
+        lax = len(str(x))
+
+        variables.push(symbols, lax)
+        symbols[SYM_LOCAL]['last x'] = x
 
         return 1
 

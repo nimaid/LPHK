@@ -1,5 +1,5 @@
 # This module is VERY specific to Win32
-import os, command_base, ms, kb, scripts, variables, win32gui, commands_win32, PIL, pytesseract, io, hashlib, imagehash, dhash, shutil
+import os, command_base, ms, kb, scripts, variables, win32gui, commands_win32, PIL, pytesseract, io, hashlib, imagehash, dhash, shutil, colorsys
 from constants import *
 
 LIB = "cmds_sscr" # name of this library (for logging)
@@ -283,8 +283,14 @@ scripts.Add_command(Scrape_Image_Hash())  # register the command
 # ### CLASS S_IMAGE_COLOUR                       ###
 # ##################################################
 
+# constants for S_IMAGE_COLOUR
+SIC_MEAN    = "MEAN"
+SIC_MODAL   = "MODAL"
+
+SICG_ALL = [SIC_MEAN, SIC_MODAL]
+
 # class that defines the S_COLOUR command -- Takes an image and calculates a checksum
-class Scrape_Clipboard_Colour(Command_Scrape):
+class Scrape_Image_Colour(Command_Scrape):
     def __init__(
         self,
         ):
@@ -297,10 +303,12 @@ class Scrape_Clipboard_Colour(Command_Scrape):
             ("Red",        False, AVV_REQD, PT_INT,  None,                       None),
             ("Green",      False, AVV_REQD, PT_INT,  None,                       None),
             ("Blue",       False, AVV_REQD, PT_INT,  None,                       None),
+            ("Method",     True,  AVV_NO,   PT_WORD, None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
             (4,           "    average colour of image {1} in ({2}, {3}, {4})"),
+            (5,           "    average colour of image {1} in ({2}, {3}, {4}) using method {5}"),
             ) )
 
         self.doc = ["Creates an average colour representation of an `Image`, returning "
@@ -318,33 +326,58 @@ class Scrape_Clipboard_Colour(Command_Scrape):
 
     def Process(self, btn, idx, split_line):
         image = self.Get_param(btn, 1)          # get the image
+        method = self.Get_param(btn, 5, SIC_MEAN)
 
         pixels = image.load()                   # create the pixel map
 
-        r = 0                                   # initialise RGB and pixel count to 0
-        g = 0
-        b = 0
-        p = 0
+        if method == SIC_MEAN:
+            r = 0                               # initialise RGB and pixel count to 0
+            g = 0
+            b = 0
+            p = 0
 
-        for i in range(image.size[0]):          # for every col:
-            for j in range(image.size[1]):      # for every row
-                px = pixels[i, j]
-                p += 1
-                r += px[0]
-                g += px[1]
-                b += px[2]
+            for i in range(image.size[0]):      # for every col:
+                for j in range(image.size[1]):  # for every row
+                    px = pixels[i, j]
+                    p += 1
+                    r += px[0]
+                    g += px[1]
+                    b += px[2]
 
-        if p > 0:                               # calc average data
-           r = r // p
-           g = g // p
-           b = b // p
+            if p > 0:                           # calc average data
+               r = r // p
+               g = g // p
+               b = b // p
 
+        elif method == SIC_MODAL:
+            #Get colors from image object
+            pixels = image.getcolors(image.size[0] * image.size[1])
+            #Sort them by count number(first element of tuple)
+            sorted_pixels = sorted(pixels, key=lambda t: t[0])
+            #Get the most frequent color
+            dominant_colour = sorted_pixels[-1][1]
+            
+            r = dominant_colour[0]
+            g = dominant_colour[1]
+            b = dominant_colour[2]
+            
         self.Set_param(btn, 2, r)               # send back RGB
         self.Set_param(btn, 3, g)
         self.Set_param(btn, 4, b)
 
 
-scripts.Add_command(Scrape_Clipboard_Colour())  # register the command
+    def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
+        ret = super().Partial_validate_step_pass_1(ret, btn, idx, split_line)     # perform the original pass 1 validation
+
+        if ret == None or ((type(ret) == bool) and ret):                          # if the original validation hasn't raised an error
+            if (len(split_line) > 5) and (not split_line[5] in SICG_ALL):         # invalid subcommand
+                c_ok = ', '.join(SICG_ALL[:-1]) + ', or ' + SICG_ALL[-1]
+                s_err = f"Invalid subcommand {split_line[1]} when expecting {c_ok}."
+                return (s_err, btn.Line(idx))
+        return ret
+
+
+scripts.Add_command(Scrape_Image_Colour())  # register the command
 
 
 # ##################################################
@@ -414,8 +447,8 @@ class Scrape_Fingerprint_Distance(command_base.Command_Basic):
             (3,           "    Return the hamming distance between fingerprints {1} and {2} into {3}"),
             ) )
 
-        self.doc = ["This command calculates the hamming distance between 2 fingerprints. ",
-                    "This can be used to determine how similar 2 images are.  The larger ",
+        self.doc = ["This command calculates the hamming distance between 2 fingerprints. "
+                    "This can be used to determine how similar 2 images are.  The larger "
                     "the hamming distance, the more different the images are."]
 
 
@@ -458,9 +491,8 @@ class Scrape_Colour_Distance(command_base.Command_Basic):
             (7,           "    Return the hamming distance between colours ({1}, {2}, {3}) and ({4}, {5}, {6}) into {7}"),
             ) )
 
-        self.doc = ["This command calculates the hamming distance between 2 RGB values. ",
-                    "This can be used to determine how similar 2 colours are.  The larger ",
-                    "the hamming distance, the more different the colours are."]
+        self.doc = ["This can be used to determine how similar 2 colours are.  The larger "
+                    "the distance, the more different the colours are."]
 
 
     def Process(self, btn, idx, split_line):
@@ -478,3 +510,146 @@ class Scrape_Colour_Distance(command_base.Command_Basic):
 
 
 scripts.Add_command(Scrape_Colour_Distance())  # register the command
+
+
+# ##################################################
+# ### CLASS SCRAPE_RGB_TO_HSV                    ###
+# ##################################################
+
+# class that defines the S_RGB_TO_HSV command -- converts RGB to an HSV colour space
+class Scrape_Rgb_To_Hsv(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("S_RGB_TO_HSV, Converts RGB to an HSV colour space",
+            LIB,
+            (
+            # Desc         Opt    Var       type      p1_val                      p2_val
+            ("R",          False, AVV_YES,  PT_INT,   None,                       None),
+            ("G",          False, AVV_YES,  PT_INT,   None,                       None),
+            ("B",          False, AVV_YES,  PT_INT,   None,                       None),
+            ("H",          False, AVV_REQD, PT_FLOAT, None,                       None),
+            ("S",          False, AVV_REQD, PT_FLOAT, None,                       None),
+            ("V",          False, AVV_REQD, PT_FLOAT, None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (6,           "    converts RGB ({1}, {2}, {3}) to HSV ({4}, {5}, {6})"),
+            ) )
+
+        self.doc = ["This command converts an RGB value into an HSV value. "
+                    "It can be used to determine the Hue, Saturation, and/or "
+                    "Value (Brightness) of a colour.",
+                    "",
+                    "All values are in the range 0..255"]
+
+
+    def Process(self, btn, idx, split_line):
+
+        r = self.Get_param(btn, 1)                    # get the colours
+        g = self.Get_param(btn, 2)
+        b = self.Get_param(btn, 3)
+
+        h, s, v = colorsys.rgb_to_hsv(r/255, g/255, b/255)
+
+        self.Set_param(btn, 4, int(h*255))
+        self.Set_param(btn, 5, int(s*255))
+        self.Set_param(btn, 6, int(v*255))
+
+
+scripts.Add_command(Scrape_Rgb_To_Hsv())  # register the command
+
+
+# ##################################################
+# ### CLASS SCRAPE_RGB_TO_HSL                    ###
+# ##################################################
+
+# class that defines the S_RGB_TO_HSL command -- converts RGB to an HSL colour space
+class Scrape_Rgb_To_Hsl(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("S_RGB_TO_HSL, Converts RGB to an HSL colour space",
+            LIB,
+            (
+            # Desc         Opt    Var       type      p1_val                      p2_val
+            ("R",          False, AVV_YES,  PT_INT,   None,                       None),
+            ("G",          False, AVV_YES,  PT_INT,   None,                       None),
+            ("B",          False, AVV_YES,  PT_INT,   None,                       None),
+            ("H",          False, AVV_REQD, PT_FLOAT, None,                       None),
+            ("S",          False, AVV_REQD, PT_FLOAT, None,                       None),
+            ("L",          False, AVV_REQD, PT_FLOAT, None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (6,           "    converts RGB ({1}, {2}, {3}) to HSV ({4}, {5}, {6})"),
+            ) )
+
+        self.doc = ["This command converts an RGB value into an HSL value. "
+                    "It can be used to determine the Hue, Saturation, and/or "
+                    "Luminance of a colour.",
+                    "",
+                    "All values are in the range 0..255"]
+
+
+    def Process(self, btn, idx, split_line):
+
+        r = self.Get_param(btn, 1)                    # get the colours
+        g = self.Get_param(btn, 2)
+        b = self.Get_param(btn, 3)
+
+        h, l, s = colorsys.rgb_to_hls(r/255, g/255, b/255)
+
+        self.Set_param(btn, 4, int(h*255))
+        self.Set_param(btn, 5, int(s*255))
+        self.Set_param(btn, 6, int(l*255))
+
+
+scripts.Add_command(Scrape_Rgb_To_Hsl())  # register the command
+
+
+# ##################################################
+# ### CLASS SCRAPE_RGB_TO_Brightness             ###
+# ##################################################
+
+# class that defines the S_RGB_TO_B command -- an alternative routine to calculate the perceptual brightness of a colour
+class Scrape_Rgb_To_Brightness(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("S_RGB_TO_B, An alternative routine to calculate the perceptual brightness of a colour",
+            LIB,
+            (
+            # Desc         Opt    Var       type      p1_val                      p2_val
+            ("R",          False, AVV_YES,  PT_INT,   None,                       None),
+            ("G",          False, AVV_YES,  PT_INT,   None,                       None),
+            ("B",          False, AVV_YES,  PT_INT,   None,                       None),
+            ("Bright",     False, AVV_REQD, PT_FLOAT, None,                       None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (4,           "    converts RGB ({1}, {2}, {3}) to Brightness ({4})"),
+            ) )
+
+        self.doc = ["This command converts an RGB value into an alternative brightness "
+                    "value.  It can be used to determine Value (Brightness) of a colour "
+                    "in a more perceptually correct manner.",
+                    "",
+                    "All values are in the range 0..255"]
+
+
+    def Process(self, btn, idx, split_line):
+        r = self.Get_param(btn, 1)                    # get the colours
+        g = self.Get_param(btn, 2)
+        b = self.Get_param(btn, 3)
+
+        br = 0.243863271*r + 0.673319569*g + 0.08281716*b
+        v = cmax * 100
+
+        self.Set_param(btn, 4, int(br))
+
+
+scripts.Add_command(Scrape_Rgb_To_Brightness())  # register the command

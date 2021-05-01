@@ -225,7 +225,7 @@ scripts.Add_command(External_Code())  # register the command
 
 
 # ##################################################
-# ### CLASS External_Code_NOWAIT                 ###
+# ### CLASS External_Code_Nowait                 ###
 # ##################################################
 
 # class that defines the CODE_NOWAIT command (runs something).  This returns immediately
@@ -262,5 +262,33 @@ class External_Code_Nowait(command_base.Command_Basic):
 
 
 scripts.Add_command(External_Code_Nowait())    # register the command
+
+
+# ##################################################
+# ### CLASS External_Os_Userid                   ###
+# ##################################################
+
+# class that defines the OS_USERID command (returns operating system user id)
+class External_Os_Userid(command_base.Command_Basic):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("OS_USERID, Returns the userid of the currently logged on user",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("UserID",     False, AVV_REQD, PT_STR,  None,                       None),   # variable to receive user_id
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (1,           "    Return currently logged on User ID in {1}"),
+            ) )
+
+    def Process(self, btn, idx, split_line):
+        self.Set_param(btn, 1, os.getlogin())       # return the logged in user id
+
+
+scripts.Add_command(External_Os_Userid())    # register the command
 
 
