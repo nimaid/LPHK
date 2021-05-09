@@ -228,7 +228,15 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
   * Open website (argument 1) in default browser.
 * `WEB_NEW`
   * Open website (argument 1) in default browser, try new window.
-  
+* `COLOR`
+  * Set the color of the button at x, y (arguments 4 and 5) to a given RGB color (arguments 1-3)
+    * RGB values range from 0 to 255, e.g., `COLOR 0 255 0` for green
+    * x, y range from 0 to 8
+  * The command takes 0-5 arguments. If none are given the default is `COLOR 0 0 0 X Y` where `X` and `Y` is the current button.
+* `IF_COLOR_GOTO_LABEL`
+  * If the button at x, y (arguments 5 and 6) is currently set to RGB (arguments 2-4), goto label (argument 1).
+  * All arguments but the label (argument 1) are optional. See command `COLOR` for their default values.
+
 #### Keypresses [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * `PRESS`
   * Presses the key (argument 1).

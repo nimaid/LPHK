@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "@LOAD_LAYOUT", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "CODE", "SOUND", "SOUND_STOP", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
+VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "@LOAD_LAYOUT", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "COLOR", "IF_COLOR_GOTO_LABEL", "WEB", "WEB_NEW", "CODE", "SOUND", "SOUND_STOP", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
 ASYNC_HEADERS = ["@ASYNC", "@SIMPLE"]
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -205,6 +205,24 @@ def run_script(script_str, x, y):
                     print("[scripts] " + coords + "    Release key " + split_line[1])
                     key = kb.sp(split_line[1])
                     kb.release(key)
+                elif split_line[0] == "COLOR":
+                    rgb = list(map(int, split_line[1:4]))
+                    rgb += [0] * (3 - len(rgb))
+                    xy = list(map(int, split_line[5:7]))
+                    xy += [x, y][len(xy):]
+                    print("[scripts] " + coords + "    Set color of " + str(tuple(xy)) + " to " + str(tuple(rgb)))
+                    lp_colors.setXY(*xy, rgb)
+                    lp_colors.updateXY(*xy)
+                elif split_line[0] == "IF_COLOR_GOTO_LABEL":
+                    rgb = list(map(int, split_line[2:5]))
+                    rgb += [0] * (3 - len(rgb))
+                    xy = list(map(int, split_line[6:8]))
+                    xy += [x, y][len(xy):]
+                    rgb_is = lp_colors.getXY(*xy)
+                    print("[scripts] " + coords + "    If color of " + str(tuple(xy)) + " [currently " + str(tuple(rgb_is)) + "] is " + str(tuple(rgb)) + " goto LABEL " + split_line[1])
+                    print(lp_colors.getXY(*xy), rgb)
+                    if lp_colors.getXY(*xy) == rgb:
+                        return labels[split_line[1]]
                 elif split_line[0] == "WEB":
                     link = split_line[1]
                     if "http" not in link:
@@ -679,7 +697,10 @@ def validate_script(script_str):
                             temp = int(split_line[2])
                         except:
                             return (split_line[0] + " repetitions '" + split_line[2] + "' not valid.", line)
-                if split_line[0] in ["M_LINE"]:
+                if split_line[0] in ["COLOR"]:
+                    if len(split_line) > 6:
+                        return ("Too many arguments for command '" + split_line[0] + "'.", line)
+                if split_line[0] in ["M_LINE", "IF_COLOR_GOTO_LABEL"]:
                     if len(split_line) > 7:
                         return ("Too many arguments for command '" + split_line[0] + "'.", line)
                 if split_line[0] in ["TAP", "PRESS", "RELEASE"]:
@@ -706,6 +727,26 @@ def validate_script(script_str):
                                 return ("'SOUND' volume must be between 0 and 100.", line)
                         except:
                             return ("'SOUND' volume " + split_line[2] + " not valid.", line)
+                if split_line[0] in ["COLOR", "IF_COLOR_GOTO_LABEL"]:
+                    if split_line[0] == "COLOR":
+                        rgb = split_line[1:4]
+                        xy = split_line[5:7]
+                    elif split_line[0] == "IF_COLOR_GOTO_LABEL":
+                        rgb = split_line[2:5]
+                        xy = split_line[6:8]
+                    try:
+                        if any([c < 0 or c > 255 for c in map(int, rgb)]):
+                            return ("RGB values out of range (0-255)", line)
+                    except ValueError:
+                        return ("RGB values must be integers", line)
+                    try:
+                        if any([c < 0 or c > 255 for c in map(int, xy)]):
+                            return ("Coordinate value out of range (0-8)", line)
+                    except ValueError:
+                        return ("Coordinate values must be integers", line)
+                if split_line[0] == "IF_COLOR_GOTO_LABEL":
+                    if split_line[1] not in labels:
+                        return ("Label '" + split_line[1] + "' not defined in this script.", line)
                 if split_line[0] in ["M_STORE", "M_RECALL"]:
                     if len(split_line) > 1:
                         return ("'" + split_line[0] + "' takes no arguments.", line)
