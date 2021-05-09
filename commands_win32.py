@@ -672,6 +672,40 @@ scripts.Add_command(Win32_Paste())  # register the command
 
 
 # ##################################################
+# ### CLASS W_COPY_VAR                           ###
+# ##################################################
+
+# class that defines the W_COPY_VAR command - place a variable into the clipboard
+class Win32_Copy_Var(Command_Win32):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("W_COPY_VAR, Place data into the clipboard",
+            LIB,
+            (
+            # Desc         Opt    Var       type     p1_val                      p2_val
+            ("Data",       False, AVV_YES,  PT_STR,  None,                       None),   # variable to contain item to paste
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (1,           "    Place {1} into the system clipboard"),
+            ) )
+
+    def Process(self, btn, idx, split_line):
+
+        hwnd = win32gui.GetForegroundWindow()              # get the current window
+        c = self.Get_param(btn, 1)                         # get the value
+
+        ClearClipboard()
+
+        SetClipboard(str(c))
+
+
+scripts.Add_command(Win32_Copy_Var())  # register the command
+
+
+# ##################################################
 # ### CLASS W_WAIT                               ###
 # ##################################################
 
