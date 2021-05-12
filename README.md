@@ -304,62 +304,62 @@ All Mouse movement commands can now use variables in place of constants.  Variab
   * Variables must begin with an alphabetic character and cannot contain spaces.
   * Variables can be used in the Mouse commands in place of constants
   * Any numeric value is pushed onto the stack
-  * Common functions pop their parameters off the stack and push the result.  Note that any function requiring more values that there are on the stack will be returned zero for all additional parameters.
-    * + - replaces the top two values on the stack with their sum
-    * - - replaces the top two values on the stack with their difference
-    * * - replaces the top two values on the stack with their product
-    * / - replaces the top two values on the stack with their quotient
-	* // - performs integer division
-	* mod - calculates the modulus (remainder)
-	* y^x - raises the second value on the stack to the power of the first value on the stack
+  * Common functions pop their parameters off the stack and push the result.  Note that any function requiring more values than there are on the stack will be returned zero for all additional parameters.
+    * `+` - replaces the top two values on the stack with their sum
+    * `-` - replaces the top two values on the stack with their difference
+    * `*` - replaces the top two values on the stack with their product
+    * `/` - replaces the top two values on the stack with their quotient
+    * `//` - performs integer division
+    * `mod` - calculates the modulus (remainder)
+    * `y^x` - raises the second value on the stack to the power of the first value on the stack
   * Some operations only change the top value on the stack.
-    * 1/x - replaces the top value on the stack with it's inverse
-    * sqr - replaces the value on the top of the stack with its square
-	* int - replaces the value on trhe top of the stack with the integer part
-	* frac - replaces the value on trhe top of the stack with the fractional part
-	* chs - changes the sign of the value on the top of the stack (does not affect lastx)
+    * `1/x` - replaces the top value on the stack with its inverse
+    * `sqr` - replaces the value on the top of the stack with its square
+    * `int` - replaces the value on the top of the stack with the integer part
+    * `frac` - replaces the value on the top of the stack with the fractional part
+    * `chs` - changes the sign of the value on the top of the stack (does not affect last)
   * Some operations manipulate the stack
-    * dup - duplicates the value on the top of the stack
-    * pop - removes the top item from the stack
-    * x<>y - swaps the position of the top two items on the stack
-    * clst - clears the stack
-	* stack - pushes the length of the stack onto the stack
-  * Some operations handle variables (these are all followed by a variable name).  Note that refering to a variable that does not exist will return zero, but not greate that variable.  Whilst it is possible to name a variable using a string of numbers representing a number (e.g. '32') these will likely not be accessible from other commands -- AVOID THEM
-    * >L {x} - Takes the value on the top of the stack and stores it in local variable {x}
-    * >G {x} - Takes the value on the top of the stack and stores it in the globalk variable {x}
-    * > {x} - Stores the value in the local variable {x} if it exists, otherwise the global variable {x} if it exists, otherwise creates a new local variable {x}
-    * <L {x} - Pushes the value in the local variable {x} onto the stack.
-    * <G {x} - Pushes the value of the global variable {x} onto the stack.
-    * < {x} - Pushes the value of the local variable {x} if it exists, otherwise the global variable {x}
-	* cl_l - clears all local variables
-  * Some operations display resuls or other status information
-    * view - displays the value on the top of the stack
-    * view_s - displays the entire stack
-    * view_l - displays all local variables
-    * view_g - displays all global variables
-  * Some operations can perform a test and terminate the RPN_EVAL is the test fails
-    * X=0? - Does the top value of the stack equal zero?
-    * X!=0? - Does the top value of the stack equal something other than zero?
-    * X=Y? - Does the top value of the stack equal the next value on the stack?
-    * X!=Y? - Does the top value of the stack equal something other thanthe next value on the stack
-    * X>Y? - Is the top value of the stack greater than the next value on the stack
-    * X>=Y? - Is the top value of the stack greater than or equal to the next value on the stack
-    * X<Y? - Is the top value of the stack less than the next value on the stack
-    * X<=Y? - Is the top value of the stack less than or equal to the next value on the stack
-    * ? {x} - Does a variable {x} exist
-    * !? {x} - Does a variable {x} not exist
-    * ?L {x} - Does a local variable {x} exist
-    * !?L {x} - Does a local variable {x} not exist
-    * ?G {x} - Does a global variable {x} exist
-    * !?G {x} - Does a global variable {x} not exist
+    * `dup` - duplicates the value on the top of the stack
+    * `pop` - removes the top item from the stack
+    * `x<>y` - swaps the position of the top two items on the stack
+    * `clst` - clears the stack
+    * `stack` - pushes the length of the stack onto the stack
+  * Some operations handle variables (these are all followed by a variable name).  Note that referencing to a variable that does not exist will return zero, but not create that variable.  Whilst it is possible to name a variable using a string of numbers representing a number (e.g. '32') these will likely not be accessible from other commands -- AVOID THEM
+    * `>L {x}` - Takes the value on the top of the stack and stores it in local variable {x}
+    * `>G {x}` - Takes the value on the top of the stack and stores it in the global variable {x}
+    * `> {x}` - Stores the value in the local variable {x} if it exists, otherwise the global variable {x} if it exists, otherwise creates a new local variable {x}
+    * `<L {x}` - Pushes the value in the local variable {x} onto the stack.
+    * `<G {x}` - Pushes the value of the global variable {x} onto the stack.
+    * `< {x}` - Pushes the value of the local variable {x} if it exists, otherwise the global variable {x}
+    * `cl_l` - clears all local variables
+  * Some operations display results or other status information
+    * `view` - displays the value on the top of the stack
+    * `view_s` - displays the entire stack
+    * `view_l` - displays all local variables
+    * `view_g` - displays all global variables
+  * Some operations can perform a test and terminate the RPN_EVAL if the test fails
+    * `X=0?` - Does the top value of the stack equal zero?
+    * `X!=0?` - Does the top value of the stack equal something other than zero?
+    * `X=Y?` - Does the top value of the stack equal the next value on the stack?
+    * `X!=Y?` - Does the top value of the stack equal something other than the next value on the stack
+    * `X>Y?` - Is the top value of the stack greater than the next value on the stack
+    * `X>=Y?` - Is the top value of the stack greater than or equal to the next value on the stack
+    * `X<Y?` - Is the top value of the stack less than the next value on the stack
+    * `X<=Y?` - Is the top value of the stack less than or equal to the next value on the stack
+    * `? {x}` - Does a variable {x} exist
+    * `!? {x}` - Does a variable {x} not exist
+    * `?L {x}` - Does a local variable {x} exist
+    * `!?L {x}` - Does a local variable {x} not exist
+    * `?G {x}` - Does a global variable {x} exist
+    * `!?G {x}` - Does a global variable {x} not exist
   * One command allows you to affect script execution
-    * abort - causes the script to terminate
+    * `abort` - causes the script to terminate
   * The stack is local to the current script, however it is maintained between executions!
   * The global variables are global to all scripts. 
   * Local variables are local to the current script (and are maintained across executions)
   * The stack and local variables will be lost if the script is edited.
 * `RPN_SET`
-  * Appends all values passed as parameters 2 (strings and variables) onwards and assignes the result to the variable parameter 1
+  * Appends all values passed as parameters 2 (strings and variables) onwards and assigns the result to the variable parameter 1
 #### Win32 Commands [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 * `W_GET_CARET`
   * Places the window-relative X and Y coordinates of the text cursor (caret) into the 2 variables passed as parameters
@@ -435,9 +435,9 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
 * `vol_up`
 
 ## Known Issues / Troubleshooting [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
-* The USB connection on the Launchpads, quite frankly, suck. If the angle is wrong, the Launchpad may receive power, but will not be able to transmit or receive data. While using the Launchpad, if you wiggle the connection somehow, it will straight up break the MIDI library I use. You will have to do the following:
+* The USB connection on the Launchpads, quite frankly, sucks. If the angle is wrong, the Launchpad may receive power, but will not be able to transmit or receive data. While using the Launchpad, if you wiggle the connection somehow, it will straight up break the MIDI library I use. You will have to do the following:
   * Click on "Launchpad > Disconnect from Launchpad xxx..."
-  * Unplug your Launchpad and wait about 5 seconds for the capacitors inside the Launchpad to drain. (It stays powered for a few seconds after losing it's connection, we want it dead as a doorknob)
+  * Unplug your Launchpad and wait about 5 seconds for the capacitors inside the Launchpad to drain. (It stays powered for a few seconds after losing its connection, we want it dead as a doorknob)
   * Connect the Launchpad via USB
     * If you see the rainbow wipe effect and are left with no lights on, the connection is good
     * If the pad has psychedelic waves of colors exploding everywhere, it is getting power but cannot transmit or receive data. Try again, maybe with a different cable
@@ -482,7 +482,7 @@ In order of priority:
   * Add `SOUND_VOLUME` to set the sound volume by label
   * Add `SOUND_STOP` to stop playing sound by label and delete the sound label
   * Add `SOUND_ALL_*` commands to stop/change the volume of all sounds
-* Let `SOUND` use spaces in it's path if it has double quotes around it (this can now be added easily)
+* Let `SOUND` use spaces in its path if it has double quotes around it (this can now be added easily)
 * Let program function as a layout editor without LP connection
   * Would probably be easier to write a "Dummy LP" class
 * Make an installer for Linux
@@ -514,11 +514,11 @@ In order of priority:
       * Add `run_color_mode` to set the "running" color mode
         * `flash` is a quick blinking (default)
         * `pulse` is a slow fade in and fade out
-        * `solid` is coninuously on
+        * `solid` is continuously on
       * Add `schedule_color_mode` to set the "scheduled" color mode
         * `pulse` is a slow fade in and fade out (default)
         * `flash` is a quick blinking
-        * `solid` is coninuously on
+        * `solid` is continuously on
     * Add more selectors to script entry window
 * Add a `Sound` menu with `Choose default output device...` option
 * [Refactor code to make LPHKscript functions in auto-implementing modules, for ease of delevopment](https://github.com/nimaid/LPHK/issues/3)
