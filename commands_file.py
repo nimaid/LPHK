@@ -1,5 +1,5 @@
 # This module contains commands that work on the filesystem
-import os, command_base, ms, kb, scripts, traceback, pathlib
+import os, command_base, ms, kb, scripts, traceback, pathlib, files
 from constants import *
 
 LIB = "cmds_file" # name of this library (for logging)
@@ -195,6 +195,13 @@ scripts.Add_command(File_Ensure_Path_Exists())    # register the command
 # ### CLASS File_Load_Layout                     ###
 # ##################################################
 
+# constants for LOAD_LAYOUT
+LL_NORMAL    = "NORMAL"
+LL_FAST      = "FAST"
+LL_UNCHECKED = "UNCHECKED"
+
+LLG_ALL = [LL_NORMAL, LL_FAST, LL_UNCHECKED]
+
 # Loads a new layout.  Command rather than header format (doesn't have the F_ prefix for historical reasons)
 class File_Load_Layout(command_base.Command_Basic):
     def __init__(
@@ -206,10 +213,12 @@ class File_Load_Layout(command_base.Command_Basic):
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
             ("Layout",     False, AVV_YES,  PT_STR,  None,                       None),
+            ("Method",     True,  AVV_NO,   PT_WORD, None,                       None),
             ),
             (
             # num params, format string                           (trailing comma is important)
             (1,           "    loads layout {1}"),
+            (2,           "    loads layout {1} with option {2}"),
             ) )
 
         self.doc = ["Replaces the current layout with a new one loaded from a layout file."]
@@ -217,6 +226,7 @@ class File_Load_Layout(command_base.Command_Basic):
 
     def Process(self, btn, idx, split_line):
         layout_name = self.Get_param(btn, 1)
+        method = self.Get_param(btn, 2, LL_NORMAL)
 
         layout_path = os.path.join(files.LAYOUT_PATH, layout_name)
         if not os.path.isfile(layout_path):
@@ -232,12 +242,27 @@ class File_Load_Layout(command_base.Command_Basic):
         if files.layout_changed_since_load:
             files.save_lp_to_layout(files.curr_layout)
 
-        files.load_layout_to_lp(layout_path, popups=False, save_converted=False, preload=layout)
+        if method == LL_NORMAL:
+            files.load_layout_to_lp(layout_path, popups=False, save_converted=False, preload=layout)
+        elif method == LL_FAST:
+            files.load_layout_to_lp(layout_path, popups=False, save_converted=False, preload=layout, load_subroutines=False)
+        elif method == LL_UNCHECKED:
+            files.load_layout_to_lp(layout_path, popups=False, save_converted=False, preload=layout, load_subroutines=False, check_subroutines=False)
 
         return idx+1
 
 
-scripts.Add_command(File_Load_Layout())  # register the header
+    def Partial_validate_step_pass_1(self, ret, btn, idx, split_line):
+        ret = super().Partial_validate_step_pass_1(ret, btn, idx, split_line)     # perform the original pass 1 validation
 
+        if ret == None or ((type(ret) == bool) and ret):                          # if the original validation hasn't raised an error
+            if (len(split_line) > 2) and (not split_line[2] in LLG_ALL):          # invalid subcommand
+                c_ok = ', '.join(LLG_ALL[:-1]) + ', or ' + LLG_ALL[-1]
+                s_err = f"Invalid subcommand {split_line[1]} when expecting {c_ok}."
+                return (s_err, btn.Line(idx))
+        return ret
+
+
+scripts.Add_command(File_Load_Layout())  # register the header
 
 

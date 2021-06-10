@@ -136,7 +136,7 @@ def save_lp_to_layout(name):
 
     save_layout(layout=layout, name=name)
 
-def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
+def load_layout_to_lp(name, popups=True, save_converted=True, preload=None, load_subroutines=True, check_subroutines=True):
     global curr_layout
     global in_error
     global layout_changed_since_load
@@ -144,7 +144,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
     converted_to_rg = False
 
     scripts.Unbind_all()
-    scripts.Unload_all()                         # remove all existing subroutines when you load a new layout
+    scripts.Unload_all(unload_subroutines=load_subroutines)                         # remove all existing subroutines when you load a new layout
     window.Redraw(True)
 
     if preload == None:
@@ -153,10 +153,11 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
         layout = preload
 
     # load subroutines before buttons so you don't get errors on buttons using them
-    if layout["version"] >= FILE_VERSION_SUBS:   # if it's a version that might have subroutines
-        if "subroutines" in layout:              # and it has subroutines
-            for sub in layout["subroutines"]:    # for all the subroutines that were saved
-                load_subroutine(sub, 0, 'LAYOUT')# load the subroutine
+    if load_subroutines:
+        if layout["version"] >= FILE_VERSION_SUBS:   # if it's a version that might have subroutines
+            if "subroutines" in layout:              # and it has subroutines
+                for sub in layout["subroutines"]:    # for all the subroutines that were saved
+                    load_subroutine(sub, 0, 'LAYOUT')# load the subroutine
 
     for x in range(9):
         for y in range(9):
@@ -173,7 +174,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
                 script_validation = None
                 try:
                     btn = scripts.Button(x, y, script_text)
-                    script_validation = btn.Validate_script()
+                    script_validation = btn.Validate_script(full_validate=check_subroutines)
                 except:
                     new_layout_func = lambda: window.app.unbind_lp(prompt_save = False)
                     if popups:
@@ -181,7 +182,7 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None):
                     else:
                         print("[files] Fatal error while attempting to validate script.\nPlease see LPHK.log for more information.")
                     raise
-                if script_validation != True:
+                if check_subroutines and (script_validation != True):
                     btn.invalid_on_load = True
                     color = [0, 0, 0]
                 else:

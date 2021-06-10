@@ -331,7 +331,7 @@ class Button():
 
 
     #  Do what is required to parse the script.  Parsing does not output any information unless it is an error
-    def Parse_script(self):
+    def Parse_script(self, full_parse=True):
         if self.validated:                           # we don't want to repeat validation over and over
             return True
 
@@ -358,18 +358,19 @@ class Button():
 
                 if cmd_txt in VALID_COMMANDS:        # if first element is a command
                     command = VALID_COMMANDS[cmd_txt]# get the command itself
-                    split_line = self.Split_text(command, cmd_txt, line) # now split the line appropriately
+                    if full_parse or isinstance(command, command_base.Command_Header):
+                        split_line = self.Split_text(command, cmd_txt, line) # now split the line appropriately
 
-                    if type(split_line) == tuple:
-                        if err == True:
-                           err = split_line
-                           errors += 1
-                    else:
-                        res = command.Parse(self, idx, split_line, pass_no);
-                        if res != True:
+                        if type(split_line) == tuple:
                             if err == True:
-                                err = res            # note the error
-                            errors += 1              # and 1 more error
+                               err = split_line
+                               errors += 1
+                        else:
+                            res = command.Parse(self, idx, split_line, pass_no);
+                            if res != True:
+                                if err == True:
+                                    err = res        # note the error
+                                errors += 1          # and 1 more error
                 else:
                     msg = " Invalid command '" + cmd_txt + "' on line " + str(idx+1) + "."
                     if err == True:
@@ -378,10 +379,16 @@ class Button():
                     errors += 1                      # and 1 more error
 
             if err != True:
-                if self.is_button:
-                    print('Pass ' + str(pass_no) + ' complete for button ' + self.coords + '.  ' + str(errors) + ' errors detected.')
+                if full_parse:
+                    if self.is_button:
+                        print('Pass ' + str(pass_no) + ' complete for button ' + self.coords + '.  ' + str(errors) + ' errors detected.')
+                    else:
+                        print('Pass ' + str(pass_no) + ' complete for subroutine ' + self.coords +'.  ' + str(errors) + ' errors detected.')
                 else:
-                    print('Pass ' + str(pass_no) + ' complete for subroutine ' + self.coords +'.  ' + str(errors) + ' errors detected.')
+                    if self.is_button:
+                        print('Pass ' + str(pass_no) + ' (partial) for button ' + self.coords + '.  ' + str(errors) + ' errors detected.')
+                    else:
+                        print('Pass ' + str(pass_no) + ' (partial) for subroutine ' + self.coords +'.  ' + str(errors) + ' errors detected.') # should never happen!
                 break                                # errors prevent next pass
 
         return err                                   # success or failure
@@ -754,14 +761,14 @@ class Button():
 
     # validating a script consists of doing the checks that we do prior to running, but
     # we won't run it afterwards.
-    def Validate_script(self):
+    def Validate_script(self, full_validate=True):
         if self.validated or self.script_str == "":      # If valid or there is no script...
             self.validated = True
             return True                                  # ...validation succeeds!
 
-        validation = self.Parse_script()                 # parse the script
+        validation = self.Parse_script(full_parse=full_validate) # parse the script
         if validation == True:                           # If parsing is OK
-            self.validated = True                        # Script is valid
+            self.validated = full_validate               # Script is valid
 
             if len(self.script_lines) > 0:               # look for async header and set flag
                 cmd_txt = self.Split_cmd_text(self.script_lines[0])
@@ -952,7 +959,7 @@ def Unbind_all():
 
 
 # Unload all subroutines.
-def Unload_all():
+def Unload_all(unload_subroutines=True):
     kill_all()                               # stop everything running
 
     subs = []                                # list of subroutines to remove
@@ -960,11 +967,12 @@ def Unload_all():
         if cmd.startswith(SUBROUTINE_PREFIX):# if this command is a subroutine
             subs += [cmd]                    # add the command to the list
 
-    for cmd in subs:                         # for each subroutine we've found
-        Remove_command(cmd)                  # remove it
+    if unload_subroutines:
+        for cmd in subs:                     # for each subroutine we've found
+            Remove_command(cmd)              # remove it
 
     files.layout_changed_since_load = True   # mark layout as changed
 
-    files.validate_all_buttons()                   # ensure buttons are valid
+    files.validate_all_buttons()             # ensure buttons are valid
 
 
