@@ -280,6 +280,7 @@ class Button():
         self.y = y
         self.is_button = x >= 0 and y >= 0   # It's a button if it has valid (non-negative) coordinates, otherwise it must be a subroutine
         self.script_str = script_str         # The script
+        self.colour = None                   # default is no colour
 
         self.name = None
         self.Set_name(name)                  # only for subroutines at present, but useful to print a caption for a button?
@@ -334,6 +335,8 @@ class Button():
     def Parse_script(self, full_parse=True):
         if self.validated:                           # we don't want to repeat validation over and over
             return True
+
+        self.colour = None                           # no colour from the script
 
         if self.script_lines == None:                # A little setup if the script lines are not created
             if isinstance(self.script_str, list):    # Subroutines already have this as a list of lines
@@ -762,6 +765,9 @@ class Button():
     # validating a script consists of doing the checks that we do prior to running, but
     # we won't run it afterwards.
     def Validate_script(self, full_validate=True):
+        if not self.validated:                           # reset script-nominated colour before validation
+            self.colour = None
+            
         if self.validated or self.script_str == "":      # If valid or there is no script...
             self.validated = True
             return True                                  # ...validation succeeds!

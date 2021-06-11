@@ -1,4 +1,4 @@
-import command_base, kb, lp_events, scripts
+import command_base, kb, lp_events, scripts, lp_colors
 
 
 # ##################################################
@@ -418,3 +418,57 @@ class Header_Deprecated(command_base.Command_Header):
 
 
 scripts.Add_command(Header_Doc())  # register the header
+
+# ##################################################
+# ### CLASS Header_Colour                        ###
+# ##################################################
+
+# The Deprecated header marks a routine as deprecated with any additional text
+# placed in the "use" description.
+class Header_Colour(command_base.Command_Header):
+    def __init__(
+        self,
+        ):
+
+        super().__init__("@COLOUR, Sets (overrides) the default buton colour")
+
+        self.doc = ["The `@COLOUR` header allows a routine to be assigned a default button colour.",
+                    "",
+                    "Some simple examples follows",
+                    "",
+                    "      @COLOUR f00",
+                    "      @COLOUR fff",
+                    "",
+                    "When the routine is parsed, the default button colour is set to the RGB value specified by a 3 character hex constant.",
+                    "",
+                    "If repeated, this the colour will be set to the last specified colour"]
+
+
+    # Validate routine.  Adds the deprecated information if the command is not already deprecated!
+    def Validate(
+        self,
+        btn,
+        idx: int,              # The current line number
+        split_line,            # The current line, split
+        pass_no                # interpreter pass (1=gather symbols & check syntax, 2=check symbol references)
+        ):
+
+        if pass_no == 1:
+            if len(split_line) <= 1:
+                return ("Line:" + str(idx+1) + " - The header '" + split_line[0] + "' must have a colour specified.", btn.Line(idx))
+            elif len(split_line) > 2:
+                return ("Line:" + str(idx+1) + " - The header '" + split_line[0] + "' must have only 1 colour specified.", btn.Line(idx))
+            else:
+                if len(split_line[1]) != 3:
+                    return (f"Line:{idx+1} - The header '{split_line[0]}' has a colour {split_line[1]} that is not a 3 character hex value for RGB.", btn.Line(idx))
+                try:
+                    cv = int('0x' + split_line[1], 16)
+                except:
+                    return (f"Line:{idx+1} - The header '{split_line[0]}' has a colour {split_line[1]} that is not a 3 character hex value for RGB.", btn.Line(idx))
+                c = split_line[1].lower()
+                btn.colour = lp_colors.Hex_to_RGB(c)
+                    
+        return True
+
+
+scripts.Add_command(Header_Colour())  # register the header

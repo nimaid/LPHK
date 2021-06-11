@@ -187,6 +187,8 @@ def load_layout_to_lp(name, popups=True, save_converted=True, preload=None, load
                     color = [0, 0, 0]
                 else:
                     btn.invalid_on_load = False
+                    if btn.colour != None:
+                        color = btn.colour
                 scripts.Bind(x, y, btn, color)
             else:
                 lp_colors.setXY(x, y, color)

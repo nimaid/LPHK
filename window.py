@@ -719,6 +719,10 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
                 self.save_script(w, x, y, text_string)
             else:
                 btn.invalid_on_load = False
+                #if btn.colour != None:                   # there should be no reason to do this here unless we want an unsuccessful edit to return the button to its original colour
+                #    colors_to_set[x][y] = btn.colour
+                #    lp_colors.updateXY(x, y)
+                #    print("set Colour", btn.colour)
                 w.destroy()
 
         w.protocol("WM_DELETE_WINDOW", validate_func)
@@ -910,6 +914,8 @@ upper left corner, then release the 'Setup' key. Please only continue once this 
         if script_validate == True:
             if script_text != "":
                 script_text = files.strip_lines(script_text)
+                if btn.colour != None:                                     # is there a script-coded colour for the button?
+                    colors_to_set[x][y] = btn.colour                       # if so, override the user's choice of colour
                 scripts.Bind(x, y, script_text, colors_to_set[x][y])
                 Redraw(x, y)
                 lp_colors.updateXY(x, y)
