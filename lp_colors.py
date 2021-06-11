@@ -11,6 +11,14 @@ def init(lp_object_in):
     global lp_object
     lp_object = lp_object_in   # this function just stores the object in a global variable (what?!)
 
+def Hex_to_RGB(code):
+    # Used to convert 3 hex digits to a colour
+    rgb = []
+    for c in range(3):
+        val = code[c]
+        rgb.append(int(val + val, 16))
+    return rgb
+
 def code_to_RGB(code):
     # Used to convert old layouts to the new format only
     RGB = {0: "#000",
@@ -44,11 +52,7 @@ def code_to_RGB(code):
            48: "#96f",
            49: "#64a",
            50: "#325"}
-    rgb = []
-    for c in range(3):
-        val = RGB[code][c + 1]
-        rgb.append(int(val + val, 16))
-    return rgb
+    return Hex_to_RGB(RGB[code][1:])
 
 def RGB_to_RG(rgb):
     if rgb[2] != 0:

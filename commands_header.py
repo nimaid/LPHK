@@ -472,3 +472,18 @@ class Header_Colour(command_base.Command_Header):
 
 
 scripts.Add_command(Header_Colour())  # register the header
+
+
+class Header_Color(Header_Colour):
+    def __init__(
+        self,
+        ):
+
+        super().__init__()
+        self.name = '@COLOR'
+        self.desc = self.desc.replace('@COLOUR', '@COLOR').replace('olour', 'olor')
+        for i in range(len(self.doc)):
+            self.doc[i] = self.doc[i].replace('@COLOUR', '@COLOR').replace('olour', 'olor')
+        
+    
+scripts.Add_command(Header_Color())  # register the header
