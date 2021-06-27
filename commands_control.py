@@ -333,9 +333,38 @@ class Control_Goto_Label(Control_Flow_Basic):
             # num params, format string                           (trailing comma is important)
             (1,           "    Goto label {1}"),
             ) )  # don't even need the additional parameters!
+            
+        self.deprecated = True
+        self.deprecated_use = "This command is not recommended for new scripts.  Please use the more terse `GOTO` command instead."
 
 
 scripts.Add_command(Control_Goto_Label())  # register the command
+
+
+# ##################################################
+# ### CLASS Control_Goto                         ###
+# ##################################################
+
+# class that defines the GOTO command
+class Control_Goto(Control_Flow_Basic):
+    def __init__(
+        self
+        ):
+
+        super().__init__(
+            "GOTO, Unconditional jump to label",
+            LIB,
+            (
+            # Desc         Opt    Var     type      p1_val  p2_val
+            ("Label",      False, AVV_NO, PT_LABEL, None,   None),
+            ),
+            (
+            # num params, format string                           (trailing comma is important)
+            (1,           "    Goto {1}"),
+            ) )  # don't even need the additional parameters!
+
+
+scripts.Add_command(Control_Goto())  # register the command
 
 
 # ##################################################

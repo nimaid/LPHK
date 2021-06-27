@@ -288,9 +288,9 @@ class Mouse_Recall_Line(command_base.Command_Basic):
     def Process(self, btn, idx, split_line):
         # while this looks like validation, it is just a warning
         if btn.symbols[SYM_MOUSE] == tuple():
-            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
+            print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
         else:
-            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    Recall mouse position " + str(btn.symbols[SYM_MOUSE]))
+            print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Recall mouse position " + str(btn.symbols[SYM_MOUSE]))
 
             x1, y1 = btn.symbols[SYM_MOUSE]
 
@@ -378,9 +378,9 @@ class Mouse_Recall(command_base.Command_Basic):
     def Process(self, btn, idx, split_line):
         # while this looks like validation, it is really just the info. Putting it here is easy
         if btn.symbols[SYM_MOUSE] == tuple():
-            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
+            print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    No 'M_STORE' command has been run, cannot do 'M_RECALL'")
         else:
-            print("[" + lib + "] " + btn.coords + "  Line:" + str(idx+1) + "    Recall mouse position " + str(btn.symbols[SYM_MOUSE]))
+            print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Recall mouse position " + str(btn.symbols[SYM_MOUSE]))
             ms.set_pos(btn.symbols[SYM_MOUSE][0], btn.symbols[SYM_MOUSE][1])
 
 

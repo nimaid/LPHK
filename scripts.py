@@ -437,8 +437,8 @@ class Button():
 
 
     # a sleep method that works with the multiple threads
-    def Safe_sleep(self, time, endfunc=None):
-        while time > DELAY_EXIT_CHECK:
+    def Safe_sleep(self, time=DELAY_EXIT_CHECK, endfunc=None):
+        while time >= DELAY_EXIT_CHECK:
             sleep(DELAY_EXIT_CHECK)
             time -= DELAY_EXIT_CHECK
             if self.Check_kill(endfunc):

@@ -1,6 +1,8 @@
 # This module is VERY specific to Win32
 import command_base, ms, kb, scripts, variables, win32gui, win32process, win32api, win32con, win32clipboard, win32event, re
 from constants import *
+import pyperclip                                       # pyperclip is cross-platform (better than using windows specific code)
+
 
 LIB = "cmds_wn32" # name of this library (for logging)
 
@@ -278,12 +280,14 @@ class Win32_Find_Hwnd(Command_Win32):
             # Desc         Opt    Var       type     p1_val                      p2_val
             ("Title",      False, AVV_YES,  PT_STR,  None,                       None),   # name to search for
             ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
-            ("M",          False, AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
-            ("N",          False, AVV_YES,  PT_INT,  variables.Validate_gt_zero, None),   # number of match desired
+            ("N",          True,  AVV_YES,  PT_INT,  variables.Validate_gt_zero, None),   # number of match desired (default 1)
+            ("M",          True,  AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (4,           "    Find {4}th window titled '{1}', returning handle in {2}.  Report {3} total matches"),
+            (2,           "    Find 1st window titled '{1}', returning handle in {2}."),
+            (3,           "    Find {3}th window titled '{1}', returning handle in {2}."),
+            (4,           "    Find {3}th window titled '{1}', returning handle in {2}.  Report {4} total matches"),
             ) )
 
         self.doc = ["Searches for an exactly matching window `Title`.  If multiple are found, "
@@ -308,9 +312,9 @@ class Win32_Find_Hwnd(Command_Win32):
         hwnds.sort()                                           # helps to ensure we get the windows in the same order.  (creation?)
 
         m = len(hwnds)                                         # how many did we get?
-        self.Set_param(btn, 3, m)                              # pass this back
+        self.Set_param(btn, 4, m)                              # pass this back
 
-        n = self.Get_param(btn, 4)                             # which one did we want?
+        n = self.Get_param(btn, 3, 1)                          # which one did we want? (default 1)
         if n <= m:                                             # do we have it
             hwnd = hwnds[n-1]                                  # get it
         else:
@@ -338,12 +342,14 @@ class Win32_Similar_Hwnd(Command_Win32):
             # Desc         Opt    Var       type     p1_val                      p2_val
             ("Title",      False, AVV_YES,  PT_STR,  None,                       None),   # name to search for
             ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
-            ("M",          False, AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
-            ("N",          False, AVV_YES,  PT_INT,  None, None),   # number of match desired  #@@@ variables.Validate_gt_zero make this work with variables!!!!!
+            ("N",          True,  AVV_YES,  PT_INT,  None, None),   # number of match desired  #@@@ variables.Validate_gt_zero make this work with variables!!!!!
+            ("M",          True,  AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (4,           "    Find {4}th window titled '{1}', returning handle in {2}.  Report {3} total matches"),
+            (2,           "    Find 1st window titled '{1}', returning handle in {2}."),
+            (3,           "    Find {3}th window titled '{1}', returning handle in {2}."),
+            (4,           "    Find {3}th window titled '{1}', returning handle in {2}.  Report {4} total matches"),
             ) )
 
         self.doc = ["Searches for windows with titles starting with `Title`.  If multiple "
@@ -372,9 +378,9 @@ class Win32_Similar_Hwnd(Command_Win32):
         hwnds.sort()                                           # helps to ensure we get the windows in the same order.  (creation?)
 
         m = len(hwnds)                                         # how many did we get?
-        self.Set_param(btn, 3, m)                              # pass this back
+        self.Set_param(btn, 4, m)                              # pass this back
 
-        n = self.Get_param(btn, 4)                             # which one did we want?
+        n = self.Get_param(btn, 3, 1)                          # which one did we want?
         if n <= m:                                             # do we have it
             hwnd = hwnds[n-1]                                  # get it
         else:
@@ -402,12 +408,14 @@ class Win32_Regex_Hwnd(Command_Win32):
             # Desc         Opt    Var       type     p1_val                      p2_val
             ("Regex",      False, AVV_YES,  PT_STR,  None,                       None),   # regular expression search for
             ("HWND",       False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain HWND
-            ("M",          False, AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
-            ("N",          False, AVV_YES,  PT_INT,  None, None),   # number of match desired  #@@@ variables.Validate_gt_zero make this work with variables!!!!!
+            ("N",          True,  AVV_YES,  PT_INT,  None, None),   # number of match desired  #@@@ variables.Validate_gt_zero make this work with variables!!!!!
+            ("M",          True,  AVV_REQD, PT_INT,  None,                       None),   # number of matches found (if M<N then error)
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (4,           "    Find {4}th window titled '{1}', returning handle in {2}.  Report {3} total matches"),
+            (2,           "    Find 1st window titled '{1}', returning handle in {2}."),
+            (3,           "    Find {3}th window titled '{1}', returning handle in {2}."),
+            (4,           "    Find {3}th window titled '{1}', returning handle in {2}.  Report {4} total matches"),
             ) )
 
         self.doc = ["Searches for windows with titles described with the regular expression "
@@ -433,9 +441,9 @@ class Win32_Regex_Hwnd(Command_Win32):
         hwnds.sort()                                           # helps to ensure we get the windows in the same order.  (creation?)
 
         m = len(hwnds)                                         # how many did we get?
-        self.Set_param(btn, 3, m)                              # pass this back
+        self.Set_param(btn, 4, m)                              # pass this back
 
-        n = self.Get_param(btn, 4)                             # which one did we want?
+        n = self.Get_param(btn, 3, 1)                          # which one did we want?
         if n <= m:                                             # do we have it
             hwnd = hwnds[n-1]                                  # get it
         else:
@@ -529,6 +537,8 @@ class Win32_Restore_Hwnd(Command_Win32):
 scripts.Add_command(Win32_Restore_Hwnd())  # register the command
 
 def ClearClipboard():
+    pyperclip.copy('')
+    return #@@@
     for i in range(5):
         x = True
         try:                                                   # clear the clipboard
@@ -542,8 +552,10 @@ def ClearClipboard():
                 if x: break
             except:
                 pass                                           # we don't care if the clipboard wasn't opened!
-
+    
 def SetClipboard(text):
+    pyperclip.copy(text)
+    return #@@@
     for i in range(5):
         x = True
         try:
@@ -557,6 +569,35 @@ def SetClipboard(text):
                 if x: break
             except:
                 pass                                           # we don't care if the clipboard wasn't opened!
+
+def WaitClipboard(btn):
+    btn.Safe_sleep()
+    r = 20
+    while r > 0:
+        r -= 1
+        try:
+            n = win32clipboard.CountClipboardFormats()
+            break
+        except:
+            n = -1
+            btn.Safe_sleep()
+
+    btn.Safe_sleep()
+            
+    return n
+
+
+def Wait_for_hwnd(btn, hwnd):
+    tid, pid = win32process.GetWindowThreadProcessId(hwnd) # find the pid
+    hproc = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION , False, pid) # find the process id
+
+    res = win32con.WAIT_TIMEOUT                            # set the failure mode to timeout
+    while res == win32con.WAIT_TIMEOUT:                    # while we're still timing out
+        res = win32event.WaitForInputIdle(hproc, 20)       # wait a little while for window to become idle
+        if btn.Check_kill():                               # check if we've been killed
+            return False                                   # and die
+            
+    return True
 
 # ##################################################
 # ### CLASS W_COPY                               ###
@@ -572,12 +613,13 @@ class Win32_Copy(Command_Win32):
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
-            ("Success",    False, AVV_REQD, PT_INT,  None,                       None),   # variable to contain success value
             ("Clipboard",  True,  AVV_REQD, PT_STR,  None,                       None),   # variable to contain cut item
+            ("Success",    True,  AVV_REQD, PT_INT,  None,                       None),   # variable to contain success value
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (1,           "    Copy into system clipboard returning success in {2}"),
+            (0,           "    Copy into system clipboard"),
+            (1,           "    Copy into system clipboard and {1}"),
             (2,           "    Copy into system clipboard and {1}, returning success in {2}"),
             ) )
 
@@ -591,36 +633,23 @@ class Win32_Copy(Command_Win32):
             kb.tap(kb.sp('c'))
         finally:
             kb.release(kb.sp('ctrl'))
-
-        import pyperclip                                       # pyperclip is cross-platform (better than using windows specific code)
-
-        success = False
-        r = 20
-        while r > 0:
-            r -= 1
+            
+        n = -10
+        while n < -1:
             try:
                 n = win32clipboard.CountClipboardFormats()
-                if n > 0:
-                    break
             except:
-                n = -1
-                btn.Safe_sleep(0.05)
-
-        if (n <= 0):
-            self.Set_param(btn, 1, -1)
-        else:
-            t = pyperclip.paste()
+                n += 1
+                btn.Safe_sleep()
 
         if n <= 0:
-            print(f'fail {r}')
-            self.Set_param(btn, 2, None)
-            self.Set_param(btn, 1, -1)
+            self.Set_param(btn, 1, None)
+            self.Set_param(btn, 2, -1)
         else:
             t = pyperclip.paste()                              # get it again
             t = t.rstrip('\r\n')                               # remove any line terminators
-            print(f"success {r} `{t}`")
-            self.Set_param(btn, 2, t)
-            self.Set_param(btn, 1, 0)
+            self.Set_param(btn, 1, t)
+            self.Set_param(btn, 2, 0)
 
 
 scripts.Add_command(Win32_Copy())  # register the command
@@ -651,19 +680,21 @@ class Win32_Paste(Command_Win32):
     def Process(self, btn, idx, split_line):
 
         if self.Param_count(btn) > 0:                          # place variable into clipboard if required
-            hwnd = win32gui.GetForegroundWindow()              # get the current window
+            #hwnd = win32gui.GetForegroundWindow()              # get the current window
             c = self.Get_param(btn, 1)                         # get the value
 
             ClearClipboard()
-
             SetClipboard(str(c))
+            WaitClipboard(btn)
 
-            # win32api.SendMessage(hwnd, win32con.WM_PASTE, 0, 0)  # do a paste
-            try:
-                kb.press(kb.sp('ctrl'))                            # do a ctrl v (because the message version isn't reliable)
-                kb.tap(kb.sp('v'))
-            finally:
-                kb.release(kb.sp('ctrl'))
+        #win32api.SendMessage(hwnd, win32con.WM_PASTE, 0, 0)  # do a paste
+        #win32gui.SetForegroundWindow(hwnd)
+        try:
+            kb.press(kb.sp('ctrl'))                            # do a ctrl v (because the message version isn't reliable)
+            kb.tap(kb.sp('v'))
+        finally:
+            kb.release(kb.sp('ctrl'))
+        btn.Safe_sleep()
 
 
 
@@ -698,8 +729,8 @@ class Win32_Copy_Var(Command_Win32):
         c = self.Get_param(btn, 1)                         # get the value
 
         ClearClipboard()
-
         SetClipboard(str(c))
+        WaitClipboard(btn)
 
 
 scripts.Add_command(Win32_Copy_Var())  # register the command
@@ -719,24 +750,19 @@ class Win32_Wait(Command_Win32):
             LIB,
             (
             # Desc         Opt    Var       type     p1_val                      p2_val
-            ("HWND",       False, AVV_YES,  PT_INT,  None,                       None),   # variable to contain item to paste
+            ("HWND",       True,  AVV_YES,  PT_INT,  None,                       None),   # variable to contain item to paste
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (0,           "    Wait until {1} is ready for input"),
+            (0,           "    Wait until current window is ready for input"),
+            (1,           "    Wait until {1} is ready for input"),
             ) )
 
     def Process(self, btn, idx, split_line):
 
-        hwnd = self.Get_param(btn, 1)                          # get the window
-        tid, pid = win32process.GetWindowThreadProcessId(hwnd) # find the pid
-        hproc = win32api.OpenProcess(win32con.PROCESS_QUERY_INFORMATION , False, pid) # find the process id
-
-        res = win32con.WAIT_TIMEOUT                            # set the failure mode to timeout
-        while res == win32con.WAIT_TIMEOUT:                    # while we're still timing out
-            res = win32event.WaitForInputIdle(hproc, 20)       # wait a little while for window to become idle
-            if btn.Check_kill():                               # check if we've been killed
-                return False                                   # and die
+        hwnd = self.Get_param(btn, 1, win32gui.GetForegroundWindow()) # get the window
+        if not Wait_for_hwnd(btn, hwnd):
+            return False
 
 
 scripts.Add_command(Win32_Wait())  # register the command
