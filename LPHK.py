@@ -1,4 +1,5 @@
-import sys, os, subprocess
+import os
+import sys
 from datetime import datetime
 
 print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!\n")
@@ -6,22 +7,22 @@ print("\n!!!!!!!! DO NOT CLOSE THIS WINDOW WITHOUT SAVING !!!!!!!!\n")
 LOG_TITLE = "LPHK.log"
 
 # Get platform information
-PLATFORMS = [   {"search_string": "win", "name_string": "windows"},
-                {"search_string": "linux", "name_string": "linux"},
-                {"search_string": "darwin", "name_string": "macintosh"} ]
+PLATFORMS = [{"search_string": "win", "name_string": "windows"},
+             {"search_string": "linux", "name_string": "linux"},
+             {"search_string": "darwin", "name_string": "macintosh"}]
 PLATFORM = None
 for plat in PLATFORMS:
     if sys.platform.startswith(plat["search_string"]):
         PLATFORM = plat["name_string"]
         break
-if PLATFORM == None:
+if PLATFORM is None:
     PLATFORM = "other"
 
 # Test if this is a PyInstaller executable or a .py file
 if getattr(sys, 'frozen', False):
     IS_EXE = True
     PROG_FILE = sys.executable
-    PROG_PATH = os.path.dirname(PROG_FILE) 
+    PROG_PATH = os.path.dirname(PROG_FILE)
     PATH = sys._MEIPASS
 else:
     IS_EXE = False
@@ -29,13 +30,14 @@ else:
     PROG_PATH = os.path.dirname(PROG_FILE)
     PATH = PROG_PATH
 
+
 # Test if there is a user folder specified
 def get_first_textfile_line(file_path):
-    file_lines = None
     with open(file_path, "r") as f:
         file_lines = f.readlines()
     first_line = file_lines[0]
     return first_line.strip()
+
 
 USERPATH_FILE = os.path.join(PATH, "USERPATH")
 if os.path.exists(USERPATH_FILE):
@@ -53,6 +55,7 @@ VERSION = get_first_textfile_line(os.path.join(PATH, "VERSION"))
 LOG_PATH = os.path.join(USER_PATH, LOG_TITLE)
 
 import logger
+
 logger.start(LOG_PATH)
 
 
@@ -84,7 +87,7 @@ except ImportError:
         sys.exit("[LPHK] Error loading launchpad.py")
 print("")
 
-import lp_events, scripts, kb, files, sound, window
+import lp_events, scripts, files, sound, window
 from utils import launchpad_connector
 
 lp = launchpad.Launchpad()
@@ -102,17 +105,18 @@ def init():
 
         else:
             print("[LPHK] Invalid argument: " + sys.argv[1] + ". Ignoring...")
-    
+
     files.init(USER_PATH)
     sound.init(USER_PATH)
 
+
 def shutdown():
-    if lp_events.timer != None:
+    if lp_events.timer is not None:
         lp_events.timer.cancel()
     scripts.to_run = []
     for x in range(9):
         for y in range(9):
-            if scripts.threads[x][y] != None:
+            if scripts.threads[x][y] is not None:
                 scripts.threads[x][y].kill.set()
     if window.lp_connected:
         scripts.unbind_all()
