@@ -166,7 +166,7 @@ class Main_Window(tk.Frame):
 
         lp = lpcon.get_launchpad()
 
-        if lp is -1:
+        if lp == -1:
             self.popup(self, "Connect to Unsupported Device", self.error_image,
                        """The device you are attempting to use is not currently supported by LPHK,
                        and there are no plans to add support for it.
@@ -187,7 +187,7 @@ class Main_Window(tk.Frame):
             lp_object = lp
             lp_mode = lpcon.get_mode(lp)
 
-            if lp_mode is "Pro":
+            if lp_mode == "Pro":
                 self.popup(self, "Connect to Launchpad Pro", self.error_image,
                            """This is a BETA feature! The Pro is not fully supported yet,as the bottom and left rows are not mappable currently.
                            I (nimaid) do not have a Launchpad Pro to test with, so let me know if this does or does not work on the Discord! (https://discord.gg/mDCzB8X)
@@ -198,7 +198,7 @@ class Main_Window(tk.Frame):
             lp_object.ButtonFlush()
 
             # special case?
-            if lp_mode is not "Mk1":
+            if lp_mode != "Mk1":
                 lp_object.LedCtrlBpm(INDICATOR_BPM)
 
             lp_events.start(lp_object)
