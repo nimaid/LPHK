@@ -213,7 +213,7 @@ class External_Code(command_base.Command_Basic):
         print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Running code: " + args)
 
         try:
-            subprocess.run(args)
+            subprocess.run(args, shell=True)
         except Exception as e:
             print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))
 
