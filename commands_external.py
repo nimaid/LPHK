@@ -1,4 +1,5 @@
-import command_base, webbrowser, sound, subprocess, os, scripts
+import webbrowser, sound, subprocess, os, scripts
+import command_base
 from constants import *
 
 LIB = "cmds_extn" # name of this library (for logging)
@@ -209,11 +210,11 @@ class External_Code(command_base.Command_Basic):
         split_line             # The current line, split
         ):
 
-        args = split_line[1:]
-        print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Running code: " + " ".join(args))
+        args = " ".join(split_line[1:])
+        print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Running code: " + args)
 
         try:
-            subprocess.run(args, shell=False)
+            subprocess.run(args, shell=True)
         except Exception as e:
             print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))
 
@@ -242,17 +243,14 @@ class External_Code_Nowait(command_base.Command_Basic):
             ),
             (
             # num params, format string                           (trailing comma is important)
-            (2,           "    Run {2} retuning PID in {1}"),
+            (2,           "    Run {2} returning PID in {1}"),
             ) )
 
     def Process(self, btn, idx, split_line):
-        args = []
-        for i in range(2, self.Param_count(btn)+1):
-            args += [self.Get_param(btn, i)]    # get the command we want to run
-
+        args = " ".join(split_line[1:])
         pid = -1
         try:
-            proc = subprocess.Popen(args)
+            proc = subprocess.Popen(args, shell=True)
             pid = proc.pid
         except Exception as e:
             print("[" + LIB + "] " + btn.coords + "  Line:" + str(idx+1) + "    Error with running code: " + str(e))
