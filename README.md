@@ -160,6 +160,7 @@ I have specifically chosen to do my best to develop this using as many cross pla
         * If the second button is already bound, you will get a dialog box with options.
 * Go to `Layout > Save layout as...` to save your current layout for future use, colors and all.
 * Go to `Layout > Load layout...` to load an existing layout. Examples are in `user_layouts/examples/`.
+* (Optional) Create a layout with the name `startup.lpl` that will be automatically loaded every time LPHK starts up.
 
 #### The whole GUI is still rough around the edges, so don't be too surprised if something breaks. If it does, kindly open a detailed issue on GitHub so I can fix the error. :) And don't feel shy making feature requests, either!
 
