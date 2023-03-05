@@ -38,7 +38,7 @@ A Novation Launchpad macro scripting system.
 ## What does it do? [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
 The goal of this project is to implement a macro scripting system for the Novation Launchpad, in order to use the launchpad as a scriptable, general purpose macro keyboard.
 
-It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](https://github.com/hak5darren/USB-Rubber-Ducky/wiki/Duckyscript), and has a GUI to enter scripts, set colors, and to save/load your setup.
+It uses "LPHKscript", a very simple scripting language similar to [DuckyScript](https://docs.hak5.org/hak5-usb-rubber-ducky/duckyscript-tm-quick-reference), and has a GUI to enter scripts, set colors, and to save/load your setup.
 
 **LPHK can be used for the following:**
 * Gaming, to bind:
