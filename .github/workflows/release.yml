@@ -15,4 +15,4 @@ jobs:
           spec: 'LPHK.py'
           requirements: 'INSTALL/requirements.txt'
           upload_exe_with_name: 'My executable'
-          options: --onefile, --name "LPHK", --windowed, ---icon=resources\LPHK.ico, --add-data Version;., --add-data resources\;resources\
+          options: --onefile, --name "LPHK", --windowed, ---icon resources\LPHK.ico, --add-data Version:., --add-data resources\:resources\
