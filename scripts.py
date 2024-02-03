@@ -241,10 +241,19 @@ def run_script(script_str, x, y):
                         print("[scripts] " + coords + "    Stopping sounds")
                         sound.stop()
                 elif split_line[0] == "SOUND_VLC":
-                    if len(split_line) > 2:
+                    if len(split_line) == 6:
+                        print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]) + " from " + str(split_line[3]) + " to " + str(split_line[4])+ " with " + str(split_line[5]) + " milliseconds fadeout time")
+                        sound_vlc.play_vlc(split_line[1], int(split_line[2]), float(split_line[3]), float(split_line[4]),float(split_line[5]))
+                    if len(split_line) == 5:
+                        print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]) + " from " + str(split_line[3]) + " to " + str(split_line[4]))
+                        sound_vlc.play_vlc(split_line[1], int(split_line[2]), float(split_line[3]), float(split_line[4]))
+                    if len(split_line) == 4:
+                        print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]) + " from " + str(split_line[3]))
+                        sound_vlc.play_vlc(split_line[1], int(split_line[2]), float(split_line[3]))
+                    if len(split_line) == 3:
                         print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]))
-                        sound_vlc.play_vlc(split_line[1], float(split_line[2]))
-                    else:
+                        sound_vlc.play_vlc(split_line[1], int(split_line[2]))
+                    if len(split_line) == 2:
                         print("[scripts] " + coords + "    Play sound file " + split_line[1])
                         sound_vlc.play_vlc(split_line[1])
                 elif split_line[0] == "SOUND_VLC_STOP":
