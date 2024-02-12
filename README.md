@@ -223,6 +223,19 @@ Commands follow the format: `COMMAND arg1 arg2 ...`. Scripts are just a text fil
 * `SOUND_STOP`
   * Stops all sounds currently playing.
   * If (argument 1) supplied, fading for (argument 1) milliseconds and then stops the sounds.
+* `SOUND_VLC`
+  * Play a sound named (argument 1) inside the `user_sounds/` folder.
+    * Supports all Files compatible with VLC-Mediaplayer.
+    * VLC must be installed
+    * Only one sound volume can be played at a time. Multiple sounds with different volumes will be played at the same volume.
+  * If (argument 2) supplied, set volume to (argument 2).
+    * Range is 0 to 100
+  * If (argument 3) supplied, set the start time to (argument 3) milliseconds.
+  * If (argument 4) supplied, set the end time to (argument 4) milliseconds.
+  * If (argument 5) supplied, set fadeout time to (argument 5) milliseconds
+* `SOUND_VLC_STOP`
+  * Stops all sounds currently playing via VLC.
+    * If (argument 1) supplied, fading for (argument 1) milliseconds and then stops the sounds.
 * `WAIT_UNPRESSED`
   * Waits until the button the script is bound to is unpressed. (no arguments)
 * `WEB`

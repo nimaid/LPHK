@@ -87,7 +87,7 @@ except ImportError:
         sys.exit("[LPHK] Error loading launchpad.py")
 print("")
 
-import lp_events, scripts, files, sound, window
+import lp_events, scripts, files, sound, sound_vlc, window
 from utils import launchpad_connector
 
 lp = launchpad.Launchpad()
@@ -108,6 +108,7 @@ def init():
 
     files.init(USER_PATH)
     sound.init(USER_PATH)
+    sound_vlc.init(USER_PATH)
 
 
 def shutdown():

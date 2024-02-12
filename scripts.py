@@ -1,7 +1,7 @@
 import threading, webbrowser, os, subprocess
 from time import sleep
 from functools import partial
-import lp_events, lp_colors, kb, sound, ms
+import lp_events, lp_colors, kb, sound, sound_vlc, ms
 
 COLOR_PRIMED = 5 #red
 COLOR_FUNC_KEYS_PRIMED = 9 #amber
@@ -10,7 +10,7 @@ DELAY_EXIT_CHECK = 0.025
 
 import files
 
-VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "@LOAD_LAYOUT", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "CODE", "SOUND", "SOUND_STOP", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
+VALID_COMMANDS = ["@ASYNC", "@SIMPLE", "@LOAD_LAYOUT", "STRING", "DELAY", "TAP", "PRESS", "RELEASE", "WEB", "WEB_NEW", "CODE", "SOUND", "SOUND_STOP", "SOUND_VLC", "SOUND_VLC_STOP", "WAIT_UNPRESSED", "M_MOVE", "M_SET", "M_SCROLL", "M_LINE", "M_LINE_MOVE", "M_LINE_SET", "LABEL", "IF_PRESSED_GOTO_LABEL", "IF_UNPRESSED_GOTO_LABEL", "GOTO_LABEL", "REPEAT_LABEL", "IF_PRESSED_REPEAT_LABEL", "IF_UNPRESSED_REPEAT_LABEL", "M_STORE", "M_RECALL", "M_RECALL_LINE", "OPEN", "RELEASE_ALL", "RESET_REPEATS"]
 ASYNC_HEADERS = ["@ASYNC", "@SIMPLE"]
 
 threads = [[None for y in range(9)] for x in range(9)]
@@ -240,6 +240,31 @@ def run_script(script_str, x, y):
                     else:
                         print("[scripts] " + coords + "    Stopping sounds")
                         sound.stop()
+                elif split_line[0] == "SOUND_VLC":
+                    if len(split_line) == 6:
+                        print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]) + " from " + str(split_line[3]) + " to " + str(split_line[4])+ " with " + str(split_line[5]) + " milliseconds fadeout time")
+                        sound_vlc.play_vlc(split_line[1], int(split_line[2]), float(split_line[3]), float(split_line[4]),float(split_line[5]))
+                    if len(split_line) == 5:
+                        print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]) + " from " + str(split_line[3]) + " to " + str(split_line[4]))
+                        sound_vlc.play_vlc(split_line[1], int(split_line[2]), float(split_line[3]), float(split_line[4]))
+                    if len(split_line) == 4:
+                        print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]) + " from " + str(split_line[3]))
+                        sound_vlc.play_vlc(split_line[1], int(split_line[2]), float(split_line[3]))
+                    if len(split_line) == 3:
+                        print("[scripts] " + coords + "    Play sound file " + split_line[1] + " at volume " + str(split_line[2]))
+                        sound_vlc.play_vlc(split_line[1], int(split_line[2]))
+                    if len(split_line) == 2:
+                        print("[scripts] " + coords + "    Play sound file " + split_line[1])
+                        sound_vlc.play_vlc(split_line[1])
+                elif split_line[0] == "SOUND_VLC_STOP":
+                    if len(split_line) > 1:
+                        delay = split_line[1]
+                        print("[scripts] " + coords +
+                              "    Stopping sounds with " + delay + " milliseconds fadeout time")
+                        sound_vlc.fadeout_vlc(int(delay))
+                    else:
+                        print("[scripts] " + coords + "    Stopping sounds")
+                        sound_vlc.stop_vlc()
                 elif split_line[0] == "WAIT_UNPRESSED":
                     print("[scripts] " + coords + "    Wait for script key to be unpressed")
                     while lp_events.pressed[x][y]:
