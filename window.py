@@ -724,7 +724,8 @@ def make():
 def close():
     global root_destroyed, launchpad
     app.modified_layout_save_prompt()
-    app.disconnect_lp()
+    if lpcon.get_launchpad() is not None:
+        app.disconnect_lp()
 
     if not root_destroyed:
         root.destroy()

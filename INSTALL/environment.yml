@@ -13,3 +13,4 @@ dependencies:
     - tkcolorpicker
     - py-getch
     - pyautogui
+    - python-vlc
