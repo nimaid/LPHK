@@ -337,6 +337,10 @@ For the `PRESS`, `RELEASE`, and `TAP` commands, all single character non-whitesp
     * Unplug and restart the program manually
     * Maybe restart your computer?
     * At this point IDK, maybe the USB on your Launchpad needs to be replaced.
+   
+* Launchpad Pro Users:
+   * Upon opening up the LPHK application with a Launchpad Pro connected, you will receive a popup message. If you click past the popup, you might face a blank LPHK application which freezes a few moments after.
+   * To solve this, simply wait on that warning message for 2-3 minutes. Then click the proceed button and you should be all good. 
 * If your game/application does not detect mouse movements, see if there is an option to turn off "raw input" in the settings. This setting bypasses all software and reads directly from the mouse, which you don't want for this.
 
 ## TODO List [[Table of Contents]](https://github.com/nimaid/LPHK#table-of-contents)
